@@ -36,7 +36,7 @@ CoreUI is meant to be the UX game changer. Pure & transparent code is devoid of 
 
 * [CoreUI Free Bootstrap Admin Template](https://github.com/coreui/coreui-free-bootstrap-admin-template)
 * [CoreUI Free Angular 9+ Admin Template](https://github.com/coreui/coreui-free-angular-admin-template)
-* [CoreUI Free React.js Admin Template](https://github.com/coreui/coreui-free-react-admin-template)
+* [CoreUI Free React.js Admin Template](https://github.com/Ricardo2308/sionpagosadmin)
 * [CoreUI Free Vue.js Admin Template](https://github.com/coreui/coreui-free-vue-admin-template)
 * [CoreUI Free Laravel Admin Template](https://github.com/coreui/coreui-free-laravel-admin-template)
 * [CoreUI Free Vue.js + Laravel Admin Template](https://github.com/coreui/coreui-free-vue-laravel-admin-template)
@@ -58,7 +58,7 @@ CoreUI is meant to be the UX game changer. Pure & transparent code is devoid of 
 
 ``` bash
 # clone the repo
-$ git clone https://github.com/coreui/coreui-free-react-admin-template.git my-project
+$ git clone https://github.com/Ricardo2308/sionpagosadmin.git my-project
 
 # go into app's directory
 $ cd my-project

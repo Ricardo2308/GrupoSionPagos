@@ -1,38 +1,191 @@
-import React, { lazy } from 'react'
-
+import React from 'react'
+import { CCard, CCardBody, CCol, CCardHeader, CRow } from '@coreui/react'
 import {
-  CAvatar,
-  CButton,
-  CButtonGroup,
-  CCard,
-  CCardBody,
-  CCardFooter,
-  CCardHeader,
-  CCol,
-  CProgress,
-  CRow,
-  CTable,
-  CTableBody,
-  CTableDataCell,
-  CTableHead,
-  CTableHeaderCell,
-  CTableRow,
-} from '@coreui/react'
-import { CChartLine } from '@coreui/react-chartjs'
-import { getStyle, hexToRgba } from '@coreui/utils'
-import CIcon from '@coreui/icons-react'
-
-const WidgetsDropdown = lazy(() => import('../components/widgets/WidgetsDropdown.js'))
-const WidgetsBrand = lazy(() => import('../components/widgets/WidgetsBrand.js'))
+  CChartBar,
+  CChartDoughnut,
+  CChartLine,
+  CChartPie,
+  CChartPolarArea,
+  CChartRadar,
+} from '@coreui/react-chartjs'
+import { DocsLink } from 'src/reusable'
+import { useSession } from 'react-use-session'
+import '../../scss/estilos.scss'
 
 const Dashboard = () => {
-  const random = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1) + min)
-  }
+  const { session } = useSession('PendrogonIT-Session')
+  const random = () => Math.round(Math.random() * 100)
 
+  if (session) {
+    return (
+      <CRow>
+        <CCol xs={6}>
+          <CCard className="mb-4">
+            <CCardHeader>
+              Bar Chart
+              <DocsLink href="http://www.chartjs.org" />
+            </CCardHeader>
+            <CCardBody>
+              <CChartBar
+                data={{
+                  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                  datasets: [
+                    {
+                      label: 'GitHub Commits',
+                      backgroundColor: '#f87979',
+                      data: [40, 20, 12, 39, 10, 40, 39, 80, 40],
+                    },
+                  ],
+                }}
+                labels="months"
+              />
+            </CCardBody>
+          </CCard>
+        </CCol>
+        <CCol xs={6}>
+          <CCard className="mb-4">
+            <CCardHeader>Line Chart</CCardHeader>
+            <CCardBody>
+              <CChartLine
+                data={{
+                  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                  datasets: [
+                    {
+                      label: 'My First dataset',
+                      backgroundColor: 'rgba(220, 220, 220, 0.2)',
+                      borderColor: 'rgba(220, 220, 220, 1)',
+                      pointBackgroundColor: 'rgba(220, 220, 220, 1)',
+                      pointBorderColor: '#fff',
+                      data: [random(), random(), random(), random(), random(), random(), random()],
+                    },
+                    {
+                      label: 'My Second dataset',
+                      backgroundColor: 'rgba(151, 187, 205, 0.2)',
+                      borderColor: 'rgba(151, 187, 205, 1)',
+                      pointBackgroundColor: 'rgba(151, 187, 205, 1)',
+                      pointBorderColor: '#fff',
+                      data: [random(), random(), random(), random(), random(), random(), random()],
+                    },
+                  ],
+                }}
+              />
+            </CCardBody>
+          </CCard>
+        </CCol>
+        <CCol xs={6}>
+          <CCard className="mb-4">
+            <CCardHeader>Doughnut Chart</CCardHeader>
+            <CCardBody>
+              <CChartDoughnut
+                data={{
+                  labels: ['VueJs', 'EmberJs', 'ReactJs', 'AngularJs'],
+                  datasets: [
+                    {
+                      backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
+                      data: [40, 20, 80, 10],
+                    },
+                  ],
+                }}
+              />
+            </CCardBody>
+          </CCard>
+        </CCol>
+        <CCol xs={6}>
+          <CCard className="mb-4">
+            <CCardHeader>Pie Chart</CCardHeader>
+            <CCardBody>
+              <CChartPie
+                data={{
+                  labels: ['Red', 'Green', 'Yellow'],
+                  datasets: [
+                    {
+                      data: [300, 50, 100],
+                      backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                      hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                    },
+                  ],
+                }}
+              />
+            </CCardBody>
+          </CCard>
+        </CCol>
+        <CCol xs={6}>
+          <CCard className="mb-4">
+            <CCardHeader>Polar Area Chart</CCardHeader>
+            <CCardBody>
+              <CChartPolarArea
+                data={{
+                  labels: ['Red', 'Green', 'Yellow', 'Grey', 'Blue'],
+                  datasets: [
+                    {
+                      data: [11, 16, 7, 3, 14],
+                      backgroundColor: ['#FF6384', '#4BC0C0', '#FFCE56', '#E7E9ED', '#36A2EB'],
+                    },
+                  ],
+                }}
+              />
+            </CCardBody>
+          </CCard>
+        </CCol>
+        <CCol xs={6}>
+          <CCard className="mb-4">
+            <CCardHeader>Radar Chart</CCardHeader>
+            <CCardBody>
+              <CChartRadar
+                data={{
+                  labels: [
+                    'Eating',
+                    'Drinking',
+                    'Sleeping',
+                    'Designing',
+                    'Coding',
+                    'Cycling',
+                    'Running',
+                  ],
+                  datasets: [
+                    {
+                      label: 'My First dataset',
+                      backgroundColor: 'rgba(220, 220, 220, 0.2)',
+                      borderColor: 'rgba(220, 220, 220, 1)',
+                      pointBackgroundColor: 'rgba(220, 220, 220, 1)',
+                      pointBorderColor: '#fff',
+                      pointHighlightFill: '#fff',
+                      pointHighlightStroke: 'rgba(220, 220, 220, 1)',
+                      data: [65, 59, 90, 81, 56, 55, 40],
+                    },
+                    {
+                      label: 'My Second dataset',
+                      backgroundColor: 'rgba(151, 187, 205, 0.2)',
+                      borderColor: 'rgba(151, 187, 205, 1)',
+                      pointBackgroundColor: 'rgba(151, 187, 205, 1)',
+                      pointBorderColor: '#fff',
+                      pointHighlightFill: '#fff',
+                      pointHighlightStroke: 'rgba(151, 187, 205, 1)',
+                      data: [28, 48, 40, 19, 96, 27, 100],
+                    },
+                  ],
+                }}
+              />
+            </CCardBody>
+          </CCard>
+        </CCol>
+      </CRow>
+    )
+  } else {
+    return <div className="sin-sesion">SIN SESIÓN ACTIVA.</div>
+  }
+  {
+    /*
   return (
+    const random = () => Math.round(Math.random() * 100)
+    {/*
     <>
+      <div>
+        <img src={logo} />
+      </div>
+      {/*
       <WidgetsDropdown />
+      
       <CCard className="mb-4">
         <CCardBody>
           <CRow>
@@ -176,186 +329,7 @@ const Dashboard = () => {
         </CCardFooter>
       </CCard>
 
-      <WidgetsBrand withCharts />
-
-      <CRow>
-        <CCol xs>
-          <CCard className="mb-4">
-            <CCardHeader>Traffic {' & '} Sales</CCardHeader>
-            <CCardBody>
-              <CRow>
-                <CCol xs="12" md="6" xl="6">
-                  <CRow>
-                    <CCol sm="6">
-                      <div className="border-start border-start-4 border-start-info py-1 px-3">
-                        <div className="text-medium-emphasis small">New Clients</div>
-                        <div className="fs-5 fw-semibold">9,123</div>
-                      </div>
-                    </CCol>
-                    <CCol sm="6">
-                      <div className="border-start border-start-4 border-start-danger py-1 px-3 mb-3">
-                        <div className="text-medium-emphasis small">Recurring Clients</div>
-                        <div className="fs-5 fw-semibold">22,643</div>
-                      </div>
-                    </CCol>
-                  </CRow>
-
-                  <hr className="mt-0" />
-
-                  <div className="progress-group mb-4">
-                    <div className="progress-group-prepend">
-                      <span className="text-medium-emphasis small">Monday</span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress thin color="info" value={34} />
-                      <CProgress thin color="danger" value={78} />
-                    </div>
-                  </div>
-                  <div className="progress-group mb-4">
-                    <div className="progress-group-prepend">
-                      <span className="text-medium-emphasis small">Tuesday</span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress thin color="info" value={56} />
-                      <CProgress thin color="danger" value={94} />
-                    </div>
-                  </div>
-                  <div className="progress-group mb-4">
-                    <div className="progress-group-prepend">
-                      <span className="text-medium-emphasis small">Wednesday</span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress thin color="info" value={12} />
-                      <CProgress thin color="danger" value={67} />
-                    </div>
-                  </div>
-                  <div className="progress-group mb-4">
-                    <div className="progress-group-prepend">
-                      <span className="text-medium-emphasis small">Thursday</span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress thin color="info" value={43} />
-                      <CProgress thin color="danger" value={91} />
-                    </div>
-                  </div>
-                  <div className="progress-group mb-4">
-                    <div className="progress-group-prepend">
-                      <span className="text-medium-emphasis small">Friday</span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress thin color="info" value={22} />
-                      <CProgress thin color="danger" value={73} />
-                    </div>
-                  </div>
-                  <div className="progress-group mb-4">
-                    <div className="progress-group-prepend">
-                      <span className="text-medium-emphasis small">Saturday</span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress thin color="info" value={53} />
-                      <CProgress thin color="danger" value={82} />
-                    </div>
-                  </div>
-                  <div className="progress-group mb-4">
-                    <div className="progress-group-prepend">
-                      <span className="text-medium-emphasis small">Sunday</span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress thin color="info" value={9} />
-                      <CProgress thin color="danger" value={69} />
-                    </div>
-                  </div>
-                </CCol>
-
-                <CCol xs="12" md="6" xl="6">
-                  <CRow>
-                    <CCol sm="6">
-                      <div className="border-start border-start-4 border-start-warning py-1 px-3 mb-3">
-                        <div className="text-medium-emphasis small">Pageviews</div>
-                        <div className="fs-5 fw-semibold">78,623</div>
-                      </div>
-                    </CCol>
-                    <CCol sm="6">
-                      <div className="border-start border-start-4 border-start-success py-1 px-3 mb-3">
-                        <div className="text-medium-emphasis small">Organic</div>
-                        <div className="fs-5 fw-semibold">49,123</div>
-                      </div>
-                    </CCol>
-                  </CRow>
-
-                  <hr className="mt-0" />
-
-                  <div className="progress-group mb-4">
-                    <div className="progress-group-header">
-                      <CIcon className="icon icon-lg me-2" name="cil-user" />
-                      <span>Male</span>
-                      <span className="ms-auto font-semibold">43%</span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress thin color="warning" value={43} />
-                    </div>
-                  </div>
-                  <div className="progress-group mb-5">
-                    <div className="progress-group-header">
-                      <CIcon className="icon icon-lg me-2" name="cil-user-female" />
-                      <span>Female</span>
-                      <span className="ms-auto font-semibold">37%</span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress thin color="warning" value={37} />
-                    </div>
-                  </div>
-
-                  <div className="progress-group">
-                    <div className="progress-group-header">
-                      <CIcon className="icon icon-lg me-2" name="cib-google" />
-                      <span>Organic Search</span>
-                      <span className="ms-auto font-semibold">
-                        191,235 <span className="text-medium-emphasis small">(56%)</span>
-                      </span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress thin color="success" value={56} />
-                    </div>
-                  </div>
-                  <div className="progress-group">
-                    <div className="progress-group-header">
-                      <CIcon name="cib-facebook" className="icon icon-lg me-2" />
-                      <span>Facebook</span>
-                      <span className="ms-auto font-semibold">
-                        51,223 <span className="text-medium-emphasis small">(15%)</span>
-                      </span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress thin color="success" value={15} />
-                    </div>
-                  </div>
-                  <div className="progress-group">
-                    <div className="progress-group-header">
-                      <CIcon name="cib-twitter" className="icon icon-lg me-2" />
-                      <span>Twitter</span>
-                      <span className="ms-auto font-semibold">
-                        37,564 <span className="text-medium-emphasis small">(11%)</span>
-                      </span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress thin color="success" value={11} />
-                    </div>
-                  </div>
-                  <div className="progress-group">
-                    <div className="progress-group-header">
-                      <CIcon name="cib-linkedin" className="icon icon-lg me-2" />
-                      <span>LinkedIn</span>
-                      <span className="ms-auto font-semibold">
-                        27,319 <span className="text-medium-emphasis small">(8%)</span>
-                      </span>
-                    </div>
-                    <div className="progress-group-bars">
-                      <CProgress thin color="success" value={8} />
-                    </div>
-                  </div>
-                </CCol>
-              </CRow>
+      <WidgetsBrand withCharts />      
 
               <br />
 
@@ -406,177 +380,7 @@ const Dashboard = () => {
                       <div className="small text-medium-emphasis">Last login</div>
                       <strong>10 sec ago</strong>
                     </CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableDataCell className="text-center">
-                      <CAvatar size="md" src="avatars/2.jpg" status="danger" />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div>Avram Tarasios</div>
-                      <div className="small text-medium-emphasis">
-                        <span>Recurring</span> | Registered: Jan 1, 2015
-                      </div>
-                    </CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CIcon size="xl" name="cif-br" title="br" id="br" />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div className="clearfix">
-                        <div className="float-start">
-                          <strong>10%</strong>
-                        </div>
-                        <div className="float-end">
-                          <small className="text-medium-emphasis">
-                            Jun 11, 2015 - Jul 10, 2015
-                          </small>
-                        </div>
-                      </div>
-                      <CProgress thin color="info" value={10} />
-                    </CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CIcon size="xl" name="cib-cc-visa" />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div className="small text-medium-emphasis">Last login</div>
-                      <strong>5 minutes ago</strong>
-                    </CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableDataCell className="text-center">
-                      <CAvatar size="md" src="avatars/3.jpg" status="warning" />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div>Quintin Ed</div>
-                      <div className="small text-medium-emphasis">
-                        <span>New</span> | Registered: Jan 1, 2015
-                      </div>
-                    </CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CIcon size="xl" name="cif-in" title="in" id="in" />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div className="clearfix">
-                        <div className="float-start">
-                          <strong>74%</strong>
-                        </div>
-                        <div className="float-end">
-                          <small className="text-medium-emphasis">
-                            Jun 11, 2015 - Jul 10, 2015
-                          </small>
-                        </div>
-                      </div>
-                      <CProgress thin color="warning" value={74} />
-                    </CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CIcon size="xl" name="cib-cc-stripe" />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div className="small text-medium-emphasis">Last login</div>
-                      <strong>1 hour ago</strong>
-                    </CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableDataCell className="text-center">
-                      <CAvatar size="md" src="avatars/4.jpg" status="secondary" />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div>Enéas Kwadwo</div>
-                      <div className="small text-medium-emphasis">
-                        <span>New</span> | Registered: Jan 1, 2015
-                      </div>
-                    </CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CIcon size="xl" name="cif-fr" title="fr" id="fr" />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div className="clearfix">
-                        <div className="float-start">
-                          <strong>98%</strong>
-                        </div>
-                        <div className="float-end">
-                          <small className="text-medium-emphasis">
-                            Jun 11, 2015 - Jul 10, 2015
-                          </small>
-                        </div>
-                      </div>
-                      <CProgress thin color="danger" value={98} />
-                    </CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CIcon size="xl" name="cib-cc-paypal" />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div className="small text-medium-emphasis">Last login</div>
-                      <strong>Last month</strong>
-                    </CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableDataCell className="text-center">
-                      <CAvatar size="md" src="avatars/5.jpg" status="success" />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div>Agapetus Tadeáš</div>
-                      <div className="small text-medium-emphasis">
-                        <span>New</span> | Registered: Jan 1, 2015
-                      </div>
-                    </CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CIcon size="xl" name="cif-es" title="es" id="es" />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div className="clearfix">
-                        <div className="float-start">
-                          <strong>22%</strong>
-                        </div>
-                        <div className="float-end">
-                          <small className="text-medium-emphasis">
-                            Jun 11, 2015 - Jul 10, 2015
-                          </small>
-                        </div>
-                      </div>
-                      <CProgress thin color="info" value={22} />
-                    </CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CIcon size="xl" name="cib-cc-apple-pay" />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div className="small text-medium-emphasis">Last login</div>
-                      <strong>Last week</strong>
-                    </CTableDataCell>
-                  </CTableRow>
-                  <CTableRow>
-                    <CTableDataCell className="text-center">
-                      <CAvatar size="md" src="avatars/6.jpg" status="danger" />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div>Friderik Dávid</div>
-                      <div className="small text-medium-emphasis">
-                        <span>New</span> | Registered: Jan 1, 2015
-                      </div>
-                    </CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CIcon size="xl" name="cif-pl" title="pl" id="pl" />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div className="clearfix">
-                        <div className="float-start">
-                          <strong>43%</strong>
-                        </div>
-                        <div className="float-end">
-                          <small className="text-medium-emphasis">
-                            Jun 11, 2015 - Jul 10, 2015
-                          </small>
-                        </div>
-                      </div>
-                      <CProgress thin color="success" value={43} />
-                    </CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CIcon size="xl" name="cib-cc-amex" />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <div className="small text-medium-emphasis">Last login</div>
-                      <strong>Yesterday</strong>
-                    </CTableDataCell>
-                  </CTableRow>
+                  </CTableRow>                                                                               
                 </CTableBody>
               </CTable>
             </CCardBody>
@@ -585,6 +389,8 @@ const Dashboard = () => {
       </CRow>
     </>
   )
+  */
+  }
 }
 
 export default Dashboard

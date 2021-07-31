@@ -1,6 +1,20 @@
 import React from 'react'
-import CIcon from '@coreui/icons-react'
 import { NavLink } from 'react-router-dom'
+import {
+  FiBook,
+  FiLock,
+  FiSettings,
+  FiGitPullRequest,
+  FiUserCheck,
+  FiUsers,
+  FiGrid,
+  FiAlertOctagon,
+  FiFile,
+  FiThumbsUp,
+  FiCreditCard,
+} from 'react-icons/fi'
+import { BiUserCircle } from 'react-icons/bi'
+import logo from './assets/icons/GrupoSion.png'
 
 const _nav = [
   {
@@ -8,7 +22,7 @@ const _nav = [
     as: NavLink,
     anchor: 'Dashboard',
     to: '/dashboard',
-    icon: <CIcon name="cil-speedometer" customClasses="nav-icon" />,
+    icon: <img src={logo} style={{ width: '15%', marginRight: '15px', marginLeft: '30px' }} />,
     badge: {
       color: 'info',
       text: 'NEW',
@@ -16,303 +30,258 @@ const _nav = [
   },
   {
     _component: 'CNavTitle',
-    anchor: 'Theme',
-  },
-  {
-    _component: 'CNavItem',
-    as: NavLink,
-    anchor: 'Colors',
-    to: '/theme/colors',
-    icon: <CIcon name="cil-drop" customClasses="nav-icon" />,
-  },
-  {
-    _component: 'CNavItem',
-    as: NavLink,
-    anchor: 'Typography',
-    to: '/theme/typography',
-    icon: <CIcon name="cil-pencil" customClasses="nav-icon" />,
-  },
-  {
-    _component: 'CNavTitle',
-    anchor: 'Components',
+    anchor: 'Módulos',
   },
   {
     _component: 'CNavGroup',
     as: NavLink,
-    anchor: 'Base',
+    anchor: 'Seguridad',
     to: '/to',
-    icon: <CIcon name="cil-puzzle" customClasses="nav-icon" />,
+    icon: <FiLock size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
     items: [
       {
-        _component: 'CNavItem',
+        _component: 'CNavGroup',
         as: NavLink,
-        anchor: 'Accordion',
-        to: '/base/accordion',
+        anchor: 'Usuarios',
+        to: '/to',
+        icon: <FiUsers size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Nuevo',
+            to: '/base/registro',
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Listar',
+            to: '/base/usuarios',
+          },
+        ],
       },
       {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Breadcrumb',
-        to: '/base/breadcrumbs',
+        _component: 'CNavGroup',
+        anchor: 'Perfiles',
+        icon: <BiUserCircle size={23} style={{ marginRight: '19px', marginLeft: '6px' }} />,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Nuevo',
+            to: '/perfiles/nuevo',
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Listar',
+            to: '/perfiles/perfiles',
+          },
+        ],
       },
       {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Cards',
-        to: '/base/cards',
+        _component: 'CNavGroup',
+        anchor: 'Roles',
+        icon: <FiSettings size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Nuevo',
+            to: '/roles/nuevo',
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Listar',
+            to: '/roles/roles',
+          },
+        ],
       },
       {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Carousel',
-        to: '/base/carousels',
+        _component: 'CNavGroup',
+        anchor: 'Permisos',
+        icon: <FiUserCheck size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Nuevo',
+            to: '/permisos/nuevo',
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Listar',
+            to: '/permisos/permisos',
+          },
+        ],
       },
       {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Collapse',
-        to: '/base/collapses',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'List group',
-        to: '/base/list-groups',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Navs & Tabs',
-        to: '/base/navs',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Pagination',
-        to: '/base/paginations',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Popovers',
-        to: '/base/popovers',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Progress',
-        to: '/base/progress',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Spinners',
-        to: '/base/spinners',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Tables',
-        to: '/base/tables',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Tooltips',
-        to: '/base/tooltips',
+        _component: 'CNavGroup',
+        anchor: 'Políticas',
+        icon: <FiBook size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Nueva',
+            to: '/politicas/nueva',
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Listar',
+            to: '/politicas/politicas',
+          },
+        ],
       },
     ],
   },
   {
     _component: 'CNavGroup',
-    anchor: 'Buttons',
-    icon: <CIcon name="cil-cursor" customClasses="nav-icon" />,
-    items: [
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Buttons',
-        to: '/buttons/buttons',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Buttons groups',
-        to: '/buttons/button-groups',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Dropdowns',
-        to: '/buttons/dropdowns',
-      },
-    ],
-  },
-  {
-    _component: 'CNavGroup',
-    anchor: 'Forms',
-    icon: <CIcon name="cil-notes" customClasses="nav-icon" />,
-    items: [
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Form Control',
-        to: '/forms/form-control',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Select',
-        to: '/forms/select',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Checks & Radios',
-        to: '/forms/checks-radios',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Range',
-        to: '/forms/range',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Input Group',
-        to: '/forms/input-group',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Floating Labels',
-        to: '/forms/floating-labels',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Layout',
-        to: '/forms/layout',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Validation',
-        to: '/forms/validation',
-      },
-    ],
-  },
-  {
-    _component: 'CNavItem',
     as: NavLink,
-    anchor: 'Charts',
-    to: '/charts',
-    icon: <CIcon name="cil-chart-pie" customClasses="nav-icon" />,
-  },
-  {
-    _component: 'CNavGroup',
-    anchor: 'Icons',
-    icon: <CIcon name="cil-star" customClasses="nav-icon" />,
+    anchor: 'Pagos',
+    to: '/to',
+    icon: <FiCreditCard size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
     items: [
       {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'CoreUI Free',
-        to: '/icons/coreui-icons',
-        badge: {
-          color: 'success',
-          text: 'NEW',
-        },
+        _component: 'CNavGroup',
+        anchor: 'Condiciones',
+        icon: <FiAlertOctagon size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Nuevo',
+            to: '/condiciones/nueva',
+            badge: {
+              color: 'success',
+              text: 'NEW',
+            },
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Listar',
+            to: '/condiciones/condiciones',
+          },
+        ],
+      },
+      {
+        _component: 'CNavGroup',
+        anchor: 'Grupos',
+        icon: <FiUsers size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Nuevo',
+            to: '/grupos/nuevo',
+            badge: {
+              color: 'success',
+              text: 'NEW',
+            },
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Listar',
+            to: '/grupos/grupos',
+          },
+        ],
+      },
+      {
+        _component: 'CNavGroup',
+        anchor: 'Autorizacion',
+        icon: <FiThumbsUp size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Nueva',
+            to: '/autorizacion/autorizacion',
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Listar',
+            to: '/autorizacion/listado',
+          },
+        ],
+      },
+      {
+        _component: 'CNavGroup',
+        anchor: 'Estado Pago',
+        icon: <FiGrid size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Nuevo',
+            to: '/estadoflujo/nuevo',
+            badge: {
+              color: 'success',
+              text: 'NEW',
+            },
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Listar',
+            to: '/estadoflujo/estados',
+          },
+        ],
+      },
+      {
+        _component: 'CNavGroup',
+        anchor: 'Tipo Flujo',
+        icon: <FiGitPullRequest size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Nuevo',
+            to: '/tipoflujo/nuevo',
+            badge: {
+              color: 'success',
+              text: 'NEW',
+            },
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Listar',
+            to: '/tipoflujo/tipos',
+          },
+        ],
+      },
+      {
+        _component: 'CNavGroup',
+        anchor: 'Archivos Pago',
+        icon: <FiFile size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Listar',
+            to: '/archivoflujo/archivos',
+          },
+        ],
       },
       {
         _component: 'CNavItem',
+        anchor: 'Pagos',
+        icon: <FiCreditCard size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
         as: NavLink,
-        anchor: 'CoreUI Flags',
-        to: '/icons/flags',
+        to: '/pagos',
       },
       {
         _component: 'CNavItem',
+        anchor: 'Pagos',
+        icon: <FiCreditCard size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
         as: NavLink,
-        anchor: 'CoreUI Brands',
-        to: '/icons/brands',
-      },
-    ],
-  },
-  {
-    _component: 'CNavGroup',
-    anchor: 'Notifications',
-    icon: <CIcon name="cil-bell" customClasses="nav-icon" />,
-    items: [
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Alerts',
-        to: '/notifications/alerts',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Badges',
-        to: '/notifications/badges',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Modal',
-        to: '/notifications/modals',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Toasts',
-        to: '/notifications/toasts',
-      },
-    ],
-  },
-  {
-    _component: 'CNavItem',
-    as: NavLink,
-    anchor: 'Widgets',
-    to: '/widgets',
-    icon: <CIcon name="cil-calculator" customClasses="nav-icon" />,
-    badge: {
-      color: 'info',
-      text: 'NEW',
-    },
-  },
-  {
-    _component: 'CNavTitle',
-    anchor: 'Extras',
-  },
-  {
-    _component: 'CNavGroup',
-    anchor: 'Pages',
-    icon: <CIcon name="cil-star" customClasses="nav-icon" />,
-    items: [
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Login',
-        to: '/login',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Register',
-        to: '/register',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Error 404',
-        to: '/404',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Error 500',
-        to: '/500',
+        to: '/pagos1',
       },
     ],
   },

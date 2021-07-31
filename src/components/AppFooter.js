@@ -6,14 +6,14 @@ const AppFooter = () => {
     <CFooter>
       <div>
         <a href="https://coreui.io" target="_blank" rel="noopener noreferrer">
-          CoreUI
+          Control de Pagos
         </a>
-        <span className="ms-1">&copy; 2021 creativeLabs.</span>
+        <span className="ms-1">&copy; 2021 Grupo Sion.</span>
       </div>
       <div className="ms-auto">
-        <span className="me-1">Powered by</span>
+        <span className="me-1">Desarrollado por</span>
         <a href="https://coreui.io/react" target="_blank" rel="noopener noreferrer">
-          CoreUI for React
+          Pendrogon
         </a>
       </div>
     </CFooter>
