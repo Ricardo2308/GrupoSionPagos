@@ -82,9 +82,7 @@ const EditarTipoFlujo = React.lazy(() =>
   import('./views/components/flujos/tipoflujo/EditarTipoFlujo'),
 )
 
-const FlujoTabs = React.lazy(() => import('./views/components/flujos/flujo/FlujoTabs'))
 const PagoTabs = React.lazy(() => import('./views/components/flujos/flujo/PagoTabs'))
-const GridFlujos = React.lazy(() => import('./views/components/flujos/flujo/GridFlujos'))
 const GridPagos = React.lazy(() => import('./views/components/flujos/flujo/GridPagos'))
 const ArchivosFlujoF = React.lazy(() => import('./views/components/flujos/flujo/ArchivosFlujoF'))
 const DetalleFlujo = React.lazy(() => import('./views/components/flujos/flujo/DetalleFlujo'))
@@ -196,12 +194,10 @@ const routes = [
   { path: '/tipoflujo/tipos', name: 'Listado', component: TiposFlujo },
   { path: '/tipoflujo/nuevo', name: 'Nuevo', component: NuevoTipoFlujo },
   { path: '/tipoflujo/editar', name: 'Modificación', component: EditarTipoFlujo },
-  { path: '/pagos', exact: true, name: 'Pagos', component: GridFlujos },
-  { path: '/pagos/tabs', name: 'Detalle Flujos', component: FlujoTabs },
-  { path: '/pagos/tabs1', name: 'Detalle Flujos', component: PagoTabs },
+  { path: '/pagos', exact: true, name: 'Pagos', component: GridPagos },
+  { path: '/pagos/tabs', name: 'Detalle Flujos', component: PagoTabs },
   { path: '/pagos/archivos', name: 'Archivos Flujo', component: ArchivosFlujoF },
   { path: '/pagos/detalle', name: 'Archivos Flujo', component: DetalleFlujo },
-  { path: '/pagos1', exact: true, name: 'Pagos', component: GridPagos },
   { path: '/archivoflujo', exact: true, name: 'Archivos Flujo', component: ArchivosFlujoU },
   { path: '/archivoflujo/archivos', name: 'Listado', component: ArchivosFlujoU },
   { path: '/archivoflujo/nuevo', name: 'Nuevo', component: NuevoArchivoFlujo },
