@@ -1,4 +1,4 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}grupos_autorizacion.php`
+const API = `${process.env.REACT_APP_API_URL}grupoautorizacion`
 
 export function getGruposAutorizacion(idGrupo, idGrupoPadre) {
   let ApiFinal = API

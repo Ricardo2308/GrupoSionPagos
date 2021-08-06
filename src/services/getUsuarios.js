@@ -1,4 +1,4 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}usuarios.php`
+const API = `${process.env.REACT_APP_API_URL}usuarios`
 
 export function getUsuarios(Nombre, Apellido, Correo, Password) {
   let ApiFinal = API
@@ -34,7 +34,6 @@ export function getUsuarios(Nombre, Apellido, Correo, Password) {
   ApiFinal += ApiWhere
   return fetch(ApiFinal)
     .then(function (response) {
-      console.log(process.env)
       return response.json()
     })
     .catch((err) => err)

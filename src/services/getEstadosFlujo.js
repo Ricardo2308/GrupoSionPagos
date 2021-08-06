@@ -1,4 +1,4 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}estados_flujo.php`
+const API = `${process.env.REACT_APP_API_URL}estadoflujo`
 
 export function getEstadosFlujo(idEstado, descripcion) {
   let ApiFinal = API
