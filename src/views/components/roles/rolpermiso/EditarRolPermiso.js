@@ -139,7 +139,7 @@ const EditarRolPermiso = () => {
                     <CFormSelect name="permiso" onChange={handleInput}>
                       <option>Seleccione nuevo permiso. (Opcional)</option>
                       {results.map((item, i) => {
-                        if (item.estado_eliminado !== '1' && item.estado_activo !== '0') {
+                        if (item.eliminado !== '1' && item.activo !== '0') {
                           return (
                             <option key={item.id_permiso} value={item.id_permiso}>
                               {item.descripcion}

@@ -170,6 +170,7 @@ const Consultar = () => {
                         <CButton
                           color="primary"
                           size="sm"
+                          title="Cambiar Perfil"
                           disabled={location.inhabilitar}
                           onClick={() =>
                             history.push({
@@ -188,6 +189,7 @@ const Consultar = () => {
                         <CButton
                           color="danger"
                           size="sm"
+                          title="Eliminar Perfil Asociado"
                           disabled={location.inhabilitar}
                           onClick={() => mostrarModal(item.id_perfil, '', '2', '')}
                         >
@@ -196,6 +198,7 @@ const Consultar = () => {
                         <CButton
                           color="info"
                           size="sm"
+                          title="Cambiar Estado"
                           disabled={location.inhabilitar}
                           onClick={() => mostrarModal(item.id_perfil, '', '4', item.estado_activo)}
                         >
@@ -241,6 +244,7 @@ const Consultar = () => {
                         <CButton
                           color="primary"
                           size="sm"
+                          title="Elegir Nuevo Grupo"
                           disabled={location.inhabilitar}
                           onClick={() =>
                             history.push({
@@ -258,6 +262,7 @@ const Consultar = () => {
                         <CButton
                           color="danger"
                           size="sm"
+                          title="Eliminar Grupo Asociado"
                           disabled={location.inhabilitar}
                           onClick={() => mostrarModal('', item.id_grupoautorizacion, '2', '')}
                         >
@@ -266,6 +271,7 @@ const Consultar = () => {
                         <CButton
                           color="info"
                           size="sm"
+                          title="Cambiar de Estado"
                           disabled={location.inhabilitar}
                           onClick={() =>
                             mostrarModal('', item.id_grupoautorizacion, '4', item.estado_activo)

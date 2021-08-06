@@ -44,7 +44,7 @@ const Usuarios = () => {
   }
 
   async function eliminarUsuario(id) {
-    const respuesta = await postEditarUsuario(id, '', '', '', '', '', '3')
+    const respuesta = await postEditarUsuario(id, '', '', '', '', '', '', '3')
     if (respuesta === 'OK') {
       await getUsuarios(null, null, null, null).then((items) => {
         setList(items.users)
@@ -82,8 +82,8 @@ const Usuarios = () => {
           <CTableBody>
             {results.map((item, i) => {
               let estado = 'Inactivo'
-              if (item.estado_eliminado !== '1' && item.id !== session.id) {
-                if (item.estado_activo === '1') {
+              if (item.eliminado !== '1' && item.id !== session.id) {
+                if (item.activo === '1') {
                   estado = 'Activo'
                 }
                 return (
@@ -98,13 +98,14 @@ const Usuarios = () => {
                       <CButton
                         color="info"
                         size="sm"
+                        title="Consultar Usuario Perfil"
                         onClick={() =>
                           history.push({
                             pathname: '/base/consulta',
                             id_usuario: item.id,
                             email: item.email,
                             nombre: item.nombre + ' ' + item.apellido,
-                            estado: item.estado_activo,
+                            estado: item.activo,
                             inhabilitar: false,
                           })
                         }
@@ -114,13 +115,14 @@ const Usuarios = () => {
                       <CButton
                         color="success"
                         size="sm"
+                        title="Asignar Perfiles"
                         onClick={() =>
                           history.push({
                             pathname: '/base/perfilusuario',
                             id: item.id,
                             nombre: item.nombre + ' ' + item.apellido,
                             email: item.email,
-                            estado: item.estado_activo,
+                            estado: item.activo,
                           })
                         }
                       >
@@ -129,13 +131,14 @@ const Usuarios = () => {
                       <CButton
                         color="warning"
                         size="sm"
+                        title="Asignar Grupo Autorización"
                         onClick={() =>
                           history.push({
                             pathname: '/base/usuariogrupo',
                             id: item.id,
                             nombre: item.nombre + ' ' + item.apellido,
                             email: item.email,
-                            estado: item.estado_activo,
+                            estado: item.activo,
                             inhabilitar: true,
                           })
                         }
@@ -145,6 +148,7 @@ const Usuarios = () => {
                       <CButton
                         color="primary"
                         size="sm"
+                        title="Editar Usuario"
                         onClick={() =>
                           history.push({
                             pathname: '/base/editar',
@@ -154,7 +158,7 @@ const Usuarios = () => {
                             usuario: item.nombre_usuario,
                             email: item.email,
                             password: item.password,
-                            estado: item.estado_activo,
+                            estado: item.activo,
                           })
                         }
                       >
@@ -163,6 +167,7 @@ const Usuarios = () => {
                       <CButton
                         color="danger"
                         size="sm"
+                        title="Eliminar Usuario"
                         onClick={() => mostrarModal(item.id, item.nombre + ' ' + item.apellido)}
                       >
                         <FaTrash />

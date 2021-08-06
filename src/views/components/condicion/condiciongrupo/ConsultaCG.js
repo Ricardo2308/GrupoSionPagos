@@ -139,6 +139,7 @@ const ConsultarPR = () => {
                         <CButton
                           color="primary"
                           size="sm"
+                          title="Elegir Nuevo Grupo"
                           onClick={() =>
                             history.push({
                               pathname: '/condiciones/editarCG',
@@ -156,6 +157,7 @@ const ConsultarPR = () => {
                         <CButton
                           color="danger"
                           size="sm"
+                          title="Eliminar Grupo"
                           onClick={() => mostrarModal(item.id_grupo, '2', '')}
                         >
                           <FaTrash />
@@ -163,6 +165,7 @@ const ConsultarPR = () => {
                         <CButton
                           color="info"
                           size="sm"
+                          title="Cambiar Estado"
                           onClick={() => mostrarModal(item.id_grupo, '4', item.estado_activo)}
                         >
                           <BsToggles />

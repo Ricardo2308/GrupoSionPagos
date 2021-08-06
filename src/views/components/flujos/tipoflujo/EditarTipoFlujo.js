@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
-import { Alert } from 'react-bootstrap'
+import { Alert, FormControl } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { getEstadosFlujo } from '../../../../services/getEstadosFlujo'
 import { postTipoFlujo } from '../../../../services/postTipoFlujo'
@@ -14,7 +14,7 @@ import {
   CInputGroup,
   CFormSelect,
 } from '@coreui/react'
-import { FiSettings, FiGrid } from 'react-icons/fi'
+import { FiSettings, FiGrid, FiGitPullRequest } from 'react-icons/fi'
 import '../../../../scss/estilos.scss'
 
 const EditarEstadoFlujo = () => {
@@ -80,31 +80,29 @@ const EditarEstadoFlujo = () => {
             <CCard style={{ display: 'flex', alignItems: 'center' }}>
               <CCardBody style={{ width: '80%' }}>
                 <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
-                  <h1>Modificación del Estado de Flujo</h1>
-                  <p className="text-medium-emphasis">
-                    Modifique la información del estado de flujo
-                  </p>
+                  <h1>Modificación del Tipo de Flujo</h1>
+                  <p className="text-medium-emphasis">Modifique la información del tipo de flujo</p>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
-                      <FiGrid />
+                      <FiGitPullRequest />
                     </CInputGroupText>
-                    <textarea
+                    <FormControl
                       placeholder="Descripción"
                       name="descripcion"
                       className="form-control"
                       rows="2"
                       onChange={handleInput}
                       defaultValue={location.descripcion}
-                    ></textarea>
+                    ></FormControl>
                   </CInputGroup>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
-                      <FiSettings />
+                      <FiGrid />
                     </CInputGroupText>
                     <CFormSelect name="estado_inicial" onChange={handleInput}>
-                      <option>Seleccione un grupo superior. (Opcional)</option>
+                      <option>Seleccione nuevo estado inicial. (Opcional)</option>
                       {results.map((item, i) => {
-                        if (item.estado_eliminado !== '1' && item.estado_activo !== '0') {
+                        if (item.eliminado !== '1' && item.activo !== '0') {
                           return (
                             <option key={item.id_estadoflujo} value={item.id_estadoflujo}>
                               {item.descripcion}

@@ -99,11 +99,7 @@ const UsuarioGrupo = () => {
                   <CFormSelect name="usuario" onChange={handleInput}>
                     <option>Seleccione usuario temporal.</option>
                     {results.map((item, i) => {
-                      if (
-                        item.estado_eliminado !== '1' &&
-                        item.estado_activo !== '0' &&
-                        item.id !== session.id
-                      ) {
+                      if (item.eliminado !== '1' && item.activo !== '0' && item.id !== session.id) {
                         return (
                           <option key={item.id} value={item.id}>
                             {item.nombre} {item.apellido}

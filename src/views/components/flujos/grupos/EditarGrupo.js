@@ -119,7 +119,7 @@ const EditarGrupo = () => {
                     <CFormSelect name="grupopadre" onChange={handleInput}>
                       <option>Seleccione nuevo grupo superior. (Opcional)</option>
                       {results.map((item, i) => {
-                        if (item.estado_eliminado !== '1' && item.estado_activo !== '0') {
+                        if (item.estado !== '1' && item.estado !== '0') {
                           return (
                             <option key={item.id_grupo} value={item.id_grupo}>
                               {item.identificador}

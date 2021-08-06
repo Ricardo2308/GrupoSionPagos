@@ -82,8 +82,8 @@ const TiposFlujo = () => {
             {results.map((item, i) => {
               let estado = 'Inactivo'
               let asignacion = ''
-              if (item.estado_eliminado !== '1') {
-                if (item.estado_activo === '1') {
+              if (item.eliminado !== '1') {
+                if (item.activo === '1') {
                   estado = 'Activo'
                 }
                 if (item.id_estadoinicial === '' || item.id_estadoinicial === '0') {
@@ -100,13 +100,14 @@ const TiposFlujo = () => {
                       <CButton
                         color="primary"
                         size="sm"
+                        title="Editar Tipo Flujo"
                         onClick={() =>
                           history.push({
                             pathname: '/tipoflujo/editar',
                             id_tipoflujo: item.id_tipoflujo,
                             id_estadoinicial: item.id_estadoinicial,
                             descripcion: item.descripcion,
-                            estado: item.estado_activo,
+                            estado: item.activo,
                           })
                         }
                       >
@@ -115,6 +116,7 @@ const TiposFlujo = () => {
                       <CButton
                         color="danger"
                         size="sm"
+                        title="Eliminar Tipo Flujo"
                         onClick={() => mostrarModal(item.id_tipoflujo)}
                       >
                         <FaTrash />

@@ -136,6 +136,7 @@ const ConsultarRP = () => {
                         <CButton
                           color="primary"
                           size="sm"
+                          title="Cambiar Permiso"
                           onClick={() =>
                             history.push({
                               pathname: '/roles/editarRP',
@@ -153,6 +154,7 @@ const ConsultarRP = () => {
                         <CButton
                           color="danger"
                           size="sm"
+                          title="Eliminar Permiso"
                           onClick={() => mostrarModal(item.id_permiso, '2', '')}
                         >
                           <FaTrash />
@@ -160,6 +162,7 @@ const ConsultarRP = () => {
                         <CButton
                           color="info"
                           size="sm"
+                          title="Cambiar Estado"
                           onClick={() => mostrarModal(item.id_permiso, '4', item.estado_activo)}
                         >
                           <BsToggles />

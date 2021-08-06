@@ -136,6 +136,7 @@ const ConsultarPR = () => {
                         <CButton
                           color="primary"
                           size="sm"
+                          title="Cambiar Rol"
                           onClick={() =>
                             history.push({
                               pathname: '/perfiles/editarPR',
@@ -153,6 +154,7 @@ const ConsultarPR = () => {
                         <CButton
                           color="danger"
                           size="sm"
+                          title="Eliminar Rol"
                           onClick={() => mostrarModal(item.id_rol, '2', '')}
                         >
                           <FaTrash />
@@ -160,6 +162,7 @@ const ConsultarPR = () => {
                         <CButton
                           color="info"
                           size="sm"
+                          title="Cambiar Estado"
                           onClick={() => mostrarModal(item.id_rol, '4', item.estado_activo)}
                         >
                           <BsToggles />

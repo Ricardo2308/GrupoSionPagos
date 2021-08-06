@@ -104,7 +104,7 @@ const EditarEstadoFlujo = () => {
                     <CFormSelect name="estadopadre" onChange={handleInput}>
                       <option>Seleccione nuevo estado superior. (Opcional)</option>
                       {results.map((item, i) => {
-                        if (item.estado_eliminado !== '1' && item.estado_activo !== '0') {
+                        if (item.eliminado !== '1' && item.activo !== '0') {
                           return (
                             <option key={item.id_estadoflujo} value={item.id_estadoflujo}>
                               {item.descripcion}

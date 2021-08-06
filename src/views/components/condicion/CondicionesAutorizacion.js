@@ -97,8 +97,24 @@ const Cards = () => {
                     <CTableDataCell className="text-center">{estado}</CTableDataCell>
                     <CTableDataCell className="text-center">
                       <CButton
+                        color="info"
+                        size="sm"
+                        title="Consultar Condición Grupos"
+                        onClick={() =>
+                          history.push({
+                            pathname: '/condiciones/consulta',
+                            id_condicion: item.id_condicionautorizacion,
+                            descripcion: item.descripcion,
+                            estado: estado,
+                          })
+                        }
+                      >
+                        <FaUsers />
+                      </CButton>{' '}
+                      <CButton
                         color="success"
                         size="sm"
+                        title="Asignar Grupo Autorización"
                         onClick={() =>
                           history.push({
                             pathname: '/condiciones/condiciongrupo',
@@ -113,6 +129,7 @@ const Cards = () => {
                       <CButton
                         color="primary"
                         size="sm"
+                        title="Editar Condición Autorización"
                         onClick={() =>
                           history.push({
                             pathname: '/condiciones/editar',
@@ -128,23 +145,10 @@ const Cards = () => {
                       <CButton
                         color="danger"
                         size="sm"
+                        title="Eliminar Condición Autorización"
                         onClick={() => mostrarModal(item.id_condicionautorizacion)}
                       >
                         <FaTrash />
-                      </CButton>{' '}
-                      <CButton
-                        color="info"
-                        size="sm"
-                        onClick={() =>
-                          history.push({
-                            pathname: '/condiciones/consulta',
-                            id_condicion: item.id_condicionautorizacion,
-                            descripcion: item.descripcion,
-                            estado: estado,
-                          })
-                        }
-                      >
-                        <FaUsers />
                       </CButton>
                     </CTableDataCell>
                   </CTableRow>

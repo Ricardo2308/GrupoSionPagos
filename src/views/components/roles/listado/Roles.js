@@ -92,6 +92,7 @@ const Roles = () => {
                       <CButton
                         color="success"
                         size="sm"
+                        title="Asignar Permiso"
                         onClick={() =>
                           history.push({
                             pathname: '/roles/rolpermiso',
@@ -106,6 +107,7 @@ const Roles = () => {
                       <CButton
                         color="primary"
                         size="sm"
+                        title="Editar Rol"
                         onClick={() =>
                           history.push({
                             pathname: '/roles/editar',
@@ -118,12 +120,18 @@ const Roles = () => {
                       >
                         <FaUserEdit />
                       </CButton>{' '}
-                      <CButton color="danger" size="sm" onClick={() => mostrarModal(item.id_rol)}>
+                      <CButton
+                        color="danger"
+                        size="sm"
+                        title="Eliminar Rol"
+                        onClick={() => mostrarModal(item.id_rol)}
+                      >
                         <FaTrash />
                       </CButton>{' '}
                       <CButton
                         color="info"
                         size="sm"
+                        title="Consultar Rol Permiso"
                         onClick={() =>
                           history.push({
                             pathname: '/roles/consulta',

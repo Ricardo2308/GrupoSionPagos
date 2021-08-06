@@ -90,8 +90,24 @@ const Perfiles = () => {
                     <CTableDataCell className="text-center">{estado}</CTableDataCell>
                     <CTableDataCell className="text-center">
                       <CButton
+                        color="info"
+                        size="sm"
+                        title="Consultar Perfil Rol"
+                        onClick={() =>
+                          history.push({
+                            pathname: '/perfiles/consulta',
+                            id_perfil: item.id_perfil,
+                            descripcion: item.descripcion,
+                            estado: estado,
+                          })
+                        }
+                      >
+                        <FaClipboardList />
+                      </CButton>{' '}
+                      <CButton
                         color="success"
                         size="sm"
+                        title="Asignar Rol"
                         onClick={() =>
                           history.push({
                             pathname: '/perfiles/perfilrol',
@@ -106,6 +122,7 @@ const Perfiles = () => {
                       <CButton
                         color="primary"
                         size="sm"
+                        title="Editar Perfil"
                         onClick={() =>
                           history.push({
                             pathname: '/perfiles/editar',
@@ -120,23 +137,10 @@ const Perfiles = () => {
                       <CButton
                         color="danger"
                         size="sm"
+                        title="Eliminar Perfil"
                         onClick={() => mostrarModal(item.id_perfil)}
                       >
                         <FaTrash />
-                      </CButton>{' '}
-                      <CButton
-                        color="info"
-                        size="sm"
-                        onClick={() =>
-                          history.push({
-                            pathname: '/perfiles/consulta',
-                            id_perfil: item.id_perfil,
-                            descripcion: item.descripcion,
-                            estado: estado,
-                          })
-                        }
-                      >
-                        <FaClipboardList />
                       </CButton>
                     </CTableDataCell>
                   </CTableRow>

@@ -139,7 +139,7 @@ const EditarPerfilRol = () => {
                     <CFormSelect name="rol" onChange={handleInput}>
                       <option>Seleccione un nuevo rol. (Opcional)</option>
                       {results.map((item, i) => {
-                        if (item.estado_eliminado !== '1' && item.estado_activo !== '0') {
+                        if (item.eliminado !== '1' && item.activo !== '0') {
                           return (
                             <option key={item.id_rol} value={item.id_rol}>
                               {item.descripcion}

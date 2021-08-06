@@ -82,8 +82,8 @@ const EstadosFlujo = () => {
             {results.map((item, i) => {
               let estado = 'Inactivo'
               let asignacion = ''
-              if (item.estado_eliminado !== '1') {
-                if (item.estado_activo === '1') {
+              if (item.eliminado !== '1') {
+                if (item.activo === '1') {
                   estado = 'Activo'
                 }
                 if (item.id_estadoflujopadre === '' || item.id_estadoflujopadre === '0') {
@@ -100,13 +100,14 @@ const EstadosFlujo = () => {
                       <CButton
                         color="primary"
                         size="sm"
+                        title="Editar Estado Flujo"
                         onClick={() =>
                           history.push({
                             pathname: '/estadoflujo/editar',
                             id_estado: item.id_estadoflujo,
                             id_estadopadre: item.id_estadoflujopadre,
                             descripcion: item.descripcion,
-                            estado: item.estado_activo,
+                            estado: item.activo,
                           })
                         }
                       >
@@ -115,6 +116,7 @@ const EstadosFlujo = () => {
                       <CButton
                         color="danger"
                         size="sm"
+                        title="Eliminar Estado Flujo"
                         onClick={() => mostrarModal(item.id_estadoflujo)}
                       >
                         <FaTrash />

@@ -83,8 +83,8 @@ const GruposAutorizacion = () => {
             {results.map((item, i) => {
               let estado = 'Inactivo'
               let asignacion = ''
-              if (item.estado_eliminado !== '1') {
-                if (item.estado_activo === '1') {
+              if (item.eliminado !== '1') {
+                if (item.activo === '1') {
                   estado = 'Activo'
                 }
                 if (item.id_grupopadre === '' || item.id_grupopadre === '0') {
@@ -102,6 +102,7 @@ const GruposAutorizacion = () => {
                       <CButton
                         color="primary"
                         size="sm"
+                        title="Editar Grupo Autorización"
                         onClick={() =>
                           history.push({
                             pathname: '/grupos/editar',
@@ -109,13 +110,18 @@ const GruposAutorizacion = () => {
                             id_grupopadre: item.id_grupopadre,
                             identificador: item.identificador,
                             descripcion: item.descripcion,
-                            estado: item.estado_activo,
+                            estado: item.activo,
                           })
                         }
                       >
                         <FaPen />
                       </CButton>{' '}
-                      <CButton color="danger" size="sm" onClick={() => mostrarModal(item.id_grupo)}>
+                      <CButton
+                        color="danger"
+                        size="sm"
+                        title="Eliminar Grupo Autorización"
+                        onClick={() => mostrarModal(item.id_grupo)}
+                      >
                         <FaTrash />
                       </CButton>
                     </CTableDataCell>

@@ -94,6 +94,7 @@ const Politicas = () => {
                       <CButton
                         color="primary"
                         size="sm"
+                        title="Editar Política"
                         onClick={() =>
                           history.push({
                             pathname: '/politicas/editar',
@@ -110,6 +111,7 @@ const Politicas = () => {
                       <CButton
                         color="danger"
                         size="sm"
+                        title="Eliminar Política"
                         onClick={() => mostrarModal(item.id_politica)}
                       >
                         <FaTrash />

@@ -128,6 +128,7 @@ const ArchivosFlujo = () => {
                         variant="outline"
                         size="sm"
                         target="_blank"
+                        title="Ver PDF"
                         onClick={() => mostrarModal('', item.archivo, session.user_name)}
                       >
                         <FaRegFilePdf />
@@ -152,14 +153,7 @@ const ArchivosFlujo = () => {
                       >
                         <FaPen />
                       </CButton>
-                      */}{' '}
-                      <CButton
-                        color="danger"
-                        size="sm"
-                        onClick={() => mostrarModal(item.id_archivoflujo, '', '')}
-                      >
-                        <FaTrash />
-                      </CButton>
+                      */}
                     </CTableDataCell>
                   </CTableRow>
                 )

@@ -118,6 +118,7 @@ const ListaAutorizaciones = () => {
                       <CButton
                         color="info"
                         size="sm"
+                        title="Cambiar Estado"
                         onClick={() =>
                           mostrarModal(item.id_usuarioautorizacion, '2', item.estado_activo)
                         }

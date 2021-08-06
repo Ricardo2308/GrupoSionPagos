@@ -30,19 +30,18 @@ const Permisos = () => {
     getPermisos(null, null).then((items) => {
       if (mounted) {
         setList(items.permisos)
-        console.log(items)
       }
     })
     return () => (mounted = false)
   }, [])
 
-  function mostrarModal(id) {
-    setIdPermiso(id)
+  function mostrarModal(id_permiso) {
+    setIdPermiso(id_permiso)
     setShow(true)
   }
 
-  async function eliminarPermiso(id) {
-    const respuesta = await postCrudPermiso(id, '', '', '2')
+  async function eliminarPermiso(id_permiso) {
+    const respuesta = await postCrudPermiso(id_permiso, '', '', '2')
     if (respuesta === 'OK') {
       await getPermisos(null, null).then((items) => {
         setList(items.permisos)
@@ -90,6 +89,7 @@ const Permisos = () => {
                       <CButton
                         color="primary"
                         size="sm"
+                        title="Editar Permiso"
                         onClick={() =>
                           history.push({
                             pathname: '/permisos/editar',
@@ -101,7 +101,12 @@ const Permisos = () => {
                       >
                         <FaUserEdit />
                       </CButton>{' '}
-                      <CButton color="danger" size="sm" onClick={() => mostrarModal(item.id)}>
+                      <CButton
+                        color="danger"
+                        size="sm"
+                        title="Eliminar Permiso"
+                        onClick={() => mostrarModal(item.id_permiso)}
+                      >
                         <FaTrash />
                       </CButton>
                     </CTableDataCell>
