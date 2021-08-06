@@ -276,13 +276,6 @@ const _nav = [
         as: NavLink,
         to: '/pagos',
       },
-      {
-        _component: 'CNavItem',
-        anchor: 'Pagos',
-        icon: <FiCreditCard size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
-        as: NavLink,
-        to: '/pagos1',
-      },
     ],
   },
 ]
