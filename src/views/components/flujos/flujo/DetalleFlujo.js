@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom'
 import { getFlujos } from '../../../../services/getFlujos'
 import '../../../../scss/estilos.scss'
 
-const FlujoTabs = (prop) => {
+const DetalleFlujo = (prop) => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
@@ -110,4 +110,4 @@ const FlujoTabs = (prop) => {
   }
 }
 
-export default FlujoTabs
+export default DetalleFlujo

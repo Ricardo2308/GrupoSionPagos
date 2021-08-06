@@ -5,7 +5,7 @@ import DataTable, { createTheme } from 'react-data-table-component'
 import { getFlujos } from '../../../../services/getFlujos'
 import { postFlujos } from '../../../../services/postFlujos'
 import { useSession } from 'react-use-session'
-import { FaTrash, FaList, FaFileUpload } from 'react-icons/fa'
+import { FaList, FaFileUpload } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 
 const FilterComponent = (prop) => (
@@ -18,7 +18,12 @@ const FilterComponent = (prop) => (
       value={prop.filterText}
       onChange={prop.onFilter}
     />
-    <Button color="primary" className="clear-search" onClick={prop.onClear}>
+    <Button
+      color="primary"
+      className="clear-search"
+      onClick={prop.onClear}
+      title="Limpiar Campo Búsqueda"
+    >
       X
     </Button>
   </div>
@@ -115,6 +120,7 @@ const GridFlujos = () => {
               data-tag="allowRowEvents"
               size="sm"
               variant="primary"
+              title="Cargar Archivo"
               onClick={() =>
                 history.push({
                   pathname: '/archivoflujo/nuevo',
@@ -128,22 +134,16 @@ const GridFlujos = () => {
               data-tag="allowRowEvents"
               variant="success"
               size="sm"
+              title="Consultar Detalle Pago"
               onClick={() =>
                 history.push({
-                  pathname: '/pagos/tabs1',
+                  pathname: '/pagos/tabs',
                   id_flujo: row.id_flujo,
+                  pago: row.doc_num,
                 })
               }
             >
               <FaList />
-            </Button>{' '}
-            <Button
-              data-tag="allowRowEvents"
-              variant="danger"
-              size="sm"
-              onClick={() => mostrarModal(row.id_flujo)}
-            >
-              <FaTrash />
             </Button>
           </div>
         )

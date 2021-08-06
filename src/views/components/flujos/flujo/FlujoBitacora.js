@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom'
 import { getFlujoSolicitud } from '../../../../services/getFlujoSolicitud'
 import '../../../../scss/estilos.scss'
 
-const FlujoSolicitud = (prop) => {
+const FlujoBitacora = (prop) => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
@@ -94,7 +94,7 @@ const FlujoSolicitud = (prop) => {
         </div>
       )
     } else {
-      return <div className="sin-array">AÚN NO EXISTE SOLICITUD.</div>
+      return <div className="sin-array">AÚN NO EXISTE BITÁCORA.</div>
     }
   } else {
     history.push('/dashboard')
@@ -102,4 +102,4 @@ const FlujoSolicitud = (prop) => {
   }
 }
 
-export default FlujoSolicitud
+export default FlujoBitacora

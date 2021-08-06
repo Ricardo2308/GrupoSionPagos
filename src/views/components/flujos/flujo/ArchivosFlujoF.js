@@ -128,6 +128,7 @@ const ArchivosFlujo = (prop) => {
                         variant="outline"
                         size="sm"
                         target="_blank"
+                        title="Ver PDF"
                         onClick={() => mostrarModal('', item.archivo, item.nombre_usuario)}
                       >
                         <FaRegFilePdf />
@@ -156,6 +157,7 @@ const ArchivosFlujo = (prop) => {
                       <CButton
                         color="danger"
                         size="sm"
+                        title="Eliminar PDF"
                         onClick={() => mostrarModal(item.id_archivoflujo, '', '')}
                       >
                         <FaTrash />

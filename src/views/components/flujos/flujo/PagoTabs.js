@@ -5,11 +5,15 @@ import { useHistory, useLocation } from 'react-router-dom'
 import FlujoSolicitud from './FlujoSolicitud'
 import FlujoOferta from './FlujoOferta'
 import FlujoOrden from './FlujoOrden'
+import FlujoIngreso from './FlujoIngreso'
 import DetalleFlujo from './DetalleFlujo'
 import ArchivosFlujo from './ArchivosFlujoF'
 import { postFlujos } from '../../../../services/postFlujos'
 import { useSession } from 'react-use-session'
+import Chat from './Chat'
 import '../../../../scss/estilos.scss'
+import FlujoFactura from './FlujoFactura'
+import FlujoBitacora from './FlujoBitacora'
 
 const PagoTabs = () => {
   const history = useHistory()
@@ -35,7 +39,7 @@ const PagoTabs = () => {
   if (session) {
     if (location.id_flujo) {
       return (
-        <>
+        <div className="div-tabs">
           <Modal responsive variant="primary" show={show} onHide={handleClose} centered>
             <Modal.Header closeButton>
               <Modal.Title>Confirmación</Modal.Title>
@@ -50,7 +54,7 @@ const PagoTabs = () => {
               </CButton>
             </Modal.Footer>
           </Modal>
-          <div className="float-right" style={{ marginBottom: '20px' }}>
+          <div className="float-right" style={{ marginTop: '15px', marginRight: '15px' }}>
             <CButton color="success" size="sm" onClick={() => history.push('/pagos')}>
               Aceptar
             </CButton>{' '}
@@ -58,12 +62,7 @@ const PagoTabs = () => {
               Rechazar
             </CButton>
           </div>
-          <div
-            style={{
-              display: 'flex',
-              width: '100%',
-            }}
-          >
+          <div className="div-content">
             <div style={{ width: '100%' }}>
               <Tabs defaultActiveKey="solicitud" id="uncontrolled-tab-example" className="mb-3">
                 <Tab eventKey="solicitud" title="Solicitud">
@@ -76,10 +75,10 @@ const PagoTabs = () => {
                   <FlujoOrden id_flujo={location.id_flujo} />
                 </Tab>
                 <Tab eventKey="ingreso" title="Ingreso Bodega">
-                  Ingreso Bodega
+                  <FlujoIngreso id_flujo={location.id_flujo} />
                 </Tab>
                 <Tab eventKey="facturas" title="Facturas">
-                  Facturas
+                  <FlujoFactura id_flujo={location.id_flujo} />
                 </Tab>
                 <Tab eventKey="detalle" title="Detalle">
                   <DetalleFlujo id_flujo={location.id_flujo} />
@@ -88,12 +87,13 @@ const PagoTabs = () => {
                   <ArchivosFlujo id_flujo={location.id_flujo} />
                 </Tab>
                 <Tab eventKey="bitacora" title="Bitácora">
-                  Bitácora
+                  <FlujoBitacora id_flujo={location.id_flujo} />
                 </Tab>
               </Tabs>
             </div>
           </div>
-        </>
+          <Chat id_usuario={session.id} id_flujo={location.id_flujo} pago={location.pago} />
+        </div>
       )
     } else {
       history.push('/pagos')
