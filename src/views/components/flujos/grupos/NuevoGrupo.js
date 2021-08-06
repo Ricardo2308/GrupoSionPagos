@@ -38,7 +38,6 @@ const NuevoGrupo = () => {
     getGruposAutorizacion(null, null).then((items) => {
       if (mounted) {
         setList(items.grupos)
-        console.log(items)
       }
     })
     return () => (mounted = false)

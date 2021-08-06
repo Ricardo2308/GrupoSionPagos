@@ -30,7 +30,6 @@ const Cards = () => {
     getCondicionesAutorizacion(null, null).then((items) => {
       if (mounted) {
         setList(items.condiciones)
-        console.log(items)
       }
     })
     return () => (mounted = false)

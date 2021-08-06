@@ -35,7 +35,6 @@ const ConsultarRP = () => {
     getRolPermiso(location.id_rol, null).then((items) => {
       if (mounted) {
         setList(items.perfil)
-        console.log(items)
       }
     })
     return () => (mounted = false)

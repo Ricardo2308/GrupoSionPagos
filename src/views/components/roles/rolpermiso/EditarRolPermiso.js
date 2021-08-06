@@ -46,7 +46,6 @@ const EditarRolPermiso = () => {
     getRolPermiso(location.id_rol, null).then((items) => {
       if (mounted) {
         setList1(items.perfil)
-        console.log(items)
       }
     })
     return () => (mounted = false)

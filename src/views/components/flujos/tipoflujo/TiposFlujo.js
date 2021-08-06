@@ -30,7 +30,6 @@ const TiposFlujo = () => {
     getTiposFlujo(null, null).then((items) => {
       if (mounted) {
         setList(items.tipos)
-        console.log(items)
       }
     })
     return () => (mounted = false)

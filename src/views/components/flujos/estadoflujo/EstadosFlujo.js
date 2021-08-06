@@ -30,7 +30,6 @@ const EstadosFlujo = () => {
     getEstadosFlujo(null, null).then((items) => {
       if (mounted) {
         setList(items.estados)
-        console.log(items)
       }
     })
     return () => (mounted = false)

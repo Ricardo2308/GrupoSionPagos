@@ -30,7 +30,6 @@ const Politicas = () => {
     getPoliticas(null, null).then((items) => {
       if (mounted) {
         setList(items.politicas)
-        console.log(items)
       }
     })
     return () => (mounted = false)

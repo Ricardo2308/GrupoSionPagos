@@ -36,7 +36,6 @@ const RolPermiso = () => {
     getPermisos(null, null).then((items) => {
       if (mounted) {
         setList(items.permisos)
-        console.log(items)
       }
     })
     return () => (mounted = false)

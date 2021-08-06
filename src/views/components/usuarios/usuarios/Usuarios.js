@@ -31,7 +31,6 @@ const Usuarios = () => {
     getUsuarios(null, null, null, null).then((items) => {
       if (mounted) {
         setList(items.users)
-        console.log(items)
       }
     })
     return () => (mounted = false)

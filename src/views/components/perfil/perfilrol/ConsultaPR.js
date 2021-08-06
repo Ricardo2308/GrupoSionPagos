@@ -35,7 +35,6 @@ const ConsultarPR = () => {
     getPerfilRol(location.id_perfil, null).then((items) => {
       if (mounted) {
         setList(items.perfil)
-        console.log(items)
       }
     })
     return () => (mounted = false)

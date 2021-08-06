@@ -36,7 +36,6 @@ const PerfilRol = () => {
     getRoles(null, null).then((items) => {
       if (mounted) {
         setList(items.roles)
-        console.log(items)
       }
     })
     return () => (mounted = false)

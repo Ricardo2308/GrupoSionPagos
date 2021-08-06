@@ -30,7 +30,6 @@ const Roles = () => {
     getRoles(null, null).then((items) => {
       if (mounted) {
         setList(items.roles)
-        console.log(items)
       }
     })
     return () => (mounted = false)
@@ -90,6 +89,21 @@ const Roles = () => {
                     <CTableDataCell className="text-center">{estado}</CTableDataCell>
                     <CTableDataCell className="text-center">
                       <CButton
+                        color="info"
+                        size="sm"
+                        title="Consultar Rol Permiso"
+                        onClick={() =>
+                          history.push({
+                            pathname: '/roles/consulta',
+                            id_rol: item.id_rol,
+                            descripcion: item.descripcion,
+                            estado: estado,
+                          })
+                        }
+                      >
+                        <FaClipboardList />
+                      </CButton>{' '}
+                      <CButton
                         color="success"
                         size="sm"
                         title="Asignar Permiso"
@@ -127,21 +141,6 @@ const Roles = () => {
                         onClick={() => mostrarModal(item.id_rol)}
                       >
                         <FaTrash />
-                      </CButton>{' '}
-                      <CButton
-                        color="info"
-                        size="sm"
-                        title="Consultar Rol Permiso"
-                        onClick={() =>
-                          history.push({
-                            pathname: '/roles/consulta',
-                            id_rol: item.id_rol,
-                            descripcion: item.descripcion,
-                            estado: estado,
-                          })
-                        }
-                      >
-                        <FaClipboardList />
                       </CButton>
                     </CTableDataCell>
                   </CTableRow>

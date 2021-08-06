@@ -36,7 +36,6 @@ const ArchivosFlujo = () => {
     getArchivosFlujo(null, session.id).then((items) => {
       if (mounted) {
         setList(items.archivos)
-        console.log(items)
       }
     })
     return () => (mounted = false)

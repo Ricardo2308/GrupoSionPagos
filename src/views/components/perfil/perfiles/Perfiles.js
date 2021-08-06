@@ -30,7 +30,6 @@ const Perfiles = () => {
     getPerfiles(null, null).then((items) => {
       if (mounted) {
         setList(items.perfiles)
-        console.log(items)
       }
     })
     return () => (mounted = false)
