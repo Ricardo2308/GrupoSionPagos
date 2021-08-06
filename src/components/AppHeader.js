@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
+import { useSession } from 'react-use-session'
 import { useSelector, useDispatch } from 'react-redux'
+import { FiBell, FiMenu } from 'react-icons/fi'
+import { getMensajes } from '../services/getMensajes'
+import '../chat/src/styles/launcher.css'
 import {
   CContainer,
   CHeader,
@@ -11,15 +15,34 @@ import {
   CNavLink,
   CNavItem,
 } from '@coreui/react'
-import { FiBell, FiMail, FiMenu } from 'react-icons/fi'
 
 import { AppBreadcrumb } from './index'
 
 import { AppHeaderDropdown } from './header/index'
+import { MessageDropdown } from './header/index'
 
 const AppHeader = () => {
   const dispatch = useDispatch()
+  const [results, setList] = useState([])
+  const [contador, Contar] = useState(0)
   const sidebarShow = useSelector((state) => state.sidebarShow)
+  const { session } = useSession('PendrogonIT-Session')
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      let cont = 0
+      getMensajes(null, session.id).then((items) => {
+        items.mensajes.map((item) => {
+          if (item.leido === '0') {
+            cont++
+          }
+          Contar(cont)
+        })
+        setList(items.mensajes)
+      })
+    }, 30000)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <CHeader position="sticky" className="mb-4">
@@ -40,7 +63,7 @@ const AppHeader = () => {
             </CNavLink>
           </CNavItem>
         </CHeaderNav>
-        <CHeaderNav>
+        <CHeaderNav title="Mensajes Pagos">
           <CNavItem>
             <CNavLink>
               <FiBell size={20} />
@@ -48,11 +71,12 @@ const AppHeader = () => {
           </CNavItem>
           <CNavItem>
             <CNavLink>
-              <FiMail size={20} />
+              <MessageDropdown mensajes={results} />
+              <MessageCount count={contador} />
             </CNavLink>
           </CNavItem>
         </CHeaderNav>
-        <CHeaderNav>
+        <CHeaderNav title="Perfil Usuario">
           <AppHeaderDropdown />
         </CHeaderNav>
       </CContainer>
@@ -62,6 +86,13 @@ const AppHeader = () => {
       </CContainer>
     </CHeader>
   )
+}
+
+const MessageCount = (props) => {
+  if (props.count === 0) {
+    return null
+  }
+  return <div className={'new-messages-count'}>{props.count}</div>
 }
 
 export default AppHeader
