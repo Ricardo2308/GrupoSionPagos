@@ -7,119 +7,177 @@ import {
   FiGitPullRequest,
   FiUserCheck,
   FiUsers,
-  FiActivity,
   FiGrid,
+  FiAlertOctagon,
+  FiFile,
+  FiThumbsUp,
+  FiCreditCard,
 } from 'react-icons/fi'
 import { BiUserCircle } from 'react-icons/bi'
 import logo from './assets/icons/GrupoSion.png'
 
-const _seguridadnav = [
+const _nav = [
+  {
+    _component: 'CNavItem',
+    as: NavLink,
+    anchor: 'Dashboard',
+    to: '/dashboard',
+    icon: <img src={logo} style={{ width: '15%', marginRight: '15px', marginLeft: '30px' }} />,
+    badge: {
+      color: 'info',
+      text: 'NEW',
+    },
+  },
+  {
+    _component: 'CNavTitle',
+    anchor: 'Módulos',
+  },
+  {
+    _component: 'CNavItem',
+    anchor: 'Seguridad',
+    to: '/dashboard',
+    icon: <FiLock size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+  },
   {
     _component: 'CNavGroup',
     as: NavLink,
-    anchor: 'Seguridad',
+    anchor: 'Pagos',
     to: '/to',
-    icon: <FiLock size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+    icon: <FiCreditCard size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
     items: [
       {
         _component: 'CNavGroup',
-        as: NavLink,
-        anchor: 'Usuarios',
-        to: '/to',
+        anchor: 'Condiciones',
+        icon: <FiAlertOctagon size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Nuevo',
+            to: '/condiciones/nueva',
+            badge: {
+              color: 'success',
+              text: 'NEW',
+            },
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Listar',
+            to: '/condiciones/condiciones',
+          },
+        ],
+      },
+      {
+        _component: 'CNavGroup',
+        anchor: 'Grupos',
         icon: <FiUsers size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
         items: [
           {
             _component: 'CNavItem',
             as: NavLink,
             anchor: 'Nuevo',
-            to: '/base/registro',
+            to: '/grupos/nuevo',
+            badge: {
+              color: 'success',
+              text: 'NEW',
+            },
           },
           {
             _component: 'CNavItem',
             as: NavLink,
             anchor: 'Listar',
-            to: '/base/usuarios',
+            to: '/grupos/grupos',
           },
         ],
       },
       {
         _component: 'CNavGroup',
-        anchor: 'Perfiles',
-        icon: <BiUserCircle size={23} style={{ marginRight: '19px', marginLeft: '6px' }} />,
-        items: [
-          {
-            _component: 'CNavItem',
-            as: NavLink,
-            anchor: 'Nuevo',
-            to: '/perfiles/nuevo',
-          },
-          {
-            _component: 'CNavItem',
-            as: NavLink,
-            anchor: 'Listar',
-            to: '/perfiles/perfiles',
-          },
-        ],
-      },
-      {
-        _component: 'CNavGroup',
-        anchor: 'Roles',
-        icon: <FiSettings size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
-        items: [
-          {
-            _component: 'CNavItem',
-            as: NavLink,
-            anchor: 'Nuevo',
-            to: '/roles/nuevo',
-          },
-          {
-            _component: 'CNavItem',
-            as: NavLink,
-            anchor: 'Listar',
-            to: '/roles/roles',
-          },
-        ],
-      },
-      {
-        _component: 'CNavGroup',
-        anchor: 'Permisos',
-        icon: <FiUserCheck size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
-        items: [
-          {
-            _component: 'CNavItem',
-            as: NavLink,
-            anchor: 'Nuevo',
-            to: '/permisos/nuevo',
-          },
-          {
-            _component: 'CNavItem',
-            as: NavLink,
-            anchor: 'Listar',
-            to: '/permisos/permisos',
-          },
-        ],
-      },
-      {
-        _component: 'CNavGroup',
-        anchor: 'Políticas',
-        icon: <FiBook size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        anchor: 'Autorizacion',
+        icon: <FiThumbsUp size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
         items: [
           {
             _component: 'CNavItem',
             as: NavLink,
             anchor: 'Nueva',
-            to: '/politicas/nueva',
+            to: '/autorizacion/autorizacion',
           },
           {
             _component: 'CNavItem',
             as: NavLink,
             anchor: 'Listar',
-            to: '/politicas/politicas',
+            to: '/autorizacion/listado',
           },
         ],
+      },
+      {
+        _component: 'CNavGroup',
+        anchor: 'Estado Pago',
+        icon: <FiGrid size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Nuevo',
+            to: '/estadoflujo/nuevo',
+            badge: {
+              color: 'success',
+              text: 'NEW',
+            },
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Listar',
+            to: '/estadoflujo/estados',
+          },
+        ],
+      },
+      {
+        _component: 'CNavGroup',
+        anchor: 'Tipo Flujo',
+        icon: <FiGitPullRequest size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Nuevo',
+            to: '/tipoflujo/nuevo',
+            badge: {
+              color: 'success',
+              text: 'NEW',
+            },
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Listar',
+            to: '/tipoflujo/tipos',
+          },
+        ],
+      },
+      {
+        _component: 'CNavGroup',
+        anchor: 'Archivos Pago',
+        icon: <FiFile size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Listar',
+            to: '/archivoflujo/archivos',
+          },
+        ],
+      },
+      {
+        _component: 'CNavItem',
+        anchor: 'Pagos',
+        icon: <FiCreditCard size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        as: NavLink,
+        to: '/pagos',
       },
     ],
   },
 ]
 
-export default _seguridadnav
+export default _nav
