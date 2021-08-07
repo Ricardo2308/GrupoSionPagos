@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useSession } from 'react-use-session'
 import { useHistory } from 'react-router-dom'
-import { getMensajes } from '../../services/getMensajes'
 import {
   CDropdown,
   CDropdownHeader,
@@ -13,13 +12,7 @@ import { FiMail } from 'react-icons/fi'
 
 const MessageDropdown = (props) => {
   const history = useHistory()
-  const [mensajes, setList] = useState([])
-  const { session, clear } = useSession('PendrogonIT-Session')
-
-  const salir = (e) => {
-    clear()
-    history.push('/#')
-  }
+  const { session } = useSession('PendrogonIT-Session')
 
   if (session) {
     return (
@@ -43,9 +36,12 @@ const MessageDropdown = (props) => {
                     })
                   }
                 >
+                  {item.usuarioenvia}
+                  {'->'}
                   {item.pago}
-                  {' -> '}
+                  {'->"'}
                   {item.mensaje}
+                  {'"'}
                 </CDropdownItem>
               )
             }
