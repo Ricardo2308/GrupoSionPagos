@@ -15,6 +15,7 @@ import 'simplebar/dist/simplebar.min.css'
 
 // sidebar nav config
 import navigation from '../_nav'
+import seguridad from '../_seguridadnav'
 
 const AppSidebar = () => {
   const { session } = useSession('PendrogonIT-Session')
@@ -23,33 +24,63 @@ const AppSidebar = () => {
   const sidebarShow = useSelector((state) => state.sidebarShow)
 
   if (session) {
-    return (
-      <CSidebar
-        position="fixed"
-        selfHiding="md"
-        unfoldable={unfoldable}
-        show={sidebarShow}
-        onShow={() => console.log('show')}
-        onHide={() => {
-          dispatch({ type: 'set', sidebarShow: false })
-        }}
-      >
-        <CSidebarHeader style={{ fontWeight: 'bold', textAlign: 'center' }} to="/">
-          CONTROL DE PAGOS
-          <br />
-          {session.user_name}
-        </CSidebarHeader>
-        <CSidebarNav>
-          <SimpleBar>
-            <CCreateNavItem items={navigation} />
-          </SimpleBar>
-        </CSidebarNav>
-        <CSidebarToggler
-          className="d-none d-lg-flex"
-          onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
-        />
-      </CSidebar>
-    )
+    if (session.perfil === 'Administrador') {
+      return (
+        <CSidebar
+          position="fixed"
+          selfHiding="md"
+          unfoldable={unfoldable}
+          show={sidebarShow}
+          onShow={() => console.log('show')}
+          onHide={() => {
+            dispatch({ type: 'set', sidebarShow: false })
+          }}
+        >
+          <CSidebarHeader style={{ fontWeight: 'bold', textAlign: 'center' }} to="/">
+            CONTROL DE PAGOS
+            <br />
+            {session.user_name}
+          </CSidebarHeader>
+          <CSidebarNav>
+            <SimpleBar>
+              <CCreateNavItem items={navigation} />
+            </SimpleBar>
+          </CSidebarNav>
+          <CSidebarToggler
+            className="d-none d-lg-flex"
+            onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
+          />
+        </CSidebar>
+      )
+    } else {
+      return (
+        <CSidebar
+          position="fixed"
+          selfHiding="md"
+          unfoldable={unfoldable}
+          show={sidebarShow}
+          onShow={() => console.log('show')}
+          onHide={() => {
+            dispatch({ type: 'set', sidebarShow: false })
+          }}
+        >
+          <CSidebarHeader style={{ fontWeight: 'bold', textAlign: 'center' }} to="/">
+            CONTROL DE PAGOS
+            <br />
+            {session.user_name}
+          </CSidebarHeader>
+          <CSidebarNav>
+            <SimpleBar>
+              <CCreateNavItem items={seguridad} />
+            </SimpleBar>
+          </CSidebarNav>
+          <CSidebarToggler
+            className="d-none d-lg-flex"
+            onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
+          />
+        </CSidebar>
+      )
+    }
   } else {
     return (
       <CSidebar
