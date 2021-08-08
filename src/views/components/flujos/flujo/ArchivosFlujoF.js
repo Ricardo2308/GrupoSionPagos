@@ -157,6 +157,7 @@ const ArchivosFlujo = (prop) => {
                         color="danger"
                         size="sm"
                         title="Eliminar PDF"
+                        disabled={prop.deshabilitar}
                         onClick={() => mostrarModal(item.id_archivoflujo, '', '')}
                       >
                         <FaTrash />

@@ -3,9 +3,8 @@ import { useHistory } from 'react-router-dom'
 import { Modal, Button, FormControl } from 'react-bootstrap'
 import DataTable, { createTheme } from 'react-data-table-component'
 import { getFlujos } from '../../../../services/getFlujos'
-import { postFlujos } from '../../../../services/postFlujos'
 import { useSession } from 'react-use-session'
-import { FaList, FaFileUpload } from 'react-icons/fa'
+import { FaList, FaCoins } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 
 const FilterComponent = (prop) => (
@@ -118,33 +117,28 @@ const GridFlujos = () => {
           <div>
             <Button
               data-tag="allowRowEvents"
-              size="sm"
-              variant="primary"
-              title="Cargar Archivo"
-              onClick={() =>
-                history.push({
-                  pathname: '/archivoflujo/nuevo',
-                  id_flujo: row.id_flujo,
-                })
-              }
-            >
-              <FaFileUpload />
-            </Button>{' '}
-            <Button
-              data-tag="allowRowEvents"
               variant="success"
               size="sm"
               title="Consultar Detalle Pago"
               onClick={() =>
                 history.push({
-                  pathname: '/pagos/tabs',
+                  pathname: '/compensacion/tabs',
                   id_flujo: row.id_flujo,
                   pago: row.doc_num,
-                  deshabilitar: false,
+                  deshabilitar: true,
                 })
               }
             >
               <FaList />
+            </Button>{' '}
+            <Button
+              data-tag="allowRowEvents"
+              variant="warning"
+              size="sm"
+              title="Compensar Pago"
+              onClick={() => mostrarModal(row.id_flujo)}
+            >
+              <FaCoins />
             </Button>
           </div>
         )
@@ -174,13 +168,8 @@ const GridFlujos = () => {
     setShow(true)
   }
 
-  async function eliminarUsuario(id_flujo) {
-    const respuesta = await postFlujos(id_flujo, '2')
-    if (respuesta === 'OK') {
-      await getFlujos(null, null).then((items) => {
-        setList(items.flujos)
-      })
-    }
+  async function eliminarUsuario() {
+    alert('Confirmado')
   }
 
   if (session) {
@@ -190,7 +179,7 @@ const GridFlujos = () => {
           <Modal.Header closeButton>
             <Modal.Title>Confirmación</Modal.Title>
           </Modal.Header>
-          <Modal.Body>Está seguro de eliminar este flujo?</Modal.Body>
+          <Modal.Body>Está seguro de compensar este pago?</Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
               Cancelar

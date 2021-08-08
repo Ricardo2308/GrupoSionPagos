@@ -21,28 +21,30 @@ class Chat extends Component {
   }
 
   componentDidMount() {
-    getMensajes(null, null).then((items) => {
-      this.setState({
-        mensajes: items.mensajes,
-      })
-      this.state.mensajes.map((item) => {
-        if (
-          item.id_usuariorecibe == this.props.id_usuario &&
-          item.id_usuarioenvia != this.props.id_usuario &&
-          item.eliminado !== '1' &&
-          item.id_flujo === this.props.id_flujo
-        ) {
-          if (item.leido === '0') {
-            const newMessagesCount = this.state.isOpen
-              ? this.state.newMessagesCount
-              : this.state.newMessagesCount + 1
-            this.setState({
-              newMessagesCount: newMessagesCount,
-            })
+    const interval = setInterval(() => {
+      let cont = 0
+      getMensajes(null, null).then((items) => {
+        this.setState({
+          mensajes: items.mensajes,
+        })
+        this.state.mensajes.map((item) => {
+          if (
+            item.id_usuariorecibe == this.props.id_usuario &&
+            item.id_usuarioenvia != this.props.id_usuario &&
+            item.eliminado !== '1' &&
+            item.id_flujo === this.props.id_flujo
+          ) {
+            if (item.leido === '0') {
+              cont++
+            }
           }
-        }
+        })
+        this.setState({
+          newMessagesCount: cont,
+        })
       })
-    })
+    }, 5000)
+    return () => clearInterval(interval)
   }
 
   setShow(valor) {
@@ -77,7 +79,11 @@ class Chat extends Component {
             item.eliminado !== '1' &&
             item.id_flujo === this.props.id_flujo
           ) {
-            this._sendMessageMe(item.mensaje, item.fecha_hora)
+            if (item.leido === '0') {
+              this._sendMessageMe(item.mensaje, item.fecha_hora, 'Enviado')
+            } else {
+              this._sendMessageMe(item.mensaje, item.fecha_hora, 'Leído')
+            }
           }
         })
       })
@@ -124,7 +130,7 @@ class Chat extends Component {
     }
   }
 
-  _sendMessageMe(text, fecha) {
+  _sendMessageMe(text, fecha, estado) {
     if (text.length > 0) {
       this.setState({
         messageList: [
@@ -133,6 +139,7 @@ class Chat extends Component {
             author: 'me',
             type: 'text',
             fecha: fecha,
+            estado: estado,
             data: { text },
           },
         ],
@@ -150,8 +157,7 @@ class Chat extends Component {
   async _handleClick() {
     this.setState({
       isOpen: !this.state.isOpen,
-      newMessagesCount: this.state.newMessagesCount - this.state.newCount,
-      newCount: 0,
+      newMessagesCount: this.state.newMessagesCount,
     })
   }
 

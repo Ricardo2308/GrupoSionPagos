@@ -95,7 +95,6 @@ const PagoTabs = () => {
               </Tabs>
             </div>
           </div>
-          <Chat id_usuario={session.id} id_flujo={location.id_flujo} pago={location.pago} />
         </div>
       )
     } else {
