@@ -26,6 +26,7 @@ const MessageDropdown = (props) => {
             if (item.leido === '0') {
               return (
                 <CDropdownItem
+                  title="Ir al Pago"
                   key={item.id_mensaje}
                   onClick={() =>
                     history.push({

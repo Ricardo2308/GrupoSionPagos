@@ -31,6 +31,7 @@ const AppHeaderDropdown = () => {
           <CDropdownHeader>{session.name}</CDropdownHeader>
           <CDropdownHeader>{session.user_name}</CDropdownHeader>
           <CDropdownItem
+            title="Ir al Perfil"
             onClick={() =>
               history.push({
                 pathname: '/base/consulta',
@@ -44,7 +45,7 @@ const AppHeaderDropdown = () => {
             <FiUser style={{ marginRight: '5px' }} />
             Perfil
           </CDropdownItem>
-          <CDropdownItem onClick={() => salir()}>
+          <CDropdownItem title="Cerrar Sesión" onClick={() => salir()}>
             <FiPower style={{ marginRight: '5px' }} />
             Salir
           </CDropdownItem>
