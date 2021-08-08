@@ -9,8 +9,10 @@ const TextMessage = (props) => {
           {props.data.text}
         </NavLink>
         <NavLink style={{ color: 'black', fontSize: '10px' }}>
-          {'Yo\n'}
+          {'Yo.   '}
           {props.fecha}
+          {'. '}
+          {props.estado}
         </NavLink>
         {/*
         <Button size="sm" style={{ backgroundColor: 'transparent' }} variant="outline-danger">
@@ -27,7 +29,7 @@ const TextMessage = (props) => {
         </NavLink>
         <NavLink style={{ color: 'black', fontSize: '10px' }}>
           {props.author}
-          {'\n'}
+          {'. '}
           {props.fecha}
         </NavLink>
         {/*
