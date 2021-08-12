@@ -29,8 +29,18 @@ const AppHeader = () => {
   const { session } = useSession('PendrogonIT-Session')
 
   useEffect(() => {
+    let cont = 0
+    getMensajes(null, session.id).then((items) => {
+      items.mensajes.map((item) => {
+        if (item.leido === '0') {
+          cont++
+        }
+        Contar(cont)
+      })
+      setList(items.mensajes)
+    })
     const interval = setInterval(() => {
-      let cont = 0
+      cont = 0
       getMensajes(null, session.id).then((items) => {
         items.mensajes.map((item) => {
           if (item.leido === '0') {
