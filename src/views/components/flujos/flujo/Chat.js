@@ -21,8 +21,29 @@ class Chat extends Component {
   }
 
   componentDidMount() {
+    let cont = 0
+    getMensajes(null, null).then((items) => {
+      this.setState({
+        mensajes: items.mensajes,
+      })
+      this.state.mensajes.map((item) => {
+        if (
+          item.id_usuariorecibe == this.props.id_usuario &&
+          item.id_usuarioenvia != this.props.id_usuario &&
+          item.eliminado !== '1' &&
+          item.id_flujo === this.props.id_flujo
+        ) {
+          if (item.leido === '0') {
+            cont++
+          }
+        }
+      })
+      this.setState({
+        newMessagesCount: cont,
+      })
+    })
     const interval = setInterval(() => {
-      let cont = 0
+      cont = 0
       getMensajes(null, null).then((items) => {
         this.setState({
           mensajes: items.mensajes,
