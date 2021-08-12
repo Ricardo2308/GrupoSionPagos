@@ -14,6 +14,8 @@ import {
   FiCreditCard,
 } from 'react-icons/fi'
 import { BiUserCircle } from 'react-icons/bi'
+import { RiBankLine } from 'react-icons/ri'
+import { FaCoins } from 'react-icons/fa'
 import logo from './assets/icons/GrupoSion.png'
 
 const _nav = [
@@ -44,7 +46,7 @@ const _nav = [
         as: NavLink,
         anchor: 'Usuarios',
         to: '/to',
-        icon: <FiUsers size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        icon: <FiUsers size={16} style={{ marginRight: '4px' }} />,
         items: [
           {
             _component: 'CNavItem',
@@ -63,7 +65,7 @@ const _nav = [
       {
         _component: 'CNavGroup',
         anchor: 'Perfiles',
-        icon: <BiUserCircle size={23} style={{ marginRight: '19px', marginLeft: '6px' }} />,
+        icon: <BiUserCircle size={18} style={{ marginRight: '4px' }} />,
         items: [
           {
             _component: 'CNavItem',
@@ -82,7 +84,7 @@ const _nav = [
       {
         _component: 'CNavGroup',
         anchor: 'Roles',
-        icon: <FiSettings size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        icon: <FiSettings size={16} style={{ marginRight: '4px' }} />,
         items: [
           {
             _component: 'CNavItem',
@@ -101,7 +103,7 @@ const _nav = [
       {
         _component: 'CNavGroup',
         anchor: 'Permisos',
-        icon: <FiUserCheck size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        icon: <FiUserCheck size={16} style={{ marginRight: '4px' }} />,
         items: [
           {
             _component: 'CNavItem',
@@ -120,7 +122,7 @@ const _nav = [
       {
         _component: 'CNavGroup',
         anchor: 'Políticas',
-        icon: <FiBook size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        icon: <FiBook size={16} style={{ marginRight: '4px' }} />,
         items: [
           {
             _component: 'CNavItem',
@@ -148,7 +150,7 @@ const _nav = [
       {
         _component: 'CNavGroup',
         anchor: 'Condiciones',
-        icon: <FiAlertOctagon size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        icon: <FiAlertOctagon size={16} style={{ marginRight: '4px' }} />,
         items: [
           {
             _component: 'CNavItem',
@@ -171,7 +173,7 @@ const _nav = [
       {
         _component: 'CNavGroup',
         anchor: 'Grupos',
-        icon: <FiUsers size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        icon: <FiUsers size={16} style={{ marginRight: '4px' }} />,
         items: [
           {
             _component: 'CNavItem',
@@ -194,7 +196,7 @@ const _nav = [
       {
         _component: 'CNavGroup',
         anchor: 'Autorizacion',
-        icon: <FiThumbsUp size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        icon: <FiThumbsUp size={16} style={{ marginRight: '4px' }} />,
         items: [
           {
             _component: 'CNavItem',
@@ -213,7 +215,7 @@ const _nav = [
       {
         _component: 'CNavGroup',
         anchor: 'Estado Pago',
-        icon: <FiGrid size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        icon: <FiGrid size={16} style={{ marginRight: '4px' }} />,
         items: [
           {
             _component: 'CNavItem',
@@ -236,7 +238,7 @@ const _nav = [
       {
         _component: 'CNavGroup',
         anchor: 'Tipo Flujo',
-        icon: <FiGitPullRequest size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        icon: <FiGitPullRequest size={16} style={{ marginRight: '4px' }} />,
         items: [
           {
             _component: 'CNavItem',
@@ -259,7 +261,7 @@ const _nav = [
       {
         _component: 'CNavGroup',
         anchor: 'Archivos Pago',
-        icon: <FiFile size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        icon: <FiFile size={16} style={{ marginRight: '4px' }} />,
         items: [
           {
             _component: 'CNavItem',
@@ -270,11 +272,113 @@ const _nav = [
         ],
       },
       {
-        _component: 'CNavItem',
-        anchor: 'Pagos',
-        icon: <FiCreditCard size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+        _component: 'CNavGroup',
+        anchor: 'Bancos',
+        icon: <RiBankLine size={18} style={{ marginRight: '4px' }} />,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Nuevo',
+            to: '/bancos/nuevo',
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Listar',
+            to: '/bancos/bancos',
+          },
+        ],
+      },
+      {
+        _component: 'CNavGroup',
+        anchor: 'Monedas',
+        icon: <FaCoins size={16} style={{ marginRight: '4px' }} />,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Nueva',
+            to: '/monedas/nueva',
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Listar',
+            to: '/monedas/monedas',
+          },
+        ],
+      },
+      {
+        _component: 'CNavGroup',
+        anchor: 'Cuentas',
+        icon: <FiCreditCard size={16} style={{ marginRight: '4px' }} />,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Nueva',
+            to: '/cuentas/nueva',
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Listar',
+            to: '/cuentas/cuentas',
+          },
+        ],
+      },
+      {
+        _component: 'CNavGroup',
+        anchor: 'Autorizar Pagos',
+        icon: <FiCreditCard size={16} style={{ marginRight: '4px' }} />,
         as: NavLink,
-        to: '/pagos',
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Bancario',
+            to: '/pagos/bancario',
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Transferencia',
+            to: '/pagos/transferencia',
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Interna',
+            to: '/pagos/interna',
+          },
+        ],
+      },
+      {
+        _component: 'CNavGroup',
+        anchor: 'Compensar Pagos',
+        icon: <FiCreditCard size={17} style={{ marginRight: '4px' }} />,
+        as: NavLink,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Bancario',
+            to: '/compensacion/bancario',
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Transferencia',
+            to: '/compensacion/transferencia',
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Interna',
+            to: '/compensacion/interna',
+          },
+        ],
       },
     ],
   },
