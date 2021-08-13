@@ -137,7 +137,7 @@ const UsuarioGrupo = () => {
                     <CFormSelect name="grupo_autorizacion" onChange={handleInput}>
                       <option>Seleccione un grupo. (Obligatorio)</option>
                       {results.map((item, i) => {
-                        if (item.estado_eliminado !== '1' && item.estado_activo !== '0') {
+                        if (item.eliminado !== '1' && item.activo !== '0') {
                           return (
                             <option key={item.id_grupo} value={item.id_grupo}>
                               {item.identificador}

@@ -34,7 +34,7 @@ const ConsultarRP = () => {
     let mounted = true
     getRolPermiso(location.id_rol, null).then((items) => {
       if (mounted) {
-        setList(items.perfil)
+        setList(items.detalle)
       }
     })
     return () => (mounted = false)
@@ -61,7 +61,7 @@ const ConsultarRP = () => {
       const respuesta = await postRolPermiso('', id_rol, '', '2', id_permiso, '')
       if (respuesta === 'OK') {
         await getRolPermiso(id_rol, null).then((items) => {
-          setList(items.perfil)
+          setList(items.detalle)
         })
       }
     } else if (opcion === '4') {
@@ -73,7 +73,7 @@ const ConsultarRP = () => {
       const respuesta = await postRolPermiso('', id_rol, '', '4', id_permiso, result)
       if (respuesta === 'OK') {
         await getRolPermiso(id_rol, null).then((items) => {
-          setList(items.perfil)
+          setList(items.detalle)
         })
       }
     }
@@ -123,8 +123,8 @@ const ConsultarRP = () => {
             <CTableBody>
               {results.map((item, i) => {
                 let estado = 'Inactivo'
-                if (item.estado_eliminado !== '1') {
-                  if (item.estado_activo === '1') {
+                if (item.eliminado !== '1') {
+                  if (item.activo === '1') {
                     estado = 'Activo'
                   }
                   return (
@@ -144,7 +144,7 @@ const ConsultarRP = () => {
                               id_permiso: item.id_permiso,
                               descripcion: item.descripcion,
                               nombre: location.descripcion,
-                              estado: item.estado_activo,
+                              estado: item.activo,
                             })
                           }
                         >
@@ -162,7 +162,7 @@ const ConsultarRP = () => {
                           color="info"
                           size="sm"
                           title="Cambiar Estado"
-                          onClick={() => mostrarModal(item.id_permiso, '4', item.estado_activo)}
+                          onClick={() => mostrarModal(item.id_permiso, '4', item.activo)}
                         >
                           <BsToggles />
                         </CButton>

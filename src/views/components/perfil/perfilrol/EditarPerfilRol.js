@@ -45,7 +45,7 @@ const EditarPerfilRol = () => {
     })
     getPerfilRol(location.id_perfil, null).then((items) => {
       if (mounted) {
-        setList1(items.perfil)
+        setList1(items.detalle)
       }
     })
     return () => (mounted = false)

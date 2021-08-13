@@ -38,12 +38,12 @@ const Consultar = () => {
     let mounted = true
     getPerfilUsuario(location.id_usuario, null).then((items) => {
       if (mounted) {
-        setList(items.perfil)
+        setList(items.detalle)
       }
     })
     getUsuarioGrupo(location.id_usuario, null).then((items) => {
       if (mounted) {
-        setList1(items.perfil)
+        setList1(items.detalle)
       }
     })
     return () => (mounted = false)
@@ -73,14 +73,14 @@ const Consultar = () => {
         const respuesta = await postPerfilUsuario('', id_usuario, '', '2', id_perfil, '')
         if (respuesta === 'OK') {
           await getPerfilUsuario(id_usuario, null).then((items) => {
-            setList(items.perfil)
+            setList(items.detalle)
           })
         }
       } else if (id_perfil === '' && id_grupo !== '') {
         const respuesta = await postUsuarioGrupo(id_usuario, '2', id_grupo, '')
         if (respuesta === 'OK') {
           await getUsuarioGrupo(id_usuario, null).then((items) => {
-            setList1(items.perfil)
+            setList1(items.detalle)
           })
         }
       }
@@ -94,14 +94,14 @@ const Consultar = () => {
         const respuesta = await postPerfilUsuario('', id_usuario, '', '4', id_perfil, result)
         if (respuesta === 'OK') {
           await getPerfilUsuario(id_usuario, null).then((items) => {
-            setList(items.perfil)
+            setList(items.detalle)
           })
         }
       } else if (id_perfil === '' && id_grupo !== '') {
         const respuesta = await postUsuarioGrupo(id_usuario, '4', id_grupo, result)
         if (respuesta === 'OK') {
           await getUsuarioGrupo(id_usuario, null).then((items) => {
-            setList1(items.perfil)
+            setList1(items.detalle)
           })
         }
       }
@@ -156,8 +156,8 @@ const Consultar = () => {
             <CTableBody>
               {results.map((item, i) => {
                 let estado = 'Inactivo'
-                if (item.estado_eliminado !== '1') {
-                  if (item.estado_activo === '1') {
+                if (item.eliminado !== '1') {
+                  if (item.activo === '1') {
                     estado = 'Activo'
                   }
                   return (
@@ -180,7 +180,7 @@ const Consultar = () => {
                               id_perfil: item.id_perfil,
                               nombre: location.nombre,
                               descripcion: item.descripcion,
-                              estado: item.estado_activo,
+                              estado: item.activo,
                             })
                           }
                         >
@@ -200,7 +200,7 @@ const Consultar = () => {
                           size="sm"
                           title="Cambiar Estado"
                           disabled={location.inhabilitar}
-                          onClick={() => mostrarModal(item.id_perfil, '', '4', item.estado_activo)}
+                          onClick={() => mostrarModal(item.id_perfil, '', '4', item.activo)}
                         >
                           <BsToggles />
                         </CButton>
@@ -230,8 +230,8 @@ const Consultar = () => {
             <CTableBody>
               {results1.map((item, i) => {
                 let estado = 'Inactivo'
-                if (item.estado_eliminado !== '1') {
-                  if (item.estado_activo === '1') {
+                if (item.eliminado !== '1') {
+                  if (item.activo === '1') {
                     estado = 'Activo'
                   }
                   return (
@@ -252,7 +252,7 @@ const Consultar = () => {
                               id: location.id_usuario,
                               email: location.email,
                               nombre: location.nombre,
-                              estado: item.estado_activo,
+                              estado: item.activo,
                               id_grupo: item.id_grupoautorizacion,
                             })
                           }
@@ -274,7 +274,7 @@ const Consultar = () => {
                           title="Cambiar de Estado"
                           disabled={location.inhabilitar}
                           onClick={() =>
-                            mostrarModal('', item.id_grupoautorizacion, '4', item.estado_activo)
+                            mostrarModal('', item.id_grupoautorizacion, '4', item.activo)
                           }
                         >
                           <BsToggles />
