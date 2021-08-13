@@ -1,21 +1,13 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}get_usuarioperfil.php`
+const API = `${process.env.REACT_APP_API_URL}usuarioperfil`
 
 export function getPerfilUsuario(idUsuario, Descripcion) {
   let ApiFinal = API
   let ApiWhere = ''
   if (idUsuario !== null) {
-    if (ApiWhere.length > 0) {
-      ApiWhere += '&id_usuario=' + idUsuario
-    } else {
-      ApiWhere += '?id_usuario=' + idUsuario
-    }
+    ApiWhere += '/' + idUsuario
   }
   if (Descripcion !== null) {
-    if (ApiWhere.length > 0) {
-      ApiWhere += '&descripcion=' + Descripcion
-    } else {
-      ApiWhere += '?descripcion=' + Descripcion
-    }
+    ApiWhere += '/' + Descripcion
   }
   ApiFinal += ApiWhere
   return fetch(ApiFinal)

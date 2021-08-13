@@ -1,9 +1,10 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}post_perfiles.php`
+const API = `${process.env.REACT_APP_BACKEND_URL}post_bancos.php`
 
-export function postCrudPerfil(idPerfil, descripcion, estado, opcion) {
+export function postCrudBancos(idBanco, nombre, direccion, estado, opcion) {
   var datos = {
-    id_perfil: idPerfil,
-    descripcion: descripcion,
+    id_banco: idBanco,
+    nombre: nombre,
+    direccion: direccion,
     estado: estado,
     opcion: opcion,
   }

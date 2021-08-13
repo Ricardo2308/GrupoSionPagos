@@ -4,18 +4,10 @@ export function getGruposAutorizacion(idGrupo, idGrupoPadre) {
   let ApiFinal = API
   let ApiWhere = ''
   if (idGrupo !== null) {
-    if (ApiWhere.length > 0) {
-      ApiWhere += '&id_grupo=' + idGrupo
-    } else {
-      ApiWhere += '?id_grupo=' + idGrupo
-    }
+    ApiWhere += '/' + idGrupo
   }
   if (idGrupoPadre !== null) {
-    if (ApiWhere.length > 0) {
-      ApiWhere += '&id_grupopadre=' + idGrupoPadre
-    } else {
-      ApiWhere += '?id_grupopadre=' + idGrupoPadre
-    }
+    ApiWhere += '/' + idGrupoPadre
   }
   ApiFinal += ApiWhere
   return fetch(ApiFinal)

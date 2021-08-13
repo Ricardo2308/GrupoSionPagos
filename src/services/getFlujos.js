@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_BACKEND_URL}flujos.php`
 
-export function getFlujos(idFlujo, idTipoFlujo) {
+export function getFlujos(idFlujo, Tipo) {
   let ApiFinal = API
   let ApiWhere = ''
   if (idFlujo !== null) {
@@ -10,11 +10,11 @@ export function getFlujos(idFlujo, idTipoFlujo) {
       ApiWhere += '?id_flujo=' + idFlujo
     }
   }
-  if (idTipoFlujo !== null) {
+  if (Tipo !== null) {
     if (ApiWhere.length > 0) {
-      ApiWhere += '&id_tipoflujo=' + idTipoFlujo
+      ApiWhere += '&tipo=' + Tipo
     } else {
-      ApiWhere += '?id_tipoflujo=' + idTipoFlujo
+      ApiWhere += '?tipo=' + Tipo
     }
   }
   ApiFinal += ApiWhere
