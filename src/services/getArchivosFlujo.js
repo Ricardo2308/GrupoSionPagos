@@ -1,21 +1,13 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}archivos_flujo.php`
+const API = `${process.env.REACT_APP_API_URL}archivosflujo`
 
 export function getArchivosFlujo(idFlujo, idUsuario) {
   let ApiFinal = API
   let ApiWhere = ''
   if (idFlujo !== null) {
-    if (ApiWhere.length > 0) {
-      ApiWhere += '&id_flujo=' + idFlujo
-    } else {
-      ApiWhere += '?id_flujo=' + idFlujo
-    }
+    ApiWhere += '/0/' + idFlujo
   }
   if (idUsuario !== null) {
-    if (ApiWhere.length > 0) {
-      ApiWhere += '&id_usuario=' + idUsuario
-    } else {
-      ApiWhere += '?id_usuario=' + idUsuario
-    }
+    ApiWhere += '/' + idUsuario + '/0'
   }
   ApiFinal += ApiWhere
   return fetch(ApiFinal)

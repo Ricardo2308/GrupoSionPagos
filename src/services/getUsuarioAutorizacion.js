@@ -1,21 +1,13 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}get_usuarioautorizacion.php`
+const API = `${process.env.REACT_APP_API_URL}usuarioautorizacion`
 
 export function getUsuarioAutorizacion(idAprobador, idAutorizacion) {
   let ApiFinal = API
   let ApiWhere = ''
   if (idAprobador !== null) {
-    if (ApiWhere.length > 0) {
-      ApiWhere += '&id_usuario=' + idAprobador
-    } else {
-      ApiWhere += '?id_usuario=' + idAprobador
-    }
+    ApiWhere += '/' + idAprobador
   }
   if (idAutorizacion !== null) {
-    if (ApiWhere.length > 0) {
-      ApiWhere += '&id_usuarioautorizacion=' + idAutorizacion
-    } else {
-      ApiWhere += '?id_usuarioautorizacion=' + idAutorizacion
-    }
+    ApiWhere += '/' + idAutorizacion
   }
   ApiFinal += ApiWhere
   return fetch(ApiFinal)
