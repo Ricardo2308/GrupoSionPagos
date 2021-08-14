@@ -233,7 +233,7 @@ const _nav = [
           {
             _component: 'CNavItem',
             as: NavLink,
-            anchor: 'Bancario',
+            anchor: 'Bancaria',
             to: '/pagos/bancario',
           },
           {
@@ -253,13 +253,13 @@ const _nav = [
       {
         _component: 'CNavGroup',
         anchor: 'Compensar Pagos',
-        icon: <FiCreditCard size={17} style={{ marginRight: '4px' }} />,
+        icon: <FiCreditCard size={17} />,
         as: NavLink,
         items: [
           {
             _component: 'CNavItem',
             as: NavLink,
-            anchor: 'Bancario',
+            anchor: 'Bancaria',
             to: '/compensacion/bancario',
           },
           {
