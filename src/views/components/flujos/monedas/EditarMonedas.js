@@ -51,6 +51,8 @@ const EditarMonedas = (props) => {
       )
       if (respuesta === 'OK') {
         history.push('/monedas/monedas')
+      } else {
+        alert(respuesta)
       }
     } else {
       setShow(true)
