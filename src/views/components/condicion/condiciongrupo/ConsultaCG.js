@@ -127,8 +127,8 @@ const ConsultarPR = () => {
             <CTableBody>
               {results.map((item, i) => {
                 let estado = 'Inactivo'
-                if (item.estado_eliminado !== '1') {
-                  if (item.estado_activo === '1') {
+                if (item.eliminado !== '1') {
+                  if (item.activo === '1') {
                     estado = 'Activo'
                   }
                   return (
@@ -148,7 +148,7 @@ const ConsultarPR = () => {
                               id_grupo: item.id_grupo,
                               identificador: item.identificador,
                               nombre: location.descripcion,
-                              estado: item.estado_activo,
+                              estado: item.activo,
                             })
                           }
                         >
@@ -166,7 +166,7 @@ const ConsultarPR = () => {
                           color="info"
                           size="sm"
                           title="Cambiar Estado"
-                          onClick={() => mostrarModal(item.id_grupo, '4', item.estado_activo)}
+                          onClick={() => mostrarModal(item.id_grupo, '4', item.activo)}
                         >
                           <BsToggles />
                         </CButton>

@@ -99,17 +99,24 @@ const GridFlujos = () => {
       name: 'Fecha Documento',
       selector: 'doc_date',
       center: true,
+      width: '13%',
     },
     {
       name: 'Detalle',
       selector: 'comments',
       center: true,
-      width: '45%',
+      width: '53%',
     },
     {
       name: 'Estado',
-      selector: 'estado_activo',
       center: true,
+      cell: function OrderItems(row) {
+        if (row.activo === '1') {
+          return <div>Activo</div>
+        } else if (row.activo === '0') {
+          return <div>Inactivo</div>
+        }
+      },
     },
     {
       name: 'Acciones',

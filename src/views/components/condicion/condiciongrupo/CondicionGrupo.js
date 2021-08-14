@@ -104,7 +104,7 @@ const CondicionGrupo = () => {
                     />
                   </CInputGroup>
                   {results.map((item, i) => {
-                    if (item.estado_eliminado !== '1' && item.estado_activo !== '0') {
+                    if (item.eliminado !== '1' && item.activo !== '0') {
                       return (
                         <CFormCheck
                           key={item.id_grupo}

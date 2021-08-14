@@ -112,8 +112,8 @@ const ArchivosFlujo = (prop) => {
           <CTableBody>
             {results.map((item, i) => {
               let estado = 'Inactivo'
-              if (item.estado_eliminado !== '1') {
-                if (item.estado_activo === '1') {
+              if (item.eliminado !== '1') {
+                if (item.activo === '1') {
                   estado = 'Activo'
                 }
                 return (

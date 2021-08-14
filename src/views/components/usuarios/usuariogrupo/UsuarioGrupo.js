@@ -135,7 +135,7 @@ const UsuarioGrupo = () => {
                       <FiSettings />
                     </CInputGroupText>
                     <CFormSelect name="grupo_autorizacion" onChange={handleInput}>
-                      <option>Seleccione un grupo. (Obligatorio)</option>
+                      <option>Seleccione un grupo. (Opcional)</option>
                       {results.map((item, i) => {
                         if (item.eliminado !== '1' && item.activo !== '0') {
                           return (

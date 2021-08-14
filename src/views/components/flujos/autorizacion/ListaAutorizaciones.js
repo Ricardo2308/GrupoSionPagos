@@ -104,8 +104,8 @@ const ListaAutorizaciones = () => {
           <CTableBody>
             {results.map((item, i) => {
               let estado = 'Inactivo'
-              if (item.estado_eliminado !== '1') {
-                if (item.estado_activo === '1') {
+              if (item.eliminado !== '1') {
+                if (item.activo === '1') {
                   estado = 'Activo'
                 }
                 return (
@@ -119,9 +119,7 @@ const ListaAutorizaciones = () => {
                         color="info"
                         size="sm"
                         title="Cambiar Estado"
-                        onClick={() =>
-                          mostrarModal(item.id_usuarioautorizacion, '2', item.estado_activo)
-                        }
+                        onClick={() => mostrarModal(item.id_usuarioautorizacion, '2', item.activo)}
                       >
                         <BsToggles />
                       </CButton>
