@@ -79,7 +79,7 @@ const NuevoBanco = (props) => {
         form.id_banco,
         form.id_moneda,
         form.codigo_ach,
-        '3',
+        '',
       )
       if (respuesta === 'OK') {
         history.push('/cuentas/cuentas')

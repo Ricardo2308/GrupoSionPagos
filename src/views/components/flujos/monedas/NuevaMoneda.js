@@ -38,7 +38,7 @@ const NuevaMoneda = (props) => {
   const handleSubmit = async (event) => {
     if (form.nombre !== '' && form.simbolo !== '') {
       event.preventDefault()
-      const respuesta = await postCrudMonedas('', form.nombre, form.simbolo, '', '3')
+      const respuesta = await postCrudMonedas('', form.nombre, form.simbolo, '', '')
       if (respuesta === 'OK') {
         history.push('/monedas/monedas')
       }

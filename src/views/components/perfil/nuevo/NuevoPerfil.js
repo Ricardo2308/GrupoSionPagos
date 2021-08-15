@@ -37,7 +37,7 @@ const NuevoPerfil = (props) => {
   const handleSubmit = async (event) => {
     if (form.descripcion !== '') {
       event.preventDefault()
-      const respuesta = await postCrudPerfil('', form.descripcion, '', '3')
+      const respuesta = await postCrudPerfil('', form.descripcion, '', '')
       if (respuesta === 'OK') {
         history.push('/perfiles/perfiles')
       }
@@ -59,7 +59,7 @@ const NuevoPerfil = (props) => {
           </Alert>
           <CCard style={{ display: 'flex', alignItems: 'center' }}>
             <CCardBody style={{ width: '80%' }}>
-              <CForm style={{ width: '100%' }}>
+              <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
                 <h1>Creación de Perfil</h1>
                 <p className="text-medium-emphasis">Cree un nuevo perfil</p>
                 <CInputGroup className="mb-3">
@@ -74,7 +74,7 @@ const NuevoPerfil = (props) => {
                     name="descripcion"
                   ></textarea>
                 </CInputGroup>
-                <CButton color="primary" block onClick={handleSubmit}>
+                <CButton color="primary" block type="submit">
                   Crear Perfil
                 </CButton>
               </CForm>

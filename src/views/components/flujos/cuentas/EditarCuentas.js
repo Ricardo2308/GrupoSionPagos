@@ -197,7 +197,7 @@ const EditarBancos = (props) => {
         </div>
       )
     } else {
-      history.push('/bancos/bancos')
+      history.push('/cuentas/cuentas')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL USUARIO. REGRESE A LA PANTALLA DE USUARIOS.

@@ -38,7 +38,7 @@ const NuevoBanco = (props) => {
   const handleSubmit = async (event) => {
     if (form.nombre !== '' && form.direccion !== '') {
       event.preventDefault()
-      const respuesta = await postCrudBancos('', form.nombre, form.direccion, '', '3')
+      const respuesta = await postCrudBancos('', form.nombre, form.direccion, '', '')
       if (respuesta === 'OK') {
         history.push('/bancos/bancos')
       }

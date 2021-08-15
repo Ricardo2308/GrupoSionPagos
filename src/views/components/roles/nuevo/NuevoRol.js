@@ -39,7 +39,7 @@ const NuevoRol = () => {
   const handleSubmit = async (event) => {
     if (form.descripcion !== '') {
       event.preventDefault()
-      const respuesta = await postCrudRoles('', form.descripcion, form.objeto, '', '3')
+      const respuesta = await postCrudRoles('', form.descripcion, form.objeto, '', '')
       if (respuesta === 'OK') {
         history.push('/roles/roles')
       }
@@ -61,7 +61,7 @@ const NuevoRol = () => {
           </Alert>
           <CCard style={{ display: 'flex', alignItems: 'center' }}>
             <CCardBody style={{ width: '80%' }}>
-              <CForm style={{ width: '100%' }}>
+              <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
                 <h1>Creación de Rol</h1>
                 <p className="text-medium-emphasis">Cree un nuevo rol</p>
                 <CInputGroup className="mb-3">
@@ -87,8 +87,8 @@ const NuevoRol = () => {
                     onChange={handleInput}
                   />
                 </CInputGroup>
-                <CButton color="primary" block onClick={handleSubmit}>
-                  Crear Usuario
+                <CButton color="primary" block type="submit">
+                  Crear Rol
                 </CButton>
               </CForm>
             </CCardBody>

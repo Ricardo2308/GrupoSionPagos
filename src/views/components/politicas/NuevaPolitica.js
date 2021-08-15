@@ -46,7 +46,7 @@ const NuevoPermiso = () => {
         form.identificador,
         form.valor,
         '',
-        '3',
+        '',
       )
       if (respuesta === 'OK') {
         history.push('/politicas/politicas')

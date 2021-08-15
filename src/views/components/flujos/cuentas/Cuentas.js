@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Modal } from 'react-bootstrap'
 import { getCuentas } from '../../../../services/getCuentas'
-import { postCrudCuentas } from '../../../../services/postCrudCuentas'
 import { useSession } from 'react-use-session'
-import { FaUserEdit, FaTrash } from 'react-icons/fa'
+import { FaUserEdit } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import {
   CButton,
@@ -20,10 +18,6 @@ const Cuentas = () => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
-  const [show, setShow] = useState(false)
-  const [idCuenta, setIdCuenta] = useState(0)
-
-  const handleClose = () => setShow(false)
 
   useEffect(() => {
     let mounted = true
@@ -35,37 +29,9 @@ const Cuentas = () => {
     return () => (mounted = false)
   }, [])
 
-  function mostrarModal(id_cuenta) {
-    setIdCuenta(id_cuenta)
-    setShow(true)
-  }
-
-  async function eliminarCuenta(id_cuenta) {
-    const respuesta = await postCrudCuentas(id_cuenta, '', '', '', '2')
-    if (respuesta === 'OK') {
-      await getCuentas(null, null).then((items) => {
-        setList(items.cuentas)
-      })
-    }
-  }
-
   if (session) {
     return (
       <>
-        <Modal variant="primary" show={show} onHide={handleClose} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirmación</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>Está seguro de eliminar esta cuenta?</Modal.Body>
-          <Modal.Footer>
-            <CButton color="secondary" onClick={handleClose}>
-              Cancelar
-            </CButton>
-            <CButton color="primary" onClick={() => eliminarCuenta(idCuenta).then(handleClose)}>
-              Aceptar
-            </CButton>
-          </Modal.Footer>
-        </Modal>
         <CTable hover responsive align="middle" className="mb-0 border">
           <CTableHead color="light">
             <CTableRow>
@@ -116,14 +82,6 @@ const Cuentas = () => {
                         }
                       >
                         <FaUserEdit />
-                      </CButton>{' '}
-                      <CButton
-                        color="danger"
-                        size="sm"
-                        title="Eliminar Banco"
-                        onClick={() => mostrarModal(item.id_cuenta)}
-                      >
-                        <FaTrash />
                       </CButton>
                     </CTableDataCell>
                   </CTableRow>

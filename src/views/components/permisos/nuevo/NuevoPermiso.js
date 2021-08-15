@@ -37,7 +37,7 @@ const NuevoPermiso = () => {
   const handleSubmit = async (event) => {
     if (form.descripcion !== '') {
       event.preventDefault()
-      const respuesta = await postCrudPermiso('', form.descripcion, '', '3')
+      const respuesta = await postCrudPermiso('', form.descripcion, '', '')
       if (respuesta === 'OK') {
         history.push('/permisos/permisos')
       }
@@ -75,7 +75,7 @@ const NuevoPermiso = () => {
                   ></textarea>
                 </CInputGroup>
                 <CButton color="primary" block onClick={handleSubmit}>
-                  Crear Usuario
+                  Crear Permiso
                 </CButton>
               </CForm>
             </CCardBody>
