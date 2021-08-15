@@ -1,14 +1,23 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}post_permisos.php`
+const API = `${process.env.REACT_APP_API_URL}permisos`
 
 export function postCrudPermiso(idPermiso, descripcion, estado, opcion) {
+  let ApiFinal = API
+  let ApiWhere = ''
+
   var datos = {
     id: idPermiso,
     descripcion: descripcion,
-    estado: estado,
+    activo: estado,
     opcion: opcion,
   }
+
+  if (idPermiso !== '' && opcion !== '') {
+    ApiWhere += '/' + idPermiso + '/' + opcion
+  }
+  ApiFinal += ApiWhere
+
   const data = JSON.stringify(datos)
-  return fetch(API, {
+  return fetch(ApiFinal, {
     method: 'POST',
     body: data,
     headers: {

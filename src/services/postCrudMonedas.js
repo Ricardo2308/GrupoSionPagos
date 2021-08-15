@@ -12,8 +12,8 @@ export function postCrudMonedas(idMoneda, nombre, simbolo, estado, opcion) {
     opcion: opcion,
   }
 
-  if (idMoneda !== '') {
-    ApiWhere += '/' + idMoneda
+  if (idMoneda !== '' && opcion !== '') {
+    ApiWhere += '/' + idMoneda + '/' + opcion
   }
   ApiFinal += ApiWhere
 

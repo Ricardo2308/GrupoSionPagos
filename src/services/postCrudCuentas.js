@@ -1,4 +1,4 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}post_cuentas.php`
+const API = `${process.env.REACT_APP_API_URL}cuentas`
 
 export function postCrudCuentas(
   idCuenta,
@@ -10,6 +10,9 @@ export function postCrudCuentas(
   codigoACH,
   opcion,
 ) {
+  let ApiFinal = API
+  let ApiWhere = ''
+
   var datos = {
     id_cuenta: idCuenta,
     numero_cuenta: numeroCuenta,
@@ -20,8 +23,14 @@ export function postCrudCuentas(
     codigo_ach: codigoACH,
     opcion: opcion,
   }
+
+  if (idCuenta !== '' && opcion !== '') {
+    ApiWhere += '/' + idCuenta + '/' + opcion
+  }
+  ApiFinal += ApiWhere
+
   const data = JSON.stringify(datos)
-  return fetch(API, {
+  return fetch(ApiFinal, {
     method: 'POST',
     body: data,
     headers: {

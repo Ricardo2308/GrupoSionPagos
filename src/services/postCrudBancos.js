@@ -1,15 +1,24 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}post_bancos.php`
+const API = `${process.env.REACT_APP_API_URL}bancos`
 
 export function postCrudBancos(idBanco, nombre, direccion, estado, opcion) {
+  let ApiFinal = API
+  let ApiWhere = ''
+
   var datos = {
     id_banco: idBanco,
     nombre: nombre,
     direccion: direccion,
-    estado: estado,
+    activo: estado,
     opcion: opcion,
   }
+
+  if (idBanco !== '' && opcion !== '') {
+    ApiWhere += '/' + idBanco + '/' + opcion
+  }
+  ApiFinal += ApiWhere
+
   const data = JSON.stringify(datos)
-  return fetch(API, {
+  return fetch(ApiFinal, {
     method: 'POST',
     body: data,
     headers: {

@@ -1,16 +1,25 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}post_politicas.php`
+const API = `${process.env.REACT_APP_API_URL}politicas`
 
 export function postCrudPoliticas(idPolitica, descripcion, identificador, valor, estado, opcion) {
+  let ApiFinal = API
+  let ApiWhere = ''
+
   var datos = {
     id_politica: idPolitica,
     descripcion: descripcion,
     identificador: identificador,
     valor: valor,
-    estado: estado,
+    activo: estado,
     opcion: opcion,
   }
+
+  if (idPolitica !== '' && opcion !== '') {
+    ApiWhere += '/' + idPolitica + '/' + opcion
+  }
+  ApiFinal += ApiWhere
+
   const data = JSON.stringify(datos)
-  return fetch(API, {
+  return fetch(ApiFinal, {
     method: 'POST',
     body: data,
     headers: {

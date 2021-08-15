@@ -1,4 +1,4 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}post_condicionautorizacion.php`
+const API = `${process.env.REACT_APP_API_URL}condicionautorizacion`
 
 export function postCondicionAutorizacion(idCondicion, descripcion, parametro, estado, opcion) {
   var datos = {

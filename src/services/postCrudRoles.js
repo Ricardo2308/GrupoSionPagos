@@ -1,15 +1,24 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}post_roles.php`
+const API = `${process.env.REACT_APP_API_URL}roles`
 
 export function postCrudRoles(idRol, descripcion, objeto, estado, opcion) {
+  let ApiFinal = API
+  let ApiWhere = ''
+
   var datos = {
     id_rol: idRol,
     descripcion: descripcion,
     objeto: objeto,
-    estado: estado,
+    activo: estado,
     opcion: opcion,
   }
+
+  if (idRol !== '' && opcion !== '') {
+    ApiWhere += '/' + idRol + '/' + opcion
+  }
+  ApiFinal += ApiWhere
+
   const data = JSON.stringify(datos)
-  return fetch(API, {
+  return fetch(ApiFinal, {
     method: 'POST',
     body: data,
     headers: {

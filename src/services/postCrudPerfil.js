@@ -1,14 +1,23 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}post_perfiles.php`
+const API = `${process.env.REACT_APP_API_URL}perfiles`
 
 export function postCrudPerfil(idPerfil, descripcion, estado, opcion) {
+  let ApiFinal = API
+  let ApiWhere = ''
+
   var datos = {
     id_perfil: idPerfil,
     descripcion: descripcion,
-    estado: estado,
+    activo: estado,
     opcion: opcion,
   }
+
+  if (idPerfil !== '' && opcion !== '') {
+    ApiWhere += '/' + idPerfil + '/' + opcion
+  }
+  ApiFinal += ApiWhere
+
   const data = JSON.stringify(datos)
-  return fetch(API, {
+  return fetch(ApiFinal, {
     method: 'POST',
     body: data,
     headers: {
