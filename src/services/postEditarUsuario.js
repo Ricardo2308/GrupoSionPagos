@@ -1,18 +1,27 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}editar_usuario.php`
+const API = `${process.env.REACT_APP_API_URL}usuarios`
 
 export function postEditarUsuario(id, nombre, apellido, email, password, username, estado, opcion) {
+  let ApiFinal = API
+  let ApiWhere = ''
+
   var datos = {
     id: id,
     nombre: nombre,
     apellido: apellido,
-    email: email,
+    correo: email,
     password: password,
-    usuario: username,
-    estado: estado,
+    nombre_usuario: username,
+    activo: estado,
     opcion: opcion,
   }
+
+  if (id !== '' && opcion !== '') {
+    ApiWhere += '/' + id + '/' + opcion
+  }
+  ApiFinal += ApiWhere
+
   const data = JSON.stringify(datos)
-  return fetch(API, {
+  return fetch(ApiFinal, {
     method: 'POST',
     body: data,
     headers: {

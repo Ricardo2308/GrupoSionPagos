@@ -1,6 +1,9 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}postmensajes.php`
+const API = `${process.env.REACT_APP_API_URL}mensajes`
 
 export function postMensajes(idFlujo, idUsuarioEnvia, idUsuarioRecibe, mensaje, opcion) {
+  let ApiFinal = API
+  let ApiWhere = ''
+
   var datos = {
     id_flujo: idFlujo,
     id_usuarioenvia: idUsuarioEnvia,
@@ -8,8 +11,14 @@ export function postMensajes(idFlujo, idUsuarioEnvia, idUsuarioRecibe, mensaje, 
     mensaje: mensaje,
     opcion: opcion,
   }
+
+  if (opcion !== '') {
+    ApiWhere += '/' + opcion
+  }
+  ApiFinal += ApiWhere
+
   const data = JSON.stringify(datos)
-  return fetch(API, {
+  return fetch(ApiFinal, {
     method: 'POST',
     body: data,
     headers: {
