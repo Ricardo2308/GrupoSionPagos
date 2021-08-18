@@ -1,16 +1,28 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}post_condiciongrupo.php`
+const API = `${process.env.REACT_APP_API_URL}condiciongrupo`
 
 export function postCondicionGrupo(idCondicionGrupo, idCondicion, grupos, opcion, idGrupo, estado) {
+  let ApiFinal = API
+  let ApiWhere = ''
+
   var datos = {
     id_condiciongrupo: idCondicionGrupo,
-    id_condicion: idCondicion,
+    id_condicionautorizacion: idCondicion,
     grupos: grupos,
     opcion: opcion,
-    grupo_crud: idGrupo,
-    estado: estado,
+    id_grupoautorizacion: idGrupo,
+    activo: estado,
   }
+
+  if (grupos !== '') {
+    ApiWhere += '/' + grupos
+  }
+  if (idCondicionGrupo !== '' && opcion !== '') {
+    ApiWhere += '/' + idCondicionGrupo + '/' + opcion
+  }
+  ApiFinal += ApiWhere
+
   const data = JSON.stringify(datos)
-  return fetch(API, {
+  return fetch(ApiFinal, {
     method: 'POST',
     body: data,
     headers: {

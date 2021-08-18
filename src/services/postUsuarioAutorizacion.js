@@ -1,4 +1,4 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}post_usuarioautorizacion.php`
+const API = `${process.env.REACT_APP_API_URL}usuarioautorizacion`
 
 export function postUsuarioAutorizacion(
   idAutorizacion,
@@ -9,17 +9,26 @@ export function postUsuarioAutorizacion(
   opcion,
   estado,
 ) {
+  let ApiFinal = API
+  let ApiWhere = ''
+
   var datos = {
     id_usuarioautorizacion: idAutorizacion,
-    id_aprobador: idAprobador,
-    id_temporal: idTemporal,
-    fechainicio: fechaInicio,
-    fechafinal: fechaFinal,
+    id_usuarioaprobador: idAprobador,
+    id_usuariotemporal: idTemporal,
+    fecha_inicio: fechaInicio,
+    fecha_final: fechaFinal,
     opcion: opcion,
-    estado: estado,
+    activo: estado,
   }
+
+  if (idAutorizacion !== '' && opcion !== '') {
+    ApiWhere += '/' + idAutorizacion + '/' + opcion
+  }
+  ApiFinal += ApiWhere
+
   const data = JSON.stringify(datos)
-  return fetch(API, {
+  return fetch(ApiFinal, {
     method: 'POST',
     body: data,
     headers: {

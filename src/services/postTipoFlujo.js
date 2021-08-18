@@ -1,15 +1,24 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}post_tipoflujo.php`
+const API = `${process.env.REACT_APP_API_URL}tipoflujo`
 
 export function postTipoFlujo(idTipo, descripcion, inicial, estado, opcion) {
+  let ApiFinal = API
+  let ApiWhere = ''
+
   var datos = {
     id_tipoflujo: idTipo,
     descripcion: descripcion,
     id_estadoinicial: inicial,
-    estado: estado,
+    activo: estado,
     opcion: opcion,
   }
+
+  if (idTipo !== '' && opcion !== '') {
+    ApiWhere += '/' + idTipo + '/' + opcion
+  }
+  ApiFinal += ApiWhere
+
   const data = JSON.stringify(datos)
-  return fetch(API, {
+  return fetch(ApiFinal, {
     method: 'POST',
     body: data,
     headers: {
