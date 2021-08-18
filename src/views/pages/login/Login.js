@@ -64,7 +64,7 @@ const Login = () => {
         md5(form.password, { encoding: 'binary' }) === item.password &&
         (form.usuario === item.email || form.usuario === item.nombre_usuario)
       ) {
-        if (item.estado_activo !== '0' && item.estado_eliminado !== '1') {
+        if (item.activo !== '0' && item.eliminado !== '1') {
           const sign = require('jwt-encode')
           const secret = 'secret'
           const data = {
@@ -73,7 +73,7 @@ const Login = () => {
             user_name: item.nombre_usuario,
             id: item.id,
             perfil: item.perfil,
-            estado: item.estado_activo,
+            estado: item.activo,
           }
           const jwt = sign(data, secret)
           saveJWT(jwt)
