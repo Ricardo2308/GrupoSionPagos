@@ -49,7 +49,7 @@ class ChatWindow extends Component {
         this.props.id_usuario,
         this.state.id_receptor,
         message.data.text,
-        '1',
+        '',
       )
       if (respuesta === 'OK') {
         this.props.onUserInputSubmit(message)
