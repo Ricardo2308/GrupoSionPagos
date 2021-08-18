@@ -83,7 +83,11 @@ const EditarTipoFlujo = React.lazy(() =>
 )
 
 const PagoTabs = React.lazy(() => import('./views/components/flujos/flujo/PagoTabs'))
-const GridPagos = React.lazy(() => import('./views/components/flujos/flujo/GridPagos'))
+const GridBancario = React.lazy(() => import('./views/components/flujos/flujo/GridBancario'))
+const GridTransferencia = React.lazy(() =>
+  import('./views/components/flujos/flujo/GridTransferencia'),
+)
+const GridInterna = React.lazy(() => import('./views/components/flujos/flujo/GridInterna'))
 const ArchivosFlujoF = React.lazy(() => import('./views/components/flujos/flujo/ArchivosFlujoF'))
 const DetalleFlujo = React.lazy(() => import('./views/components/flujos/flujo/DetalleFlujo'))
 const ArchivosFlujoU = React.lazy(() =>
@@ -92,9 +96,33 @@ const ArchivosFlujoU = React.lazy(() =>
 const NuevoArchivoFlujo = React.lazy(() =>
   import('./views/components/flujos/archivoflujo/NuevoArchivoFlujo'),
 )
+const CompensacionBancario = React.lazy(() =>
+  import('./views/components/flujos/flujo/CompensacionBancario'),
+)
+const CompensacionTransferencia = React.lazy(() =>
+  import('./views/components/flujos/flujo/CompensacionTransferencia'),
+)
+const CompensacionInterna = React.lazy(() =>
+  import('./views/components/flujos/flujo/CompensacionInterna'),
+)
+const CompensacionTabs = React.lazy(() =>
+  import('./views/components/flujos/flujo/CompensacionTabs'),
+)
 const EditarArchivoFlujo = React.lazy(() =>
   import('./views/components/flujos/archivoflujo/EditarArchivoFlujo'),
 )
+
+const Bancos = React.lazy(() => import('./views/components/flujos/bancos/Bancos'))
+const EditarBancos = React.lazy(() => import('./views/components/flujos/bancos/EditarBancos'))
+const NuevoBanco = React.lazy(() => import('./views/components/flujos/bancos/NuevoBanco'))
+
+const Monedas = React.lazy(() => import('./views/components/flujos/monedas/Monedas'))
+const EditarMonedas = React.lazy(() => import('./views/components/flujos/monedas/EditarMonedas'))
+const NuevaMoneda = React.lazy(() => import('./views/components/flujos/monedas/NuevaMoneda'))
+
+const Cuentas = React.lazy(() => import('./views/components/flujos/cuentas/Cuentas'))
+const EditarCuentas = React.lazy(() => import('./views/components/flujos/cuentas/EditarCuentas'))
+const NuevaCuenta = React.lazy(() => import('./views/components/flujos/cuentas/NuevaCuenta'))
 
 const Navs = React.lazy(() => import('./views/components/usuarios/navs/Navs'))
 const Popovers = React.lazy(() => import('./views/components/usuarios/popovers/Popovers'))
@@ -194,10 +222,39 @@ const routes = [
   { path: '/tipoflujo/tipos', name: 'Listado', component: TiposFlujo },
   { path: '/tipoflujo/nuevo', name: 'Nuevo', component: NuevoTipoFlujo },
   { path: '/tipoflujo/editar', name: 'Modificación', component: EditarTipoFlujo },
-  { path: '/pagos', exact: true, name: 'Pagos', component: GridPagos },
-  { path: '/pagos/tabs', name: 'Detalle Flujos', component: PagoTabs },
+  { path: '/bancos', exact: true, name: 'Bancos', component: Bancos },
+  { path: '/bancos/bancos', name: 'Listado', component: Bancos },
+  { path: '/bancos/editar', name: 'Modificación', component: EditarBancos },
+  { path: '/bancos/nuevo', name: 'Nuevo', component: NuevoBanco },
+  { path: '/monedas', exact: true, name: 'Monedas', component: Monedas },
+  { path: '/monedas/monedas', name: 'Listado', component: Monedas },
+  { path: '/monedas/editar', name: 'Modificación', component: EditarMonedas },
+  { path: '/monedas/nueva', name: 'Nueva', component: NuevaMoneda },
+  { path: '/cuentas', exact: true, name: 'Cuentas', component: Cuentas },
+  { path: '/cuentas/cuentas', name: 'Listado', component: Cuentas },
+  { path: '/cuentas/editar', name: 'Modificación', component: EditarCuentas },
+  { path: '/cuentas/nueva', name: 'Nueva', component: NuevaCuenta },
+  { path: '/pagos', exact: true, name: 'Autorización Pagos', component: GridBancario },
+  { path: '/pagos/bancario', name: 'Bancaria', component: GridBancario },
+  { path: '/pagos/transferencia', name: 'Transferencia', component: GridTransferencia },
+  { path: '/pagos/interna', name: 'Interna', component: GridInterna },
+  { path: '/pagos/tabs', name: 'Detalle Pagos', component: PagoTabs },
   { path: '/pagos/archivos', name: 'Archivos Flujo', component: ArchivosFlujoF },
   { path: '/pagos/detalle', name: 'Archivos Flujo', component: DetalleFlujo },
+  {
+    path: '/compensacion',
+    exact: true,
+    name: 'Compensación Pagos',
+    component: CompensacionBancario,
+  },
+  { path: '/compensacion/bancario', name: 'Bancaria', component: CompensacionBancario },
+  {
+    path: '/compensacion/transferencia',
+    name: 'Transferencia',
+    component: CompensacionTransferencia,
+  },
+  { path: '/compensacion/interna', name: 'Interna', component: CompensacionInterna },
+  { path: '/compensacion/tabs', name: 'Detalle Pagos', component: CompensacionTabs },
   { path: '/archivoflujo', exact: true, name: 'Archivos Flujo', component: ArchivosFlujoU },
   { path: '/archivoflujo/archivos', name: 'Listado', component: ArchivosFlujoU },
   { path: '/archivoflujo/nuevo', name: 'Nuevo', component: NuevoArchivoFlujo },
