@@ -65,13 +65,15 @@ const CondicionGrupo = () => {
       setShow(true)
       setTitulo('Error!')
       setMensaje('Error de conexión.')
-    } else {
+    } else if (respuesta === 'Repetidos') {
       setShow(true)
       setTitulo('Aviso!')
       setColor('warning')
       setMensaje(
-        'Los perfiles: ' + respuesta + 'ya fueron seleccionados anteriormente. Intente con otros!',
+        'Los grupos seleccionados ya fueron elegidos para esta condición!' + ' Intente con otros.',
       )
+    } else {
+      console.log(respuesta)
     }
   }
 

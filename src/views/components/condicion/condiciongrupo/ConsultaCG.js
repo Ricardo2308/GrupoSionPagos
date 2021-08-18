@@ -41,12 +41,12 @@ const ConsultarPR = () => {
   }, [])
 
   function mostrarModal(id_grupo, opcion, estado) {
-    if (opcion === '2') {
+    if (opcion === '1') {
       setMensaje('Está seguro de eliminar este detalle de grupos asociados a la condición?')
       setIdGrupo(id_grupo)
       setOpcion(opcion)
       setShow(true)
-    } else if (opcion === '4') {
+    } else if (opcion === '3') {
       setMensaje('Está seguro de cambiar el estado de este grupo asociado a la condición?')
       setIdGrupo(id_grupo)
       setEstado(estado)
@@ -55,22 +55,22 @@ const ConsultarPR = () => {
     }
   }
 
-  async function crudCondicionGrupo(id_condicion, id_grupo, opcion, estado) {
+  async function crudCondicionGrupo(id_condicion, id_condiciongrupo, opcion, estado) {
     let result
-    if (opcion === '2') {
-      const respuesta = await postCondicionGrupo('', id_condicion, '', '2', id_grupo, '')
+    if (opcion === '1') {
+      const respuesta = await postCondicionGrupo(id_condiciongrupo, '', '', '1', '', '')
       if (respuesta === 'OK') {
         await getCondicionGrupo(id_condicion, null).then((items) => {
           setList(items.detalle)
         })
       }
-    } else if (opcion === '4') {
+    } else if (opcion === '3') {
       if (estado === '0') {
         result = '1'
       } else {
         result = '0'
       }
-      const respuesta = await postCondicionGrupo('', id_condicion, '', '4', id_grupo, result)
+      const respuesta = await postCondicionGrupo(id_condiciongrupo, '', '', '3', '', result)
       if (respuesta === 'OK') {
         await getCondicionGrupo(id_condicion, null).then((items) => {
           setList(items.detalle)
@@ -158,7 +158,7 @@ const ConsultarPR = () => {
                           color="danger"
                           size="sm"
                           title="Eliminar Grupo"
-                          onClick={() => mostrarModal(item.id_grupo, '2', '')}
+                          onClick={() => mostrarModal(item.id_condiciongrupo, '1', '')}
                         >
                           <FaTrash />
                         </CButton>{' '}
@@ -166,7 +166,7 @@ const ConsultarPR = () => {
                           color="info"
                           size="sm"
                           title="Cambiar Estado"
-                          onClick={() => mostrarModal(item.id_grupo, '4', item.activo)}
+                          onClick={() => mostrarModal(item.id_condiciongrupo, '3', item.activo)}
                         >
                           <BsToggles />
                         </CButton>

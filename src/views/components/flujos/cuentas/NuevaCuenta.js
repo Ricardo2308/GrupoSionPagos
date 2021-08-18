@@ -182,7 +182,7 @@ const NuevoBanco = (props) => {
                   />
                 </CInputGroup>
                 <CButton color="primary" type="submit" block>
-                  Crear Cuenta
+                  Añadir Cuenta
                 </CButton>
               </CForm>
             </CCardBody>

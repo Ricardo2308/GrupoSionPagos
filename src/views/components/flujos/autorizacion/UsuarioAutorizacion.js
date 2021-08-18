@@ -63,12 +63,14 @@ const UsuarioGrupo = () => {
       form.usuario,
       fechainicio,
       fechafinal,
-      '1',
+      '',
       '',
     )
     if (form.usuario !== '' && fechainicio && fechafinal) {
       if (respuesta === 'OK') {
         history.push('/autorizacion/listado')
+      } else {
+        console.log(respuesta)
       }
     } else {
       setShow(true)

@@ -119,7 +119,7 @@ const ListaAutorizaciones = () => {
                         color="info"
                         size="sm"
                         title="Cambiar Estado"
-                        onClick={() => mostrarModal(item.id_usuarioautorizacion, '2', item.activo)}
+                        onClick={() => mostrarModal(item.id_usuarioautorizacion, '1', item.activo)}
                       >
                         <BsToggles />
                       </CButton>

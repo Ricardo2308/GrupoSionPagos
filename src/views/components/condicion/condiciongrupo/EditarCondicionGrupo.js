@@ -80,7 +80,7 @@ const EditarCondicionGrupo = () => {
           location.id_condiciongrupo,
           location.id_condicion,
           '',
-          '3',
+          '2',
           form.grupo,
           form.estado,
         )

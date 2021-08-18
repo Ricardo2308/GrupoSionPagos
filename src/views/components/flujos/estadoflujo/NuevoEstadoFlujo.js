@@ -106,7 +106,7 @@ const NuevoEstadoFlujo = () => {
                   </CFormSelect>
                 </CInputGroup>
                 <CButton color="primary" block onClick={handleSubmit}>
-                  Crear Grupo
+                  Crear Estado
                 </CButton>
               </CForm>
             </CCardBody>

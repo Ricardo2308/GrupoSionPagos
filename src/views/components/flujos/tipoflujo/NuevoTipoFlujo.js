@@ -51,7 +51,7 @@ const NuevoEstadoFlujo = () => {
   const handleSubmit = async (event) => {
     if (form.descripcion !== '') {
       event.preventDefault()
-      const respuesta = await postTipoFlujo('', form.descripcion, form.estado_inicial, '', '3')
+      const respuesta = await postTipoFlujo('', form.descripcion, form.estado_inicial, '', '')
       if (respuesta === 'OK') {
         history.push('/tipoflujo/tipos')
       }
@@ -106,7 +106,7 @@ const NuevoEstadoFlujo = () => {
                   </CFormSelect>
                 </CInputGroup>
                 <CButton color="primary" block onClick={handleSubmit}>
-                  Crear Grupo
+                  Crear Tipo
                 </CButton>
               </CForm>
             </CCardBody>

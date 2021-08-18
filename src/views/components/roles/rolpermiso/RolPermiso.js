@@ -71,8 +71,6 @@ const RolPermiso = () => {
       setMensaje(
         'Los permisos seleccionados ya fueron elegidos para este rol!' + ' Intente con otros.',
       )
-    } else {
-      console.log(respuesta)
     }
   }
 
