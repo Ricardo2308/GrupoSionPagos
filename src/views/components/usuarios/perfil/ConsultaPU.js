@@ -50,13 +50,13 @@ const Consultar = () => {
   }, [])
 
   function mostrarModal(id_perfil, id_grupo, opcion, estado) {
-    if (opcion === '2') {
+    if (opcion === '1') {
       setMensaje('Está seguro de eliminar este perfil de usuario?')
       setIdPerfil(id_perfil)
       setIdGrupo(id_grupo)
       setOpcion(opcion)
       setShow(true)
-    } else if (opcion === '4') {
+    } else if (opcion === '3') {
       setMensaje('Está seguro de cambiar el estado de este perfil de usuario?')
       setIdPerfil(id_perfil)
       setIdGrupo(id_grupo)
@@ -66,39 +66,39 @@ const Consultar = () => {
     }
   }
 
-  async function crudPerfil(id_usuario, id_perfil, id_grupo, opcion, estado) {
+  async function crudPerfil(id_usuario, id_usuarioperfil, id_usuariogrupo, opcion, estado) {
     let result
-    if (opcion === '2') {
-      if (id_perfil !== '' && id_grupo === '') {
-        const respuesta = await postPerfilUsuario('', id_usuario, '', '2', id_perfil, '')
+    if (opcion === '1') {
+      if (id_usuarioperfil !== '' && id_usuariogrupo === '') {
+        const respuesta = await postPerfilUsuario(id_usuarioperfil, '', '', '1', '', '')
         if (respuesta === 'OK') {
           await getPerfilUsuario(id_usuario, null).then((items) => {
             setList(items.detalle)
           })
         }
-      } else if (id_perfil === '' && id_grupo !== '') {
-        const respuesta = await postUsuarioGrupo(id_usuario, '2', id_grupo, '')
+      } else if (id_usuarioperfil === '' && id_usuariogrupo !== '') {
+        const respuesta = await postUsuarioGrupo(id_usuariogrupo, id_usuario, '1', '', '')
         if (respuesta === 'OK') {
           await getUsuarioGrupo(id_usuario, null).then((items) => {
             setList1(items.detalle)
           })
         }
       }
-    } else if (opcion === '4') {
+    } else if (opcion === '3') {
       if (estado === '0') {
         result = '1'
       } else {
         result = '0'
       }
-      if (id_perfil !== '' && id_grupo === '') {
-        const respuesta = await postPerfilUsuario('', id_usuario, '', '4', id_perfil, result)
+      if (id_usuarioperfil !== '' && id_usuariogrupo === '') {
+        const respuesta = await postPerfilUsuario(id_usuarioperfil, '', '', '3', '', result)
         if (respuesta === 'OK') {
           await getPerfilUsuario(id_usuario, null).then((items) => {
             setList(items.detalle)
           })
         }
-      } else if (id_perfil === '' && id_grupo !== '') {
-        const respuesta = await postUsuarioGrupo(id_usuario, '4', id_grupo, result)
+      } else if (id_usuarioperfil === '' && id_usuariogrupo !== '') {
+        const respuesta = await postUsuarioGrupo(id_usuariogrupo, id_usuario, '3', '', result)
         if (respuesta === 'OK') {
           await getUsuarioGrupo(id_usuario, null).then((items) => {
             setList1(items.detalle)
@@ -191,7 +191,7 @@ const Consultar = () => {
                           size="sm"
                           title="Eliminar Perfil Asociado"
                           disabled={location.inhabilitar}
-                          onClick={() => mostrarModal(item.id_perfil, '', '2', '')}
+                          onClick={() => mostrarModal(item.id_usuarioperfil, '', '1', '')}
                         >
                           <FaTrash />
                         </CButton>{' '}
@@ -200,7 +200,7 @@ const Consultar = () => {
                           size="sm"
                           title="Cambiar Estado"
                           disabled={location.inhabilitar}
-                          onClick={() => mostrarModal(item.id_perfil, '', '4', item.activo)}
+                          onClick={() => mostrarModal(item.id_usuarioperfil, '', '3', item.activo)}
                         >
                           <BsToggles />
                         </CButton>
@@ -249,6 +249,7 @@ const Consultar = () => {
                           onClick={() =>
                             history.push({
                               pathname: '/base/usuariogrupo',
+                              id_usuariogrupo: item.id_usuariogrupo,
                               id: location.id_usuario,
                               email: location.email,
                               nombre: location.nombre,
@@ -264,7 +265,7 @@ const Consultar = () => {
                           size="sm"
                           title="Eliminar Grupo Asociado"
                           disabled={location.inhabilitar}
-                          onClick={() => mostrarModal('', item.id_grupoautorizacion, '2', '')}
+                          onClick={() => mostrarModal('', item.id_usuariogrupo, '1', '')}
                         >
                           <FaTrash />
                         </CButton>{' '}
@@ -273,9 +274,7 @@ const Consultar = () => {
                           size="sm"
                           title="Cambiar de Estado"
                           disabled={location.inhabilitar}
-                          onClick={() =>
-                            mostrarModal('', item.id_grupoautorizacion, '4', item.activo)
-                          }
+                          onClick={() => mostrarModal('', item.id_usuariogrupo, '3', item.activo)}
                         >
                           <BsToggles />
                         </CButton>

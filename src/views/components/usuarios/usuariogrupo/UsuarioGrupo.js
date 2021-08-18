@@ -54,15 +54,15 @@ const UsuarioGrupo = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    const respuesta = await postUsuarioGrupo(location.id, '1', form.grupo_autorizacion, '')
+    const respuesta = await postUsuarioGrupo('', location.id, '', form.grupo_autorizacion, '')
     if (respuesta === 'OK') {
       history.push('/base/usuarios')
     } else if (respuesta === 'Error') {
       setShow(true)
       setMensaje('Error de conexión.')
-    } else {
+    } else if (respuesta === 'Repetido') {
       mostrarModal(location.id)
-      setMensaje('Desea elegir otro grupo de autorización para el usuario ' + respuesta + '?')
+      setMensaje('Desea elegir otro grupo de autorización para el usuario?')
     }
   }
 
@@ -72,7 +72,7 @@ const UsuarioGrupo = () => {
   }
 
   async function editarUsuarioGrupo(id_usuario) {
-    const respuesta = await postUsuarioGrupo(id_usuario, '3', form.grupo_autorizacion, form.estado)
+    const respuesta = await postUsuarioGrupo('0', id_usuario, '2', form.grupo_autorizacion, '')
     if (respuesta === 'OK') {
       history.push('/base/usuarios')
     }

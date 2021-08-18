@@ -41,12 +41,12 @@ const ConsultarRP = () => {
   }, [])
 
   function mostrarModal(id_permiso, opcion, estado) {
-    if (opcion === '2') {
+    if (opcion === '1') {
       setMensaje('Está seguro de eliminar este detalle de permisos del rol?')
       setIdPermiso(id_permiso)
       setOpcion(opcion)
       setShow(true)
-    } else if (opcion === '4') {
+    } else if (opcion === '3') {
       setMensaje('Está seguro de cambiar el estado de este permiso del rol?')
       setIdPermiso(id_permiso)
       setEstado(estado)
@@ -55,22 +55,22 @@ const ConsultarRP = () => {
     }
   }
 
-  async function crudRolPermiso(id_rol, id_permiso, opcion, estado) {
+  async function crudRolPermiso(id_rol, id_rolpermiso, opcion, estado) {
     let result
-    if (opcion === '2') {
-      const respuesta = await postRolPermiso('', id_rol, '', '2', id_permiso, '')
+    if (opcion === '1') {
+      const respuesta = await postRolPermiso(id_rolpermiso, '', '', '1', '', '')
       if (respuesta === 'OK') {
         await getRolPermiso(id_rol, null).then((items) => {
           setList(items.detalle)
         })
       }
-    } else if (opcion === '4') {
+    } else if (opcion === '3') {
       if (estado === '0') {
         result = '1'
       } else {
         result = '0'
       }
-      const respuesta = await postRolPermiso('', id_rol, '', '4', id_permiso, result)
+      const respuesta = await postRolPermiso(id_rolpermiso, '', '', '3', '', result)
       if (respuesta === 'OK') {
         await getRolPermiso(id_rol, null).then((items) => {
           setList(items.detalle)
@@ -154,7 +154,7 @@ const ConsultarRP = () => {
                           color="danger"
                           size="sm"
                           title="Eliminar Permiso"
-                          onClick={() => mostrarModal(item.id_permiso, '2', '')}
+                          onClick={() => mostrarModal(item.id_rolpermiso, '1', '')}
                         >
                           <FaTrash />
                         </CButton>{' '}
@@ -162,7 +162,7 @@ const ConsultarRP = () => {
                           color="info"
                           size="sm"
                           title="Cambiar Estado"
-                          onClick={() => mostrarModal(item.id_permiso, '4', item.activo)}
+                          onClick={() => mostrarModal(item.id_rolpermiso, '3', item.activo)}
                         >
                           <BsToggles />
                         </CButton>

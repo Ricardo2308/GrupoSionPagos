@@ -81,7 +81,7 @@ const EditarPerfilUsuario = () => {
           location.id_usuarioperfil,
           location.id_usuario,
           '',
-          '3',
+          '2',
           form.perfil,
           form.estado,
         )

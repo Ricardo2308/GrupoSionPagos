@@ -57,19 +57,19 @@ const PerfilUsuario = () => {
         result += checkbox.value + '|'
       }
     }
-    const respuesta = await postPerfilUsuario('', location.id, result, '1', '', '')
+    const respuesta = await postPerfilUsuario('', location.id, result, '', '', '')
     if (respuesta === 'OK') {
       history.push('/base/usuarios')
     } else if (respuesta === 'Error') {
       setShow(true)
       setTitulo('Error!')
       setMensaje('Error de conexión.')
-    } else {
+    } else if (respuesta === 'Repetidos') {
       setShow(true)
       setTitulo('Aviso!')
       setColor('warning')
       setMensaje(
-        'Los perfiles: ' + respuesta + 'ya fueron seleccionados anteriormente. Intente con otros!',
+        'Los perfiles seleccionados ya fueron elegidos para este usuario! Intente con otros.',
       )
     }
   }

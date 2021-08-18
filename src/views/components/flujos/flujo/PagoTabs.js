@@ -75,10 +75,10 @@ const PagoTabs = () => {
                   <FlujoOrden id_flujo={location.id_flujo} />
                 </Tab>
                 <Tab eventKey="ingreso" title="Ingreso Bodega">
-                  <FlujoIngreso id_flujo={location.id_flujo} />
+                  <FlujoIngreso id_flujo1={location.id_flujo} />
                 </Tab>
                 <Tab eventKey="facturas" title="Facturas">
-                  <FlujoFactura id_flujo={location.id_flujo} />
+                  <FlujoFactura id_flujo1={location.id_flujo} />
                 </Tab>
                 <Tab eventKey="detalle" title="Detalle">
                   <DetalleFlujo id_flujo={location.id_flujo} />

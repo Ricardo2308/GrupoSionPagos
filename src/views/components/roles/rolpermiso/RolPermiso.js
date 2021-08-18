@@ -57,20 +57,22 @@ const RolPermiso = () => {
         result += checkbox.value + '|'
       }
     }
-    const respuesta = await postRolPermiso('', location.id_rol, result, '1', '', '')
+    const respuesta = await postRolPermiso('', location.id_rol, result, '', '', '')
     if (respuesta === 'OK') {
       history.push('/roles/roles')
     } else if (respuesta === 'Error') {
       setShow(true)
       setTitulo('Error!')
       setMensaje('Error de conexión.')
-    } else {
+    } else if (respuesta === 'Repetidos') {
       setShow(true)
       setTitulo('Aviso!')
       setColor('warning')
       setMensaje(
-        'Los permisos: ' + respuesta + 'ya fueron seleccionados anteriormente. Intente con otros!',
+        'Los permisos seleccionados ya fueron elegidos para este rol!' + ' Intente con otros.',
       )
+    } else {
+      console.log(respuesta)
     }
   }
 

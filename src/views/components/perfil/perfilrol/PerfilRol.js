@@ -57,19 +57,19 @@ const PerfilRol = () => {
         result += checkbox.value + '|'
       }
     }
-    const respuesta = await postPerfilRol('', location.id_perfil, result, '1', '', '')
+    const respuesta = await postPerfilRol('', location.id_perfil, result, '', '', '')
     if (respuesta === 'OK') {
       history.push('/perfiles/perfiles')
     } else if (respuesta === 'Error') {
       setShow(true)
       setTitulo('Error!')
       setMensaje('Error de conexión.')
-    } else {
+    } else if (respuesta === 'Repetidos') {
       setShow(true)
       setTitulo('Aviso!')
       setColor('warning')
       setMensaje(
-        'Los roles: ' + respuesta + 'ya fueron seleccionados anteriormente. Intente con otros!',
+        'Los roles seleccionados ya fueron elegidos para este perfil!' + ' Intente con otros.',
       )
     }
   }

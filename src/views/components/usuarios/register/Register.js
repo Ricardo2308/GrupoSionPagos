@@ -99,7 +99,7 @@ const Register = (props) => {
           </Alert>
           <CCard style={{ display: 'flex', alignItems: 'center' }}>
             <CCardBody style={{ width: '80%' }}>
-              <CForm style={{ width: '100%' }}>
+              <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
                 <h1>Creación de Usuario</h1>
                 <p className="text-medium-emphasis">Crear un nuevo usuario</p>
                 <CInputGroup className="mb-3">
@@ -168,7 +168,7 @@ const Register = (props) => {
                     onChange={handleInput}
                   />
                 </CInputGroup>
-                <CButton color="primary" block onClick={handleSubmit}>
+                <CButton color="primary" type="submit" block>
                   Crear Usuario
                 </CButton>
               </CForm>

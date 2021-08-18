@@ -81,7 +81,7 @@ const EditarRolPermiso = () => {
           location.id_rolpermiso,
           location.id_rol,
           '',
-          '3',
+          '2',
           form.permiso,
           form.estado,
         )

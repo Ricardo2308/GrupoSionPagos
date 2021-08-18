@@ -41,12 +41,12 @@ const ConsultarPR = () => {
   }, [])
 
   function mostrarModal(id_rol, opcion, estado) {
-    if (opcion === '2') {
+    if (opcion === '1') {
       setMensaje('Está seguro de eliminar este detalle de roles del perfil?')
       setIdRol(id_rol)
       setOpcion(opcion)
       setShow(true)
-    } else if (opcion === '4') {
+    } else if (opcion === '3') {
       setMensaje('Está seguro de cambiar el estado de este rol del perfil?')
       setIdRol(id_rol)
       setEstado(estado)
@@ -55,22 +55,22 @@ const ConsultarPR = () => {
     }
   }
 
-  async function crudPerfilRol(id_perfil, id_rol, opcion, estado) {
+  async function crudPerfilRol(id_perfil, id_perfilrol, opcion, estado) {
     let result
-    if (opcion === '2') {
-      const respuesta = await postPerfilRol('', id_perfil, '', '2', id_rol, '')
+    if (opcion === '1') {
+      const respuesta = await postPerfilRol(id_perfilrol, '', '', '1', '', '')
       if (respuesta === 'OK') {
         await getPerfilRol(id_perfil, null).then((items) => {
           setList(items.detalle)
         })
       }
-    } else if (opcion === '4') {
+    } else if (opcion === '3') {
       if (estado === '0') {
         result = '1'
       } else {
         result = '0'
       }
-      const respuesta = await postPerfilRol('', id_perfil, '', '4', id_rol, result)
+      const respuesta = await postPerfilRol(id_perfilrol, '', '', '3', '', result)
       if (respuesta === 'OK') {
         await getPerfilRol(id_perfil, null).then((items) => {
           setList(items.detalle)
@@ -154,7 +154,7 @@ const ConsultarPR = () => {
                           color="danger"
                           size="sm"
                           title="Eliminar Rol"
-                          onClick={() => mostrarModal(item.id_rol, '2', '')}
+                          onClick={() => mostrarModal(item.id_perfilrol, '1', '')}
                         >
                           <FaTrash />
                         </CButton>{' '}
@@ -162,7 +162,7 @@ const ConsultarPR = () => {
                           color="info"
                           size="sm"
                           title="Cambiar Estado"
-                          onClick={() => mostrarModal(item.id_rol, '4', item.activo)}
+                          onClick={() => mostrarModal(item.id_perfilrol, '3', item.activo)}
                         >
                           <BsToggles />
                         </CButton>

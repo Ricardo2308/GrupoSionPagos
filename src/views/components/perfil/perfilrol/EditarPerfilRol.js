@@ -81,7 +81,7 @@ const EditarPerfilRol = () => {
           location.id_perfilrol,
           location.id_perfil,
           '',
-          '3',
+          '2',
           form.rol,
           form.estado,
         )
