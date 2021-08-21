@@ -1,4 +1,4 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}post_archivoflujo.php`
+const API = `${process.env.REACT_APP_API_URL}archivosflujo`
 
 export function postArchivoFlujo(
   idArchivoFlujo,
@@ -6,23 +6,28 @@ export function postArchivoFlujo(
   idUsuario,
   descripcion,
   archivos,
-  estado,
   opcion,
-  archivo,
 ) {
+  let ApiFinal = API
+  let ApiWhere = ''
+
   var datos = {
     id_archivoflujo: idArchivoFlujo,
     id_flujo: idFlujo,
     id_usuario: idUsuario,
     descripcion: descripcion,
     archivos: archivos,
-    estado: estado,
     opcion: opcion,
     url: 'http://sionpagos.pendrogon.com/archivos/',
-    url_archivo: archivo,
   }
   const data = JSON.stringify(datos)
-  return fetch(API, {
+
+  if (idArchivoFlujo !== '' && opcion !== '') {
+    ApiWhere += '/' + idArchivoFlujo + '/' + opcion
+  }
+  ApiFinal += ApiWhere
+
+  return fetch(ApiFinal, {
     method: 'POST',
     body: data,
     headers: {
