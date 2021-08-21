@@ -55,7 +55,7 @@ const ArchivosFlujo = (prop) => {
   }
 
   async function eliminarArchivoFlujo(id_archivoflujo) {
-    const respuesta = await postArchivoFlujo(id_archivoflujo, '', '', '', '', '', '2', '')
+    const respuesta = await postArchivoFlujo(id_archivoflujo, '', '', '', '', '1')
     if (respuesta === 'OK') {
       await getArchivosFlujo(prop.id_flujo, null).then((items) => {
         setList(items.archivos)

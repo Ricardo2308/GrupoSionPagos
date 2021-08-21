@@ -48,11 +48,11 @@ const NuevoArchivoFlujo = (props) => {
         form.descripcion,
         form.archivos,
         '',
-        '3',
-        '',
       )
       if (respuesta === 'OK') {
-        history.push('/pagos')
+        history.go(-1)
+      } else {
+        console.log(respuesta)
       }
     } else {
       setShow(true)
@@ -133,6 +133,7 @@ const NuevoArchivoFlujo = (props) => {
         </div>
       )
     } else {
+      history.go(-1)
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL NÚMERO DE PAGO. REGRESE A LA PANTALLA DE PAGOS.
