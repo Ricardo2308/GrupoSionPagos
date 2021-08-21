@@ -98,7 +98,7 @@ const PagoTabs = () => {
         </div>
       )
     } else {
-      history.push('/dashboard')
+      history.go(-1)
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL NÚMERO DE PAGO. REGRESE A LA PANTALLA DE PAGOS.
