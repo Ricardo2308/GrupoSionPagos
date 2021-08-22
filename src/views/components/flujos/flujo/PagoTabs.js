@@ -30,9 +30,9 @@ const PagoTabs = () => {
   }
 
   async function rechazarPago(id_flujo) {
-    const respuesta = await postFlujos(id_flujo, '2')
-    if (respuesta === 'OK') {
-      history.push('/pagos')
+    const respuesta = await postFlujos(id_flujo)
+    if (respuesta == 'OK') {
+      history.go(-1)
     }
   }
 
@@ -55,7 +55,7 @@ const PagoTabs = () => {
             </Modal.Footer>
           </Modal>
           <div className="float-right" style={{ marginTop: '15px', marginRight: '15px' }}>
-            <CButton color="success" size="sm" onClick={() => history.push('/pagos')}>
+            <CButton color="success" size="sm" onClick={() => history.go(-1)}>
               Aceptar
             </CButton>{' '}
             <CButton color="danger" size="sm" onClick={() => mostrarModal(location.id_flujo)}>

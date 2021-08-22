@@ -42,7 +42,7 @@ const GridFlujos = () => {
       item.comments.toLowerCase().includes(filterText.toLowerCase()) ||
       item.doc_date.toLowerCase().includes(filterText.toLowerCase()) ||
       item.doc_num.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.estado_activo.toLowerCase().includes(filterText.toLowerCase()),
+      item.activo.toLowerCase().includes(filterText.toLowerCase()),
   )
 
   const handleClose = () => setShow(false)

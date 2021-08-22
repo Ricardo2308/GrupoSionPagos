@@ -42,7 +42,7 @@ const GridFlujos = () => {
       item.comments.toLowerCase().includes(filterText.toLowerCase()) ||
       item.doc_date.toLowerCase().includes(filterText.toLowerCase()) ||
       item.doc_num.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.estado_activo.toLowerCase().includes(filterText.toLowerCase()),
+      item.activo.toLowerCase().includes(filterText.toLowerCase()),
   )
 
   const handleClose = () => setShow(false)
@@ -176,13 +176,8 @@ const GridFlujos = () => {
     )
   }, [filterText, resetPaginationToggle])
 
-  function mostrarModal(id_flujo) {
-    setIdFlujo(id_flujo)
-    setShow(true)
-  }
-
   async function eliminarUsuario(id_flujo) {
-    const respuesta = await postFlujos(id_flujo, '2')
+    const respuesta = await postFlujos(id_flujo)
     if (respuesta === 'OK') {
       await getFlujos(null, null).then((items) => {
         setList(items.flujos)

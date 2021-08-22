@@ -10,7 +10,6 @@ import DetalleFlujo from './DetalleFlujo'
 import ArchivosFlujo from './ArchivosFlujoF'
 import { postFlujos } from '../../../../services/postFlujos'
 import { useSession } from 'react-use-session'
-import Chat from './Chat'
 import '../../../../scss/estilos.scss'
 import FlujoFactura from './FlujoFactura'
 import FlujoBitacora from './FlujoBitacora'
@@ -30,9 +29,9 @@ const PagoTabs = () => {
   }
 
   async function rechazarPago(id_flujo) {
-    const respuesta = await postFlujos(id_flujo, '2')
+    const respuesta = await postFlujos(id_flujo)
     if (respuesta === 'OK') {
-      history.push('/pagos')
+      history.go(-1)
     }
   }
 
@@ -55,7 +54,7 @@ const PagoTabs = () => {
             </Modal.Footer>
           </Modal>
           <div className="float-right" style={{ marginTop: '15px', marginRight: '15px' }}>
-            <CButton color="success" size="sm" onClick={() => history.push('/pagos')}>
+            <CButton color="success" size="sm" onClick={() => history.go(-1)}>
               Aceptar
             </CButton>{' '}
             <CButton color="danger" size="sm" onClick={() => mostrarModal(location.id_flujo)}>
