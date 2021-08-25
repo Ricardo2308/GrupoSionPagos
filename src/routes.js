@@ -13,6 +13,9 @@ const EditarPerfilUsuario = React.lazy(() =>
 const UsuarioGrupo = React.lazy(() =>
   import('./views/components/usuarios/usuariogrupo/UsuarioGrupo'),
 )
+const EditarUsuarioGrupo = React.lazy(() =>
+  import('./views/components/usuarios/usuariogrupo/EditarUsuarioGrupo'),
+)
 
 const EditarPerfil = React.lazy(() => import('./views/components/perfil/editar/EditarPerfil'))
 const NuevoPerfil = React.lazy(() => import('./views/components/perfil/nuevo/NuevoPerfil'))
@@ -124,9 +127,6 @@ const Cuentas = React.lazy(() => import('./views/components/flujos/cuentas/Cuent
 const EditarCuentas = React.lazy(() => import('./views/components/flujos/cuentas/EditarCuentas'))
 const NuevaCuenta = React.lazy(() => import('./views/components/flujos/cuentas/NuevaCuenta'))
 
-const Navs = React.lazy(() => import('./views/components/usuarios/navs/Navs'))
-const Popovers = React.lazy(() => import('./views/components/usuarios/popovers/Popovers'))
-const Progress = React.lazy(() => import('./views/components/usuarios/progress/Progress'))
 const FormControl = React.lazy(() => import('./views/components/permisos/form-control/FormControl'))
 const Layout = React.lazy(() => import('./views/components/permisos/layout/Layout'))
 const Select = React.lazy(() => import('./views/components/permisos/select/Select'))
@@ -158,6 +158,11 @@ const routes = [
   { path: '/perfiles/consulta', name: 'Perfil Rol', component: ConsultaPR },
   { path: '/perfiles/editarPR', name: 'Editar Perfil Rol', component: EditarPerfilRol },
   { path: '/base/usuariogrupo', name: 'Usuario Grupo Autorización', component: UsuarioGrupo },
+  {
+    path: '/base/editarusuariogrupo',
+    name: 'Usuario Grupo Autorización',
+    component: EditarUsuarioGrupo,
+  },
   { path: '/perfiles', name: 'Perfiles', component: Perfiles, exact: true },
   { path: '/perfiles/nuevo', name: 'Nuevo', component: NuevoPerfil },
   { path: '/perfiles/perfiles', name: 'Listado', component: Perfiles },
@@ -265,9 +270,6 @@ const routes = [
   { path: '/notifications/badges', name: 'Badges', component: Badges },
   { path: '/notifications/modals', name: 'Modals', component: Modals },
   { path: '/notifications/toasts', name: 'Toasts', component: Toasts },
-  { path: '/base/navs', name: 'Navs', component: Navs },
-  { path: '/base/popovers', name: 'Popovers', component: Popovers },
-  { path: '/base/progress', name: 'Progress', component: Progress },
   // { path: '/login', name: 'Login', component: Login },
   // { path: '/register', name: 'Register', component: Register },
   // { path: '/404', name: '404', component: Page404 },
