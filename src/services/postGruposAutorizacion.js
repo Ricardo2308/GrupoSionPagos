@@ -1,23 +1,32 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}post_gruposautorizacion.php`
+const API = `${process.env.REACT_APP_API_URL}grupoautorizacion`
 
 export function postGruposAutorizacion(
   idGrupo,
-  idGrupoPadre,
   identificador,
   descripcion,
+  numeroNiveles,
   estado,
   opcion,
 ) {
+  let ApiFinal = API
+  let ApiWhere = ''
+
   var datos = {
     id_grupo: idGrupo,
-    id_grupopadre: idGrupoPadre,
     identificador: identificador,
     descripcion: descripcion,
-    estado: estado,
+    numero_niveles: numeroNiveles,
+    activo: estado,
     opcion: opcion,
   }
+
+  if (idGrupo !== '' && opcion !== '') {
+    ApiWhere += '/' + idGrupo + '/' + opcion
+  }
+  ApiFinal += ApiWhere
+
   const data = JSON.stringify(datos)
-  return fetch(API, {
+  return fetch(ApiFinal, {
     method: 'POST',
     body: data,
     headers: {

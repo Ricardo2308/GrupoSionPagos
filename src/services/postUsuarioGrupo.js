@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}usuariogrupo`
 
-export function postUsuarioGrupo(idUsuarioGrupo, idUsuario, opcion, idGrupo, estado) {
+export function postUsuarioGrupo(idUsuarioGrupo, idUsuario, opcion, idGrupo, nivel, estado) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -9,6 +9,7 @@ export function postUsuarioGrupo(idUsuarioGrupo, idUsuario, opcion, idGrupo, est
     id_usuario: idUsuario,
     opcion: opcion,
     id_grupoautorizacion: idGrupo,
+    nivel: nivel,
     activo: estado,
   }
 
