@@ -17,8 +17,9 @@ import {
   CFormSelect,
 } from '@coreui/react'
 import { FiUser, FiAtSign, FiSettings } from 'react-icons/fi'
+import { GrLocationPin } from 'react-icons/gr'
 
-const UsuarioGrupo = () => {
+const UsuarioGrupo = (props) => {
   const history = useHistory()
   const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
@@ -32,6 +33,7 @@ const UsuarioGrupo = () => {
   const [form, setValues] = useState({
     grupo_autorizacion: location.id_grupo,
     estado: location.estado,
+    nivel: location.nivel,
   })
 
   useEffect(() => {
@@ -45,6 +47,14 @@ const UsuarioGrupo = () => {
     return () => (mounted = false)
   }, [])
 
+  function obtenerNiveles(num_niveles) {
+    var niveles = []
+    for (let i = 0; i < num_niveles; i++) {
+      niveles.push(i + 1)
+    }
+    return niveles
+  }
+
   const handleInput = (event) => {
     setValues({
       ...form,
@@ -54,7 +64,14 @@ const UsuarioGrupo = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    const respuesta = await postUsuarioGrupo('', location.id, '', form.grupo_autorizacion, '')
+    const respuesta = await postUsuarioGrupo(
+      '',
+      location.id,
+      '',
+      form.grupo_autorizacion,
+      form.nivel,
+      '',
+    )
     if (respuesta === 'OK') {
       history.push('/base/usuarios')
     } else if (respuesta === 'Error') {
@@ -72,7 +89,14 @@ const UsuarioGrupo = () => {
   }
 
   async function editarUsuarioGrupo(id_usuario) {
-    const respuesta = await postUsuarioGrupo('0', id_usuario, '2', form.grupo_autorizacion, '')
+    const respuesta = await postUsuarioGrupo(
+      '0',
+      id_usuario,
+      '2',
+      form.grupo_autorizacion,
+      form.nivel,
+      '',
+    )
     if (respuesta === 'OK') {
       history.push('/base/usuarios')
     }
@@ -135,7 +159,7 @@ const UsuarioGrupo = () => {
                       <FiSettings />
                     </CInputGroupText>
                     <CFormSelect name="grupo_autorizacion" onChange={handleInput}>
-                      <option>Seleccione un grupo. (Opcional)</option>
+                      <option>Primero seleccione un grupo. (Opcional)</option>
                       {results.map((item, i) => {
                         if (item.eliminado !== '1' && item.activo !== '0') {
                           return (
@@ -143,6 +167,27 @@ const UsuarioGrupo = () => {
                               {item.identificador}
                             </option>
                           )
+                        }
+                      })}
+                    </CFormSelect>
+                  </CInputGroup>
+                  <CInputGroup className="mb-3">
+                    <CInputGroupText>
+                      <FiSettings />
+                    </CInputGroupText>
+                    <CFormSelect name="nivel" onChange={handleInput}>
+                      <option>Luego un nivel de autorización. (Opcional)</option>
+                      {results.map((item, i) => {
+                        if (item.id_grupo == form.grupo_autorizacion) {
+                          var niveles = obtenerNiveles(item.numero_niveles)
+                          console.log(niveles)
+                          return niveles.map((nivel) => {
+                            return (
+                              <option key={nivel.toString()} value={nivel}>
+                                {nivel}
+                              </option>
+                            )
+                          })
                         }
                       })}
                     </CFormSelect>

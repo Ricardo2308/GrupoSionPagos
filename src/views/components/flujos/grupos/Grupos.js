@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
+import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
+import { postGruposAutorizacion } from '../../../../services/postGruposAutorizacion'
+import { useSession } from 'react-use-session'
+import { FaPen, FaTrash } from 'react-icons/fa'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CTable,
@@ -10,11 +15,6 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
-import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
-import { postGruposAutorizacion } from '../../../../services/postGruposAutorizacion'
-import { useSession } from 'react-use-session'
-import { FaPen, FaTrash } from 'react-icons/fa'
-import '../../../../scss/estilos.scss'
 
 const GruposAutorizacion = () => {
   const history = useHistory()
@@ -70,7 +70,7 @@ const GruposAutorizacion = () => {
           <CTableHead color="light">
             <CTableRow>
               <CTableHeaderCell className="text-center">Grupo Autorización</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Grupo Padre</CTableHeaderCell>
+              <CTableHeaderCell className="text-center">Niveles</CTableHeaderCell>
               <CTableHeaderCell className="text-center">Descripcion</CTableHeaderCell>
               <CTableHeaderCell className="text-center">Estado</CTableHeaderCell>
               <CTableHeaderCell style={{ textAlign: 'center', width: '15%' }}>
@@ -81,20 +81,14 @@ const GruposAutorizacion = () => {
           <CTableBody>
             {results.map((item, i) => {
               let estado = 'Inactivo'
-              let asignacion = ''
               if (item.eliminado !== '1') {
                 if (item.activo === '1') {
                   estado = 'Activo'
                 }
-                if (item.id_grupopadre === '' || item.id_grupopadre === '0') {
-                  asignacion = 'No asignado'
-                } else {
-                  asignacion = item.grupopadre
-                }
                 return (
                   <CTableRow key={item.id_grupo}>
                     <CTableDataCell className="text-center">{item.identificador}</CTableDataCell>
-                    <CTableDataCell className="text-center">{asignacion}</CTableDataCell>
+                    <CTableDataCell className="text-center">{item.numero_niveles}</CTableDataCell>
                     <CTableDataCell className="text-center">{item.descripcion}</CTableDataCell>
                     <CTableDataCell className="text-center">{estado}</CTableDataCell>
                     <CTableDataCell className="text-center">
@@ -106,7 +100,7 @@ const GruposAutorizacion = () => {
                           history.push({
                             pathname: '/grupos/editar',
                             id_grupo: item.id_grupo,
-                            id_grupopadre: item.id_grupopadre,
+                            numero_niveles: item.numero_niveles,
                             identificador: item.identificador,
                             descripcion: item.descripcion,
                             estado: item.activo,

@@ -4,6 +4,9 @@ import { Alert } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postGruposAutorizacion } from '../../../../services/postGruposAutorizacion'
 import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
+import { FiUserPlus, FiSettings, FiGrid } from 'react-icons/fi'
+import { FaNetworkWired } from 'react-icons/fa'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CCard,
@@ -15,33 +18,20 @@ import {
   CInputGroup,
   CFormSelect,
 } from '@coreui/react'
-import { FiUserPlus, FiSettings, FiGrid } from 'react-icons/fi'
-import '../../../../scss/estilos.scss'
 
 const EditarGrupo = () => {
   const history = useHistory()
   const location = useLocation()
-  const [results, setList] = useState([])
   const { session } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
   const [mensaje, setMensaje] = useState('')
 
   const [form, setValues] = useState({
-    grupopadre: location.id_grupopadre,
+    numero_niveles: location.numero_niveles,
     descripcion: location.descripcion,
     identificador: location.identificador,
     estado: location.estado,
   })
-
-  useEffect(() => {
-    let mounted = true
-    getGruposAutorizacion(null, null).then((items) => {
-      if (mounted) {
-        setList(items.grupos)
-      }
-    })
-    return () => (mounted = false)
-  }, [])
 
   const handleInput = (event) => {
     setValues({
@@ -55,9 +45,9 @@ const EditarGrupo = () => {
       event.preventDefault()
       const respuesta = await postGruposAutorizacion(
         location.id_grupo,
-        form.grupopadre,
         form.identificador,
         form.descripcion,
+        form.numero_niveles,
         form.estado,
         '1',
       )
@@ -113,20 +103,15 @@ const EditarGrupo = () => {
                   </CInputGroup>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
-                      <FiSettings />
+                      <FaNetworkWired />
                     </CInputGroupText>
-                    <CFormSelect name="grupopadre" onChange={handleInput}>
-                      <option>Seleccione nuevo grupo superior. (Opcional)</option>
-                      {results.map((item, i) => {
-                        if (item.estado !== '1' && item.estado !== '0') {
-                          return (
-                            <option key={item.id_grupo} value={item.id_grupo}>
-                              {item.identificador}
-                            </option>
-                          )
-                        }
-                      })}
-                    </CFormSelect>
+                    <CFormControl
+                      type="text"
+                      placeholder="Número Niveles"
+                      name="numero_niveles"
+                      defaultValue={location.numero_niveles}
+                      onChange={handleInput}
+                    />
                   </CInputGroup>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
