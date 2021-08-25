@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
-import { Modal, Alert } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postUsuarioGrupo } from '../../../../services/postUsuarioGrupo'
 import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
@@ -19,22 +18,16 @@ import {
 import { FiUser, FiAtSign, FiSettings } from 'react-icons/fi'
 import { GrLocationPin } from 'react-icons/gr'
 
-const UsuarioGrupo = (props) => {
+const EditarUsuarioGrupo = (props) => {
   const history = useHistory()
   const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
-  const [show, setShow] = useState(false)
-  const [showAlert, setShowAlert] = useState(false)
   const [results, setList] = useState([])
-  const [mensaje, setMensaje] = useState('')
-  const [idUsuario, setIdUsuario] = useState(0)
-
-  const handleClose = () => setShow(false)
 
   const [form, setValues] = useState({
-    grupo_autorizacion: '',
-    estado: '',
-    nivel: '',
+    grupo_autorizacion: location.id_grupo,
+    estado: location.estado,
+    nivel: location.nivel,
   })
 
   useEffect(() => {
@@ -63,39 +56,10 @@ const UsuarioGrupo = (props) => {
   }
 
   const handleSubmit = async (event) => {
-    if (form.grupo_autorizacion !== '' && form.nivel !== '') {
-      event.preventDefault()
-      const respuesta = await postUsuarioGrupo(
-        '',
-        location.id,
-        '',
-        form.grupo_autorizacion,
-        form.nivel,
-        '',
-      )
-      if (respuesta === 'OK') {
-        history.push('/base/usuarios')
-      } else if (respuesta === 'Error') {
-        setShow(true)
-        setMensaje('Error de conexión.')
-      } else if (respuesta === 'Repetido') {
-        mostrarModal(location.id)
-        setMensaje('Desea elegir otro grupo de autorización para el usuario?')
-      }
-    } else {
-      setShowAlert(true)
-    }
-  }
-
-  function mostrarModal(id_usuario) {
-    setIdUsuario(id_usuario)
-    setShow(true)
-  }
-
-  async function editarUsuarioGrupo(id_usuario) {
+    event.preventDefault()
     const respuesta = await postUsuarioGrupo(
       '0',
-      id_usuario,
+      location.id,
       '2',
       form.grupo_autorizacion,
       form.nivel,
@@ -111,32 +75,6 @@ const UsuarioGrupo = (props) => {
       return (
         <div style={{ flexDirection: 'row' }}>
           <CContainer>
-            <Alert
-              show={showAlert}
-              variant="danger"
-              onClose={() => setShowAlert(false)}
-              dismissible
-            >
-              <Alert.Heading>Error!</Alert.Heading>
-              <p>No has llenado todos los campos.</p>
-            </Alert>
-            <Modal responsive variant="primary" show={show} onHide={handleClose} centered>
-              <Modal.Header closeButton>
-                <Modal.Title>Confirmación</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>{mensaje}</Modal.Body>
-              <Modal.Footer>
-                <CButton color="secondary" onClick={handleClose}>
-                  Cancelar
-                </CButton>
-                <CButton
-                  color="primary"
-                  onClick={() => editarUsuarioGrupo(idUsuario).then(handleClose)}
-                >
-                  Aceptar
-                </CButton>
-              </Modal.Footer>
-            </Modal>
             <CCard style={{ display: 'flex', alignItems: 'center' }}>
               <CCardBody style={{ width: '80%' }}>
                 <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
@@ -172,7 +110,7 @@ const UsuarioGrupo = (props) => {
                       <FiSettings />
                     </CInputGroupText>
                     <CFormSelect name="grupo_autorizacion" onChange={handleInput}>
-                      <option>Primero seleccione un grupo. (Opcional)</option>
+                      <option>Primero seleccione un grupo. (Obligatorio)</option>
                       {results.map((item, i) => {
                         if (item.eliminado !== '1' && item.activo !== '0') {
                           return (
@@ -189,7 +127,7 @@ const UsuarioGrupo = (props) => {
                       <GrLocationPin />
                     </CInputGroupText>
                     <CFormSelect name="nivel" onChange={handleInput}>
-                      <option>Luego un nivel de autorización. (Opcional)</option>
+                      <option>Luego un nivel de autorización. (Obligatorio)</option>
                       {results.map((item, i) => {
                         if (item.id_grupo == form.grupo_autorizacion) {
                           var niveles = obtenerNiveles(item.numero_niveles)
@@ -227,4 +165,4 @@ const UsuarioGrupo = (props) => {
   }
 }
 
-export default UsuarioGrupo
+export default EditarUsuarioGrupo

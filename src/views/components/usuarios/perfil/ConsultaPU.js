@@ -248,11 +248,12 @@ const Consultar = () => {
                           disabled={location.inhabilitar}
                           onClick={() =>
                             history.push({
-                              pathname: '/base/usuariogrupo',
+                              pathname: '/base/editarusuariogrupo',
                               id_usuariogrupo: item.id_usuariogrupo,
                               id: location.id_usuario,
                               email: location.email,
                               nombre: location.nombre,
+                              nivel: item.nivel,
                               estado: item.activo,
                               id_grupo: item.id_grupoautorizacion,
                             })
