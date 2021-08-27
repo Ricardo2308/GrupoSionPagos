@@ -1,13 +1,13 @@
 const API = `${process.env.REACT_APP_API_URL}usuarioperfil`
 
-export function getPerfilUsuario(idUsuario, Descripcion) {
+export function getPerfilUsuario(idUsuario, opcion) {
   let ApiFinal = API
   let ApiWhere = ''
   if (idUsuario !== null) {
     ApiWhere += '/' + idUsuario
   }
-  if (Descripcion !== null) {
-    ApiWhere += '/' + Descripcion
+  if (opcion !== null) {
+    ApiWhere += '/' + opcion
   }
   ApiFinal += ApiWhere
   return fetch(ApiFinal)
