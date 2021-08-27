@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { getPerfiles } from '../../../../services/getPerfiles'
 import { useHistory } from 'react-router-dom'
 import { postCrudPerfil } from '../../../../services/postCrudPerfil'
+import { getPerfiles } from '../../../../services/getPerfiles'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { Modal } from 'react-bootstrap'
+import { useSession } from 'react-use-session'
+import { FaUserEdit, FaTrash, FaUserCog, FaClipboardList } from 'react-icons/fa'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CTable,
@@ -12,14 +16,12 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
-import { useSession } from 'react-use-session'
-import { FaUserEdit, FaTrash, FaUserCog, FaClipboardList } from 'react-icons/fa'
-import '../../../../scss/estilos.scss'
 
 const Perfiles = () => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [idPerfil, setIdPerfil] = useState(0)
 
@@ -32,8 +34,23 @@ const Perfiles = () => {
         setList(items.perfiles)
       }
     })
+    getPerfilUsuario(session.id, '2').then((items) => {
+      if (mounted) {
+        setPermisos(items.detalle)
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  function ExistePermiso(objeto) {
+    let result = 0
+    for (let item of permisos) {
+      if (objeto === item.objeto) {
+        result = 1
+      }
+    }
+    return result
+  }
 
   function mostrarModal(id) {
     setIdPerfil(id)
@@ -50,6 +67,10 @@ const Perfiles = () => {
   }
 
   if (session) {
+    let deshabilitar = false
+    if (ExistePermiso('Modulo Perfiles') == 0) {
+      deshabilitar = true
+    }
     return (
       <>
         <Modal variant="primary" show={show} onHide={handleClose} centered>
@@ -70,7 +91,7 @@ const Perfiles = () => {
           <CButton
             color="primary"
             size="sm"
-            //disabled={deshabilitar}
+            disabled={deshabilitar}
             onClick={() => history.push('/perfiles/nuevo')}
           >
             Crear Nuevo
@@ -102,6 +123,7 @@ const Perfiles = () => {
                         color="info"
                         size="sm"
                         title="Consultar Perfil Rol"
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/perfiles/consulta',
@@ -117,6 +139,7 @@ const Perfiles = () => {
                         color="success"
                         size="sm"
                         title="Asignar Rol"
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/perfiles/perfilrol',
@@ -132,6 +155,7 @@ const Perfiles = () => {
                         color="primary"
                         size="sm"
                         title="Editar Perfil"
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/perfiles/editar',
@@ -147,6 +171,7 @@ const Perfiles = () => {
                         color="danger"
                         size="sm"
                         title="Eliminar Perfil"
+                        disabled={deshabilitar}
                         onClick={() => mostrarModal(item.id_perfil)}
                       >
                         <FaTrash />

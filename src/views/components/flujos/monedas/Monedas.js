@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
 import { getMonedas } from '../../../../services/getMonedas'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { postCrudMonedas } from '../../../../services/postCrudMonedas'
 import { useSession } from 'react-use-session'
 import { FaUserEdit, FaTrash } from 'react-icons/fa'
@@ -20,6 +21,7 @@ const Monedas = () => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [idMoneda, setIdMoneda] = useState(0)
 
@@ -32,8 +34,23 @@ const Monedas = () => {
         setList(items.monedas)
       }
     })
+    getPerfilUsuario(session.id, '2').then((items) => {
+      if (mounted) {
+        setPermisos(items.detalle)
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  function ExistePermiso(objeto) {
+    let result = 0
+    for (let item of permisos) {
+      if (objeto === item.objeto) {
+        result = 1
+      }
+    }
+    return result
+  }
 
   function mostrarModal(id_moneda) {
     setIdMoneda(id_moneda)
@@ -50,6 +67,10 @@ const Monedas = () => {
   }
 
   if (session) {
+    let deshabilitar = false
+    if (ExistePermiso('Modulo Monedas') == 0) {
+      deshabilitar = true
+    }
     return (
       <>
         <Modal variant="primary" show={show} onHide={handleClose} centered>
@@ -70,7 +91,7 @@ const Monedas = () => {
           <CButton
             color="primary"
             size="sm"
-            //disabled={deshabilitar}
+            disabled={deshabilitar}
             onClick={() => history.push('/monedas/nueva')}
           >
             Crear Nueva
@@ -102,6 +123,7 @@ const Monedas = () => {
                         color="primary"
                         size="sm"
                         title="Editar Banco"
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/monedas/editar',
@@ -118,6 +140,7 @@ const Monedas = () => {
                         color="danger"
                         size="sm"
                         title="Eliminar Banco"
+                        disabled={deshabilitar}
                         onClick={() => mostrarModal(item.id_moneda)}
                       >
                         <FaTrash />

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
 import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { postGruposAutorizacion } from '../../../../services/postGruposAutorizacion'
 import { useSession } from 'react-use-session'
 import { FaPen, FaTrash } from 'react-icons/fa'
@@ -20,6 +21,7 @@ const GruposAutorizacion = () => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [idGrupo, setIdGrupo] = useState(0)
 
@@ -32,8 +34,23 @@ const GruposAutorizacion = () => {
         setList(items.grupos)
       }
     })
+    getPerfilUsuario(session.id, '2').then((items) => {
+      if (mounted) {
+        setPermisos(items.detalle)
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  function ExistePermiso(objeto) {
+    let result = 0
+    for (let item of permisos) {
+      if (objeto === item.objeto) {
+        result = 1
+      }
+    }
+    return result
+  }
 
   function mostrarModal(id_grupo) {
     setIdGrupo(id_grupo)
@@ -50,6 +67,10 @@ const GruposAutorizacion = () => {
   }
 
   if (session) {
+    let deshabilitar = false
+    if (ExistePermiso('Modulo Grupos Autorizacion') == 0) {
+      deshabilitar = true
+    }
     return (
       <>
         <Modal variant="primary" show={show} onHide={handleClose} centered>
@@ -70,7 +91,7 @@ const GruposAutorizacion = () => {
           <CButton
             color="primary"
             size="sm"
-            //disabled={deshabilitar}
+            disabled={deshabilitar}
             onClick={() => history.push('/grupos/nuevo')}
           >
             Crear Nuevo
@@ -106,6 +127,7 @@ const GruposAutorizacion = () => {
                         color="primary"
                         size="sm"
                         title="Editar Grupo Autorización"
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/grupos/editar',
@@ -123,6 +145,7 @@ const GruposAutorizacion = () => {
                         color="danger"
                         size="sm"
                         title="Eliminar Grupo Autorización"
+                        disabled={deshabilitar}
                         onClick={() => mostrarModal(item.id_grupo)}
                       >
                         <FaTrash />

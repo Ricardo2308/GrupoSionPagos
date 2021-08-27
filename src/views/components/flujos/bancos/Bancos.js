@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
 import { getBancos } from '../../../../services/getBancos'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { postCrudBancos } from '../../../../services/postCrudBancos'
 import { useSession } from 'react-use-session'
 import { FaUserEdit, FaTrash } from 'react-icons/fa'
@@ -20,6 +21,7 @@ const Bancos = () => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [idBanco, setIdBanco] = useState(0)
 
@@ -32,8 +34,23 @@ const Bancos = () => {
         setList(items.bancos)
       }
     })
+    getPerfilUsuario(session.id, '2').then((items) => {
+      if (mounted) {
+        setPermisos(items.detalle)
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  function ExistePermiso(objeto) {
+    let result = 0
+    for (let item of permisos) {
+      if (objeto === item.objeto) {
+        result = 1
+      }
+    }
+    return result
+  }
 
   function mostrarModal(id_banco) {
     setIdBanco(id_banco)
@@ -50,6 +67,10 @@ const Bancos = () => {
   }
 
   if (session) {
+    let deshabilitar = false
+    if (ExistePermiso('Modulo Bancos') == 0) {
+      deshabilitar = true
+    }
     return (
       <>
         <Modal variant="primary" show={show} onHide={handleClose} centered>
@@ -70,7 +91,7 @@ const Bancos = () => {
           <CButton
             color="primary"
             size="sm"
-            //disabled={deshabilitar}
+            disabled={deshabilitar}
             onClick={() => history.push('/bancos/nuevo')}
           >
             Crear Nuevo
@@ -102,6 +123,7 @@ const Bancos = () => {
                         color="primary"
                         size="sm"
                         title="Editar Banco"
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/bancos/editar',
@@ -118,6 +140,7 @@ const Bancos = () => {
                         color="danger"
                         size="sm"
                         title="Eliminar Banco"
+                        disabled={deshabilitar}
                         onClick={() => mostrarModal(item.id_banco)}
                       >
                         <FaTrash />

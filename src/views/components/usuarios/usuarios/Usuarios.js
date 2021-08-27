@@ -43,13 +43,13 @@ const Usuarios = () => {
     return () => (mounted = false)
   }, [])
 
-  function ExistePermiso(id_permiso, objeto) {
+  function ExistePermiso(objeto) {
     let result = 0
     for (let item of permisos) {
-      if (item.id_permiso !== id_permiso && objeto === item.objeto) {
+      if (objeto === item.objeto) {
         result = 1
       } else {
-        if (item.id_permiso === id_permiso && item.objeto === 'Modulo Grupos Autorizacion') {
+        if (item.objeto === 'Modulo Grupos Autorizacion') {
           result = 2
         }
       }
@@ -75,11 +75,11 @@ const Usuarios = () => {
   if (session) {
     let deshabilitar = false
     let deshabilitar_grupo = false
-    if (ExistePermiso('6', 'Modulo Usuarios') == 1) {
+    if (ExistePermiso('Modulo Usuarios') == 1) {
       deshabilitar_grupo = true
-    } else if (ExistePermiso('6', 'Modulo Usuarios') == 2) {
+    } else if (ExistePermiso('Modulo Usuarios') == 2) {
       deshabilitar = true
-    } else if (ExistePermiso('6', 'Modulo Usuarios') == 0) {
+    } else if (ExistePermiso('Modulo Usuarios') == 0) {
       deshabilitar_grupo = true
       deshabilitar = true
     }

@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
+import { getRoles } from '../../../../services/getRoles'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
+import { postCrudRoles } from '../../../../services/postCrudRoles'
+import { useSession } from 'react-use-session'
+import { FaUserEdit, FaTrash, FaUserCog, FaClipboardList } from 'react-icons/fa'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CTable,
@@ -10,16 +16,12 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
-import { getRoles } from '../../../../services/getRoles'
-import { postCrudRoles } from '../../../../services/postCrudRoles'
-import { useSession } from 'react-use-session'
-import { FaUserEdit, FaTrash, FaUserCog, FaClipboardList } from 'react-icons/fa'
-import '../../../../scss/estilos.scss'
 
 const Roles = () => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [idRol, setIdRol] = useState(0)
 
@@ -32,8 +34,23 @@ const Roles = () => {
         setList(items.roles)
       }
     })
+    getPerfilUsuario(session.id, '2').then((items) => {
+      if (mounted) {
+        setPermisos(items.detalle)
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  function ExistePermiso(objeto) {
+    let result = 0
+    for (let item of permisos) {
+      if (objeto === item.objeto) {
+        result = 1
+      }
+    }
+    return result
+  }
 
   function mostrarModal(id_rol) {
     setIdRol(id_rol)
@@ -50,6 +67,10 @@ const Roles = () => {
   }
 
   if (session) {
+    let deshabilitar = false
+    if (ExistePermiso('Modulo Roles') == 0) {
+      deshabilitar = true
+    }
     return (
       <>
         <Modal variant="primary" show={show} onHide={handleClose} centered>
@@ -70,7 +91,7 @@ const Roles = () => {
           <CButton
             color="primary"
             size="sm"
-            //disabled={deshabilitar}
+            disabled={deshabilitar}
             onClick={() => history.push('/roles/nuevo')}
           >
             Crear Nuevo
@@ -102,6 +123,7 @@ const Roles = () => {
                         color="info"
                         size="sm"
                         title="Consultar Rol Permiso"
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/roles/consulta',
@@ -117,6 +139,7 @@ const Roles = () => {
                         color="success"
                         size="sm"
                         title="Asignar Permiso"
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/roles/rolpermiso',
@@ -132,6 +155,7 @@ const Roles = () => {
                         color="primary"
                         size="sm"
                         title="Editar Rol"
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/roles/editar',
@@ -148,6 +172,7 @@ const Roles = () => {
                         color="danger"
                         size="sm"
                         title="Eliminar Rol"
+                        disabled={deshabilitar}
                         onClick={() => mostrarModal(item.id_rol)}
                       >
                         <FaTrash />

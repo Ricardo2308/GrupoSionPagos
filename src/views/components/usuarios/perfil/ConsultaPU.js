@@ -15,7 +15,7 @@ import { postPerfilUsuario } from '../../../../services/postPerfilUsuario'
 import { getUsuarioGrupo } from '../../../../services/getUsuarioGrupo'
 import { postUsuarioGrupo } from '../../../../services/postUsuarioGrupo'
 import { useSession } from 'react-use-session'
-import { FaTrash, FaPen } from 'react-icons/fa'
+import { FaTrash, FaPen, FaUsersCog } from 'react-icons/fa'
 import { BsToggles } from 'react-icons/bs'
 import '../../../../scss/estilos.scss'
 
@@ -25,6 +25,7 @@ const Consultar = () => {
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [results1, setList1] = useState([])
+  const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [idPerfil, setIdPerfil] = useState(0)
   const [idGrupo, setIdGrupo] = useState(0)
@@ -46,8 +47,27 @@ const Consultar = () => {
         setList1(items.detalle)
       }
     })
+    getPerfilUsuario(session.id, '2').then((items) => {
+      if (mounted) {
+        setPermisos(items.detalle)
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  function ExistePermiso(id_permiso, objeto) {
+    let result = 0
+    for (let item of permisos) {
+      if (item.id_permiso !== id_permiso && objeto === item.objeto) {
+        result = 1
+      } else {
+        if (item.id_permiso === id_permiso && item.objeto === 'Modulo Grupos Autorizacion') {
+          result = 2
+        }
+      }
+    }
+    return result
+  }
 
   function mostrarModal(id_perfil, id_grupo, opcion, estado) {
     if (opcion === '1') {
@@ -110,6 +130,16 @@ const Consultar = () => {
 
   if (session) {
     if (location.id_usuario) {
+      let deshabilitar = false
+      let deshabilitar_grupo = false
+      if (ExistePermiso('6', 'Modulo Usuarios') == 1) {
+        deshabilitar_grupo = true
+      } else if (ExistePermiso('6', 'Modulo Usuarios') == 2) {
+        deshabilitar = true
+      } else if (ExistePermiso('6', 'Modulo Usuarios') == 0) {
+        deshabilitar_grupo = true
+        deshabilitar = true
+      }
       return (
         <>
           <Modal variant="primary" show={show} onHide={handleClose} centered>
@@ -139,9 +169,27 @@ const Consultar = () => {
               textAlign: 'center',
               fontWeight: 'bold',
               borderColor: 'black',
+              flexDirection: 'row',
             }}
           >
-            <p>{location.nombre}</p>
+            {location.nombre}{' '}
+            <CButton
+              color="warning"
+              size="sm"
+              title="Asignar Grupo Autorización"
+              disabled={deshabilitar_grupo}
+              onClick={() =>
+                history.push({
+                  pathname: '/usuarios/usuariogrupo',
+                  id: session.id,
+                  nombre: session.name,
+                  email: session.email,
+                  estado: session.estado,
+                })
+              }
+            >
+              <FaUsersCog />
+            </CButton>
           </div>
           <CTable hover responsive align="middle" className="mb-0 border">
             <CTableHead color="light">
@@ -171,7 +219,7 @@ const Consultar = () => {
                           color="primary"
                           size="sm"
                           title="Cambiar Perfil"
-                          disabled={location.inhabilitar}
+                          disabled={deshabilitar}
                           onClick={() =>
                             history.push({
                               pathname: '/usuarios/editarPU',
@@ -190,7 +238,7 @@ const Consultar = () => {
                           color="danger"
                           size="sm"
                           title="Eliminar Perfil Asociado"
-                          disabled={location.inhabilitar}
+                          disabled={deshabilitar}
                           onClick={() => mostrarModal(item.id_usuarioperfil, '', '1', '')}
                         >
                           <FaTrash />
@@ -199,7 +247,7 @@ const Consultar = () => {
                           color="info"
                           size="sm"
                           title="Cambiar Estado"
-                          disabled={location.inhabilitar}
+                          disabled={deshabilitar}
                           onClick={() => mostrarModal(item.id_usuarioperfil, '', '3', item.activo)}
                         >
                           <BsToggles />
@@ -245,7 +293,7 @@ const Consultar = () => {
                           color="primary"
                           size="sm"
                           title="Elegir Nuevo Grupo"
-                          disabled={location.inhabilitar}
+                          disabled={deshabilitar_grupo}
                           onClick={() =>
                             history.push({
                               pathname: '/usuarios/editarusuariogrupo',
@@ -265,7 +313,7 @@ const Consultar = () => {
                           color="danger"
                           size="sm"
                           title="Eliminar Grupo Asociado"
-                          disabled={location.inhabilitar}
+                          disabled={deshabilitar_grupo}
                           onClick={() => mostrarModal('', item.id_usuariogrupo, '1', '')}
                         >
                           <FaTrash />
@@ -274,7 +322,7 @@ const Consultar = () => {
                           color="info"
                           size="sm"
                           title="Cambiar de Estado"
-                          disabled={location.inhabilitar}
+                          disabled={deshabilitar_grupo}
                           onClick={() => mostrarModal('', item.id_usuariogrupo, '3', item.activo)}
                         >
                           <BsToggles />

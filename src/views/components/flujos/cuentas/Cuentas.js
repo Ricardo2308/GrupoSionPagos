@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { getCuentas } from '../../../../services/getCuentas'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { useSession } from 'react-use-session'
 import { FaUserEdit } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
@@ -18,6 +19,7 @@ const Cuentas = () => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [permisos, setPermisos] = useState([])
 
   useEffect(() => {
     let mounted = true
@@ -26,17 +28,36 @@ const Cuentas = () => {
         setList(items.cuentas)
       }
     })
+    getPerfilUsuario(session.id, '2').then((items) => {
+      if (mounted) {
+        setPermisos(items.detalle)
+      }
+    })
     return () => (mounted = false)
   }, [])
 
+  function ExistePermiso(objeto) {
+    let result = 0
+    for (let item of permisos) {
+      if (objeto === item.objeto) {
+        result = 1
+      }
+    }
+    return result
+  }
+
   if (session) {
+    let deshabilitar = false
+    if (ExistePermiso('Modulo Cuentas') == 0) {
+      deshabilitar = true
+    }
     return (
       <>
         <div className="float-right" style={{ marginBottom: '10px' }}>
           <CButton
             color="primary"
             size="sm"
-            //disabled={deshabilitar}
+            disabled={deshabilitar}
             onClick={() => history.push('/cuentas/nueva')}
           >
             Crear Nueva
@@ -78,6 +99,7 @@ const Cuentas = () => {
                         color="primary"
                         size="sm"
                         title="Editar Banco"
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/cuentas/editar',

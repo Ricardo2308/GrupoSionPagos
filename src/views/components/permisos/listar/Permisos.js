@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { getPermisos } from '../../../../services/getPermisos'
-import { useHistory } from 'react-router-dom'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { postCrudPermiso } from '../../../../services/postCrudPermiso'
+import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
+import { useSession } from 'react-use-session'
+import { FaUserEdit, FaTrash } from 'react-icons/fa'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CTable,
@@ -12,14 +16,12 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
-import { useSession } from 'react-use-session'
-import { FaUserEdit, FaTrash } from 'react-icons/fa'
-import '../../../../scss/estilos.scss'
 
 const Permisos = () => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [idPermiso, setIdPermiso] = useState(0)
 
@@ -32,8 +34,23 @@ const Permisos = () => {
         setList(items.permisos)
       }
     })
+    getPerfilUsuario(session.id, '2').then((items) => {
+      if (mounted) {
+        setPermisos(items.detalle)
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  function ExistePermiso(objeto) {
+    let result = 0
+    for (let item of permisos) {
+      if (objeto === item.objeto) {
+        result = 1
+      }
+    }
+    return result
+  }
 
   function mostrarModal(id_permiso) {
     setIdPermiso(id_permiso)
@@ -50,6 +67,10 @@ const Permisos = () => {
   }
 
   if (session) {
+    let deshabilitar = false
+    if (ExistePermiso('Modulo Permisos') == 0) {
+      deshabilitar = true
+    }
     return (
       <>
         <Modal variant="primary" show={show} onHide={handleClose} centered>
@@ -70,7 +91,7 @@ const Permisos = () => {
           <CButton
             color="primary"
             size="sm"
-            //disabled={deshabilitar}
+            disabled={deshabilitar}
             onClick={() => history.push('/permisos/nuevo')}
           >
             Crear Nuevo
@@ -100,6 +121,7 @@ const Permisos = () => {
                         color="primary"
                         size="sm"
                         title="Editar Permiso"
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/permisos/editar',
@@ -115,6 +137,7 @@ const Permisos = () => {
                         color="danger"
                         size="sm"
                         title="Eliminar Permiso"
+                        disabled={deshabilitar}
                         onClick={() => mostrarModal(item.id_permiso)}
                       >
                         <FaTrash />
