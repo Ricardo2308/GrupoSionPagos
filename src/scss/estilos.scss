@@ -70,3 +70,28 @@
   font-size: 14px;
   text-align: center;
 }
+
+.title-user {
+  width: '100%';
+  text-align: center;
+  font-weight: bold;
+  border-color: black;
+}
+
+.autorizacion-card {
+  display: flex;
+  align-items: center;
+}
+
+.autorizacion-fecha {
+  flex-direction: row;
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+.autorizacion-form {
+  width: 100%;
+  margin-top: 30px;
+}
