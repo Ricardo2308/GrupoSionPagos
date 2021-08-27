@@ -39,7 +39,7 @@ const NuevoPermiso = () => {
       event.preventDefault()
       const respuesta = await postCrudPermiso('', form.descripcion, '', '')
       if (respuesta === 'OK') {
-        history.push('/permisos/permisos')
+        history.push('/permisos')
       }
     } else {
       setShow(true)

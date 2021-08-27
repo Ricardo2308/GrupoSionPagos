@@ -43,7 +43,7 @@ const EditarPerfilUsuario = () => {
         setList(items.perfiles)
       }
     })
-    getPerfilUsuario(location.id_usuario, null).then((items) => {
+    getPerfilUsuario(location.id_usuario, '1').then((items) => {
       if (mounted) {
         setList1(items.detalle)
       }
@@ -86,7 +86,7 @@ const EditarPerfilUsuario = () => {
           form.estado,
         )
         if (respuesta === 'OK') {
-          history.push('/base/usuarios')
+          history.push('/usuarios')
         }
       } else {
         setShow(true)
@@ -158,7 +158,7 @@ const EditarPerfilUsuario = () => {
         </div>
       )
     } else {
-      history.push('/base/usuarios')
+      history.push('/usuarios')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL USUARIO. REGRESE A LA PANTALLA DE USUARIOS.

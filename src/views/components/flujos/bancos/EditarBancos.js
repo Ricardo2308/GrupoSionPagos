@@ -50,7 +50,7 @@ const EditarBancos = (props) => {
         '1',
       )
       if (respuesta === 'OK') {
-        history.push('/bancos/bancos')
+        history.push('/bancos')
       }
     } else {
       setShow(true)
@@ -116,7 +116,7 @@ const EditarBancos = (props) => {
         </div>
       )
     } else {
-      history.push('/bancos/bancos')
+      history.push('/bancos')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL USUARIO. REGRESE A LA PANTALLA DE USUARIOS.

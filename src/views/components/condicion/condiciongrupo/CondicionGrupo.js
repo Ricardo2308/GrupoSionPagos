@@ -21,7 +21,7 @@ import '../../../../scss/estilos.scss'
 const CondicionGrupo = () => {
   const history = useHistory()
   const location = useLocation()
-  const { session, saveJWT } = useSession('PendrogonIT-Session')
+  const { session } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
   const [results, setList] = useState([])
   const [mensaje, setMensaje] = useState('')
@@ -60,7 +60,7 @@ const CondicionGrupo = () => {
     }
     const respuesta = await postCondicionGrupo('', location.id_condicion, result, '1', '', '')
     if (respuesta === 'OK') {
-      history.push('/condiciones/condiciones')
+      history.push('/condiciones')
     } else if (respuesta === 'Error') {
       setShow(true)
       setTitulo('Error!')
@@ -130,7 +130,7 @@ const CondicionGrupo = () => {
         </div>
       )
     } else {
-      history.push('/condiciones/condiciones')
+      history.push('/condiciones')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DE CONDICIÓN. REGRESE A LA PANTALLA DE PAGOS.

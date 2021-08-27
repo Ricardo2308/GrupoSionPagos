@@ -36,7 +36,7 @@ const Consultar = () => {
 
   useEffect(() => {
     let mounted = true
-    getPerfilUsuario(location.id_usuario, null).then((items) => {
+    getPerfilUsuario(location.id_usuario, '1').then((items) => {
       if (mounted) {
         setList(items.detalle)
       }
@@ -72,12 +72,12 @@ const Consultar = () => {
       if (id_usuarioperfil !== '' && id_usuariogrupo === '') {
         const respuesta = await postPerfilUsuario(id_usuarioperfil, '', '', '1', '', '')
         if (respuesta === 'OK') {
-          await getPerfilUsuario(id_usuario, null).then((items) => {
+          await getPerfilUsuario(id_usuario, '1').then((items) => {
             setList(items.detalle)
           })
         }
       } else if (id_usuarioperfil === '' && id_usuariogrupo !== '') {
-        const respuesta = await postUsuarioGrupo(id_usuariogrupo, id_usuario, '1', '', '')
+        const respuesta = await postUsuarioGrupo(id_usuariogrupo, id_usuario, '1', '', '', '')
         if (respuesta === 'OK') {
           await getUsuarioGrupo(id_usuario, null).then((items) => {
             setList1(items.detalle)
@@ -93,12 +93,12 @@ const Consultar = () => {
       if (id_usuarioperfil !== '' && id_usuariogrupo === '') {
         const respuesta = await postPerfilUsuario(id_usuarioperfil, '', '', '3', '', result)
         if (respuesta === 'OK') {
-          await getPerfilUsuario(id_usuario, null).then((items) => {
+          await getPerfilUsuario(id_usuario, '1').then((items) => {
             setList(items.detalle)
           })
         }
       } else if (id_usuarioperfil === '' && id_usuariogrupo !== '') {
-        const respuesta = await postUsuarioGrupo(id_usuariogrupo, id_usuario, '3', '', result)
+        const respuesta = await postUsuarioGrupo(id_usuariogrupo, id_usuario, '3', '', '', result)
         if (respuesta === 'OK') {
           await getUsuarioGrupo(id_usuario, null).then((items) => {
             setList1(items.detalle)
@@ -174,7 +174,7 @@ const Consultar = () => {
                           disabled={location.inhabilitar}
                           onClick={() =>
                             history.push({
-                              pathname: '/base/editarPU',
+                              pathname: '/usuarios/editarPU',
                               id_usuarioperfil: item.id_usuarioperfil,
                               id_usuario: item.id_usuario,
                               id_perfil: item.id_perfil,
@@ -248,7 +248,7 @@ const Consultar = () => {
                           disabled={location.inhabilitar}
                           onClick={() =>
                             history.push({
-                              pathname: '/base/editarusuariogrupo',
+                              pathname: '/usuarios/editarusuariogrupo',
                               id_usuariogrupo: item.id_usuariogrupo,
                               id: location.id_usuario,
                               email: location.email,
@@ -289,7 +289,7 @@ const Consultar = () => {
         </>
       )
     } else {
-      history.push('/base/usuarios')
+      history.push('/usuarios')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL USUARIO. REGRESE A LA PANTALLA DE USUARIOS.

@@ -59,7 +59,7 @@ const RolPermiso = () => {
     }
     const respuesta = await postRolPermiso('', location.id_rol, result, '', '', '')
     if (respuesta === 'OK') {
-      history.push('/roles/roles')
+      history.push('/roles')
     } else if (respuesta === 'Error') {
       setShow(true)
       setTitulo('Error!')
@@ -125,7 +125,7 @@ const RolPermiso = () => {
         </div>
       )
     } else {
-      history.push('/roles/roles')
+      history.push('/roles')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL ROL. REGRESE A LA PANTALLA DE ROLES.

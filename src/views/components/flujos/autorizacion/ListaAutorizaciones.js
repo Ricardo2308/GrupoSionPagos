@@ -81,15 +81,15 @@ const ListaAutorizaciones = () => {
             </CButton>
           </Modal.Footer>
         </Modal>
-        <div
-          style={{
-            width: '100%',
-            textAlign: 'center',
-            fontWeight: 'bold',
-            borderColor: 'black',
-          }}
-        >
-          <p>{session.name}</p>
+        <div className="float-right" style={{ marginBottom: '10px' }}>
+          <CButton
+            color="primary"
+            size="sm"
+            //disabled={deshabilitar}
+            onClick={() => history.push('/autorizacion/nueva')}
+          >
+            Crear Nueva
+          </CButton>
         </div>
         <CTable hover responsive align="middle" className="mb-0 border">
           <CTableHead color="light">

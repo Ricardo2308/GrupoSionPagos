@@ -41,7 +41,7 @@ const NuevoRol = () => {
       event.preventDefault()
       const respuesta = await postCrudRoles('', form.descripcion, form.objeto, '', '')
       if (respuesta === 'OK') {
-        history.push('/roles/roles')
+        history.push('/roles')
       }
     } else {
       setShow(true)

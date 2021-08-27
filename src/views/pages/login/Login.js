@@ -72,7 +72,6 @@ const Login = () => {
             name: item.nombre + ' ' + item.apellido,
             user_name: item.nombre_usuario,
             id: item.id,
-            perfil: item.perfil,
             estado: item.activo,
           }
           const jwt = sign(data, secret)

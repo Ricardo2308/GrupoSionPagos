@@ -40,7 +40,7 @@ const NuevoBanco = (props) => {
       event.preventDefault()
       const respuesta = await postCrudBancos('', form.nombre, form.direccion, '', '')
       if (respuesta === 'OK') {
-        history.push('/bancos/bancos')
+        history.push('/bancos')
       }
     } else {
       setShow(true)

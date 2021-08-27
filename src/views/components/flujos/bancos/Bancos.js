@@ -66,6 +66,16 @@ const Bancos = () => {
             </CButton>
           </Modal.Footer>
         </Modal>
+        <div className="float-right" style={{ marginBottom: '10px' }}>
+          <CButton
+            color="primary"
+            size="sm"
+            //disabled={deshabilitar}
+            onClick={() => history.push('/bancos/nuevo')}
+          >
+            Crear Nuevo
+          </CButton>
+        </div>
         <CTable hover responsive align="middle" className="mb-0 border">
           <CTableHead color="light">
             <CTableRow>

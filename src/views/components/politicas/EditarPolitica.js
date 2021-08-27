@@ -50,7 +50,7 @@ const EditarPolitica = () => {
         '1',
       )
       if (respuesta === 'OK') {
-        history.push('/politicas/politicas')
+        history.push('/politicas')
       }
     } else {
       setShow(true)
@@ -129,7 +129,7 @@ const EditarPolitica = () => {
         </div>
       )
     } else {
-      history.push('/politicas/politicas')
+      history.push('/politicas')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DE LA POLÍTICA. REGRESE A LA PANTALLA DE POLÍTICAS.

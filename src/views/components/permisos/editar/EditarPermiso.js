@@ -45,7 +45,7 @@ const EditarPermiso = () => {
         '1',
       )
       if (respuesta === 'OK') {
-        history.push('/permisos/permisos')
+        history.push('/permisos')
       }
     } else {
       setShow(true)
@@ -100,7 +100,7 @@ const EditarPermiso = () => {
         </div>
       )
     } else {
-      history.push('/permisos/permisos')
+      history.push('/permisos')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL PERMISO. REGRESE A LA PANTALLA DE PERMISOS.

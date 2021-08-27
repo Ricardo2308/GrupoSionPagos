@@ -66,7 +66,7 @@ const EditarUsuarioGrupo = (props) => {
       '',
     )
     if (respuesta === 'OK') {
-      history.push('/base/usuarios')
+      history.push('/usuarios')
     }
   }
 
@@ -78,7 +78,7 @@ const EditarUsuarioGrupo = (props) => {
             <CCard style={{ display: 'flex', alignItems: 'center' }}>
               <CCardBody style={{ width: '80%' }}>
                 <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
-                  <h1>Asignación de Grupo de Autorización</h1>
+                  <h1>Asignación Nuevo Grupo Autorización</h1>
                   <p className="text-medium-emphasis">Asigne un grupo de autorización al usuario</p>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
@@ -152,7 +152,7 @@ const EditarUsuarioGrupo = (props) => {
         </div>
       )
     } else {
-      history.push('/base/usuarios')
+      history.push('/usuarios')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL USUARIO. REGRESE A LA PANTALLA DE USUARIOS.

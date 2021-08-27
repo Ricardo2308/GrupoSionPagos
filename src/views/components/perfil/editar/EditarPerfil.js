@@ -41,7 +41,7 @@ const EditarPerfil = () => {
       event.preventDefault()
       const respuesta = await postCrudPerfil(location.id_perfil, form.descripcion, form.estado, '1')
       if (respuesta === 'OK') {
-        history.push('/perfiles/perfiles')
+        history.push('/perfiles')
       }
     } else {
       setShow(true)
@@ -96,7 +96,7 @@ const EditarPerfil = () => {
         </div>
       )
     } else {
-      history.push('/perfiles/perfiles')
+      history.push('/perfiles')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL PERFIL. REGRESE A LA PANTALLA DE PERFILES.

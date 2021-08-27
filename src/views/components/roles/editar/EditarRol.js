@@ -48,7 +48,7 @@ const EditorRol = () => {
         '1',
       )
       if (respuesta === 'OK') {
-        history.push('/roles/roles')
+        history.push('/roles')
       }
     } else {
       setShow(true)
@@ -92,7 +92,8 @@ const EditorRol = () => {
                       placeholder="Objeto"
                       name="objeto"
                       onChange={handleInput}
-                      defaultValue={location.objeto}
+                      disabled={true}
+                      value={location.objeto}
                     />
                   </CInputGroup>
                   <CInputGroup className="mb-3">
@@ -115,7 +116,7 @@ const EditorRol = () => {
         </div>
       )
     } else {
-      history.push('/roles/roles')
+      history.push('/roles')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL ROL. REGRESE A LA PANTALLA DE ROLES.

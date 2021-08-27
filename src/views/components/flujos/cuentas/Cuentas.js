@@ -32,6 +32,16 @@ const Cuentas = () => {
   if (session) {
     return (
       <>
+        <div className="float-right" style={{ marginBottom: '10px' }}>
+          <CButton
+            color="primary"
+            size="sm"
+            //disabled={deshabilitar}
+            onClick={() => history.push('/cuentas/nueva')}
+          >
+            Crear Nueva
+          </CButton>
+        </div>
         <CTable hover responsive align="middle" className="mb-0 border">
           <CTableHead color="light">
             <CTableRow>

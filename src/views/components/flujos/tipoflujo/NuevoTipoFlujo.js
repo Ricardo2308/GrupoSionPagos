@@ -53,7 +53,7 @@ const NuevoEstadoFlujo = () => {
       event.preventDefault()
       const respuesta = await postTipoFlujo('', form.descripcion, form.estado_inicial, '', '')
       if (respuesta === 'OK') {
-        history.push('/tipoflujo/tipos')
+        history.push('/tipoflujo')
       }
     } else {
       setShow(true)

@@ -50,7 +50,7 @@ const NuevoGrupo = () => {
         '',
       )
       if (respuesta === 'OK') {
-        history.push('/grupos/grupos')
+        history.push('/grupos')
       }
     } else {
       setShow(true)

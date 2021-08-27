@@ -59,7 +59,7 @@ const PerfilRol = () => {
     }
     const respuesta = await postPerfilRol('', location.id_perfil, result, '', '', '')
     if (respuesta === 'OK') {
-      history.push('/perfiles/perfiles')
+      history.push('/perfiles')
     } else if (respuesta === 'Error') {
       setShow(true)
       setTitulo('Error!')
@@ -125,7 +125,7 @@ const PerfilRol = () => {
         </div>
       )
     } else {
-      history.push('/perfiles/perfiles')
+      history.push('/perfiles')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL PERFIL. REGRESE A LA PANTALLA DE PERFILES.

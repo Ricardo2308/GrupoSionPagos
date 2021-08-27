@@ -40,7 +40,7 @@ const NuevaMoneda = (props) => {
       event.preventDefault()
       const respuesta = await postCrudMonedas('', form.nombre, form.simbolo, '', '')
       if (respuesta === 'OK') {
-        history.push('/monedas/monedas')
+        history.push('/monedas')
       }
     } else {
       setShow(true)

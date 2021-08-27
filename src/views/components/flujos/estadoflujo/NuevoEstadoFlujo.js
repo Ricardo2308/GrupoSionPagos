@@ -53,7 +53,7 @@ const NuevoEstadoFlujo = () => {
       event.preventDefault()
       const respuesta = await postEstadoFlujo('', form.flujopadre, form.descripcion, '', '3')
       if (respuesta === 'OK') {
-        history.push('/estadoflujo/estados')
+        history.push('/estadosflujo')
       }
     } else {
       setShow(true)

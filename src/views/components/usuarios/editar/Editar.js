@@ -60,7 +60,7 @@ const EditarUsuarios = (props) => {
         '1',
       )
       if (respuesta === 'OK') {
-        history.push('/base/usuarios')
+        history.push('/usuarios')
       }
     } else {
       setShow(true)
@@ -150,7 +150,7 @@ const EditarUsuarios = (props) => {
         </div>
       )
     } else {
-      history.push('/base/usuarios')
+      history.push('/usuarios')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL USUARIO. REGRESE A LA PANTALLA DE USUARIOS.

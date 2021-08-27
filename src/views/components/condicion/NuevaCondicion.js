@@ -47,7 +47,7 @@ const NuevaCondicion = () => {
         '3',
       )
       if (respuesta === 'OK') {
-        history.push('/condiciones/condiciones')
+        history.push('/condiciones')
       }
     } else {
       setShow(true)

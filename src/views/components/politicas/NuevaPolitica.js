@@ -49,7 +49,7 @@ const NuevoPermiso = () => {
         '',
       )
       if (respuesta === 'OK') {
-        history.push('/politicas/politicas')
+        history.push('/politicas')
       }
     } else {
       setShow(true)

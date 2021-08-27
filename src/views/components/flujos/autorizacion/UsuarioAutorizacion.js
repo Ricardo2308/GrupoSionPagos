@@ -68,7 +68,7 @@ const UsuarioGrupo = () => {
     )
     if (form.usuario !== '' && fechainicio && fechafinal) {
       if (respuesta === 'OK') {
-        history.push('/autorizacion/listado')
+        history.push('/autorizacion')
       } else {
         console.log(respuesta)
       }
@@ -88,12 +88,14 @@ const UsuarioGrupo = () => {
             <Alert.Heading>{titulo}</Alert.Heading>
             <p>{mensaje}</p>
           </Alert>
-          <CCard style={{ display: 'flex', alignItems: 'center' }}>
+          <CCard className="autorizacion-card">
             <CCardBody style={{ width: '80%' }}>
-              <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
+              <CForm className="autorizacion-form" onSubmit={handleSubmit}>
                 <h1>Asignación de Usurio Temporal</h1>
-                <p className="text-medium-emphasis">Seleccione a un nuevo encargado</p>
-                <CInputGroup className="mb-3">
+                <p className="text-medium-emphasis autorizacion-form">
+                  Seleccione a un nuevo encargado
+                </p>
+                <CInputGroup className="mb-3 autorizacion-form">
                   <CInputGroupText>
                     <FiSettings />
                   </CInputGroupText>
@@ -111,9 +113,9 @@ const UsuarioGrupo = () => {
                   </CFormSelect>
                 </CInputGroup>
                 <div style={{ width: '100%', alignItems: 'center' }}>
-                  <div style={{ flexDirection: 'row', display: 'flex', justifyContent: 'center' }}>
-                    <div style={{ width: '50%', alignItems: 'center' }}>
-                      <CFormLabel style={{ marginLeft: '50px', marginRight: '15px' }}>
+                  <div className="autorizacion-fecha">
+                    <div style={{ width: '100%', alignItems: 'center' }}>
+                      <CFormLabel style={{ marginLeft: '40px', marginRight: '15px' }}>
                         Fecha de Inicio
                       </CFormLabel>
                       <DatePicker
@@ -124,7 +126,9 @@ const UsuarioGrupo = () => {
                       />
                     </div>
                     <div style={{ width: '50%', alignItems: 'center' }}>
-                      <CFormLabel style={{ marginRight: '15px' }}>Fecha de Fin </CFormLabel>
+                      <CFormLabel style={{ marginLeft: '40px', marginRight: '15px' }}>
+                        Fecha de Fin
+                      </CFormLabel>
                       <DatePicker
                         locale="es"
                         selected={fechafinal}
@@ -135,7 +139,7 @@ const UsuarioGrupo = () => {
                   </div>
                 </div>
                 <br />
-                <CButton color="primary" type="submit" block>
+                <CButton color="primary" type="submit" block style={{ marginBottom: '20px' }}>
                   Guardar Cambios
                 </CButton>
               </CForm>

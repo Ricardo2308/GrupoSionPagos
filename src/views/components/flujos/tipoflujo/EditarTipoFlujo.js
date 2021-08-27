@@ -59,7 +59,7 @@ const EditarEstadoFlujo = () => {
         '1',
       )
       if (respuesta === 'OK') {
-        history.push('/tipoflujo/tipos')
+        history.push('/tipoflujo')
       }
     } else {
       setShow(true)
@@ -131,7 +131,7 @@ const EditarEstadoFlujo = () => {
         </div>
       )
     } else {
-      history.push('/tipoflujo/tipos')
+      history.push('/tipoflujo')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL TIPO DE FLUJO. REGRESE A LA PANTALLA DE TIPOS DE FLUJO.

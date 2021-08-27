@@ -86,7 +86,7 @@ const EditarPerfilRol = () => {
           form.estado,
         )
         if (respuesta === 'OK') {
-          history.push('/perfiles/perfiles')
+          history.push('/perfiles')
         }
       } else {
         setShow(true)
@@ -158,7 +158,7 @@ const EditarPerfilRol = () => {
         </div>
       )
     } else {
-      history.push('/perfiles/perfiles')
+      history.push('/perfiles')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL PERFIL. REGRESE A LA PANTALLA DE PERFILES.

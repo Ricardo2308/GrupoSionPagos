@@ -180,7 +180,7 @@ const ConsultarPR = () => {
         </>
       )
     } else {
-      history.push('/condiciones/condiciones')
+      history.push('/condiciones')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DE CONDICIÓN. REGRESE A LA PANTALLA DE PAGOS.

@@ -50,7 +50,7 @@ const EditarMonedas = (props) => {
         '1',
       )
       if (respuesta === 'OK') {
-        history.push('/monedas/monedas')
+        history.push('/monedas')
       }
     } else {
       setShow(true)
@@ -116,7 +116,7 @@ const EditarMonedas = (props) => {
         </div>
       )
     } else {
-      history.push('/monedas/monedas')
+      history.push('/monedas')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL USUARIO. REGRESE A LA PANTALLA DE USUARIOS.

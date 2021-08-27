@@ -59,7 +59,7 @@ const PerfilUsuario = () => {
     }
     const respuesta = await postPerfilUsuario('', location.id, result, '', '', '')
     if (respuesta === 'OK') {
-      history.push('/base/usuarios')
+      history.push('/usuarios')
     } else if (respuesta === 'Error') {
       setShow(true)
       setTitulo('Error!')
@@ -138,7 +138,7 @@ const PerfilUsuario = () => {
         </div>
       )
     } else {
-      history.push('/base/usuarios')
+      history.push('/usuarios')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL USUARIO. REGRESE A LA PANTALLA DE USUARIOS.

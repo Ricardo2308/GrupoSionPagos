@@ -82,7 +82,7 @@ const NuevoBanco = (props) => {
         '',
       )
       if (respuesta === 'OK') {
-        history.push('/cuentas/cuentas')
+        history.push('/cuentas')
       }
     } else {
       setShow(true)

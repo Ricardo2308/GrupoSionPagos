@@ -59,7 +59,7 @@ const EditarEstadoFlujo = () => {
         '1',
       )
       if (respuesta === 'OK') {
-        history.push('/estadoflujo/estados')
+        history.push('/estadosflujo')
       }
     } else {
       setShow(true)
@@ -133,7 +133,7 @@ const EditarEstadoFlujo = () => {
         </div>
       )
     } else {
-      history.push('/estadoflujo/estados')
+      history.push('/estadosflujo')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL ESTADO. REGRESE A LA PANTALLA DE ESTADOS DE PAGO.

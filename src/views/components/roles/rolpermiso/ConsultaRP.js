@@ -176,7 +176,7 @@ const ConsultarRP = () => {
         </>
       )
     } else {
-      history.push('/roles/roles')
+      history.push('/roles')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL ROL. REGRESE A LA PANTALLA DE ROLES.

@@ -12,6 +12,7 @@ import {
 } from '@coreui/react'
 import { getUsuarios } from '../../../../services/getUsuarios'
 import { postEditarUsuario } from '../../../../services/postEditarUsuario'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { useSession } from 'react-use-session'
 import { FaUserEdit, FaTrash, FaUserCog, FaUserCircle, FaUsersCog } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
@@ -20,6 +21,7 @@ const Usuarios = () => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [nombreUsuario, setNombreUsuario] = useState('')
   const [idUsuario, setIdUsuario] = useState(0)
@@ -33,8 +35,27 @@ const Usuarios = () => {
         setList(items.users)
       }
     })
+    getPerfilUsuario(session.id, '2').then((items) => {
+      if (mounted) {
+        setPermisos(items.detalle)
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  function ExistePermiso(id_permiso, objeto) {
+    let result = 0
+    for (let item of permisos) {
+      if (item.id_permiso !== id_permiso && objeto === item.objeto) {
+        result = 1
+      } else {
+        if (item.id_permiso === id_permiso && item.objeto === 'Modulo Grupos Autorizacion') {
+          result = 2
+        }
+      }
+    }
+    return result
+  }
 
   function mostrarModal(id, nombre) {
     setIdUsuario(id)
@@ -52,6 +73,16 @@ const Usuarios = () => {
   }
 
   if (session) {
+    let deshabilitar = false
+    let deshabilitar_grupo = false
+    if (ExistePermiso('6', 'Modulo Usuarios') == 1) {
+      deshabilitar_grupo = true
+    } else if (ExistePermiso('6', 'Modulo Usuarios') == 2) {
+      deshabilitar = true
+    } else if (ExistePermiso('6', 'Modulo Usuarios') == 0) {
+      deshabilitar_grupo = true
+      deshabilitar = true
+    }
     return (
       <>
         <Modal responsive variant="primary" show={show} onHide={handleClose} centered>
@@ -68,6 +99,16 @@ const Usuarios = () => {
             </CButton>
           </Modal.Footer>
         </Modal>
+        <div className="float-right" style={{ marginBottom: '10px' }}>
+          <CButton
+            color="primary"
+            size="sm"
+            disabled={deshabilitar}
+            onClick={() => history.push('/usuarios/registro')}
+          >
+            Crear Nuevo
+          </CButton>
+        </div>
         <CTable hover responsive align="middle" className="mb-0 border">
           <CTableHead color="light">
             <CTableRow>
@@ -100,7 +141,7 @@ const Usuarios = () => {
                         title="Consultar Usuario Perfil"
                         onClick={() =>
                           history.push({
-                            pathname: '/base/consulta',
+                            pathname: '/usuarios/consulta',
                             id_usuario: item.id,
                             email: item.email,
                             nombre: item.nombre + ' ' + item.apellido,
@@ -115,9 +156,10 @@ const Usuarios = () => {
                         color="success"
                         size="sm"
                         title="Asignar Perfiles"
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
-                            pathname: '/base/perfilusuario',
+                            pathname: '/usuarios/perfilusuario',
                             id: item.id,
                             nombre: item.nombre + ' ' + item.apellido,
                             email: item.email,
@@ -131,9 +173,10 @@ const Usuarios = () => {
                         color="warning"
                         size="sm"
                         title="Asignar Grupo Autorización"
+                        disabled={deshabilitar_grupo}
                         onClick={() =>
                           history.push({
-                            pathname: '/base/usuariogrupo',
+                            pathname: '/usuarios/usuariogrupo',
                             id: item.id,
                             nombre: item.nombre + ' ' + item.apellido,
                             email: item.email,
@@ -148,9 +191,10 @@ const Usuarios = () => {
                         color="primary"
                         size="sm"
                         title="Editar Usuario"
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
-                            pathname: '/base/editar',
+                            pathname: '/usuarios/editar',
                             id: item.id,
                             nombre: item.nombre,
                             apellido: item.apellido,
@@ -167,6 +211,7 @@ const Usuarios = () => {
                         color="danger"
                         size="sm"
                         title="Eliminar Usuario"
+                        disabled={deshabilitar}
                         onClick={() => mostrarModal(item.id, item.nombre + ' ' + item.apellido)}
                       >
                         <FaTrash />

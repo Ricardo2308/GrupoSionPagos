@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postGruposAutorizacion } from '../../../../services/postGruposAutorizacion'
-import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
 import { FiUserPlus, FiSettings, FiGrid } from 'react-icons/fi'
 import { FaNetworkWired } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
@@ -52,7 +51,7 @@ const EditarGrupo = () => {
         '1',
       )
       if (respuesta === 'OK') {
-        history.push('/grupos/grupos')
+        history.push('/grupos')
       }
     } else {
       setShow(true)
@@ -133,7 +132,7 @@ const EditarGrupo = () => {
         </div>
       )
     } else {
-      history.push('/grupos/grupos')
+      history.push('/grupos')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL GRUPO. REGRESE A LA PANTALLA DE GRUPOS.

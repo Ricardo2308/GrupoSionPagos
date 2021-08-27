@@ -39,7 +39,7 @@ const NuevoPerfil = (props) => {
       event.preventDefault()
       const respuesta = await postCrudPerfil('', form.descripcion, '', '')
       if (respuesta === 'OK') {
-        history.push('/perfiles/perfiles')
+        history.push('/perfiles')
       }
     } else {
       setShow(true)
