@@ -7,6 +7,7 @@ import 'react-datepicker/dist/react-datepicker.css'
 import { useSession } from 'react-use-session'
 import { postUsuarioAutorizacion } from '../../../../services/postUsuarioAutorizacion'
 import { getUsuarios } from '../../../../services/getUsuarios'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import {
   CButton,
   CCard,
@@ -18,7 +19,6 @@ import {
   CInputGroup,
   CInputGroupText,
 } from '@coreui/react'
-import { FiSettings } from 'react-icons/fi'
 import '../../../../scss/estilos.scss'
 
 const UsuarioGrupo = () => {
@@ -29,6 +29,7 @@ const UsuarioGrupo = () => {
   const [color, setColor] = useState('danger')
   const [titulo, setTitulo] = useState('Error!')
   const [results, setList] = useState([])
+  const [permisos, setPermisos] = useState([])
   registerLocale('es', es)
 
   const [form, setValues] = useState({
@@ -46,8 +47,23 @@ const UsuarioGrupo = () => {
         setList(items.users)
       }
     })
+    getPerfilUsuario(session.id, '2').then((items) => {
+      if (mounted) {
+        setPermisos(items.detalle)
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  function ExistePermiso(objeto) {
+    let result = 0
+    for (let item of permisos) {
+      if (objeto === item.objeto) {
+        result = 1
+      }
+    }
+    return result
+  }
 
   const handleInput = (event) => {
     setValues({
@@ -82,6 +98,10 @@ const UsuarioGrupo = () => {
   }
 
   if (session) {
+    let deshabilitar = false
+    if (ExistePermiso('Modulo Autorizacion') == 0) {
+      deshabilitar = true
+    }
     return (
       <div style={{ flexDirection: 'row' }}>
         <CContainer>
@@ -98,7 +118,7 @@ const UsuarioGrupo = () => {
                 </p>
                 <CInputGroup className="mb-3 autorizacion-form">
                   <CInputGroupText style={{ width: '22%' }}>Usuario Aprobador</CInputGroupText>
-                  <CFormSelect name="aprobador" onChange={handleInput} disabled={true}>
+                  <CFormSelect name="aprobador" onChange={handleInput} disabled={deshabilitar}>
                     <option selected={true} value={session.id}>
                       {session.name}
                     </option>
