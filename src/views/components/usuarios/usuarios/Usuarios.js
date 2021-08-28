@@ -75,6 +75,7 @@ const Usuarios = () => {
   if (session) {
     let deshabilitar = false
     let deshabilitar_grupo = false
+    let deshabilitar_perfil = false
     if (ExistePermiso('Modulo Usuarios') == 1) {
       deshabilitar_grupo = true
     } else if (ExistePermiso('Modulo Usuarios') == 2) {
@@ -82,6 +83,7 @@ const Usuarios = () => {
     } else if (ExistePermiso('Modulo Usuarios') == 0) {
       deshabilitar_grupo = true
       deshabilitar = true
+      deshabilitar_perfil = true
     }
     return (
       <>
@@ -139,6 +141,7 @@ const Usuarios = () => {
                         color="info"
                         size="sm"
                         title="Consultar Usuario Perfil"
+                        disabled={deshabilitar_perfil}
                         onClick={() =>
                           history.push({
                             pathname: '/usuarios/consulta',
