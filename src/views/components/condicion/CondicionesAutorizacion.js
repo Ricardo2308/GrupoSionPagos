@@ -3,6 +3,10 @@ import { useHistory } from 'react-router-dom'
 import { useSession } from 'react-use-session'
 import { Modal } from 'react-bootstrap'
 import { FaPen, FaTrash, FaUsersCog, FaUsers } from 'react-icons/fa'
+import { getCondicionesAutorizacion } from '../../../services/getCondicionesAutorizacion'
+import { getPerfilUsuario } from '../../../services/getPerfilUsuario'
+import { postCondicionAutorizacion } from '../../../services/postCondicionAutorizacion'
+import '../../../scss/estilos.scss'
 import {
   CButton,
   CTable,
@@ -12,14 +16,12 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
-import { getCondicionesAutorizacion } from '../../../services/getCondicionesAutorizacion'
-import { postCondicionAutorizacion } from '../../../services/postCondicionAutorizacion'
-import '../../../scss/estilos.scss'
 
 const Cards = () => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [idCondicion, setIdCondicion] = useState(0)
 
@@ -32,8 +34,23 @@ const Cards = () => {
         setList(items.condiciones)
       }
     })
+    getPerfilUsuario(session.id, '2').then((items) => {
+      if (mounted) {
+        setPermisos(items.detalle)
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  function ExistePermiso(objeto) {
+    let result = 0
+    for (let item of permisos) {
+      if (objeto === item.objeto) {
+        result = 1
+      }
+    }
+    return result
+  }
 
   function mostrarModal(id_condicion) {
     setIdCondicion(id_condicion)
@@ -50,6 +67,10 @@ const Cards = () => {
   }
 
   if (session) {
+    let deshabilitar = false
+    if (ExistePermiso('Modulo Grupos Autorizacion') == 0) {
+      deshabilitar = true
+    }
     return (
       <>
         <Modal variant="primary" show={show} onHide={handleClose} centered>
@@ -109,6 +130,7 @@ const Cards = () => {
                         color="info"
                         size="sm"
                         title="Consultar Condición Grupos"
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/condiciones/consulta',
@@ -124,6 +146,7 @@ const Cards = () => {
                         color="success"
                         size="sm"
                         title="Asignar Grupo Autorización"
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/condiciones/condiciongrupo',
