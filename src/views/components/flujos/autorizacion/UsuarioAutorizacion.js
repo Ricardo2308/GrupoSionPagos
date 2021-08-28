@@ -32,7 +32,8 @@ const UsuarioGrupo = () => {
   registerLocale('es', es)
 
   const [form, setValues] = useState({
-    usuario: '',
+    aprobador: session.id,
+    temporal: '',
   })
 
   const [fechainicio, setFechaInicio] = useState(new Date())
@@ -59,8 +60,8 @@ const UsuarioGrupo = () => {
     event.preventDefault()
     const respuesta = await postUsuarioAutorizacion(
       '',
-      session.id,
-      form.usuario,
+      form.aprobador,
+      form.temporal,
       fechainicio,
       fechafinal,
       '',
@@ -91,15 +92,30 @@ const UsuarioGrupo = () => {
           <CCard className="autorizacion-card">
             <CCardBody style={{ width: '80%' }}>
               <CForm className="autorizacion-form" onSubmit={handleSubmit}>
-                <h1>Asignación de Usurio Temporal</h1>
+                <h1>Asignación de Usuario Temporal</h1>
                 <p className="text-medium-emphasis autorizacion-form">
                   Seleccione a un nuevo encargado
                 </p>
                 <CInputGroup className="mb-3 autorizacion-form">
-                  <CInputGroupText>
-                    <FiSettings />
-                  </CInputGroupText>
-                  <CFormSelect name="usuario" onChange={handleInput}>
+                  <CInputGroupText style={{ width: '22%' }}>Usuario Aprobador</CInputGroupText>
+                  <CFormSelect name="aprobador" onChange={handleInput} disabled={true}>
+                    <option selected={true} value={session.id}>
+                      {session.name}
+                    </option>
+                    {results.map((item, i) => {
+                      if (item.eliminado !== '1' && item.activo !== '0' && item.id !== session.id) {
+                        return (
+                          <option key={item.id} value={item.id}>
+                            {item.nombre} {item.apellido}
+                          </option>
+                        )
+                      }
+                    })}
+                  </CFormSelect>
+                </CInputGroup>
+                <CInputGroup className="mb-3 autorizacion-form">
+                  <CInputGroupText style={{ width: '22%' }}>Usuario Temporal</CInputGroupText>
+                  <CFormSelect name="temporal" onChange={handleInput}>
                     <option>Seleccione usuario temporal.</option>
                     {results.map((item, i) => {
                       if (item.eliminado !== '1' && item.activo !== '0' && item.id !== session.id) {
