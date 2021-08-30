@@ -47,6 +47,10 @@ const Cards = () => {
     for (let item of permisos) {
       if (objeto === item.objeto) {
         result = 1
+      } else {
+        if (item.objeto === 'Modulo Grupos Autorizacion') {
+          result = 2
+        }
       }
     }
     return result
@@ -68,7 +72,13 @@ const Cards = () => {
 
   if (session) {
     let deshabilitar = false
-    if (ExistePermiso('Modulo Grupos Autorizacion') == 0) {
+    let deshabilitar_grupos = false
+    if (ExistePermiso('Modulo Condiciones') == 1) {
+      deshabilitar_grupos = true
+    } else if (ExistePermiso('Modulo Condiciones') == 2) {
+      deshabilitar = true
+    } else if (ExistePermiso('Modulo Condiciones') == 0) {
+      deshabilitar_grupos = true
       deshabilitar = true
     }
     return (
@@ -94,7 +104,7 @@ const Cards = () => {
           <CButton
             color="primary"
             size="sm"
-            //disabled={deshabilitar}
+            disabled={deshabilitar}
             onClick={() => history.push('/condiciones/nueva')}
           >
             Crear Nueva
@@ -130,7 +140,7 @@ const Cards = () => {
                         color="info"
                         size="sm"
                         title="Consultar Condición Grupos"
-                        disabled={deshabilitar}
+                        disabled={deshabilitar_grupos}
                         onClick={() =>
                           history.push({
                             pathname: '/condiciones/consulta',
@@ -146,7 +156,7 @@ const Cards = () => {
                         color="success"
                         size="sm"
                         title="Asignar Grupo Autorización"
-                        disabled={deshabilitar}
+                        disabled={deshabilitar_grupos}
                         onClick={() =>
                           history.push({
                             pathname: '/condiciones/condiciongrupo',
@@ -162,6 +172,7 @@ const Cards = () => {
                         color="primary"
                         size="sm"
                         title="Editar Condición Autorización"
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/condiciones/editar',
@@ -178,6 +189,7 @@ const Cards = () => {
                         color="danger"
                         size="sm"
                         title="Eliminar Condición Autorización"
+                        disabled={deshabilitar}
                         onClick={() => mostrarModal(item.id_condicionautorizacion)}
                       >
                         <FaTrash />

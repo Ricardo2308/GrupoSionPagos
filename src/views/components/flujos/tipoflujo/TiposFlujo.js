@@ -11,6 +11,7 @@ import {
   CTableRow,
 } from '@coreui/react'
 import { getTiposFlujo } from '../../../../services/getTiposFlujo'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { postTipoFlujo } from '../../../../services/postTipoFlujo'
 import { useSession } from 'react-use-session'
 import { FaPen, FaTrash } from 'react-icons/fa'
@@ -20,6 +21,7 @@ const TiposFlujo = () => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [idTipo, setIdTipo] = useState(0)
 
@@ -32,8 +34,23 @@ const TiposFlujo = () => {
         setList(items.tipos)
       }
     })
+    getPerfilUsuario(session.id, '2').then((items) => {
+      if (mounted) {
+        setPermisos(items.detalle)
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  function ExistePermiso(objeto) {
+    let result = 0
+    for (let item of permisos) {
+      if (objeto === item.objeto) {
+        result = 1
+      }
+    }
+    return result
+  }
 
   function mostrarModal(id_tipoflujo) {
     setIdTipo(id_tipoflujo)
@@ -50,6 +67,10 @@ const TiposFlujo = () => {
   }
 
   if (session) {
+    let deshabilitar = false
+    if (ExistePermiso('Modulo Tipos Flujo') == 0) {
+      deshabilitar = true
+    }
     return (
       <>
         <Modal variant="primary" show={show} onHide={handleClose} centered>
@@ -70,7 +91,7 @@ const TiposFlujo = () => {
           <CButton
             color="primary"
             size="sm"
-            //disabled={deshabilitar}
+            disabled={deshabilitar}
             onClick={() => history.push('/tipoflujo/nuevo')}
           >
             Crear Nuevo
@@ -110,6 +131,7 @@ const TiposFlujo = () => {
                         color="primary"
                         size="sm"
                         title="Editar Tipo Flujo"
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/tipoflujo/editar',
@@ -126,6 +148,7 @@ const TiposFlujo = () => {
                         color="danger"
                         size="sm"
                         title="Eliminar Tipo Flujo"
+                        disabled={deshabilitar}
                         onClick={() => mostrarModal(item.id_tipoflujo)}
                       >
                         <FaTrash />
