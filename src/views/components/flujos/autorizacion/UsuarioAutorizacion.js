@@ -73,21 +73,34 @@ const UsuarioGrupo = () => {
   }
 
   const handleSubmit = async (event) => {
-    event.preventDefault()
-    const respuesta = await postUsuarioAutorizacion(
-      '',
-      form.aprobador,
-      form.temporal,
-      fechainicio,
-      fechafinal,
-      '',
-      '',
-    )
-    if (form.usuario !== '' && fechainicio && fechafinal) {
-      if (respuesta === 'OK') {
-        history.push('/autorizacion')
+    if (form.aprobador !== '' && form.temporal !== '' && fechainicio && fechafinal) {
+      if (fechafinal > fechainicio) {
+        event.preventDefault()
+        const respuesta = await postUsuarioAutorizacion(
+          '',
+          form.aprobador,
+          form.temporal,
+          fechainicio,
+          fechafinal,
+          '',
+          '',
+        )
+        if (respuesta === 'OK') {
+          history.push('/autorizacion')
+        } else if (respuesta === 'Existe') {
+          setShow(true)
+          setTitulo('Fechas existentes!')
+          setColor('danger')
+          setMensaje(
+            'Las fechas inicial o final coinciden con una autorizacion ya programada.' +
+              ' Intente con otras fechas.',
+          )
+        }
       } else {
-        console.log(respuesta)
+        setShow(true)
+        setTitulo('Error!')
+        setColor('danger')
+        setMensaje('La fecha final debe ser después de la inicial.')
       }
     } else {
       setShow(true)
@@ -111,7 +124,7 @@ const UsuarioGrupo = () => {
           </Alert>
           <CCard className="autorizacion-card">
             <CCardBody style={{ width: '80%' }}>
-              <CForm className="autorizacion-form" onSubmit={handleSubmit}>
+              <CForm className="autorizacion-form">
                 <h1>Asignación de Usuario Temporal</h1>
                 <p className="text-medium-emphasis autorizacion-form">
                   Seleccione a un nuevo encargado
@@ -123,7 +136,7 @@ const UsuarioGrupo = () => {
                       {session.name}
                     </option>
                     {results.map((item, i) => {
-                      if (item.eliminado !== '1' && item.activo !== '0' && item.id !== session.id) {
+                      if (item.eliminado !== '1' && item.activo !== '0') {
                         return (
                           <option key={item.id} value={item.id}>
                             {item.nombre} {item.apellido}
@@ -175,7 +188,7 @@ const UsuarioGrupo = () => {
                   </div>
                 </div>
                 <br />
-                <CButton color="primary" type="submit" block style={{ marginBottom: '20px' }}>
+                <CButton color="primary" onClick={handleSubmit} style={{ marginBottom: '20px' }}>
                   Guardar Cambios
                 </CButton>
               </CForm>
