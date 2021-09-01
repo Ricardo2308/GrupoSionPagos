@@ -1,13 +1,13 @@
 const API = `${process.env.REACT_APP_API_URL}flujos`
 
-export function getFlujos(idFlujo, Tipo) {
+export function getFlujos(idFlujo, Tipo, idUsuario) {
   let ApiFinal = API
   let ApiWhere = ''
   if (idFlujo !== null) {
-    ApiWhere += '/' + idFlujo + '/0'
+    ApiWhere += '/' + idFlujo + '/0/' + idUsuario
   }
   if (Tipo !== null) {
-    ApiWhere += '/0/' + Tipo
+    ApiWhere += '/0/' + Tipo + '/' + idUsuario
   }
   ApiFinal += ApiWhere
   return fetch(ApiFinal)
