@@ -48,7 +48,7 @@ const GridFlujos = () => {
 
   useEffect(() => {
     let mounted = true
-    getFlujos(null, 'TRANSFERENCIA').then((items) => {
+    getFlujos(null, 'TRANSFERENCIA', session.id).then((items) => {
       if (mounted) {
         setList(items.flujos)
       }

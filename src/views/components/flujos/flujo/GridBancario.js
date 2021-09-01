@@ -46,7 +46,7 @@ const GridFlujos = () => {
 
   useEffect(() => {
     let mounted = true
-    getFlujos(null, 'BANCARIO').then((items) => {
+    getFlujos(null, 'BANCARIO', session.id).then((items) => {
       if (mounted) {
         setList(items.flujos)
       }
@@ -59,14 +59,14 @@ const GridFlujos = () => {
     return () => (mounted = false)
   }, [])
 
-  function ExistePermiso(objeto) {
-    let result = 0
+  async function ExistePermiso(permiso) {
     for (let item of permisos) {
-      if (objeto === item.objeto) {
-        result = 1
+      if (item.id_permiso === permiso) {
+        await getFlujos(null, 'BANCARIO').then((items) => {
+          setList(items.flujos)
+        })
       }
     }
-    return result
   }
 
   const customStyles = {
@@ -133,10 +133,6 @@ const GridFlujos = () => {
     {
       name: 'Acciones',
       cell: function OrderItems(row) {
-        let deshabilitar = false
-        if (ExistePermiso('Modulo Archivos Pago') == 0) {
-          deshabilitar = true
-        }
         return (
           <div>
             <Button
@@ -144,7 +140,6 @@ const GridFlujos = () => {
               size="sm"
               variant="primary"
               title="Cargar Archivo"
-              disabled={deshabilitar}
               onClick={() =>
                 history.push({
                   pathname: '/archivoflujo/nuevo',

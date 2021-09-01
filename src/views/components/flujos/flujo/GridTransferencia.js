@@ -46,7 +46,7 @@ const GridFlujos = () => {
 
   useEffect(() => {
     let mounted = true
-    getFlujos(null, 'TRANSFERENCIA').then((items) => {
+    getFlujos(null, 'TRANSFERENCIA', session.id).then((items) => {
       if (mounted) {
         setList(items.flujos)
       }
@@ -60,10 +60,10 @@ const GridFlujos = () => {
   }, [])
 
   function ExistePermiso(objeto) {
-    let result = 0
+    let result = false
     for (let item of permisos) {
       if (objeto === item.objeto) {
-        result = 1
+        result = true
       }
     }
     return result
@@ -133,45 +133,63 @@ const GridFlujos = () => {
     {
       name: 'Acciones',
       cell: function OrderItems(row) {
-        let deshabilitar = false
-        if (ExistePermiso('Modulo Archivos Pago') == 0) {
-          deshabilitar = true
+        if (ExistePermiso('Modulo Archivos Pago')) {
+          return (
+            <div>
+              <Button
+                data-tag="allowRowEvents"
+                size="sm"
+                variant="primary"
+                title="Cargar Archivo"
+                onClick={() =>
+                  history.push({
+                    pathname: '/archivoflujo/nuevo',
+                    id_flujo: row.id_flujo,
+                  })
+                }
+              >
+                <FaFileUpload />
+              </Button>{' '}
+              <Button
+                data-tag="allowRowEvents"
+                variant="success"
+                size="sm"
+                title="Consultar Detalle Pago"
+                onClick={() =>
+                  history.push({
+                    pathname: '/pagos/tabs',
+                    id_flujo: row.id_flujo,
+                    pago: row.doc_num,
+                    deshabilitar: false,
+                  })
+                }
+              >
+                <FaList />
+              </Button>
+            </div>
+          )
+        } else {
+          return (
+            <div>
+              <Button
+                data-tag="allowRowEvents"
+                variant="success"
+                size="sm"
+                title="Consultar Detalle Pago"
+                onClick={() =>
+                  history.push({
+                    pathname: '/pagos/tabs',
+                    id_flujo: row.id_flujo,
+                    pago: row.doc_num,
+                    deshabilitar: false,
+                  })
+                }
+              >
+                <FaList />
+              </Button>
+            </div>
+          )
         }
-        return (
-          <div>
-            <Button
-              data-tag="allowRowEvents"
-              size="sm"
-              variant="primary"
-              title="Cargar Archivo"
-              disabled={deshabilitar}
-              onClick={() =>
-                history.push({
-                  pathname: '/archivoflujo/nuevo',
-                  id_flujo: row.id_flujo,
-                })
-              }
-            >
-              <FaFileUpload />
-            </Button>{' '}
-            <Button
-              data-tag="allowRowEvents"
-              variant="success"
-              size="sm"
-              title="Consultar Detalle Pago"
-              onClick={() =>
-                history.push({
-                  pathname: '/pagos/tabs',
-                  id_flujo: row.id_flujo,
-                  pago: row.doc_num,
-                  deshabilitar: false,
-                })
-              }
-            >
-              <FaList />
-            </Button>
-          </div>
-        )
       },
       center: true,
     },
