@@ -16,8 +16,9 @@ import {
   CInputGroupText,
   CFormSelect,
 } from '@coreui/react'
-import { FiUser, FiAtSign, FiSettings } from 'react-icons/fi'
-import { GrLocationPin } from 'react-icons/gr'
+import { FiUser, FiAtSign } from 'react-icons/fi'
+import { FaUsers } from 'react-icons/fa'
+import { FaNetworkWired } from 'react-icons/fa'
 
 const UsuarioGrupo = (props) => {
   const history = useHistory()
@@ -169,7 +170,7 @@ const UsuarioGrupo = (props) => {
                   </CInputGroup>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
-                      <FiSettings />
+                      <FaUsers />
                     </CInputGroupText>
                     <CFormSelect name="grupo_autorizacion" onChange={handleInput}>
                       <option>Primero seleccione un grupo. (Opcional)</option>
@@ -186,7 +187,7 @@ const UsuarioGrupo = (props) => {
                   </CInputGroup>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
-                      <GrLocationPin />
+                      <FaNetworkWired />
                     </CInputGroupText>
                     <CFormSelect name="nivel" onChange={handleInput}>
                       <option>Luego un nivel de autorización. (Opcional)</option>

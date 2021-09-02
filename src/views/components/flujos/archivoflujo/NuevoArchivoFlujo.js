@@ -4,6 +4,9 @@ import { Alert } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import FileUploader from '../../../../components/FileUploader'
 import { postArchivoFlujo } from '../../../../services/postArchivoFlujo'
+import { postFlujoDetalle } from '../../../../services/postFlujoDetalle'
+import { FiFile } from 'react-icons/fi'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CCard,
@@ -14,8 +17,6 @@ import {
   CInputGroup,
   CInputGroupText,
 } from '@coreui/react'
-import { FiFile } from 'react-icons/fi'
-import '../../../../scss/estilos.scss'
 
 const NuevoArchivoFlujo = (props) => {
   const history = useHistory()
@@ -50,7 +51,15 @@ const NuevoArchivoFlujo = (props) => {
         '',
       )
       if (respuesta === 'OK') {
-        history.go(-1)
+        const answer = await postFlujoDetalle(
+          location.id_flujo,
+          '2',
+          session.id,
+          'Documento de pago cargado',
+        )
+        if (answer) {
+          history.go(-1)
+        }
       } else {
         console.log(respuesta)
       }

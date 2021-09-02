@@ -3,8 +3,11 @@ import { useSession } from 'react-use-session'
 import { Modal, Alert } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postFlujoGrupo } from '../../../../services/postFlujoGrupo'
+import { postFlujoDetalle } from '../../../../services/postFlujoDetalle'
 import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
 import '../../../../scss/estilos.scss'
+import { FiCreditCard } from 'react-icons/fi'
+import { FaUsers } from 'react-icons/fa'
 import {
   CButton,
   CCard,
@@ -16,8 +19,6 @@ import {
   CInputGroupText,
   CFormSelect,
 } from '@coreui/react'
-import { FiUser, FiAtSign, FiSettings, FiCreditCard } from 'react-icons/fi'
-import { GrLocationPin } from 'react-icons/gr'
 
 const FlujoGrupo = (props) => {
   const history = useHistory()
@@ -27,14 +28,13 @@ const FlujoGrupo = (props) => {
   const [showAlert, setShowAlert] = useState(false)
   const [results, setList] = useState([])
   const [mensaje, setMensaje] = useState('')
-  const [idUsuario, setIdUsuario] = useState(0)
+  const [idFlujo, setIdFlujo] = useState(0)
 
   const handleClose = () => setShow(false)
 
   const [form, setValues] = useState({
     grupo_autorizacion: '',
     estado: '',
-    nivel: '',
   })
 
   useEffect(() => {
@@ -46,14 +46,6 @@ const FlujoGrupo = (props) => {
     })
     return () => (mounted = false)
   }, [])
-
-  function obtenerNiveles(num_niveles) {
-    var niveles = []
-    for (let i = 0; i < num_niveles; i++) {
-      niveles.push(i + 1)
-    }
-    return niveles
-  }
 
   const handleInput = (event) => {
     setValues({
@@ -67,13 +59,23 @@ const FlujoGrupo = (props) => {
       event.preventDefault()
       const respuesta = await postFlujoGrupo('', location.id_flujo, form.grupo_autorizacion, '', '')
       if (respuesta === 'OK') {
-        history.push('/usuarios')
+        const answer = await postFlujoDetalle(
+          location.id_flujo,
+          '3',
+          session.id,
+          'Grupo de autorización asignado',
+        )
+        if (answer) {
+          history.go(-1)
+        }
       } else if (respuesta === 'Error') {
         setShow(true)
         setMensaje('Error de conexión.')
       } else if (respuesta === 'Repetido') {
         mostrarModal(location.id_flujo)
         setMensaje('Desea elegir otro grupo de autorización para el usuario?')
+      } else {
+        console.log(respuesta)
       }
     } else {
       setShowAlert(true)
@@ -81,14 +83,14 @@ const FlujoGrupo = (props) => {
   }
 
   function mostrarModal(id_flujo) {
-    setIdUsuario(id_flujo)
+    setIdFlujo(id_flujo)
     setShow(true)
   }
 
-  async function editarUsuarioGrupo(id_flujo) {
+  async function editarFlujoGrupo(id_flujo) {
     const respuesta = await postFlujoGrupo('0', id_flujo, form.grupo_autorizacion, '', '2')
     if (respuesta === 'OK') {
-      history.push('/usuarios')
+      history.go(-1)
     }
   }
 
@@ -117,7 +119,7 @@ const FlujoGrupo = (props) => {
                 </CButton>
                 <CButton
                   color="primary"
-                  onClick={() => editarUsuarioGrupo(idUsuario).then(handleClose)}
+                  onClick={() => editarFlujoGrupo(idFlujo).then(handleClose)}
                 >
                   Aceptar
                 </CButton>
@@ -127,7 +129,7 @@ const FlujoGrupo = (props) => {
               <CCardBody style={{ width: '80%' }}>
                 <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
                   <h1>Asignación de Grupo de Autorización</h1>
-                  <p className="text-medium-emphasis">Asigne un grupo de autorización al usuario</p>
+                  <p className="text-medium-emphasis">Asigne un grupo de autorización al pago</p>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
                       <FiCreditCard />
@@ -142,7 +144,7 @@ const FlujoGrupo = (props) => {
                   </CInputGroup>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
-                      <FiSettings />
+                      <FaUsers />
                     </CInputGroupText>
                     <CFormSelect name="grupo_autorizacion" onChange={handleInput}>
                       <option>Seleccione un grupo de autorización. (Obligatorio)</option>
@@ -167,10 +169,10 @@ const FlujoGrupo = (props) => {
         </div>
       )
     } else {
-      history.push('/usuarios')
+      history.go(-1)
       return (
         <div className="sin-sesion">
-          NO SE CARGÓ EL CÓDIGO DEL USUARIO. REGRESE A LA PANTALLA DE USUARIOS.
+          NO SE CARGÓ EL CÓDIGO DEL FLUJO. REGRESE A LA PANTALLA DE PAGOS.
         </div>
       )
     }
