@@ -5,7 +5,7 @@ import DataTable, { createTheme } from 'react-data-table-component'
 import { getFlujos } from '../../../../services/getFlujos'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { useSession } from 'react-use-session'
-import { FaList, FaFileUpload } from 'react-icons/fa'
+import { FaList, FaFileUpload, FaUsersCog } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 
 const FilterComponent = (prop) => (
@@ -168,6 +168,42 @@ const GridFlujos = () => {
               </Button>
             </div>
           )
+        } else if (ExistePermiso('Modulo Grupos Autorizacion')) {
+          return (
+            <div>
+              <Button
+                data-tag="allowRowEvents"
+                size="sm"
+                variant="primary"
+                title="Asignar Grupo"
+                onClick={() =>
+                  history.push({
+                    pathname: '/pagos/flujogrupo',
+                    id_flujo: row.id_flujo,
+                    pago: row.doc_num,
+                  })
+                }
+              >
+                <FaUsersCog />
+              </Button>{' '}
+              <Button
+                data-tag="allowRowEvents"
+                variant="success"
+                size="sm"
+                title="Consultar Detalle Pago"
+                onClick={() =>
+                  history.push({
+                    pathname: '/pagos/tabs',
+                    id_flujo: row.id_flujo,
+                    pago: row.doc_num,
+                    deshabilitar: false,
+                  })
+                }
+              >
+                <FaList />
+              </Button>
+            </div>
+          )
         } else {
           return (
             <div>
@@ -213,19 +249,19 @@ const GridFlujos = () => {
 
   if (session) {
     return (
-      <>
-        <DataTable
-          columns={columns}
-          data={filteredItems}
-          customStyles={customStyles}
-          theme="solarized"
-          pagination
-          paginationResetDefaultPage={resetPaginationToggle}
-          subHeader
-          subHeaderComponent={subHeaderComponentMemo}
-          persistTableHead
-        />
-      </>
+      <DataTable
+        columns={columns}
+        noDataComponent="No hay pagos que mostrar"
+        data={filteredItems}
+        customStyles={customStyles}
+        theme="solarized"
+        pagination
+        paginationResetDefaultPage={resetPaginationToggle}
+        subHeader
+        subHeaderComponent={subHeaderComponentMemo}
+        responsive={true}
+        persistTableHead
+      />
     )
   } else {
     history.push('/dashboard')

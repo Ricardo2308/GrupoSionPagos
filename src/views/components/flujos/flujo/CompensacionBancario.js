@@ -198,6 +198,7 @@ const GridFlujos = () => {
         </Modal>
         <DataTable
           columns={columns}
+          noDataComponent="No hay pagos que mostrar"
           data={filteredItems}
           customStyles={customStyles}
           theme="solarized"

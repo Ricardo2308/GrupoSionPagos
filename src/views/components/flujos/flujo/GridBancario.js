@@ -5,7 +5,7 @@ import DataTable, { createTheme } from 'react-data-table-component'
 import { getFlujos } from '../../../../services/getFlujos'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { useSession } from 'react-use-session'
-import { FaList, FaFileUpload } from 'react-icons/fa'
+import { FaList, FaFileUpload, FaUsersCog } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 
 const FilterComponent = (prop) => (
@@ -59,14 +59,14 @@ const GridFlujos = () => {
     return () => (mounted = false)
   }, [])
 
-  async function ExistePermiso(permiso) {
+  function ExistePermiso(objeto) {
+    let result = false
     for (let item of permisos) {
-      if (item.id_permiso === permiso) {
-        await getFlujos(null, 'BANCARIO').then((items) => {
-          setList(items.flujos)
-        })
+      if (objeto === item.objeto) {
+        result = true
       }
     }
+    return result
   }
 
   const customStyles = {
@@ -133,40 +133,99 @@ const GridFlujos = () => {
     {
       name: 'Acciones',
       cell: function OrderItems(row) {
-        return (
-          <div>
-            <Button
-              data-tag="allowRowEvents"
-              size="sm"
-              variant="primary"
-              title="Cargar Archivo"
-              onClick={() =>
-                history.push({
-                  pathname: '/archivoflujo/nuevo',
-                  id_flujo: row.id_flujo,
-                })
-              }
-            >
-              <FaFileUpload />
-            </Button>{' '}
-            <Button
-              data-tag="allowRowEvents"
-              variant="success"
-              size="sm"
-              title="Consultar Detalle Pago"
-              onClick={() =>
-                history.push({
-                  pathname: '/pagos/tabs',
-                  id_flujo: row.id_flujo,
-                  pago: row.doc_num,
-                  deshabilitar: false,
-                })
-              }
-            >
-              <FaList />
-            </Button>
-          </div>
-        )
+        if (ExistePermiso('Modulo Archivos Pago')) {
+          return (
+            <div>
+              <Button
+                data-tag="allowRowEvents"
+                size="sm"
+                variant="primary"
+                title="Cargar Archivo"
+                onClick={() =>
+                  history.push({
+                    pathname: '/archivoflujo/nuevo',
+                    id_flujo: row.id_flujo,
+                  })
+                }
+              >
+                <FaFileUpload />
+              </Button>{' '}
+              <Button
+                data-tag="allowRowEvents"
+                variant="success"
+                size="sm"
+                title="Consultar Detalle Pago"
+                onClick={() =>
+                  history.push({
+                    pathname: '/pagos/tabs',
+                    id_flujo: row.id_flujo,
+                    pago: row.doc_num,
+                    deshabilitar: false,
+                  })
+                }
+              >
+                <FaList />
+              </Button>
+            </div>
+          )
+        } else if (ExistePermiso('Modulo Grupos Autorizacion')) {
+          return (
+            <div>
+              <Button
+                data-tag="allowRowEvents"
+                size="sm"
+                variant="primary"
+                title="Asignar Grupo"
+                onClick={() =>
+                  history.push({
+                    pathname: '/pagos/flujogrupo',
+                    id_flujo: row.id_flujo,
+                    pago: row.doc_num,
+                  })
+                }
+              >
+                <FaUsersCog />
+              </Button>{' '}
+              <Button
+                data-tag="allowRowEvents"
+                variant="success"
+                size="sm"
+                title="Consultar Detalle Pago"
+                onClick={() =>
+                  history.push({
+                    pathname: '/pagos/tabs',
+                    id_flujo: row.id_flujo,
+                    pago: row.doc_num,
+                    deshabilitar: false,
+                  })
+                }
+              >
+                <FaList />
+              </Button>
+            </div>
+          )
+        } else {
+          return (
+            <div>
+              <Button
+                data-tag="allowRowEvents"
+                variant="success"
+                size="sm"
+                title="Consultar Detalle Pago"
+                onClick={() =>
+                  history.push({
+                    pathname: '/pagos/tabs',
+                    id_flujo: row.id_flujo,
+                    pago: row.doc_num,
+                    deshabilitar: false,
+                  })
+                }
+              >
+                <FaList />
+              </Button>
+            </div>
+          )
+        }
       },
       center: true,
     },
@@ -193,6 +252,7 @@ const GridFlujos = () => {
       <>
         <DataTable
           columns={columns}
+          noDataComponent="No hay pagos que mostrar"
           data={filteredItems}
           customStyles={customStyles}
           theme="solarized"
