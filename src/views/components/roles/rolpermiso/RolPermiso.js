@@ -4,6 +4,7 @@ import { Alert } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postRolPermiso } from '../../../../services/postRolPermiso'
 import { getPermisos } from '../../../../services/getPermisos'
+import { FiUserPlus } from 'react-icons/fi'
 import '../../../../scss/estilos.scss'
 import {
   CButton,
@@ -16,7 +17,6 @@ import {
   CInputGroupText,
   CFormCheck,
 } from '@coreui/react'
-import { FiUserPlus } from 'react-icons/fi'
 
 const RolPermiso = () => {
   const history = useHistory()

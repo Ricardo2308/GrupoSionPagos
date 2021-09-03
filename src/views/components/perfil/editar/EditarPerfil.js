@@ -3,6 +3,9 @@ import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postCrudPerfil } from '../../../../services/postCrudPerfil'
+import { FiSettings } from 'react-icons/fi'
+import { BiUserCircle } from 'react-icons/bi'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CCard,
@@ -13,9 +16,6 @@ import {
   CInputGroup,
   CFormSelect,
 } from '@coreui/react'
-import { FiSettings } from 'react-icons/fi'
-import { BiUserCircle } from 'react-icons/bi'
-import '../../../../scss/estilos.scss'
 
 const EditarPerfil = () => {
   const history = useHistory()

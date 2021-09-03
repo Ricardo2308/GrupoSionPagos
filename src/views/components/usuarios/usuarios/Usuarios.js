@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
+import { getUsuarios } from '../../../../services/getUsuarios'
+import { postEditarUsuario } from '../../../../services/postEditarUsuario'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
+import { useSession } from 'react-use-session'
+import { FaUserEdit, FaTrash, FaUserCog, FaUserCircle, FaUsersCog } from 'react-icons/fa'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CTable,
@@ -10,12 +16,6 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
-import { getUsuarios } from '../../../../services/getUsuarios'
-import { postEditarUsuario } from '../../../../services/postEditarUsuario'
-import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
-import { useSession } from 'react-use-session'
-import { FaUserEdit, FaTrash, FaUserCog, FaUserCircle, FaUsersCog } from 'react-icons/fa'
-import '../../../../scss/estilos.scss'
 
 const Usuarios = () => {
   const history = useHistory()

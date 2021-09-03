@@ -4,6 +4,8 @@ import { Alert } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postCondicionGrupo } from '../../../../services/postCondicionGrupo'
 import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
+import { FiAlertTriangle } from 'react-icons/fi'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CCard,
@@ -15,8 +17,6 @@ import {
   CInputGroupText,
   CFormCheck,
 } from '@coreui/react'
-import { FiAlertTriangle } from 'react-icons/fi'
-import '../../../../scss/estilos.scss'
 
 const CondicionGrupo = () => {
   const history = useHistory()

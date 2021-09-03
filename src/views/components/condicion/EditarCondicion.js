@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
+import { FiGrid, FiAlertTriangle, FiSettings } from 'react-icons/fi'
+import { postCondicionAutorizacion } from '../../../services/postCondicionAutorizacion'
+import '../../../scss/estilos.scss'
 import {
   CButton,
   CCard,
@@ -13,9 +16,6 @@ import {
   CInputGroupText,
   CFormSelect,
 } from '@coreui/react'
-import { FiGrid, FiAlertTriangle, FiSettings } from 'react-icons/fi'
-import { postCondicionAutorizacion } from '../../../services/postCondicionAutorizacion'
-import '../../../scss/estilos.scss'
 
 const EditarCondicion = () => {
   const history = useHistory()

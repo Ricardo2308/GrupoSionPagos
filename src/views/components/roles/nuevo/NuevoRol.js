@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
+import { FiUserPlus, FiLayout } from 'react-icons/fi'
+import { postCrudRoles } from '../../../../services/postCrudRoles'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CCard,
@@ -12,9 +15,6 @@ import {
   CInputGroup,
   CInputGroupText,
 } from '@coreui/react'
-import { FiUserPlus, FiLayout } from 'react-icons/fi'
-import { postCrudRoles } from '../../../../services/postCrudRoles'
-import '../../../../scss/estilos.scss'
 
 const NuevoRol = () => {
   const history = useHistory()

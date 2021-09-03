@@ -4,6 +4,8 @@ import { Alert } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { getEstadosFlujo } from '../../../../services/getEstadosFlujo'
 import { postEstadoFlujo } from '../../../../services/postEstadoFlujo'
+import { FiSettings, FiGrid } from 'react-icons/fi'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CCard,
@@ -14,8 +16,6 @@ import {
   CInputGroup,
   CFormSelect,
 } from '@coreui/react'
-import { FiSettings, FiGrid } from 'react-icons/fi'
-import '../../../../scss/estilos.scss'
 
 const EditarEstadoFlujo = () => {
   const history = useHistory()

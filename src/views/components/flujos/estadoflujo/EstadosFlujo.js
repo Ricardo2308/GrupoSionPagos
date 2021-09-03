@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
+import { getEstadosFlujo } from '../../../../services/getEstadosFlujo'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
+import { postEstadoFlujo } from '../../../../services/postEstadoFlujo'
+import { useSession } from 'react-use-session'
+import { FaPen, FaTrash } from 'react-icons/fa'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CTable,
@@ -10,12 +16,6 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
-import { getEstadosFlujo } from '../../../../services/getEstadosFlujo'
-import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
-import { postEstadoFlujo } from '../../../../services/postEstadoFlujo'
-import { useSession } from 'react-use-session'
-import { FaPen, FaTrash } from 'react-icons/fa'
-import '../../../../scss/estilos.scss'
 
 const EstadosFlujo = () => {
   const history = useHistory()

@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Modal } from 'react-bootstrap'
+import { getUsuarioAutorizacion } from '../../../../services/getUsuarioAutorizacion'
+import { postUsuarioAutorizacion } from '../../../../services/postUsuarioAutorizacion'
+import { useSession } from 'react-use-session'
+import { useHistory } from 'react-router-dom'
+import { BsToggles } from 'react-icons/bs'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CTable,
@@ -9,12 +15,6 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
-import { getUsuarioAutorizacion } from '../../../../services/getUsuarioAutorizacion'
-import { postUsuarioAutorizacion } from '../../../../services/postUsuarioAutorizacion'
-import { useSession } from 'react-use-session'
-import { useHistory } from 'react-router-dom'
-import { BsToggles } from 'react-icons/bs'
-import '../../../../scss/estilos.scss'
 
 const ListaAutorizaciones = () => {
   const history = useHistory()

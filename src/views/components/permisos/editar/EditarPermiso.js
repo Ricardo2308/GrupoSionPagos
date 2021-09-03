@@ -3,6 +3,8 @@ import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postCrudPermiso } from '../../../../services/postCrudPermiso'
+import { FiUserCheck, FiSettings } from 'react-icons/fi'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CCard,
@@ -13,8 +15,6 @@ import {
   CInputGroup,
   CFormSelect,
 } from '@coreui/react'
-import { FiUserCheck, FiSettings } from 'react-icons/fi'
-import '../../../../scss/estilos.scss'
 
 const EditarPermiso = () => {
   const history = useHistory()

@@ -3,6 +3,7 @@ import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postCrudRoles } from '../../../../services/postCrudRoles'
+import { FiUserPlus, FiSettings, FiLayout } from 'react-icons/fi'
 import '../../../../scss/estilos.scss'
 import {
   CButton,
@@ -15,7 +16,6 @@ import {
   CInputGroup,
   CFormSelect,
 } from '@coreui/react'
-import { FiUserPlus, FiSettings, FiLayout } from 'react-icons/fi'
 
 const EditorRol = () => {
   const history = useHistory()

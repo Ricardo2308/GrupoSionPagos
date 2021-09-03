@@ -5,6 +5,8 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { postPerfilUsuario } from '../../../../services/postPerfilUsuario'
 import { getPerfiles } from '../../../../services/getPerfiles'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
+import { FiUser, FiSettings } from 'react-icons/fi'
+import { BiUserCircle } from 'react-icons/bi'
 import '../../../../scss/estilos.scss'
 import {
   CButton,
@@ -17,8 +19,6 @@ import {
   CInputGroupText,
   CFormSelect,
 } from '@coreui/react'
-import { FiUser, FiSettings } from 'react-icons/fi'
-import { BiUserCircle } from 'react-icons/bi'
 
 const EditarPerfilUsuario = () => {
   const history = useHistory()

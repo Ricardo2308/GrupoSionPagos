@@ -3,6 +3,8 @@ import { useSession } from 'react-use-session'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postUsuarioGrupo } from '../../../../services/postUsuarioGrupo'
 import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
+import { FiUser, FiAtSign } from 'react-icons/fi'
+import { FaNetworkWired, FaUsers } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import {
   CButton,
@@ -15,8 +17,6 @@ import {
   CInputGroupText,
   CFormSelect,
 } from '@coreui/react'
-import { FiUser, FiAtSign } from 'react-icons/fi'
-import { FaNetworkWired, FaUsers } from 'react-icons/fa'
 
 const EditarUsuarioGrupo = (props) => {
   const history = useHistory()

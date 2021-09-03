@@ -4,6 +4,8 @@ import { Alert } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postPerfilRol } from '../../../../services/postPerfilRol'
 import { getRoles } from '../../../../services/getRoles'
+import { FiUserPlus } from 'react-icons/fi'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CCard,
@@ -15,8 +17,6 @@ import {
   CInputGroupText,
   CFormCheck,
 } from '@coreui/react'
-import { FiUserPlus } from 'react-icons/fi'
-import '../../../../scss/estilos.scss'
 
 const PerfilRol = () => {
   const history = useHistory()

@@ -63,7 +63,7 @@ const FlujoGrupo = (props) => {
           location.id_flujo,
           '3',
           session.id,
-          'Grupo de autorización asignado',
+          'Asignado a responsable',
         )
         if (answer) {
           history.go(-1)
@@ -73,7 +73,7 @@ const FlujoGrupo = (props) => {
         setMensaje('Error de conexión.')
       } else if (respuesta === 'Repetido') {
         mostrarModal(location.id_flujo)
-        setMensaje('Desea elegir otro grupo de autorización para el usuario?')
+        setMensaje('Desea asignar otro responsable para este pago?')
       } else {
         console.log(respuesta)
       }

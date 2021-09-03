@@ -3,6 +3,7 @@ import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postCrudPoliticas } from '../../../services/postCrudPoliticas'
+import { FiBook, FiSettings, FiGrid, FiHash } from 'react-icons/fi'
 import '../../../scss/estilos.scss'
 import {
   CButton,
@@ -15,7 +16,6 @@ import {
   CInputGroup,
   CFormSelect,
 } from '@coreui/react'
-import { FiBook, FiSettings, FiGrid, FiHash } from 'react-icons/fi'
 
 const EditarPolitica = () => {
   const history = useHistory()

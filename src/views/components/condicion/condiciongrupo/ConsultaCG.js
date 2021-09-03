@@ -4,6 +4,9 @@ import { postCondicionGrupo } from '../../../../services/postCondicionGrupo'
 import { getCondicionGrupo } from '../../../../services/getCondicionGrupo'
 import { useSession } from 'react-use-session'
 import { Modal } from 'react-bootstrap'
+import { FaTrash, FaPen } from 'react-icons/fa'
+import { BsToggles } from 'react-icons/bs'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CTable,
@@ -13,9 +16,6 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
-import { FaTrash, FaPen } from 'react-icons/fa'
-import { BsToggles } from 'react-icons/bs'
-import '../../../../scss/estilos.scss'
 
 const ConsultarPR = () => {
   const history = useHistory()

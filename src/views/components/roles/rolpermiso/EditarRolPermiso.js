@@ -5,6 +5,8 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { postRolPermiso } from '../../../../services/postRolPermiso'
 import { getPermisos } from '../../../../services/getPermisos'
 import { getRolPermiso } from '../../../../services/getRolPermiso'
+import { FiUser, FiSettings } from 'react-icons/fi'
+import { BiUserCircle } from 'react-icons/bi'
 import '../../../../scss/estilos.scss'
 import {
   CButton,
@@ -17,8 +19,6 @@ import {
   CInputGroupText,
   CFormSelect,
 } from '@coreui/react'
-import { FiUser, FiSettings } from 'react-icons/fi'
-import { BiUserCircle } from 'react-icons/bi'
 
 const EditarRolPermiso = () => {
   const history = useHistory()

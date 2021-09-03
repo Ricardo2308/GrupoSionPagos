@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Modal } from 'react-bootstrap'
 import { PDFReader } from 'reactjs-pdf-view'
 import { getArchivosFlujo } from '../../../../services/getArchivosFlujo'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { postArchivoFlujo } from '../../../../services/postArchivoFlujo'
 import { useSession } from 'react-use-session'
 import { useHistory } from 'react-router-dom'
@@ -21,6 +22,7 @@ const ArchivosFlujo = (prop) => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [mostrar, setMostrar] = useState(false)
   const [idArchivoFlujo, setIdArchivoFlujo] = useState(0)
@@ -38,8 +40,23 @@ const ArchivosFlujo = (prop) => {
         setList(items.archivos)
       }
     })
+    getPerfilUsuario(session.id, '2').then((items) => {
+      if (mounted) {
+        setPermisos(items.detalle)
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  function ExistePermiso(objeto) {
+    let result = 0
+    for (let item of permisos) {
+      if (objeto === item.objeto) {
+        result = 1
+      }
+    }
+    return result
+  }
 
   function mostrarModal(id_archivoflujo, url_archivo, usuario) {
     if (id_archivoflujo !== '' && url_archivo === '' && usuario === '') {
@@ -116,55 +133,56 @@ const ArchivosFlujo = (prop) => {
                 if (item.activo === '1') {
                   estado = 'Activo'
                 }
-                return (
-                  <CTableRow key={item.id_archivoflujo}>
-                    <CTableDataCell className="text-center">{item.nombre_usuario}</CTableDataCell>
-                    <CTableDataCell className="text-center">{item.descripcion}</CTableDataCell>
-                    <CTableDataCell className="text-center">{estado}</CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CButton
-                        color="danger"
-                        variant="outline"
-                        size="sm"
-                        target="_blank"
-                        title="Ver PDF"
-                        onClick={() => mostrarModal('', item.archivo, item.nombre_usuario)}
-                      >
-                        <FaRegFilePdf />
-                      </CButton>{' '}
-                      {/*
-                      <CButton
-                        color="primary"
-                        size="sm"
-                        onClick={() =>
-                          history.push({
-                            pathname: '/archivoflujo/editar',
-                            id_archivoflujo: item.id_archivoflujo,
-                            id_flujo: item.id_flujo,
-                            id_usuario: item.id_usuario,
-                            nombre_usuario: item.nombre_usuario,
-                            descripcion: item.descripcion,
-                            url_archivo: item.archivo,
-                            estado: item.estado_activo,
-                            opcion: '1',
-                          })
-                        }
-                      >
-                        <FaPen />
-                      </CButton>{' '}
-                      */}
-                      <CButton
-                        color="danger"
-                        size="sm"
-                        title="Eliminar PDF"
-                        disabled={prop.deshabilitar}
-                        onClick={() => mostrarModal(item.id_archivoflujo, '', '')}
-                      >
-                        <FaTrash />
-                      </CButton>
-                    </CTableDataCell>
-                  </CTableRow>
-                )
+                if (ExistePermiso('Modulo Archivos Pago') == 1) {
+                  return (
+                    <CTableRow key={item.id_archivoflujo}>
+                      <CTableDataCell className="text-center">{item.nombre_usuario}</CTableDataCell>
+                      <CTableDataCell className="text-center">{item.descripcion}</CTableDataCell>
+                      <CTableDataCell className="text-center">{estado}</CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        <CButton
+                          color="danger"
+                          variant="outline"
+                          size="sm"
+                          target="_blank"
+                          title="Ver PDF"
+                          onClick={() => mostrarModal('', item.archivo, item.nombre_usuario)}
+                        >
+                          <FaRegFilePdf />
+                        </CButton>{' '}
+                        <CButton
+                          color="danger"
+                          size="sm"
+                          title="Eliminar PDF"
+                          disabled={prop.deshabilitar}
+                          onClick={() => mostrarModal(item.id_archivoflujo, '', '')}
+                        >
+                          <FaTrash />
+                        </CButton>
+                      </CTableDataCell>
+                    </CTableRow>
+                  )
+                } else {
+                  return (
+                    <CTableRow key={item.id_archivoflujo}>
+                      <CTableDataCell className="text-center">{item.nombre_usuario}</CTableDataCell>
+                      <CTableDataCell className="text-center">{item.descripcion}</CTableDataCell>
+                      <CTableDataCell className="text-center">{estado}</CTableDataCell>
+                      <CTableDataCell className="text-center">
+                        <CButton
+                          color="danger"
+                          variant="outline"
+                          size="sm"
+                          target="_blank"
+                          title="Ver PDF"
+                          onClick={() => mostrarModal('', item.archivo, item.nombre_usuario)}
+                        >
+                          <FaRegFilePdf />
+                        </CButton>
+                      </CTableDataCell>
+                    </CTableRow>
+                  )
+                }
               }
             })}
           </CTableBody>

@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
+import { FiBook, FiGrid, FiHash } from 'react-icons/fi'
+import { postCrudPoliticas } from '../../../services/postCrudPoliticas'
+import '../../../scss/estilos.scss'
 import {
   CButton,
   CCard,
@@ -12,9 +15,6 @@ import {
   CInputGroup,
   CInputGroupText,
 } from '@coreui/react'
-import { FiBook, FiGrid, FiHash } from 'react-icons/fi'
-import { postCrudPoliticas } from '../../../services/postCrudPoliticas'
-import '../../../scss/estilos.scss'
 
 const NuevoPermiso = () => {
   const history = useHistory()

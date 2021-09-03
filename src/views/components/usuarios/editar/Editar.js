@@ -3,6 +3,7 @@ import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postEditarUsuario } from '../../../../services/postEditarUsuario'
+import { FiUser, FiSettings, FiAtSign } from 'react-icons/fi'
 import '../../../../scss/estilos.scss'
 import {
   CButton,
@@ -15,7 +16,6 @@ import {
   CInputGroupText,
   CFormSelect,
 } from '@coreui/react'
-import { FiUser, FiSettings, FiAtSign } from 'react-icons/fi'
 
 const EditarUsuarios = (props) => {
   const history = useHistory()

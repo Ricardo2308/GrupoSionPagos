@@ -8,6 +8,7 @@ import { useSession } from 'react-use-session'
 import { postUsuarioAutorizacion } from '../../../../services/postUsuarioAutorizacion'
 import { getUsuarios } from '../../../../services/getUsuarios'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CCard,
@@ -19,7 +20,6 @@ import {
   CInputGroup,
   CInputGroupText,
 } from '@coreui/react'
-import '../../../../scss/estilos.scss'
 
 const UsuarioGrupo = () => {
   const history = useHistory()

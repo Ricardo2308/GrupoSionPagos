@@ -3,6 +3,8 @@ import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
 import { postCrudBancos } from '../../../../services/postCrudBancos'
+import { GrLocation } from 'react-icons/gr'
+import { RiBankLine } from 'react-icons/ri'
 import '../../../../scss/estilos.scss'
 import {
   CButton,
@@ -14,8 +16,6 @@ import {
   CInputGroup,
   CInputGroupText,
 } from '@coreui/react'
-import { GrLocation } from 'react-icons/gr'
-import { RiBankLine } from 'react-icons/ri'
 
 const NuevoBanco = (props) => {
   const history = useHistory()

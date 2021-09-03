@@ -5,6 +5,9 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { postPerfilRol } from '../../../../services/postPerfilRol'
 import { getRoles } from '../../../../services/getRoles'
 import { getPerfilRol } from '../../../../services/getPerfilRol'
+import { FiUser, FiSettings } from 'react-icons/fi'
+import { BiUserCircle } from 'react-icons/bi'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CCard,
@@ -16,9 +19,6 @@ import {
   CInputGroupText,
   CFormSelect,
 } from '@coreui/react'
-import { FiUser, FiSettings } from 'react-icons/fi'
-import { BiUserCircle } from 'react-icons/bi'
-import '../../../../scss/estilos.scss'
 
 const EditarPerfilRol = () => {
   const history = useHistory()

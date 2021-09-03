@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
+import { postRolPermiso } from 'src/services/postRolPermiso'
+import { getRolPermiso } from '../../../../services/getRolPermiso'
+import { useSession } from 'react-use-session'
+import { FaTrash, FaPen } from 'react-icons/fa'
+import { BsToggles } from 'react-icons/bs'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CTable,
@@ -10,12 +16,6 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
-import { postRolPermiso } from 'src/services/postRolPermiso'
-import { getRolPermiso } from '../../../../services/getRolPermiso'
-import { useSession } from 'react-use-session'
-import { FaTrash, FaPen } from 'react-icons/fa'
-import { BsToggles } from 'react-icons/bs'
-import '../../../../scss/estilos.scss'
 
 const ConsultarRP = () => {
   const history = useHistory()

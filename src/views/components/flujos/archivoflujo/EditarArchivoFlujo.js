@@ -4,6 +4,8 @@ import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postArchivoFlujo } from '../../../../services/postArchivoFlujo'
+import { FiUser, FiFile, FiDownloadCloud, FiSettings } from 'react-icons/fi'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CCard,
@@ -15,8 +17,6 @@ import {
   CInputGroup,
   CFormSelect,
 } from '@coreui/react'
-import { FiUser, FiFile, FiDownloadCloud, FiSettings } from 'react-icons/fi'
-import '../../../../scss/estilos.scss'
 
 const EditarGrupo = () => {
   const history = useHistory()

@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
+import { FiUser, FiLock, FiAtSign } from 'react-icons/fi'
+import { postCrearUsuario } from '../../../../services/postCrearUsuario'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
+import '../../../../scss/estilos.scss'
 import md5 from 'md5'
 import {
   CButton,
@@ -13,10 +17,6 @@ import {
   CInputGroup,
   CInputGroupText,
 } from '@coreui/react'
-import { FiUser, FiLock, FiAtSign } from 'react-icons/fi'
-import { postCrearUsuario } from '../../../../services/postCrearUsuario'
-import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
-import '../../../../scss/estilos.scss'
 
 const Register = (props) => {
   const history = useHistory()

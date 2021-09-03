@@ -3,6 +3,9 @@ import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postCrudBancos } from '../../../../services/postCrudBancos'
+import { FiSettings } from 'react-icons/fi'
+import { GrLocation } from 'react-icons/gr'
+import { RiBankLine } from 'react-icons/ri'
 import '../../../../scss/estilos.scss'
 import {
   CButton,
@@ -15,9 +18,6 @@ import {
   CInputGroupText,
   CFormSelect,
 } from '@coreui/react'
-import { FiSettings } from 'react-icons/fi'
-import { GrLocation } from 'react-icons/gr'
-import { RiBankLine } from 'react-icons/ri'
 
 const EditarBancos = (props) => {
   const history = useHistory()

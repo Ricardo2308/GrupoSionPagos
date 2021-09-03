@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
+import { postPerfilUsuario } from '../../../../services/postPerfilUsuario'
+import { getUsuarioGrupo } from '../../../../services/getUsuarioGrupo'
+import { postUsuarioGrupo } from '../../../../services/postUsuarioGrupo'
+import { useSession } from 'react-use-session'
+import { FaTrash, FaPen, FaUsersCog } from 'react-icons/fa'
+import { BsToggles } from 'react-icons/bs'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CTable,
@@ -10,14 +18,6 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
-import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
-import { postPerfilUsuario } from '../../../../services/postPerfilUsuario'
-import { getUsuarioGrupo } from '../../../../services/getUsuarioGrupo'
-import { postUsuarioGrupo } from '../../../../services/postUsuarioGrupo'
-import { useSession } from 'react-use-session'
-import { FaTrash, FaPen, FaUsersCog } from 'react-icons/fa'
-import { BsToggles } from 'react-icons/bs'
-import '../../../../scss/estilos.scss'
 
 const Consultar = () => {
   const history = useHistory()

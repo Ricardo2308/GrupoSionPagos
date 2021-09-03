@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
+import { FiGrid, FiAlertTriangle } from 'react-icons/fi'
+import { postCondicionAutorizacion } from '../../../services/postCondicionAutorizacion'
+import '../../../scss/estilos.scss'
 import {
   CButton,
   CCard,
@@ -12,9 +15,6 @@ import {
   CInputGroup,
   CInputGroupText,
 } from '@coreui/react'
-import { FiGrid, FiAlertTriangle } from 'react-icons/fi'
-import { postCondicionAutorizacion } from '../../../services/postCondicionAutorizacion'
-import '../../../scss/estilos.scss'
 
 const NuevaCondicion = () => {
   const history = useHistory()

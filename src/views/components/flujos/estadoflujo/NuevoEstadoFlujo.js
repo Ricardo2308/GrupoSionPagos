@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
+import { FiGrid, FiSettings } from 'react-icons/fi'
+import { postEstadoFlujo } from '../../../../services/postEstadoFlujo'
+import { getEstadosFlujo } from '../../../../services/getEstadosFlujo'
+import '../../../../scss/estilos.scss'
 import {
   CButton,
   CCard,
@@ -12,10 +16,6 @@ import {
   CInputGroupText,
   CFormSelect,
 } from '@coreui/react'
-import { FiGrid, FiSettings } from 'react-icons/fi'
-import { postEstadoFlujo } from '../../../../services/postEstadoFlujo'
-import { getEstadosFlujo } from '../../../../services/getEstadosFlujo'
-import '../../../../scss/estilos.scss'
 
 const NuevoEstadoFlujo = () => {
   const history = useHistory()
