@@ -118,7 +118,7 @@ const Politicas = () => {
                   <CTableRow key={item.id_politica}>
                     <CTableDataCell className="text-center">{item.descripcion}</CTableDataCell>
                     <CTableDataCell className="text-center">{item.identificador}</CTableDataCell>
-                    <CTableDataCell className="text-center">{item.valor} veces</CTableDataCell>
+                    <CTableDataCell className="text-center">{item.valor}</CTableDataCell>
                     <CTableDataCell className="text-center">{estado}</CTableDataCell>
                     <CTableDataCell className="text-center">
                       <CButton

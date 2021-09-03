@@ -69,7 +69,7 @@ const NuevoPermiso = () => {
           </Alert>
           <CCard style={{ display: 'flex', alignItems: 'center' }}>
             <CCardBody style={{ width: '80%' }}>
-              <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
+              <CForm style={{ width: '100%' }}>
                 <h1>Creación de Políticas</h1>
                 <p className="text-medium-emphasis">Cree una nuevo política</p>
                 <CInputGroup className="mb-3">
@@ -106,7 +106,7 @@ const NuevoPermiso = () => {
                     onChange={handleInput}
                   />
                 </CInputGroup>
-                <CButton color="primary" type="submit" block>
+                <CButton color="primary" type="submit" onClick={handleSubmit}>
                   Crear Política
                 </CButton>
               </CForm>
