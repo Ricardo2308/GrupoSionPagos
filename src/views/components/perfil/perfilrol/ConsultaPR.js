@@ -176,7 +176,7 @@ const ConsultarPR = () => {
         </>
       )
     } else {
-      history.push('/perfiles/perfiles')
+      history.push('/perfiles')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL PERFIL. REGRESE A LA PANTALLA DE PERFILES.

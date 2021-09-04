@@ -133,7 +133,7 @@ const GridFlujos = () => {
     {
       name: 'Acciones',
       cell: function OrderItems(row) {
-        if (ExistePermiso('Modulo Archivos Pago')) {
+        if (row.estado === '1') {
           return (
             <div>
               <Button
@@ -145,6 +145,7 @@ const GridFlujos = () => {
                   history.push({
                     pathname: '/archivoflujo/nuevo',
                     id_flujo: row.id_flujo,
+                    pago: row.doc_num,
                   })
                 }
               >
@@ -168,7 +169,7 @@ const GridFlujos = () => {
               </Button>
             </div>
           )
-        } else if (ExistePermiso('Modulo Grupos Autorizacion')) {
+        } else if (row.estado === '2') {
           return (
             <div>
               <Button

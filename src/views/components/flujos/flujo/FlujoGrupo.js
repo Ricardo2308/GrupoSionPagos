@@ -57,7 +57,14 @@ const FlujoGrupo = (props) => {
   const handleSubmit = async (event) => {
     if (form.grupo_autorizacion !== '') {
       event.preventDefault()
-      const respuesta = await postFlujoGrupo('', location.id_flujo, form.grupo_autorizacion, '', '')
+      const respuesta = await postFlujoGrupo(
+        '',
+        location.id_flujo,
+        form.grupo_autorizacion,
+        session.id,
+        '',
+        '',
+      )
       if (respuesta === 'OK') {
         const answer = await postFlujoDetalle(
           location.id_flujo,
@@ -88,7 +95,14 @@ const FlujoGrupo = (props) => {
   }
 
   async function editarFlujoGrupo(id_flujo) {
-    const respuesta = await postFlujoGrupo('0', id_flujo, form.grupo_autorizacion, '', '2')
+    const respuesta = await postFlujoGrupo(
+      '0',
+      id_flujo,
+      form.grupo_autorizacion,
+      session.id,
+      '',
+      '2',
+    )
     if (respuesta === 'OK') {
       history.go(-1)
     }

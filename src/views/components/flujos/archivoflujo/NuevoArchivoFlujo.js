@@ -28,7 +28,7 @@ const NuevoArchivoFlujo = (props) => {
   const [titulo, setTitulo] = useState('Error!')
 
   const [form, setValues] = useState({
-    descripcion: '',
+    descripcion: location.pago,
     archivos: [],
   })
 
@@ -118,6 +118,7 @@ const NuevoArchivoFlujo = (props) => {
                       placeholder="Descripción"
                       name="descripcion"
                       className="form-control"
+                      defaultValue={location.pago}
                       onChange={handleInput}
                     />
                   </CInputGroup>
@@ -125,7 +126,7 @@ const NuevoArchivoFlujo = (props) => {
                     sendData={handlerUploadFile}
                     sendDataRemove={handlerRemoveFile}
                     senDataRemoveAll={handlerRemoveAll}
-                    nombre={'pago' + location.id_flujo}
+                    nombre={location.pago}
                   />
                   <CButton
                     color="primary"
