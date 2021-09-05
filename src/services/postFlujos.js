@@ -1,11 +1,12 @@
 const API = `${process.env.REACT_APP_API_URL}flujos`
 
-export function postFlujos(idFlujo) {
+export function postFlujos(idFlujo, idEstado) {
   let ApiFinal = API
   let ApiWhere = ''
 
   var datos = {
     id_flujo: idFlujo,
+    id_estado: idEstado,
   }
 
   if (idFlujo !== '') {
