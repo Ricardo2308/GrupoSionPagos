@@ -161,7 +161,7 @@ const GridFlujos = () => {
                     pathname: '/pagos/tabs',
                     id_flujo: row.id_flujo,
                     pago: row.doc_num,
-                    deshabilitar: false,
+                    estado: row.estado,
                   })
                 }
               >
@@ -197,7 +197,7 @@ const GridFlujos = () => {
                     pathname: '/pagos/tabs',
                     id_flujo: row.id_flujo,
                     pago: row.doc_num,
-                    deshabilitar: false,
+                    estado: row.estado,
                   })
                 }
               >
@@ -218,7 +218,7 @@ const GridFlujos = () => {
                     pathname: '/pagos/tabs',
                     id_flujo: row.id_flujo,
                     pago: row.doc_num,
-                    deshabilitar: false,
+                    estado: row.estado,
                   })
                 }
               >

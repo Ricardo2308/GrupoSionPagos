@@ -30,7 +30,14 @@ const PagoTabs = () => {
   }
 
   async function rechazarPago(id_flujo) {
-    const respuesta = await postFlujos(id_flujo)
+    const respuesta = await postFlujos(id_flujo, '')
+    if (respuesta == 'OK') {
+      history.go(-1)
+    }
+  }
+
+  async function aprobarPago(id_flujo) {
+    const respuesta = await postFlujos(id_flujo, '')
     if (respuesta == 'OK') {
       history.go(-1)
     }
@@ -84,10 +91,7 @@ const PagoTabs = () => {
                   <DetalleFlujo id_flujo={location.id_flujo} />
                 </Tab>
                 <Tab eventKey="archivos" title="Archivos">
-                  <ArchivosFlujo
-                    id_flujo={location.id_flujo}
-                    deshabilitar={location.deshabilitar}
-                  />
+                  <ArchivosFlujo id_flujo={location.id_flujo} />
                 </Tab>
                 <Tab eventKey="bitacora" title="Bitácora">
                   <FlujoBitacora id_flujo={location.id_flujo} />

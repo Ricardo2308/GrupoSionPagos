@@ -5,7 +5,7 @@ import { getArchivosFlujo } from '../../../../services/getArchivosFlujo'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { postArchivoFlujo } from '../../../../services/postArchivoFlujo'
 import { useSession } from 'react-use-session'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import { FaTrash, FaRegFilePdf } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import {
@@ -20,6 +20,7 @@ import {
 
 const ArchivosFlujo = (prop) => {
   const history = useHistory()
+  const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [permisos, setPermisos] = useState([])
@@ -133,7 +134,7 @@ const ArchivosFlujo = (prop) => {
                 if (item.activo === '1') {
                   estado = 'Activo'
                 }
-                if (ExistePermiso('Modulo Archivos Pago') == 1) {
+                if (ExistePermiso('Modulo Archivos Pago') == 1 && location.estado < 2) {
                   return (
                     <CTableRow key={item.id_archivoflujo}>
                       <CTableDataCell className="text-center">{item.nombre_usuario}</CTableDataCell>
