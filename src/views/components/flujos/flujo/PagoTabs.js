@@ -91,7 +91,7 @@ const PagoTabs = () => {
                   <DetalleFlujo id_flujo={location.id_flujo} />
                 </Tab>
                 <Tab eventKey="archivos" title="Archivos">
-                  <ArchivosFlujo id_flujo={location.id_flujo} />
+                  <ArchivosFlujo id_flujo={location.id_flujo} estado={location.estado} />
                 </Tab>
                 <Tab eventKey="bitacora" title="Bitácora">
                   <FlujoBitacora id_flujo={location.id_flujo} />

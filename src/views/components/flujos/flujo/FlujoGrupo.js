@@ -71,6 +71,7 @@ const FlujoGrupo = (props) => {
           '3',
           session.id,
           'Asignado a responsable',
+          '0',
         )
         if (answer) {
           history.go(-1)

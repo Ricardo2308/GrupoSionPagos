@@ -134,7 +134,7 @@ const ArchivosFlujo = (prop) => {
                 if (item.activo === '1') {
                   estado = 'Activo'
                 }
-                if (ExistePermiso('Modulo Archivos Pago') == 1 && location.estado < 2) {
+                if (ExistePermiso('Modulo Archivos Pago') == 1 && prop.estado < 2) {
                   return (
                     <CTableRow key={item.id_archivoflujo}>
                       <CTableDataCell className="text-center">{item.nombre_usuario}</CTableDataCell>

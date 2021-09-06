@@ -56,6 +56,7 @@ const NuevoArchivoFlujo = (props) => {
           '2',
           session.id,
           'Documento de pago cargado',
+          '0',
         )
         if (answer) {
           history.go(-1)
