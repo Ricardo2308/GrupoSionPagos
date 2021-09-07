@@ -1,21 +1,13 @@
 const API = `${process.env.REACT_APP_API_URL}flujos`
 
-export function postFlujos(idFlujo, idEstado) {
-  let ApiFinal = API
-  let ApiWhere = ''
-
+export function postFlujos(idFlujo, nivel) {
   var datos = {
     id_flujo: idFlujo,
-    id_estado: idEstado,
+    nivel: nivel,
   }
-
-  if (idFlujo !== '') {
-    ApiWhere += '/' + idFlujo
-  }
-  ApiFinal += ApiWhere
 
   const data = JSON.stringify(datos)
-  return fetch(ApiFinal, {
+  return fetch(API, {
     method: 'POST',
     body: data,
     headers: {
