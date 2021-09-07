@@ -164,6 +164,7 @@ const GridFlujos = () => {
                     pago: row.doc_num,
                     estado: row.estado,
                     nivel: row.nivel,
+                    pagina: 'transferencia',
                   })
                 }
               >
@@ -201,6 +202,7 @@ const GridFlujos = () => {
                     pago: row.doc_num,
                     estado: row.estado,
                     nivel: row.nivel,
+                    pagina: 'transferencia',
                   })
                 }
               >
@@ -223,6 +225,7 @@ const GridFlujos = () => {
                     pago: row.doc_num,
                     estado: row.estado,
                     nivel: row.nivel,
+                    pagina: 'transferencia',
                   })
                 }
               >

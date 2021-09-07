@@ -51,15 +51,35 @@ const PagoTabs = () => {
         }
       } else if (location.estado === '4') {
         const respuesta = await postFlujos(id_flujo, location.nivel)
-        const aprobado = await postFlujoDetalle(
-          id_flujo,
-          '4',
-          session.id,
-          'Aprobado',
-          location.nivel,
-        )
-        if (respuesta == 'OK' && aprobado == 'OK') {
-          history.go(-1)
+        if (respuesta == 'OK') {
+          const aprobado = await postFlujoDetalle(
+            id_flujo,
+            '4',
+            session.id,
+            'Aprobado',
+            location.nivel,
+          )
+          if (aprobado == 'OK') {
+            history.go(-1)
+          }
+        } else if (respuesta == 'Finalizado') {
+          const aprobado = await postFlujoDetalle(
+            id_flujo,
+            '4',
+            session.id,
+            'Aprobado',
+            location.nivel,
+          )
+          const finalizado = await postFlujoDetalle(
+            id_flujo,
+            '5',
+            session.id,
+            'Autorización completa',
+            '0',
+          )
+          if (aprobado == 'OK' && finalizado == 'OK') {
+            history.push('/compensacion/' + location.pagina)
+          }
         }
       }
     } else if (opcion == 2) {
