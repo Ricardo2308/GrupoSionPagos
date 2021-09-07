@@ -162,6 +162,7 @@ const GridFlujos = () => {
                     id_flujo: row.id_flujo,
                     pago: row.doc_num,
                     estado: row.estado,
+                    nivel: row.nivel,
                   })
                 }
               >
@@ -198,6 +199,7 @@ const GridFlujos = () => {
                     id_flujo: row.id_flujo,
                     pago: row.doc_num,
                     estado: row.estado,
+                    nivel: row.nivel,
                   })
                 }
               >
@@ -219,6 +221,7 @@ const GridFlujos = () => {
                     id_flujo: row.id_flujo,
                     pago: row.doc_num,
                     estado: row.estado,
+                    nivel: row.nivel,
                   })
                 }
               >

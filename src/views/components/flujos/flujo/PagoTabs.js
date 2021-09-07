@@ -20,26 +20,45 @@ const PagoTabs = () => {
   const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
+  const [mensaje, setMensaje] = useState('')
+  const [opcion, setOpcion] = useState(0)
   const [idFlujo, setIdFlujo] = useState(0)
 
   const handleClose = () => setShow(false)
 
-  function mostrarModal(id_flujo) {
-    setIdFlujo(id_flujo)
-    setShow(true)
-  }
-
-  async function rechazarPago(id_flujo) {
-    const respuesta = await postFlujos(id_flujo, '')
-    if (respuesta == 'OK') {
-      history.go(-1)
+  function mostrarModal(id_flujo, opcion) {
+    if (opcion == 1) {
+      setIdFlujo(id_flujo)
+      setOpcion(opcion)
+      setMensaje('Está seguro de aprobar el pago?')
+      setShow(true)
+    } else if (opcion == 2) {
+      setIdFlujo(id_flujo)
+      setOpcion(opcion)
+      setMensaje('Está seguro de rechazar el pago?')
+      setShow(true)
     }
   }
 
-  async function aprobarPago(id_flujo) {
-    const respuesta = await postFlujos(id_flujo, '')
-    if (respuesta == 'OK') {
-      history.go(-1)
+  async function Aprobar_Rechazar(id_flujo, opcion) {
+    if (opcion === 1) {
+      if (location.estado === '3') {
+        const respuesta = await postFlujos(id_flujo, '2')
+        if (respuesta == 'OK') {
+          history.go(-1)
+        }
+      } else if (location.estado === '4') {
+        const respuesta = await postFlujos(id_flujo, location.nivel)
+        if (respuesta == 'OK') {
+          history.go(-1)
+        }
+      }
+    } else if (opcion == 2) {
+      //const respuesta = await postFlujos(id_flujo, '')
+      //if (respuesta == 'OK') {
+      //history.go(-1)
+      //}
+      alert('Rechazar')
     }
   }
 
@@ -51,21 +70,24 @@ const PagoTabs = () => {
             <Modal.Header closeButton>
               <Modal.Title>Confirmación</Modal.Title>
             </Modal.Header>
-            <Modal.Body>Está seguro de rechazar el pago?</Modal.Body>
+            <Modal.Body>{mensaje}</Modal.Body>
             <Modal.Footer>
               <CButton color="secondary" onClick={handleClose}>
                 Cancelar
               </CButton>
-              <CButton color="primary" onClick={() => rechazarPago(idFlujo).then(handleClose)}>
+              <CButton
+                color="primary"
+                onClick={() => Aprobar_Rechazar(idFlujo, opcion).then(handleClose)}
+              >
                 Aceptar
               </CButton>
             </Modal.Footer>
           </Modal>
           <div className="float-right" style={{ marginTop: '15px', marginRight: '15px' }}>
-            <CButton color="success" size="sm" onClick={() => history.go(-1)}>
-              Aceptar
+            <CButton color="success" size="sm" onClick={() => mostrarModal(location.id_flujo, 1)}>
+              Aprobar
             </CButton>{' '}
-            <CButton color="danger" size="sm" onClick={() => mostrarModal(location.id_flujo)}>
+            <CButton color="danger" size="sm" onClick={() => mostrarModal(location.id_flujo, 2)}>
               Rechazar
             </CButton>
           </div>
