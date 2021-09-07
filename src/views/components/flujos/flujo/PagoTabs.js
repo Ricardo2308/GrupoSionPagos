@@ -9,6 +9,7 @@ import FlujoIngreso from './FlujoIngreso'
 import DetalleFlujo from './DetalleFlujo'
 import ArchivosFlujo from './ArchivosFlujoF'
 import { postFlujos } from '../../../../services/postFlujos'
+import { postFlujoDetalle } from '../../../../services/postFlujoDetalle'
 import { useSession } from 'react-use-session'
 import Chat from './Chat'
 import '../../../../scss/estilos.scss'
@@ -44,12 +45,20 @@ const PagoTabs = () => {
     if (opcion === 1) {
       if (location.estado === '3') {
         const respuesta = await postFlujos(id_flujo, '2')
-        if (respuesta == 'OK') {
+        const aprobado = await postFlujoDetalle(id_flujo, '4', session.id, 'Aprobado', '1')
+        if (respuesta == 'OK' && aprobado == 'OK') {
           history.go(-1)
         }
       } else if (location.estado === '4') {
         const respuesta = await postFlujos(id_flujo, location.nivel)
-        if (respuesta == 'OK') {
+        const aprobado = await postFlujoDetalle(
+          id_flujo,
+          '4',
+          session.id,
+          'Aprobado',
+          location.nivel,
+        )
+        if (respuesta == 'OK' && aprobado == 'OK') {
           history.go(-1)
         }
       }
