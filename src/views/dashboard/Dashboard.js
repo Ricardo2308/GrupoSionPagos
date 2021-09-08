@@ -1,5 +1,9 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { CCard, CCardBody, CCol, CCardHeader, CRow } from '@coreui/react'
+import { getFlujos } from '../../services/getFlujos'
+import { DocsLink } from 'src/reusable'
+import { useSession } from 'react-use-session'
+import '../../scss/estilos.scss'
 import {
   CChartBar,
   CChartDoughnut,
@@ -8,17 +12,56 @@ import {
   CChartPolarArea,
   CChartRadar,
 } from '@coreui/react-chartjs'
-import { DocsLink } from 'src/reusable'
-import { useSession } from 'react-use-session'
-import '../../scss/estilos.scss'
 
 const Dashboard = () => {
   const { session } = useSession('PendrogonIT-Session')
   const random = () => Math.round(Math.random() * 100)
+  const [results, setList] = useState([])
+
+  useEffect(() => {
+    let estados = []
+    let mounted = true
+    getFlujos(null, null, null).then((items) => {
+      if (mounted) {
+        console.log(items.flujos)
+        for (const pago of items.flujos) {
+          estados.push(parseInt(pago.CantidadEstados))
+        }
+        setList(estados)
+      }
+    })
+    console.log(estados)
+    return () => (mounted = false)
+  }, [])
 
   if (session) {
     return (
       <CRow>
+        <CCol xs={6}>
+          <CCard className="mb-4">
+            <CCardHeader>Pie Chart</CCardHeader>
+            <CCardBody>
+              <CChartPie
+                data={{
+                  labels: [
+                    'Cargados',
+                    'Archivos Cargados',
+                    'Asignados',
+                    'Aprobados',
+                    'Aprobados Completamente',
+                  ],
+                  datasets: [
+                    {
+                      data: results,
+                      backgroundColor: ['red', 'yellow', 'blue', 'purple', 'green'],
+                      hoverBackgroundColor: ['#CC5855', '#C7C246', '#6F72C5', '#8E6BC2', '#56A05A'],
+                    },
+                  ],
+                }}
+              />
+            </CCardBody>
+          </CCard>
+        </CCol>
         <CCol xs={6}>
           <CCard className="mb-4">
             <CCardHeader>
@@ -38,6 +81,24 @@ const Dashboard = () => {
                   ],
                 }}
                 labels="months"
+              />
+            </CCardBody>
+          </CCard>
+        </CCol>
+        <CCol xs={6}>
+          <CCard className="mb-4">
+            <CCardHeader>Doughnut Chart</CCardHeader>
+            <CCardBody>
+              <CChartDoughnut
+                data={{
+                  labels: ['VueJs', 'EmberJs', 'ReactJs', 'AngularJs'],
+                  datasets: [
+                    {
+                      backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
+                      data: [40, 20, 80, 10],
+                    },
+                  ],
+                }}
               />
             </CCardBody>
           </CCard>
@@ -65,43 +126,6 @@ const Dashboard = () => {
                       pointBackgroundColor: 'rgba(151, 187, 205, 1)',
                       pointBorderColor: '#fff',
                       data: [random(), random(), random(), random(), random(), random(), random()],
-                    },
-                  ],
-                }}
-              />
-            </CCardBody>
-          </CCard>
-        </CCol>
-        <CCol xs={6}>
-          <CCard className="mb-4">
-            <CCardHeader>Doughnut Chart</CCardHeader>
-            <CCardBody>
-              <CChartDoughnut
-                data={{
-                  labels: ['VueJs', 'EmberJs', 'ReactJs', 'AngularJs'],
-                  datasets: [
-                    {
-                      backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-                      data: [40, 20, 80, 10],
-                    },
-                  ],
-                }}
-              />
-            </CCardBody>
-          </CCard>
-        </CCol>
-        <CCol xs={6}>
-          <CCard className="mb-4">
-            <CCardHeader>Pie Chart</CCardHeader>
-            <CCardBody>
-              <CChartPie
-                data={{
-                  labels: ['Red', 'Green', 'Yellow'],
-                  datasets: [
-                    {
-                      data: [300, 50, 100],
-                      backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-                      hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
                     },
                   ],
                 }}
