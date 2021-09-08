@@ -20,18 +20,22 @@ const Dashboard = () => {
 
   useEffect(() => {
     let estados = []
-    let mounted = true
     getFlujos(null, null, null).then((items) => {
-      if (mounted) {
-        console.log(items.flujos)
+      for (const pago of items.flujos) {
+        estados.push(parseInt(pago.CantidadEstados))
+      }
+      setList(estados)
+    })
+    const interval = setInterval(() => {
+      let estados = []
+      getFlujos(null, null, null).then((items) => {
         for (const pago of items.flujos) {
           estados.push(parseInt(pago.CantidadEstados))
         }
         setList(estados)
-      }
-    })
-    console.log(estados)
-    return () => (mounted = false)
+      })
+    }, 60000)
+    return () => clearInterval(interval)
   }, [])
 
   if (session) {
@@ -39,7 +43,7 @@ const Dashboard = () => {
       <CRow>
         <CCol xs={6}>
           <CCard className="mb-4">
-            <CCardHeader>Pie Chart</CCardHeader>
+            <CCardHeader>Cantidad de Pagos por Estado</CCardHeader>
             <CCardBody>
               <CChartPie
                 data={{
