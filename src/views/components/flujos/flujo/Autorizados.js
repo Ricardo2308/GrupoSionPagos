@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Modal, Button, FormControl } from 'react-bootstrap'
+import { Button, FormControl } from 'react-bootstrap'
 import DataTable, { createTheme } from 'react-data-table-component'
-import { getFlujos } from '../../../../services/getFlujos'
+import { getBitacora } from '../../../../services/getBitacora'
 import { useSession } from 'react-use-session'
-import { FaList, FaCoins } from 'react-icons/fa'
+import { FaList } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 
 const FilterComponent = (prop) => (
@@ -28,12 +28,10 @@ const FilterComponent = (prop) => (
   </div>
 )
 
-const GridFlujos = () => {
+const Autorizados = (prop) => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
-  const [show, setShow] = useState(false)
-  const [idFlujo, setIdFlujo] = useState(0)
   const [filterText, setFilterText] = useState('')
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false)
   const filteredItems = results.filter(
@@ -44,13 +42,11 @@ const GridFlujos = () => {
       item.activo.toLowerCase().includes(filterText.toLowerCase()),
   )
 
-  const handleClose = () => setShow(false)
-
   useEffect(() => {
     let mounted = true
-    getFlujos(null, 'INTERNA', session.id, null).then((items) => {
+    getBitacora(null, prop.tipo, session.id).then((items) => {
       if (mounted) {
-        setList(items.flujos)
+        setList(items.bitacora)
       }
     })
     return () => (mounted = false)
@@ -130,22 +126,12 @@ const GridFlujos = () => {
               onClick={() =>
                 history.push({
                   pathname: '/compensacion/tabs',
-                  id_flujo: row.id_flujo,
+                  id_flujo: row.IdFlujo,
                   pago: row.doc_num,
-                  deshabilitar: true,
                 })
               }
             >
               <FaList />
-            </Button>{' '}
-            <Button
-              data-tag="allowRowEvents"
-              variant="warning"
-              size="sm"
-              title="Compensar Pago"
-              onClick={() => mostrarModal(row.id_flujo)}
-            >
-              <FaCoins />
             </Button>
           </div>
         )
@@ -170,45 +156,22 @@ const GridFlujos = () => {
     )
   }, [filterText, resetPaginationToggle])
 
-  function mostrarModal(id_flujo) {
-    setIdFlujo(id_flujo)
-    setShow(true)
-  }
-
-  async function eliminarUsuario() {
-    alert('Confirmado')
-  }
-
   if (session) {
     return (
-      <>
-        <Modal responsive variant="primary" show={show} onHide={handleClose} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirmación</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>Está seguro de compensar este pago?</Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Cancelar
-            </Button>
-            <Button variant="primary" onClick={() => eliminarUsuario(idFlujo).then(handleClose)}>
-              Aceptar
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <DataTable
-          columns={columns}
-          noDataComponent="No hay pagos que mostrar"
-          data={filteredItems}
-          customStyles={customStyles}
-          theme="solarized"
-          pagination
-          paginationResetDefaultPage={resetPaginationToggle}
-          subHeader
-          subHeaderComponent={subHeaderComponentMemo}
-          persistTableHead
-        />
-      </>
+      <DataTable
+        columns={columns}
+        noDataComponent="No hay pagos que mostrar"
+        data={filteredItems}
+        customStyles={customStyles}
+        theme="solarized"
+        pagination
+        paginationPerPage={6}
+        paginationResetDefaultPage={resetPaginationToggle}
+        subHeader
+        subHeaderComponent={subHeaderComponentMemo}
+        responsive={true}
+        persistTableHead
+      />
     )
   } else {
     history.push('/dashboard')
@@ -216,4 +179,4 @@ const GridFlujos = () => {
   }
 }
 
-export default GridFlujos
+export default Autorizados

@@ -12,7 +12,7 @@ const DetalleFlujo = (prop) => {
 
   useEffect(() => {
     let mounted = true
-    getFlujos(prop.id_flujo, null, session.id).then((items) => {
+    getFlujos(prop.id_flujo, null, session.id, null).then((items) => {
       if (mounted) {
         setList(items.flujos[0])
       }

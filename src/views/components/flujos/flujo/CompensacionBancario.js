@@ -48,7 +48,7 @@ const GridFlujos = () => {
 
   useEffect(() => {
     let mounted = true
-    getFlujos(null, 'BANCARIO', session.id).then((items) => {
+    getFlujos(null, 'BANCARIO', session.id, null).then((items) => {
       if (mounted) {
         setList(items.flujos)
       }
@@ -132,7 +132,6 @@ const GridFlujos = () => {
                   pathname: '/compensacion/tabs',
                   id_flujo: row.id_flujo,
                   pago: row.doc_num,
-                  deshabilitar: true,
                 })
               }
             >
