@@ -58,7 +58,7 @@ const NuevaMoneda = (props) => {
           </Alert>
           <CCard style={{ display: 'flex', alignItems: 'center' }}>
             <CCardBody style={{ width: '80%' }}>
-              <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
+              <CForm style={{ width: '100%' }}>
                 <h1>Creación de Moneda</h1>
                 <p className="text-medium-emphasis">Cree una nueva moneda</p>
                 <CInputGroup className="mb-3">
@@ -83,7 +83,7 @@ const NuevaMoneda = (props) => {
                     onChange={handleInput}
                   />
                 </CInputGroup>
-                <CButton color="primary" type="submit" block>
+                <CButton color="primary" onClick={handleSubmit}>
                   Crear Moneda
                 </CButton>
               </CForm>

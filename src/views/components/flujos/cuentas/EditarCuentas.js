@@ -102,7 +102,7 @@ const EditarBancos = (props) => {
             </Alert>
             <CCard style={{ display: 'flex', alignItems: 'center' }}>
               <CCardBody style={{ width: '80%' }}>
-                <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
+                <CForm style={{ width: '100%' }}>
                   <h1>Modificación de Banco</h1>
                   <p className="text-medium-emphasis">Modifique la información del banco</p>
                   <CInputGroup className="mb-3">
@@ -187,7 +187,7 @@ const EditarBancos = (props) => {
                       defaultValue={location.codigo_ach}
                     />
                   </CInputGroup>
-                  <CButton color="primary" type="submit" block>
+                  <CButton color="primary" onClick={handleSubmit}>
                     Guardar Cambios
                   </CButton>
                 </CForm>

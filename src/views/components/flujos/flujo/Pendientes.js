@@ -146,6 +146,7 @@ const Pendientes = (prop) => {
                     pago: row.doc_num,
                     estado: row.estado,
                     nivel: row.nivel,
+                    id_grupo: row.id_grupoautorizacion,
                     pagina: 'transferencia',
                   })
                 }
@@ -184,6 +185,7 @@ const Pendientes = (prop) => {
                     pago: row.doc_num,
                     estado: row.estado,
                     nivel: row.nivel,
+                    id_grupo: row.id_grupoautorizacion,
                     pagina: 'transferencia',
                   })
                 }
@@ -207,6 +209,7 @@ const Pendientes = (prop) => {
                     pago: row.doc_num,
                     estado: row.estado,
                     nivel: row.nivel,
+                    id_grupo: row.id_grupoautorizacion,
                     pagina: 'transferencia',
                   })
                 }

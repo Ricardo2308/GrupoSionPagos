@@ -93,7 +93,7 @@ const NuevaCondicion = () => {
                     onChange={handleInput}
                   />
                 </CInputGroup>
-                <CButton color="primary" block onClick={handleSubmit}>
+                <CButton color="primary" onClick={handleSubmit}>
                   Crear Condición
                 </CButton>
               </CForm>

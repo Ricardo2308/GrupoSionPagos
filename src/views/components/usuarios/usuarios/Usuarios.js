@@ -151,7 +151,6 @@ const Usuarios = () => {
                             email: item.email,
                             nombre: item.nombre + ' ' + item.apellido,
                             estado: item.activo,
-                            inhabilitar: false,
                           })
                         }
                       >
@@ -182,7 +181,7 @@ const Usuarios = () => {
                         onClick={() =>
                           history.push({
                             pathname: '/usuarios/usuariogrupo',
-                            id: item.id,
+                            id_usuario: item.id,
                             nombre: item.nombre + ' ' + item.apellido,
                             email: item.email,
                             estado: item.activo,

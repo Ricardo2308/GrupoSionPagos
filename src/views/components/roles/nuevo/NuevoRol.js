@@ -61,7 +61,7 @@ const NuevoRol = () => {
           </Alert>
           <CCard style={{ display: 'flex', alignItems: 'center' }}>
             <CCardBody style={{ width: '80%' }}>
-              <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
+              <CForm style={{ width: '100%' }}>
                 <h1>Creación de Rol</h1>
                 <p className="text-medium-emphasis">Cree un nuevo rol</p>
                 <CInputGroup className="mb-3">
@@ -87,7 +87,7 @@ const NuevoRol = () => {
                     onChange={handleInput}
                   />
                 </CInputGroup>
-                <CButton color="primary" block type="submit">
+                <CButton color="primary" onClick={handleSubmit}>
                   Crear Rol
                 </CButton>
               </CForm>

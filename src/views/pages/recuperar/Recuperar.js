@@ -130,7 +130,7 @@ const Recuperar = () => {
                           onChange={handleInput}
                         />
                       </CInputGroup>
-                      <CButton color="primary" block onClick={handleSubmit}>
+                      <CButton color="primary" onClick={handleSubmit}>
                         Recuperar Contraseña
                       </CButton>
                     </CForm>

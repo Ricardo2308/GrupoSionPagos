@@ -105,7 +105,7 @@ const NuevoEstadoFlujo = () => {
                     })}
                   </CFormSelect>
                 </CInputGroup>
-                <CButton color="primary" block onClick={handleSubmit}>
+                <CButton color="primary" onClick={handleSubmit}>
                   Crear Tipo
                 </CButton>
               </CForm>

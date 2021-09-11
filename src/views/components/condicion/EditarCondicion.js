@@ -111,7 +111,7 @@ const EditarCondicion = () => {
                       <option value="0">Inactivo</option>
                     </CFormSelect>
                   </CInputGroup>
-                  <CButton color="primary" block onClick={handleSubmit}>
+                  <CButton color="primary" onClick={handleSubmit}>
                     Guardar Cambios
                   </CButton>
                 </CForm>

@@ -40,8 +40,8 @@ const NuevoArchivoFlujo = (props) => {
   }
 
   const handleSubmit = async (event) => {
-    if (form.descripcion !== '' && form.archivos !== '') {
-      event.preventDefault()
+    event.preventDefault()
+    if (form.descripcion !== '' && form.archivos.length > 0) {
       const respuesta = await postArchivoFlujo(
         '',
         location.id_flujo,

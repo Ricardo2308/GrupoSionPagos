@@ -43,14 +43,10 @@ const Cards = () => {
   }, [])
 
   function ExistePermiso(objeto) {
-    let result = 0
+    let result = false
     for (let item of permisos) {
       if (objeto === item.objeto) {
-        result = 1
-      } else {
-        if (item.objeto === 'Modulo Grupos Autorizacion') {
-          result = 2
-        }
+        result = true
       }
     }
     return result
@@ -73,13 +69,19 @@ const Cards = () => {
   if (session) {
     let deshabilitar = false
     let deshabilitar_grupos = false
-    if (ExistePermiso('Modulo Condiciones') == 1) {
+    if (ExistePermiso('Modulo Condiciones')) {
       deshabilitar_grupos = true
-    } else if (ExistePermiso('Modulo Condiciones') == 2) {
+    }
+    if (ExistePermiso('Modulo Grupos Autorizacion')) {
       deshabilitar = true
-    } else if (ExistePermiso('Modulo Condiciones') == 0) {
+    }
+    if (ExistePermiso('Modulo Condiciones') && ExistePermiso('Modulo Grupos Autorizacion')) {
+      deshabilitar = false
+      deshabilitar_grupos = false
+    }
+    if (!ExistePermiso('Modulo Condiciones') && !ExistePermiso('Modulo Grupos Autorizacion')) {
+      deshabilitar = true
       deshabilitar_grupos = true
-      deshabilitar = true
     }
     return (
       <>

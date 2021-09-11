@@ -70,7 +70,7 @@ const EditarGrupo = () => {
             </Alert>
             <CCard style={{ display: 'flex', alignItems: 'center' }}>
               <CCardBody style={{ width: '80%' }}>
-                <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
+                <CForm style={{ width: '100%' }}>
                   <h1>Modificación de Grupo de Autorización</h1>
                   <p className="text-medium-emphasis">
                     Modifique la información del grupo de autorización
@@ -122,7 +122,7 @@ const EditarGrupo = () => {
                       <option value="0">Inactivo</option>
                     </CFormSelect>
                   </CInputGroup>
-                  <CButton color="primary" type="submit" block>
+                  <CButton color="primary" onClick={handleSubmit}>
                     Guardar Cambios
                   </CButton>
                 </CForm>

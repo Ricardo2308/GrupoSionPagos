@@ -6,7 +6,6 @@ import { getUsuarios } from '../../../services/getUsuarios'
 import { useSession } from 'react-use-session'
 import logo from '../../../assets/icons/logo.png'
 import md5 from 'md5'
-
 import {
   CButton,
   CCard,
@@ -51,7 +50,6 @@ const Login = () => {
     getUsuarios(null, null, null, null).then((items) => {
       if (mounted) {
         setList(items.users)
-        console.log(items)
       }
     })
     return () => (mounted = false)

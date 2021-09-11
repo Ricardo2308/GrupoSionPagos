@@ -57,20 +57,27 @@ const PerfilUsuario = () => {
         result += checkbox.value + '|'
       }
     }
-    const respuesta = await postPerfilUsuario('', location.id, result, '', '', '')
-    if (respuesta === 'OK') {
-      history.push('/usuarios')
-    } else if (respuesta === 'Error') {
+    if (result !== '') {
+      const respuesta = await postPerfilUsuario('', location.id, result, '', '', '')
+      if (respuesta === 'OK') {
+        history.push('/usuarios')
+      } else if (respuesta === 'Error') {
+        setShow(true)
+        setTitulo('Error!')
+        setMensaje('Error de conexión.')
+      } else if (respuesta === 'Repetidos') {
+        setShow(true)
+        setTitulo('Aviso!')
+        setColor('warning')
+        setMensaje(
+          'Los perfiles seleccionados ya fueron elegidos para este usuario! Intente con otros.',
+        )
+      }
+    } else {
       setShow(true)
       setTitulo('Error!')
-      setMensaje('Error de conexión.')
-    } else if (respuesta === 'Repetidos') {
-      setShow(true)
-      setTitulo('Aviso!')
-      setColor('warning')
-      setMensaje(
-        'Los perfiles seleccionados ya fueron elegidos para este usuario! Intente con otros.',
-      )
+      setColor('danger')
+      setMensaje('No has seleccionado ningún perfil.')
     }
   }
 
@@ -85,7 +92,7 @@ const PerfilUsuario = () => {
             </Alert>
             <CCard style={{ display: 'flex', alignItems: 'center' }}>
               <CCardBody style={{ width: '80%' }}>
-                <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
+                <CForm style={{ width: '100%' }}>
                   <h1>Asignación de Perfiles</h1>
                   <p className="text-medium-emphasis">Asigne perfiles al usuario</p>
                   <CInputGroup className="mb-3">
@@ -128,7 +135,7 @@ const PerfilUsuario = () => {
                     }
                   })}
                   <br />
-                  <CButton color="primary" type="submit" block>
+                  <CButton color="primary" onClick={handleSubmit}>
                     Guardar Cambios
                   </CButton>
                 </CForm>

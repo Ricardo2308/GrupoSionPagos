@@ -24,11 +24,9 @@ const Consultar = () => {
   const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
-  const [results1, setList1] = useState([])
   const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [idPerfil, setIdPerfil] = useState(0)
-  const [idGrupo, setIdGrupo] = useState(0)
   const [estado, setEstado] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
@@ -42,11 +40,6 @@ const Consultar = () => {
         setList(items.detalle)
       }
     })
-    getUsuarioGrupo(location.id_usuario, null).then((items) => {
-      if (mounted) {
-        setList1(items.detalle)
-      }
-    })
     getPerfilUsuario(session.id, '2').then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
@@ -55,54 +48,39 @@ const Consultar = () => {
     return () => (mounted = false)
   }, [])
 
-  function ExistePermiso(id_permiso, objeto) {
-    let result = 0
+  function ExistePermiso(objeto) {
+    let result = false
     for (let item of permisos) {
-      if (item.id_permiso !== id_permiso && objeto === item.objeto) {
-        result = 1
-      } else {
-        if (item.id_permiso === id_permiso && item.objeto === 'Modulo Grupos Autorizacion') {
-          result = 2
-        }
+      if (objeto === item.objeto) {
+        result = true
       }
     }
     return result
   }
 
-  function mostrarModal(id_perfil, id_grupo, opcion, estado) {
+  function mostrarModal(id_perfil, opcion, estado) {
     if (opcion === '1') {
       setMensaje('Está seguro de eliminar este perfil de usuario?')
       setIdPerfil(id_perfil)
-      setIdGrupo(id_grupo)
       setOpcion(opcion)
       setShow(true)
     } else if (opcion === '3') {
       setMensaje('Está seguro de cambiar el estado de este perfil de usuario?')
       setIdPerfil(id_perfil)
-      setIdGrupo(id_grupo)
       setEstado(estado)
       setOpcion(opcion)
       setShow(true)
     }
   }
 
-  async function crudPerfil(id_usuario, id_usuarioperfil, id_usuariogrupo, opcion, estado) {
+  async function crudPerfil(id_usuario, id_usuarioperfil, opcion, estado) {
     let result
     if (opcion === '1') {
-      if (id_usuarioperfil !== '' && id_usuariogrupo === '') {
-        const respuesta = await postPerfilUsuario(id_usuarioperfil, '', '', '1', '', '')
-        if (respuesta === 'OK') {
-          await getPerfilUsuario(id_usuario, '1').then((items) => {
-            setList(items.detalle)
-          })
-        }
-      } else if (id_usuarioperfil === '' && id_usuariogrupo !== '') {
-        const respuesta = await postUsuarioGrupo(id_usuariogrupo, id_usuario, '1', '', '', '')
-        if (respuesta === 'OK') {
-          await getUsuarioGrupo(id_usuario, null).then((items) => {
-            setList1(items.detalle)
-          })
-        }
+      const respuesta = await postPerfilUsuario(id_usuarioperfil, '', '', '1', '', '')
+      if (respuesta === 'OK') {
+        await getPerfilUsuario(id_usuario, '1').then((items) => {
+          setList(items.detalle)
+        })
       }
     } else if (opcion === '3') {
       if (estado === '0') {
@@ -110,20 +88,11 @@ const Consultar = () => {
       } else {
         result = '0'
       }
-      if (id_usuarioperfil !== '' && id_usuariogrupo === '') {
-        const respuesta = await postPerfilUsuario(id_usuarioperfil, '', '', '3', '', result)
-        if (respuesta === 'OK') {
-          await getPerfilUsuario(id_usuario, '1').then((items) => {
-            setList(items.detalle)
-          })
-        }
-      } else if (id_usuarioperfil === '' && id_usuariogrupo !== '') {
-        const respuesta = await postUsuarioGrupo(id_usuariogrupo, id_usuario, '3', '', '', result)
-        if (respuesta === 'OK') {
-          await getUsuarioGrupo(id_usuario, null).then((items) => {
-            setList1(items.detalle)
-          })
-        }
+      const respuesta = await postPerfilUsuario(id_usuarioperfil, '', '', '3', '', result)
+      if (respuesta === 'OK') {
+        await getPerfilUsuario(id_usuario, '1').then((items) => {
+          setList(items.detalle)
+        })
       }
     }
   }
@@ -132,11 +101,17 @@ const Consultar = () => {
     if (location.id_usuario) {
       let deshabilitar = false
       let deshabilitar_grupo = false
-      if (ExistePermiso('6', 'Modulo Usuarios') == 1) {
+      if (ExistePermiso('Modulo Usuarios')) {
         deshabilitar_grupo = true
-      } else if (ExistePermiso('6', 'Modulo Usuarios') == 2) {
+      }
+      if (ExistePermiso('Modulo Grupos Autorizacion')) {
         deshabilitar = true
-      } else if (ExistePermiso('6', 'Modulo Usuarios') == 0) {
+      }
+      if (ExistePermiso('Modulo Usuarios') && ExistePermiso('Modulo Grupos Autorizacion')) {
+        deshabilitar = false
+        deshabilitar_grupo = false
+      }
+      if (!ExistePermiso('Modulo Usuarios') && !ExistePermiso('Modulo Grupos Autorizacion')) {
         deshabilitar_grupo = true
         deshabilitar = true
       }
@@ -154,24 +129,14 @@ const Consultar = () => {
               <CButton
                 color="primary"
                 onClick={() =>
-                  crudPerfil(location.id_usuario, idPerfil, idGrupo, opcion, estado).then(
-                    handleClose,
-                  )
+                  crudPerfil(location.id_usuario, idPerfil, opcion, estado).then(handleClose)
                 }
               >
                 Aceptar
               </CButton>
             </Modal.Footer>
           </Modal>
-          <div
-            style={{
-              width: '100%',
-              textAlign: 'center',
-              fontWeight: 'bold',
-              borderColor: 'black',
-              flexDirection: 'row',
-            }}
-          >
+          <div className="user-name-profile">
             {location.nombre}{' '}
             <CButton
               color="warning"
@@ -181,7 +146,7 @@ const Consultar = () => {
               onClick={() =>
                 history.push({
                   pathname: '/usuarios/usuariogrupo',
-                  id: session.id,
+                  id_usuario: session.id,
                   nombre: session.name,
                   email: session.email,
                   estado: session.estado,
@@ -239,7 +204,7 @@ const Consultar = () => {
                           size="sm"
                           title="Eliminar Perfil Asociado"
                           disabled={deshabilitar}
-                          onClick={() => mostrarModal(item.id_usuarioperfil, '', '1', '')}
+                          onClick={() => mostrarModal(item.id_usuarioperfil, '1', '')}
                         >
                           <FaTrash />
                         </CButton>{' '}
@@ -248,82 +213,7 @@ const Consultar = () => {
                           size="sm"
                           title="Cambiar Estado"
                           disabled={deshabilitar}
-                          onClick={() => mostrarModal(item.id_usuarioperfil, '', '3', item.activo)}
-                        >
-                          <BsToggles />
-                        </CButton>
-                      </CTableDataCell>
-                    </CTableRow>
-                  )
-                }
-              })}
-            </CTableBody>
-          </CTable>
-          <CTable
-            hover
-            responsive
-            align="middle"
-            className="mb-0 border"
-            style={{ marginTop: '15px' }}
-          >
-            <CTableHead color="light">
-              <CTableRow>
-                <CTableHeaderCell style={{ textAlign: 'center', width: '40%' }}>
-                  Grupo Autorización
-                </CTableHeaderCell>
-                <CTableHeaderCell className="text-center">Estado Usuario Grupo</CTableHeaderCell>
-                <CTableHeaderCell className="text-center">Acciones</CTableHeaderCell>
-              </CTableRow>
-            </CTableHead>
-            <CTableBody>
-              {results1.map((item, i) => {
-                let estado = 'Inactivo'
-                if (item.eliminado !== '1') {
-                  if (item.activo === '1') {
-                    estado = 'Activo'
-                  }
-                  return (
-                    <CTableRow key={item.id_usuario}>
-                      <CTableDataCell style={{ textAlign: 'center', width: '40%' }}>
-                        {item.identificador}
-                      </CTableDataCell>
-                      <CTableDataCell className="text-center">{estado}</CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        <CButton
-                          color="primary"
-                          size="sm"
-                          title="Elegir Nuevo Grupo"
-                          disabled={deshabilitar_grupo}
-                          onClick={() =>
-                            history.push({
-                              pathname: '/usuarios/editarusuariogrupo',
-                              id_usuariogrupo: item.id_usuariogrupo,
-                              id: location.id_usuario,
-                              email: location.email,
-                              nombre: location.nombre,
-                              nivel: item.nivel,
-                              estado: item.activo,
-                              id_grupo: item.id_grupoautorizacion,
-                            })
-                          }
-                        >
-                          <FaPen />
-                        </CButton>{' '}
-                        <CButton
-                          color="danger"
-                          size="sm"
-                          title="Eliminar Grupo Asociado"
-                          disabled={deshabilitar_grupo}
-                          onClick={() => mostrarModal('', item.id_usuariogrupo, '1', '')}
-                        >
-                          <FaTrash />
-                        </CButton>{' '}
-                        <CButton
-                          color="info"
-                          size="sm"
-                          title="Cambiar de Estado"
-                          disabled={deshabilitar_grupo}
-                          onClick={() => mostrarModal('', item.id_usuariogrupo, '3', item.activo)}
+                          onClick={() => mostrarModal(item.id_usuarioperfil, '3', item.activo)}
                         >
                           <BsToggles />
                         </CButton>

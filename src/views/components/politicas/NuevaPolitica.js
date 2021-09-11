@@ -106,7 +106,7 @@ const NuevoPermiso = () => {
                     onChange={handleInput}
                   />
                 </CInputGroup>
-                <CButton color="primary" type="submit" onClick={handleSubmit}>
+                <CButton color="primary" onClick={handleSubmit}>
                   Crear Política
                 </CButton>
               </CForm>

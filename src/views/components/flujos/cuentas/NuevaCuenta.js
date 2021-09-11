@@ -100,7 +100,7 @@ const NuevoBanco = (props) => {
           </Alert>
           <CCard style={{ display: 'flex', alignItems: 'center' }}>
             <CCardBody style={{ width: '80%' }}>
-              <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
+              <CForm style={{ width: '100%' }}>
                 <h1>Creación de Cuenta</h1>
                 <p className="text-medium-emphasis">Cree una nueva cuenta bancaria</p>
                 <CInputGroup className="mb-3">
@@ -181,7 +181,7 @@ const NuevoBanco = (props) => {
                     onChange={handleInput}
                   />
                 </CInputGroup>
-                <CButton color="primary" type="submit" block>
+                <CButton color="primary" onClick={handleSubmit}>
                   Añadir Cuenta
                 </CButton>
               </CForm>

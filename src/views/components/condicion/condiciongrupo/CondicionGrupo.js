@@ -88,7 +88,7 @@ const CondicionGrupo = () => {
             </Alert>
             <CCard style={{ display: 'flex', alignItems: 'center' }}>
               <CCardBody style={{ width: '80%' }}>
-                <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
+                <CForm style={{ width: '100%' }}>
                   <h1>Asignación de Grupos de Autorización</h1>
                   <p className="text-medium-emphasis">
                     Asigne grupos de autorización a la condición
@@ -120,7 +120,7 @@ const CondicionGrupo = () => {
                     }
                   })}
                   <br />
-                  <CButton color="primary" type="submit" block>
+                  <CButton color="primary" onClick={handleSubmit}>
                     Guardar Cambios
                   </CButton>
                 </CForm>

@@ -74,7 +74,7 @@ const NuevoPermiso = () => {
                     name="descripcion"
                   ></textarea>
                 </CInputGroup>
-                <CButton color="primary" block onClick={handleSubmit}>
+                <CButton color="primary" onClick={handleSubmit}>
                   Crear Permiso
                 </CButton>
               </CForm>

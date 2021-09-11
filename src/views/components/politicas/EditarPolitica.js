@@ -69,7 +69,7 @@ const EditarPolitica = () => {
             </Alert>
             <CCard style={{ display: 'flex', alignItems: 'center' }}>
               <CCardBody style={{ width: '80%' }}>
-                <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
+                <CForm style={{ width: '100%' }}>
                   <h1>Modificación de Política</h1>
                   <p className="text-medium-emphasis">Modifique la información de la política</p>
                   <CInputGroup className="mb-3">
@@ -119,7 +119,7 @@ const EditarPolitica = () => {
                       <option value="0">Inactivo</option>
                     </CFormSelect>
                   </CInputGroup>
-                  <CButton color="primary" type="submit" block>
+                  <CButton color="primary" onClick={handleSubmit}>
                     Guardar Cambios
                   </CButton>
                 </CForm>

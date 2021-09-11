@@ -10,6 +10,7 @@ import DetalleFlujo from './DetalleFlujo'
 import ArchivosFlujo from './ArchivosFlujoF'
 import { postFlujos } from '../../../../services/postFlujos'
 import { postFlujoDetalle } from '../../../../services/postFlujoDetalle'
+import { postNotificacion } from '../../../../services/postNotificacion'
 import { useSession } from 'react-use-session'
 import Chat from './Chat'
 import '../../../../scss/estilos.scss'
@@ -78,7 +79,15 @@ const PagoTabs = () => {
             '0',
           )
           if (aprobado == 'OK' && finalizado == 'OK') {
-            history.push('/compensacion/' + location.pagina)
+            const enviada = await postNotificacion(
+              id_flujo,
+              session.id,
+              'Autorización completa del pago ' + location.pago,
+              location.id_grupo,
+            )
+            if (enviada == 'OK') {
+              history.push('/compensacion/' + location.pagina)
+            }
           }
         }
       }

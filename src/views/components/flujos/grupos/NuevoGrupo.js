@@ -107,7 +107,7 @@ const NuevoGrupo = () => {
                     onChange={handleInput}
                   />
                 </CInputGroup>
-                <CButton color="primary" block onClick={handleSubmit}>
+                <CButton color="primary" onClick={handleSubmit}>
                   Crear Grupo
                 </CButton>
               </CForm>

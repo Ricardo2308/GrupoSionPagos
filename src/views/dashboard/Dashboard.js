@@ -17,22 +17,44 @@ const Dashboard = () => {
   const { session } = useSession('PendrogonIT-Session')
   const random = () => Math.round(Math.random() * 100)
   const [results, setList] = useState([])
+  const [estados, setEstados] = useState([])
+  const [pagos, setPagos] = useState([])
 
   useEffect(() => {
     let estados = []
-    getFlujos(null, null, null).then((items) => {
+    let labelestados = []
+    let pagos = []
+    getFlujos(null, null, null, '1').then((items) => {
       for (const pago of items.flujos) {
         estados.push(parseInt(pago.CantidadEstados))
+        labelestados.push(pago.estado)
       }
       setList(estados)
+      setEstados(labelestados)
+    })
+    getFlujos(null, null, null, '2').then((items) => {
+      for (const pago of items.flujos) {
+        pagos.push(parseInt(pago.PagosAprobados))
+      }
+      setPagos(pagos)
     })
     const interval = setInterval(() => {
       let estados = []
-      getFlujos(null, null, null).then((items) => {
+      let labelestados = []
+      let pagos = []
+      getFlujos(null, null, null, '1').then((items) => {
         for (const pago of items.flujos) {
           estados.push(parseInt(pago.CantidadEstados))
+          labelestados.push(pago.estado)
         }
         setList(estados)
+        setEstados(labelestados)
+      })
+      getFlujos(null, null, null, '2').then((items) => {
+        for (const pago of items.flujos) {
+          pagos.push(parseInt(pago.PagosAprobados))
+        }
+        setPagos(pagos)
       })
     }, 60000)
     return () => clearInterval(interval)
@@ -45,20 +67,33 @@ const Dashboard = () => {
           <CCard className="mb-4">
             <CCardHeader>Cantidad de Pagos por Estado</CCardHeader>
             <CCardBody>
-              <CChartPie
+              <CChartDoughnut
                 data={{
-                  labels: [
-                    'Cargados',
-                    'Archivos Cargados',
-                    'Asignados',
-                    'Aprobados',
-                    'Aprobados Completamente',
-                  ],
+                  labels: estados,
                   datasets: [
                     {
-                      data: results,
-                      backgroundColor: ['red', 'yellow', 'blue', 'purple', 'green'],
+                      backgroundColor: ['#D02F2F', '#ADBC3C', '#40389D', '#8A5C84', '#428A49'],
                       hoverBackgroundColor: ['#CC5855', '#C7C246', '#6F72C5', '#8E6BC2', '#56A05A'],
+                      data: results,
+                    },
+                  ],
+                }}
+              />
+            </CCardBody>
+          </CCard>
+        </CCol>
+        <CCol xs={6}>
+          <CCard className="mb-4">
+            <CCardHeader>Cantidad de Pagos Aprobados por Tipo</CCardHeader>
+            <CCardBody>
+              <CChartPie
+                data={{
+                  labels: ['Bancario', 'Interno', 'Transferencia'],
+                  datasets: [
+                    {
+                      data: pagos,
+                      backgroundColor: ['#D02F2F', '#40389D', '#428A49'],
+                      hoverBackgroundColor: ['#CC5855', '#6F72C5', '#56A05A'],
                     },
                   ],
                 }}
@@ -85,24 +120,6 @@ const Dashboard = () => {
                   ],
                 }}
                 labels="months"
-              />
-            </CCardBody>
-          </CCard>
-        </CCol>
-        <CCol xs={6}>
-          <CCard className="mb-4">
-            <CCardHeader>Doughnut Chart</CCardHeader>
-            <CCardBody>
-              <CChartDoughnut
-                data={{
-                  labels: ['VueJs', 'EmberJs', 'ReactJs', 'AngularJs'],
-                  datasets: [
-                    {
-                      backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-                      data: [40, 20, 80, 10],
-                    },
-                  ],
-                }}
               />
             </CCardBody>
           </CCard>

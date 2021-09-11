@@ -59,7 +59,7 @@ const NuevoPerfil = (props) => {
           </Alert>
           <CCard style={{ display: 'flex', alignItems: 'center' }}>
             <CCardBody style={{ width: '80%' }}>
-              <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
+              <CForm style={{ width: '100%' }}>
                 <h1>Creación de Perfil</h1>
                 <p className="text-medium-emphasis">Cree un nuevo perfil</p>
                 <CInputGroup className="mb-3">
@@ -74,7 +74,7 @@ const NuevoPerfil = (props) => {
                     name="descripcion"
                   ></textarea>
                 </CInputGroup>
-                <CButton color="primary" block type="submit">
+                <CButton color="primary" onClick={handleSubmit}>
                   Crear Perfil
                 </CButton>
               </CForm>
