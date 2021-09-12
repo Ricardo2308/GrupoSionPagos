@@ -1,6 +1,9 @@
 const API = `${process.env.REACT_APP_API_URL}notificacion`
 
-export function postNotificacion(idFlujo, idUsuario, mensaje, idGrupo) {
+export function postNotificacion(idFlujo, idUsuario, mensaje, idGrupo, opcion) {
+  let ApiFinal = API
+  let ApiWhere = ''
+
   var datos = {
     IdFlujo: idFlujo,
     IdUsuario: idUsuario,
@@ -8,8 +11,13 @@ export function postNotificacion(idFlujo, idUsuario, mensaje, idGrupo) {
     IdGrupo: idGrupo,
   }
 
+  if (opcion !== '') {
+    ApiWhere += '/' + opcion
+  }
+  ApiFinal += ApiWhere
+
   const data = JSON.stringify(datos)
-  return fetch(API, {
+  return fetch(ApiFinal, {
     method: 'POST',
     body: data,
     headers: {

@@ -1,14 +1,10 @@
 const API = `${process.env.REACT_APP_API_URL}usuarios`
 
-export function getUsuarios(Nombre, Apellido, Correo, Password) {
+export function getUsuarios(idUsuario, Apellido, Correo, Password) {
   let ApiFinal = API
   let ApiWhere = ''
-  if (Nombre !== null) {
-    if (ApiWhere.length > 0) {
-      ApiWhere += '&nombre=' + Nombre
-    } else {
-      ApiWhere += '?nombre=' + Nombre
-    }
+  if (idUsuario !== null) {
+    ApiWhere += '/' + idUsuario
   }
   if (Apellido !== null) {
     if (ApiWhere.length > 0) {
