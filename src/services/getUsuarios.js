@@ -1,31 +1,19 @@
 const API = `${process.env.REACT_APP_API_URL}usuarios`
 
-export function getUsuarios(idUsuario, Apellido, Correo, Password) {
+export function getUsuarios(idGrupo, Nivel, Correo, Password) {
   let ApiFinal = API
   let ApiWhere = ''
-  if (idUsuario !== null) {
-    ApiWhere += '/' + idUsuario
+  if (idGrupo !== null) {
+    ApiWhere += '/' + idGrupo
   }
-  if (Apellido !== null) {
-    if (ApiWhere.length > 0) {
-      ApiWhere += '&apellido=' + Apellido
-    } else {
-      ApiWhere += '?apellido=' + Apellido
-    }
+  if (Nivel !== null) {
+    ApiWhere += '/' + Nivel
   }
   if (Correo !== null) {
-    if (ApiWhere.length > 0) {
-      ApiWhere += '&correo=' + Correo
-    } else {
-      ApiWhere += '?correo=' + Correo
-    }
+    ApiWhere += '/' + Correo
   }
   if (Password !== null) {
-    if (ApiWhere.length > 0) {
-      ApiWhere += '&password=' + Password
-    } else {
-      ApiWhere += '?password=' + Password
-    }
+    ApiWhere += '/' + Password
   }
   ApiFinal += ApiWhere
   return fetch(ApiFinal)
