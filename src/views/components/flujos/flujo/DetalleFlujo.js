@@ -22,6 +22,10 @@ const DetalleFlujo = (prop) => {
 
   if (session) {
     if (results) {
+      let grupo = 'Pendiente'
+      if (results.grupoautorizacion) {
+        grupo = results.grupoautorizacion
+      }
       return (
         <div>
           <Container className="mb-0 border">
@@ -32,6 +36,10 @@ const DetalleFlujo = (prop) => {
             <Row className="mb-0 border">
               <Col className="mb-0 border column">Tipo</Col>
               <Col className="mb-0 border">{results.tipo}</Col>
+            </Row>
+            <Row className="mb-0 border">
+              <Col className="mb-0 border column">Grupo Autorización</Col>
+              <Col className="mb-0 border">{grupo}</Col>
             </Row>
             <Row className="mb-0 border">
               <Col className="mb-0 border column">Fecha Impuesto</Col>

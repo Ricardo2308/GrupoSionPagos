@@ -84,6 +84,7 @@ const PagoTabs = () => {
               session.id,
               'Autorización completa del pago ' + location.pago,
               location.id_grupo,
+              '',
             )
             if (enviada == 'OK') {
               history.push('/compensacion/' + location.pagina)
@@ -102,6 +103,14 @@ const PagoTabs = () => {
 
   if (session) {
     if (location.id_flujo) {
+      let grupo = '0'
+      let nivel = '0'
+      if (location.id_grupo) {
+        grupo = location.id_grupo
+      }
+      if (location.nivel) {
+        nivel = location.nivel
+      }
       return (
         <div className="div-tabs">
           <Modal responsive variant="primary" show={show} onHide={handleClose} centered>
@@ -159,11 +168,17 @@ const PagoTabs = () => {
               </Tabs>
             </div>
           </div>
-          <Chat id_usuario={session.id} id_flujo={location.id_flujo} pago={location.pago} />
+          <Chat
+            id_usuario={session.id}
+            id_flujo={location.id_flujo}
+            pago={location.pago}
+            id_grupo={grupo}
+            nivel={nivel}
+          />
         </div>
       )
     } else {
-      history.go(-1)
+      history.push('/dashboard')
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL NÚMERO DE PAGO. REGRESE A LA PANTALLA DE PAGOS.
