@@ -1,9 +1,10 @@
 const API = `${process.env.REACT_APP_API_URL}flujos`
 
-export function postFlujos(idFlujo, nivel) {
+export function postFlujos(idFlujo, nivel, id_grupo) {
   var datos = {
     id_flujo: idFlujo,
     nivel: nivel,
+    id_grupoautorizacion: id_grupo,
   }
 
   const data = JSON.stringify(datos)
