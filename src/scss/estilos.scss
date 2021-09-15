@@ -94,3 +94,26 @@
   width: 100%;
   margin-top: 18px;
 }
+
+.user-name {
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  border-color: black;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name-profile {
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  border-color: black;
+  flex-direction: column;
+}
+
+.modal-message {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 20px
+}
