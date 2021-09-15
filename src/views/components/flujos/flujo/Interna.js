@@ -22,10 +22,10 @@ const Interna = () => {
                 <Pendientes tipo={'INTERNA'} />
               </Tab>
               <Tab eventKey="autorizados" title="Autorizados">
-                <Autorizados tipo={'INTERNA'} />
+                <Autorizados comentario={'Aprobado'} tipo={'INTERNA'} />
               </Tab>
               <Tab eventKey="rechazados" title="Rechazados">
-                <Rechazados tipo={'INTERNA'} />
+                <Rechazados comentario={'Rechazado'} tipo={'INTERNA'} />
               </Tab>
             </Tabs>
           </div>

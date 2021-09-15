@@ -44,7 +44,7 @@ const Rechazados = (prop) => {
 
   useEffect(() => {
     let mounted = true
-    getBitacora(null, prop.tipo, session.id).then((items) => {
+    getBitacora(null, prop.comentario, session.id, prop.tipo).then((items) => {
       if (mounted) {
         setList(items.bitacora)
       }

@@ -22,10 +22,10 @@ const Bancario = () => {
                 <Pendientes tipo={'BANCARIO'} />
               </Tab>
               <Tab eventKey="autorizados" title="Autorizados">
-                <Autorizados tipo={'BANCARIO'} />
+                <Autorizados comentario={'Aprobado'} tipo={'BANCARIO'} />
               </Tab>
               <Tab eventKey="rechazados" title="Rechazados">
-                <Rechazados tipo={'BANCARIO'} />
+                <Rechazados comentario={'Rechazado'} tipo={'BANCARIO'} />
               </Tab>
             </Tabs>
           </div>

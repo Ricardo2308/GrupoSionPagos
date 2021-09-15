@@ -45,13 +45,13 @@ const PagoTabs = () => {
   async function Aprobar_Rechazar(id_flujo, opcion) {
     if (opcion === 1) {
       if (location.estado === '3') {
-        const respuesta = await postFlujos(id_flujo, '2')
+        const respuesta = await postFlujos(id_flujo, '2', '')
         const aprobado = await postFlujoDetalle(id_flujo, '4', session.id, 'Aprobado', '1')
         if (respuesta == 'OK' && aprobado == 'OK') {
           history.go(-1)
         }
       } else if (location.estado === '4') {
-        const respuesta = await postFlujos(id_flujo, location.nivel)
+        const respuesta = await postFlujos(id_flujo, location.nivel, '')
         if (respuesta == 'OK') {
           const aprobado = await postFlujoDetalle(
             id_flujo,

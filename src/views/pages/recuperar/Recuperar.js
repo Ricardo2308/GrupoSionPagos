@@ -44,7 +44,7 @@ const Recuperar = () => {
         if (form.password.length >= 10) {
           event.preventDefault()
           const respuesta = await postEditarUsuario(
-            '',
+            '1',
             '',
             '',
             form.usuario,
@@ -56,9 +56,7 @@ const Recuperar = () => {
           if (respuesta === 'OK') {
             history.push('/')
           } else {
-            setShow(true)
-            setTitulo('Error!')
-            setMensaje('El correo o nombre de usuario ingresado no está registrado.')
+            console.log(respuesta)
           }
         } else {
           if (form.password.length < 5) {

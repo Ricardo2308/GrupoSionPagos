@@ -24,7 +24,7 @@ const Dashboard = () => {
     let estados = []
     let labelestados = []
     let pagos = []
-    getFlujos(null, null, null, '1').then((items) => {
+    getFlujos('0', null, null, '1').then((items) => {
       for (const pago of items.flujos) {
         estados.push(parseInt(pago.CantidadEstados))
         labelestados.push(pago.estado)
@@ -32,7 +32,7 @@ const Dashboard = () => {
       setList(estados)
       setEstados(labelestados)
     })
-    getFlujos(null, null, null, '2').then((items) => {
+    getFlujos('0', null, null, '2').then((items) => {
       for (const pago of items.flujos) {
         pagos.push(parseInt(pago.PagosAprobados))
       }
@@ -42,7 +42,7 @@ const Dashboard = () => {
       let estados = []
       let labelestados = []
       let pagos = []
-      getFlujos(null, null, null, '1').then((items) => {
+      getFlujos('0', null, null, '1').then((items) => {
         for (const pago of items.flujos) {
           estados.push(parseInt(pago.CantidadEstados))
           labelestados.push(pago.estado)
@@ -50,7 +50,7 @@ const Dashboard = () => {
         setList(estados)
         setEstados(labelestados)
       })
-      getFlujos(null, null, null, '2').then((items) => {
+      getFlujos('0', null, null, '2').then((items) => {
         for (const pago of items.flujos) {
           pagos.push(parseInt(pago.PagosAprobados))
         }

@@ -22,10 +22,10 @@ const Transferencia = () => {
                 <Pendientes tipo={'TRANSFERENCIA'} />
               </Tab>
               <Tab eventKey="autorizados" title="Autorizados">
-                <Autorizados tipo={'Aprobado'} />
+                <Autorizados comentario={'Aprobado'} tipo={'TRANSFERENCIA'} />
               </Tab>
               <Tab eventKey="rechazados" title="Rechazados">
-                <Rechazados tipo={'Rechazado'} />
+                <Rechazados comentario={'Rechazado'} tipo={'TRANSFERENCIA'} />
               </Tab>
             </Tabs>
           </div>

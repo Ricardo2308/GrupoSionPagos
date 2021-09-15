@@ -19,7 +19,7 @@ const FlujoBitacora = (prop) => {
 
   useEffect(() => {
     let mounted = true
-    getBitacora(prop.id_flujo, null, session.id).then((items) => {
+    getBitacora(prop.id_flujo, null, session.id, null).then((items) => {
       if (mounted) {
         setList(items.bitacora)
       }

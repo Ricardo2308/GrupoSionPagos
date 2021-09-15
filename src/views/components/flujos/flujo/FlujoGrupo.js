@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
-import { Modal, Alert } from 'react-bootstrap'
+import { Alert } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
-import { postFlujoGrupo } from '../../../../services/postFlujoGrupo'
+import { postFlujos } from '../../../../services/postFlujos'
 import { postFlujoDetalle } from '../../../../services/postFlujoDetalle'
 import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
 import '../../../../scss/estilos.scss'
@@ -25,12 +25,7 @@ const FlujoGrupo = (props) => {
   const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
-  const [showAlert, setShowAlert] = useState(false)
   const [results, setList] = useState([])
-  const [mensaje, setMensaje] = useState('')
-  const [idFlujo, setIdFlujo] = useState(0)
-
-  const handleClose = () => setShow(false)
 
   const [form, setValues] = useState({
     grupo_autorizacion: '',
@@ -57,14 +52,7 @@ const FlujoGrupo = (props) => {
   const handleSubmit = async (event) => {
     if (form.grupo_autorizacion !== '') {
       event.preventDefault()
-      const respuesta = await postFlujoGrupo(
-        '',
-        location.id_flujo,
-        form.grupo_autorizacion,
-        session.id,
-        '',
-        '',
-      )
+      const respuesta = await postFlujos(location.id_flujo, '', form.grupo_autorizacion)
       if (respuesta === 'OK') {
         const answer = await postFlujoDetalle(
           location.id_flujo,
@@ -73,39 +61,12 @@ const FlujoGrupo = (props) => {
           'Asignado a responsable',
           '0',
         )
-        if (answer) {
+        if (answer === 'OK') {
           history.go(-1)
         }
-      } else if (respuesta === 'Error') {
-        setShow(true)
-        setMensaje('Error de conexión.')
-      } else if (respuesta === 'Repetido') {
-        mostrarModal(location.id_flujo)
-        setMensaje('Desea asignar otro responsable para este pago?')
-      } else {
-        console.log(respuesta)
       }
     } else {
-      setShowAlert(true)
-    }
-  }
-
-  function mostrarModal(id_flujo) {
-    setIdFlujo(id_flujo)
-    setShow(true)
-  }
-
-  async function editarFlujoGrupo(id_flujo) {
-    const respuesta = await postFlujoGrupo(
-      '0',
-      id_flujo,
-      form.grupo_autorizacion,
-      session.id,
-      '',
-      '2',
-    )
-    if (respuesta === 'OK') {
-      history.go(-1)
+      setShow(true)
     }
   }
 
@@ -114,32 +75,10 @@ const FlujoGrupo = (props) => {
       return (
         <div style={{ flexDirection: 'row' }}>
           <CContainer>
-            <Alert
-              show={showAlert}
-              variant="danger"
-              onClose={() => setShowAlert(false)}
-              dismissible
-            >
+            <Alert show={show} variant="danger" onClose={() => setShow(false)} dismissible>
               <Alert.Heading>Error!</Alert.Heading>
               <p>No has llenado todos los campos.</p>
             </Alert>
-            <Modal responsive variant="primary" show={show} onHide={handleClose} centered>
-              <Modal.Header closeButton>
-                <Modal.Title>Confirmación</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>{mensaje}</Modal.Body>
-              <Modal.Footer>
-                <CButton color="secondary" onClick={handleClose}>
-                  Cancelar
-                </CButton>
-                <CButton
-                  color="primary"
-                  onClick={() => editarFlujoGrupo(idFlujo).then(handleClose)}
-                >
-                  Aceptar
-                </CButton>
-              </Modal.Footer>
-            </Modal>
             <CCard style={{ display: 'flex', alignItems: 'center' }}>
               <CCardBody style={{ width: '80%' }}>
                 <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
