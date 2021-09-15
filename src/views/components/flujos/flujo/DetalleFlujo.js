@@ -42,6 +42,14 @@ const DetalleFlujo = (prop) => {
               <Col className="mb-0 border">{grupo}</Col>
             </Row>
             <Row className="mb-0 border">
+              <Col className="mb-0 border column">Días Crédito</Col>
+              <Col className="mb-0 border">{results.dias_credito}</Col>
+            </Row>
+            <Row className="mb-0 border">
+              <Col className="mb-0 border column">Condición Pago</Col>
+              <Col className="mb-0 border">{results.condicion_pago}</Col>
+            </Row>
+            <Row className="mb-0 border">
               <Col className="mb-0 border column">Fecha Impuesto</Col>
               <Col className="mb-0 border">{results.tax_date}</Col>
             </Row>
