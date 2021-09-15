@@ -10,8 +10,9 @@ const ConsultaPU = React.lazy(() => import('./views/components/usuarios/perfil/C
 const EditarPerfilUsuario = React.lazy(() =>
   import('./views/components/usuarios/perfil/EditarPerfilUsuario'),
 )
-const UsuarioGrupo = React.lazy(() =>
-  import('./views/components/usuarios/usuariogrupo/UsuarioGrupo'),
+const ConsultaUG = React.lazy(() => import('./views/components/usuarios/usuariogrupo/ConsultaUG'))
+const AgregarGrupo = React.lazy(() =>
+  import('./views/components/usuarios/usuariogrupo/AgregarGrupo'),
 )
 const EditarUsuarioGrupo = React.lazy(() =>
   import('./views/components/usuarios/usuariogrupo/EditarUsuarioGrupo'),
@@ -86,11 +87,9 @@ const EditarTipoFlujo = React.lazy(() =>
 )
 
 const PagoTabs = React.lazy(() => import('./views/components/flujos/flujo/PagoTabs'))
-const GridBancario = React.lazy(() => import('./views/components/flujos/flujo/GridBancario'))
-const GridTransferencia = React.lazy(() =>
-  import('./views/components/flujos/flujo/GridTransferencia'),
-)
-const GridInterna = React.lazy(() => import('./views/components/flujos/flujo/GridInterna'))
+const GridBancario = React.lazy(() => import('./views/components/flujos/flujo/Bancario'))
+const Transferencia = React.lazy(() => import('./views/components/flujos/flujo/Transferencia'))
+const GridInterna = React.lazy(() => import('./views/components/flujos/flujo/Interna'))
 const ArchivosFlujoF = React.lazy(() => import('./views/components/flujos/flujo/ArchivosFlujoF'))
 const DetalleFlujo = React.lazy(() => import('./views/components/flujos/flujo/DetalleFlujo'))
 const ArchivosFlujoU = React.lazy(() =>
@@ -149,7 +148,8 @@ const routes = [
   { path: '/usuarios/perfilusuario', name: 'Perfil', component: PerfilUsuario },
   { path: '/usuarios/consulta', name: 'Perfil Usuario', component: ConsultaPU },
   { path: '/usuarios/editarPU', name: 'Editar Perfil Usuario', component: EditarPerfilUsuario },
-  { path: '/usuarios/usuariogrupo', name: 'Usuario Grupo Autorización', component: UsuarioGrupo },
+  { path: '/usuarios/usuariogrupo', name: 'Usuario Grupo Autorización', component: ConsultaUG },
+  { path: '/usuarios/agregargrupo', name: 'Usuario Grupo Autorización', component: AgregarGrupo },
   {
     path: '/usuarios/editarusuariogrupo',
     name: 'Usuario Grupo Autorización',
@@ -216,7 +216,7 @@ const routes = [
   { path: '/cuentas/nueva', name: 'Nueva', component: NuevaCuenta },
   { path: '/pagos', exact: true, name: 'Autorización Pagos', component: GridBancario },
   { path: '/pagos/bancario', name: 'Bancaria', component: GridBancario },
-  { path: '/pagos/transferencia', name: 'Transferencia', component: GridTransferencia },
+  { path: '/pagos/transferencia', name: 'Transferencia', component: Transferencia },
   { path: '/pagos/interna', name: 'Interna', component: GridInterna },
   { path: '/pagos/tabs', name: 'Detalle Pagos', component: PagoTabs },
   { path: '/pagos/archivos', name: 'Archivos Flujo', component: ArchivosFlujoF },
