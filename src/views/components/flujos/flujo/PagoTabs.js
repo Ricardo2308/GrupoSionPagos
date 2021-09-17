@@ -174,6 +174,7 @@ const PagoTabs = () => {
             pago={location.pago}
             id_grupo={grupo}
             nivel={nivel}
+            estado={location.estado}
           />
         </div>
       )

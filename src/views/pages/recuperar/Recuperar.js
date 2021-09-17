@@ -55,8 +55,10 @@ const Recuperar = () => {
           )
           if (respuesta === 'OK') {
             history.push('/')
-          } else {
-            console.log(respuesta)
+          } else if (respuesta === 'Vacio') {
+            setShow(true)
+            setTitulo('Error!')
+            setMensaje('El nombre o el correo del usuario no está registrado.')
           }
         } else {
           if (form.password.length < 5) {

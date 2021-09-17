@@ -64,7 +64,7 @@ class Chat extends Component {
           newMessagesCount: cont,
         })
       })
-    }, 5000)
+    }, 10000)
     return () => clearInterval(interval)
   }
 
@@ -208,7 +208,6 @@ class Chat extends Component {
             id_usuario={this.props.id_usuario}
             id_flujo={this.props.id_flujo}
             id_grupo={this.props.id_grupo}
-            nivel={this.props.nivel}
             Receptor={this.obtenerReceptor}
           />
         </div>
