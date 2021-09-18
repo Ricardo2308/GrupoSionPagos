@@ -72,8 +72,22 @@ const Dashboard = () => {
                   labels: estados,
                   datasets: [
                     {
-                      backgroundColor: ['#D02F2F', '#ADBC3C', '#40389D', '#8A5C84', '#428A49'],
-                      hoverBackgroundColor: ['#CC5855', '#C7C246', '#6F72C5', '#8E6BC2', '#56A05A'],
+                      backgroundColor: [
+                        '#D02F2F',
+                        '#ADBC3C',
+                        '#40389D',
+                        '#8A5C84',
+                        '#428A49',
+                        '#553D26',
+                      ],
+                      hoverBackgroundColor: [
+                        '#CC5855',
+                        '#C7C246',
+                        '#6F72C5',
+                        '#8E6BC2',
+                        '#56A05A',
+                        '#825E3D',
+                      ],
                       data: results,
                     },
                   ],
