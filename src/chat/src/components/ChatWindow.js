@@ -31,7 +31,7 @@ class ChatWindow extends Component {
   }
 
   componentDidMount() {
-    getUsuarios(null, null, null, null).then((items) => {
+    getUsuarios(this.props.id_grupo, this.props.id_flujo, null, null).then((items) => {
       this.setState({
         usuarios: items.users,
       })
@@ -92,11 +92,22 @@ class ChatWindow extends Component {
         >
           <option value="0">Seleccione receptor</option>
           {this.state.usuarios.map((item, i) => {
-            if (this.props.id_usuario !== item.id) {
-              if (item.eliminado !== '1' && item.activo !== '0') {
+            if (this.props.id_usuario != item.id_usuario) {
+              if (item.nivel == '0') {
                 return (
-                  <option key={item.id} value={item.id}>
+                  <option key={item.id_usuario} value={item.id_usuario}>
                     {item.nombre_usuario}
+                    {' => '}
+                    {item.perfil}
+                  </option>
+                )
+              }
+              if (item.nivel != '0') {
+                return (
+                  <option key={item.id_usuario} value={item.id_usuario}>
+                    {item.nombre_usuario}
+                    {' => Autorizador de nivel '}
+                    {item.nivel}
                   </option>
                 )
               }

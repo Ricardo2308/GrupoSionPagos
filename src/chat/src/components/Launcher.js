@@ -61,6 +61,7 @@ class Launcher extends Component {
           id_usuario={this.props.id_usuario}
           id_flujo={this.props.id_flujo}
           Receptor={this.props.Receptor}
+          id_grupo={this.props.id_grupo}
         />
       </div>
     )
