@@ -34,7 +34,7 @@ const AppHeaderDropdown = () => {
             title="Ir al Perfil"
             onClick={() =>
               history.push({
-                pathname: '/base/consulta',
+                pathname: '/usuarios/consulta',
                 id_usuario: session.id,
                 nombre: session.name,
                 estado: session.estado,

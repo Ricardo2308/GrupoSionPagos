@@ -5,16 +5,12 @@ const AppFooter = () => {
   return (
     <CFooter>
       <div>
-        <a href="https://coreui.io" target="_blank" rel="noopener noreferrer">
-          Control de Pagos
-        </a>
+        <h style={{ color: '#0C70AA' }}>Control de Pagos</h>
         <span className="ms-1">&copy; 2021 Grupo Sion.</span>
       </div>
       <div className="ms-auto">
         <span className="me-1">Desarrollado por</span>
-        <a href="https://coreui.io/react" target="_blank" rel="noopener noreferrer">
-          Pendrogon
-        </a>
+        <h style={{ color: '#0C70AA' }}>Pendrogon</h>
       </div>
     </CFooter>
   )

@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import 'react-dropzone-uploader/dist/styles.css'
 import Dropzone from 'react-dropzone-uploader'
-import logo from '../../src/assets/icons/GrupoSion.png'
 import { jsPDF } from 'jspdf'
 
 const FileUploader = (prop) => {

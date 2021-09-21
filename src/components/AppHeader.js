@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useSession } from 'react-use-session'
 import { useSelector, useDispatch } from 'react-redux'
-import { FiBell, FiMenu } from 'react-icons/fi'
+import { FiMenu } from 'react-icons/fi'
 import { getMensajes } from '../services/getMensajes'
+import { getNotificaciones } from '../services/getNotificaciones'
 import '../chat/src/styles/launcher.css'
 import {
   CContainer,
@@ -20,16 +21,20 @@ import { AppBreadcrumb } from './index'
 
 import { AppHeaderDropdown } from './header/index'
 import { MessageDropdown } from './header/index'
+import { NotificationDropdown } from './header/index'
 
 const AppHeader = () => {
   const dispatch = useDispatch()
   const [results, setList] = useState([])
+  const [notificaciones, setNotificaciones] = useState([])
   const [contador, Contar] = useState(0)
+  const [contadorN, ContarN] = useState(0)
   const sidebarShow = useSelector((state) => state.sidebarShow)
   const { session } = useSession('PendrogonIT-Session')
 
   useEffect(() => {
     let cont = 0
+    let contN = 0
     getMensajes(null, session.id).then((items) => {
       items.mensajes.map((item) => {
         if (item.leido === '0') {
@@ -39,8 +44,18 @@ const AppHeader = () => {
       })
       setList(items.mensajes)
     })
+    getNotificaciones(null, session.id).then((items) => {
+      items.notificaciones.map((item) => {
+        if (item.Leido === '0') {
+          contN++
+        }
+        ContarN(contN)
+      })
+      setNotificaciones(items.notificaciones)
+    })
     const interval = setInterval(() => {
-      cont = 0
+      let cont = 0
+      let contN = 0
       getMensajes(null, session.id).then((items) => {
         items.mensajes.map((item) => {
           if (item.leido === '0') {
@@ -49,6 +64,15 @@ const AppHeader = () => {
           Contar(cont)
         })
         setList(items.mensajes)
+      })
+      getNotificaciones(null, session.id).then((items) => {
+        items.notificaciones.map((item) => {
+          if (item.Leido === '0') {
+            contN++
+          }
+          ContarN(contN)
+        })
+        setNotificaciones(items.notificaciones)
       })
     }, 30000)
     return () => clearInterval(interval)
@@ -76,7 +100,8 @@ const AppHeader = () => {
         <CHeaderNav title="Mensajes Pagos">
           <CNavItem>
             <CNavLink>
-              <FiBell size={20} />
+              <NotificationDropdown notificaciones={notificaciones} />
+              <NotificationsCount count={contadorN} />
             </CNavLink>
           </CNavItem>
           <CNavItem>
@@ -96,6 +121,13 @@ const AppHeader = () => {
       </CContainer>
     </CHeader>
   )
+}
+
+const NotificationsCount = (props) => {
+  if (props.count === 0) {
+    return null
+  }
+  return <div className={'new-messages-count'}>{props.count}</div>
 }
 
 const MessageCount = (props) => {

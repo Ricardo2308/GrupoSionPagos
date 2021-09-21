@@ -34,6 +34,10 @@ const MessageDropdown = (props) => {
                       id_flujo: item.id_flujo,
                       pago: item.pago,
                       id_usuario: session.id,
+                      nivel: item.nivel,
+                      estado: item.estado,
+                      id_grupo: item.id_grupoautorizacion,
+                      pagina: 'transferencia',
                     })
                   }
                 >
