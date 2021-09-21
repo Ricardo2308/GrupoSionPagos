@@ -117,3 +117,12 @@
   text-align: center;
   margin-bottom: 20px
 }
+
+.datatable-title{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+  font-weight: bold;
+}
