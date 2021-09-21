@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import { Button, FormControl } from 'react-bootstrap'
 import DataTable, { createTheme } from 'react-data-table-component'
 import { getBitacora } from '../../../../services/getBitacora'
@@ -30,6 +30,7 @@ const FilterComponent = (prop) => (
 
 const Autorizados = (prop) => {
   const history = useHistory()
+  const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [filterText, setFilterText] = useState('')
@@ -44,11 +45,20 @@ const Autorizados = (prop) => {
 
   useEffect(() => {
     let mounted = true
-    getBitacora(null, prop.comentario, session.id, prop.tipo).then((items) => {
-      if (mounted) {
-        setList(items.bitacora)
-      }
-    })
+    console.log(location.autorizados)
+    if (location.comentario && location.tipo) {
+      getBitacora(null, location.comentario, session.id, location.tipo).then((items) => {
+        if (mounted) {
+          setList(items.bitacora)
+        }
+      })
+    } else {
+      getBitacora(null, prop.comentario, session.id, prop.tipo).then((items) => {
+        if (mounted) {
+          setList(items.bitacora)
+        }
+      })
+    }
     return () => (mounted = false)
   }, [])
 
@@ -140,6 +150,63 @@ const Autorizados = (prop) => {
     },
   ])
 
+  const columnsA = useMemo(() => [
+    {
+      name: 'Número Documento',
+      selector: 'Pago',
+      center: true,
+      width: '15%',
+    },
+    {
+      name: 'Fecha Documento',
+      selector: 'doc_date',
+      center: true,
+      width: '13%',
+    },
+    {
+      name: 'Detalle',
+      selector: 'comments',
+      center: true,
+      width: '53%',
+    },
+    {
+      name: 'Estado',
+      center: true,
+      cell: function OrderItems(row) {
+        if (row.activo === '1') {
+          return <div>Activo</div>
+        } else if (row.activo === '0') {
+          return <div>Inactivo</div>
+        }
+      },
+    },
+    {
+      name: 'Acciones',
+      cell: function OrderItems(row) {
+        return (
+          <div>
+            <Button
+              data-tag="allowRowEvents"
+              variant="success"
+              size="sm"
+              title="Consultar Detalle Pago"
+              onClick={() =>
+                history.push({
+                  pathname: '/compensacion/tabs',
+                  id_flujo: row.IdFlujo,
+                  pago: row.doc_num,
+                })
+              }
+            >
+              <FaList />
+            </Button>
+          </div>
+        )
+      },
+      center: true,
+    },
+  ])
+
   const subHeaderComponentMemo = useMemo(() => {
     const handleClear = () => {
       if (filterText) {
@@ -158,20 +225,38 @@ const Autorizados = (prop) => {
 
   if (session) {
     return (
-      <DataTable
-        columns={columns}
-        noDataComponent="No hay pagos que mostrar"
-        data={filteredItems}
-        customStyles={customStyles}
-        theme="solarized"
-        pagination
-        paginationPerPage={6}
-        paginationResetDefaultPage={resetPaginationToggle}
-        subHeader
-        subHeaderComponent={subHeaderComponentMemo}
-        responsive={true}
-        persistTableHead
-      />
+      <div>
+        <div>
+          <div className="datatable-title">Recien Autorizados</div>
+          <DataTable
+            columns={columnsA}
+            noDataComponent="No hay pagos que mostrar"
+            data={location.autorizados}
+            customStyles={customStyles}
+            theme="solarized"
+            pagination
+            paginationPerPage={5}
+            responsive={true}
+            persistTableHead
+          />
+        </div>
+        <div>
+          <DataTable
+            columns={columns}
+            noDataComponent="No hay pagos que mostrar"
+            data={filteredItems}
+            customStyles={customStyles}
+            theme="solarized"
+            pagination
+            paginationPerPage={5}
+            paginationResetDefaultPage={resetPaginationToggle}
+            subHeader
+            subHeaderComponent={subHeaderComponentMemo}
+            responsive={true}
+            persistTableHead
+          />
+        </div>
+      </div>
     )
   } else {
     history.push('/dashboard')

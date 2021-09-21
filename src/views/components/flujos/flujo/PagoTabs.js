@@ -185,49 +185,50 @@ const PagoTabs = () => {
             />
           </div>
         )
-      }
-      return (
-        <div className="div-tabs">
-          <div className="div-content">
-            <div style={{ width: '100%' }}>
-              <Tabs defaultActiveKey="solicitud" id="uncontrolled-tab-example" className="mb-3">
-                <Tab eventKey="solicitud" title="Solicitud">
-                  <FlujoSolicitud id_flujo={location.id_flujo} />
-                </Tab>
-                <Tab eventKey="oferta" title="Oferta Compra">
-                  <FlujoOferta id_flujo={location.id_flujo} />
-                </Tab>
-                <Tab eventKey="orden" title="Orden Compra">
-                  <FlujoOrden id_flujo={location.id_flujo} />
-                </Tab>
-                <Tab eventKey="ingreso" title="Ingreso Bodega">
-                  <FlujoIngreso id_flujo1={location.id_flujo} />
-                </Tab>
-                <Tab eventKey="facturas" title="Facturas">
-                  <FlujoFactura id_flujo1={location.id_flujo} />
-                </Tab>
-                <Tab eventKey="detalle" title="Detalle">
-                  <DetalleFlujo id_flujo={location.id_flujo} />
-                </Tab>
-                <Tab eventKey="archivos" title="Archivos">
-                  <ArchivosFlujo id_flujo={location.id_flujo} estado={location.estado} />
-                </Tab>
-                <Tab eventKey="bitacora" title="Bitácora">
-                  <FlujoBitacora id_flujo={location.id_flujo} />
-                </Tab>
-              </Tabs>
+      } else {
+        return (
+          <div className="div-tabs">
+            <div className="div-content">
+              <div style={{ width: '100%' }}>
+                <Tabs defaultActiveKey="solicitud" id="uncontrolled-tab-example" className="mb-3">
+                  <Tab eventKey="solicitud" title="Solicitud">
+                    <FlujoSolicitud id_flujo={location.id_flujo} />
+                  </Tab>
+                  <Tab eventKey="oferta" title="Oferta Compra">
+                    <FlujoOferta id_flujo={location.id_flujo} />
+                  </Tab>
+                  <Tab eventKey="orden" title="Orden Compra">
+                    <FlujoOrden id_flujo={location.id_flujo} />
+                  </Tab>
+                  <Tab eventKey="ingreso" title="Ingreso Bodega">
+                    <FlujoIngreso id_flujo1={location.id_flujo} />
+                  </Tab>
+                  <Tab eventKey="facturas" title="Facturas">
+                    <FlujoFactura id_flujo1={location.id_flujo} />
+                  </Tab>
+                  <Tab eventKey="detalle" title="Detalle">
+                    <DetalleFlujo id_flujo={location.id_flujo} />
+                  </Tab>
+                  <Tab eventKey="archivos" title="Archivos">
+                    <ArchivosFlujo id_flujo={location.id_flujo} estado={location.estado} />
+                  </Tab>
+                  <Tab eventKey="bitacora" title="Bitácora">
+                    <FlujoBitacora id_flujo={location.id_flujo} />
+                  </Tab>
+                </Tabs>
+              </div>
             </div>
+            <Chat
+              id_usuario={session.id}
+              id_flujo={location.id_flujo}
+              pago={location.pago}
+              id_grupo={grupo}
+              nivel={nivel}
+              estado={location.estado}
+            />
           </div>
-          <Chat
-            id_usuario={session.id}
-            id_flujo={location.id_flujo}
-            pago={location.pago}
-            id_grupo={grupo}
-            nivel={nivel}
-            estado={location.estado}
-          />
-        </div>
-      )
+        )
+      }
     } else {
       history.push('/dashboard')
       return (
