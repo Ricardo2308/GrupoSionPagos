@@ -127,8 +127,8 @@ const Cuentas = React.lazy(() => import('./views/components/flujos/cuentas/Cuent
 const EditarCuentas = React.lazy(() => import('./views/components/flujos/cuentas/EditarCuentas'))
 const NuevaCuenta = React.lazy(() => import('./views/components/flujos/cuentas/NuevaCuenta'))
 
-const Alerts = React.lazy(() => import('./views/components/notifications/alerts/Alerts'))
-const Badges = React.lazy(() => import('./views/components/notifications/badges/Badges'))
+const Autorizados = React.lazy(() => import('./views/components/flujos/flujo/Autorizados'))
+const Rechazados = React.lazy(() => import('./views/components/flujos/flujo/Rechazados'))
 const Modals = React.lazy(() => import('./views/components/notifications/modals/Modals'))
 const Toasts = React.lazy(() => import('./views/components/notifications/toasts/Toasts'))
 
@@ -222,6 +222,8 @@ const routes = [
   { path: '/pagos/archivos', name: 'Archivos Flujo', component: ArchivosFlujoF },
   { path: '/pagos/flujogrupo', name: 'Flujo Grupo Autorización', component: FlujoGrupo },
   { path: '/pagos/detalle', name: 'Detalle Flujo', component: DetalleFlujo },
+  { path: '/pagos/autorizados', name: 'Autorizados', component: Autorizados },
+  { path: '/pagos/rechazados', name: 'Rechazados', component: Rechazados },
   {
     path: '/compensacion',
     exact: true,
@@ -240,9 +242,6 @@ const routes = [
   { path: '/archivoflujo/nuevo', name: 'Nuevo', component: NuevoArchivoFlujo },
   { path: '/archivoflujo/editar', name: 'Nuevo', component: EditarArchivoFlujo },
 
-  { path: '/notifications', name: 'Notifications', component: Alerts, exact: true },
-  { path: '/notifications/alerts', name: 'Alerts', component: Alerts },
-  { path: '/notifications/badges', name: 'Badges', component: Badges },
   { path: '/notifications/modals', name: 'Modals', component: Modals },
   { path: '/notifications/toasts', name: 'Toasts', component: Toasts },
   // { path: '/login', name: 'Login', component: Login },
