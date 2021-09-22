@@ -3,6 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { Button, FormControl } from 'react-bootstrap'
 import DataTable, { createTheme } from 'react-data-table-component'
 import { getBitacora } from '../../../../services/getBitacora'
+import { postNotificacion } from '../../../../services/postNotificacion'
 import { useSession } from 'react-use-session'
 import { FaList } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
@@ -51,6 +52,20 @@ const Rechazados = (prop) => {
       item.Pago.toLowerCase().includes(filterText.toLowerCase()) ||
       item.activo.toLowerCase().includes(filterText.toLowerCase()),
   )
+
+  async function leerNotificaciones(IdFlujo, Pago, Estado, Nivel, IdGrupo) {
+    const respuesta = await postNotificacion(IdFlujo, session.id, '', '', '1')
+    if (respuesta == 'OK') {
+      history.push({
+        pathname: '/pagos/tabs',
+        id_flujo: IdFlujo,
+        pago: Pago,
+        estado: Estado,
+        nivel: Nivel,
+        id_grupo: IdGrupo,
+      })
+    }
+  }
 
   useEffect(() => {
     let mounted = true
@@ -203,14 +218,7 @@ const Rechazados = (prop) => {
               size="sm"
               title="Consultar Detalle Pago"
               onClick={() =>
-                history.push({
-                  pathname: '/pagos/tabs',
-                  id_flujo: row.IdFlujo,
-                  pago: row.Pago,
-                  id_grupo: row.IdGrupo,
-                  estado: row.estado,
-                  nivel: row.nivel,
-                })
+                leerNotificaciones(row.IdFlujo, row.Pago, row.IdGrupo, row.estado, row.nivel)
               }
             >
               <FaList />
