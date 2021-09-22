@@ -33,6 +33,7 @@ const Rechazados = (prop) => {
   const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [rechazados, setRechazados] = useState([])
   const [filterText, setFilterText] = useState('')
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false)
   const filteredItems = results.filter(
@@ -43,13 +44,30 @@ const Rechazados = (prop) => {
       item.activo.toLowerCase().includes(filterText.toLowerCase()),
   )
 
+  const filteredItemsR = rechazados.filter(
+    (item) =>
+      item.comments.toLowerCase().includes(filterText.toLowerCase()) ||
+      item.doc_date.toLowerCase().includes(filterText.toLowerCase()) ||
+      item.Pago.toLowerCase().includes(filterText.toLowerCase()) ||
+      item.activo.toLowerCase().includes(filterText.toLowerCase()),
+  )
+
   useEffect(() => {
     let mounted = true
-    getBitacora(null, prop.comentario, session.id, prop.tipo).then((items) => {
-      if (mounted) {
-        setList(items.bitacora)
-      }
-    })
+    if (location.comentario && location.tipo) {
+      setRechazados(location.rechazados)
+      getBitacora(null, location.comentario, session.id, location.tipo).then((items) => {
+        if (mounted) {
+          setList(items.bitacora)
+        }
+      })
+    } else {
+      getBitacora(null, prop.comentario, session.id, prop.tipo).then((items) => {
+        if (mounted) {
+          setList(items.bitacora)
+        }
+      })
+    }
     return () => (mounted = false)
   }, [])
 
@@ -126,9 +144,12 @@ const Rechazados = (prop) => {
               title="Consultar Detalle Pago"
               onClick={() =>
                 history.push({
-                  pathname: '/compensacion/tabs',
+                  pathname: '/pagos/tabs',
                   id_flujo: row.IdFlujo,
                   pago: row.doc_num,
+                  estado: row.estado,
+                  nivel: row.nivel,
+                  id_grupo: row.id_grupoautorizacion,
                 })
               }
             >
@@ -141,7 +162,7 @@ const Rechazados = (prop) => {
     },
   ])
 
-  const columnsA = useMemo(() => [
+  const columnsR = useMemo(() => [
     {
       name: 'Número Documento',
       selector: 'Pago',
@@ -183,9 +204,12 @@ const Rechazados = (prop) => {
               title="Consultar Detalle Pago"
               onClick={() =>
                 history.push({
-                  pathname: '/compensacion/tabs',
+                  pathname: '/pagos/tabs',
                   id_flujo: row.IdFlujo,
-                  pago: row.doc_num,
+                  pago: row.Pago,
+                  id_grupo: row.IdGrupo,
+                  estado: row.estado,
+                  nivel: row.nivel,
                 })
               }
             >
@@ -215,23 +239,35 @@ const Rechazados = (prop) => {
   }, [filterText, resetPaginationToggle])
 
   if (session) {
+    if (!location.tipo && !prop.tipo) {
+      history.push('/dashboard')
+      return (
+        <div className="sin-sesion">
+          NO SE CARGÓ EL NÚMERO DE PAGO. REGRESE A LA PANTALLA DE PAGOS.
+        </div>
+      )
+    }
     return (
       <div>
         <div>
-          <div className="datatable-title">Recien Autorizados</div>
+          <div className="datatable-title">Pagos Notificados</div>
           <DataTable
-            columns={columnsA}
+            columns={columnsR}
             noDataComponent="No hay pagos que mostrar"
-            data={location.rechazados}
+            data={filteredItemsR}
             customStyles={customStyles}
             theme="solarized"
             pagination
             paginationPerPage={5}
+            paginationResetDefaultPage={resetPaginationToggle}
+            subHeader
+            subHeaderComponent={subHeaderComponentMemo}
             responsive={true}
             persistTableHead
           />
         </div>
         <div>
+          <div className="datatable-title">Pagos Rechazados</div>
           <DataTable
             columns={columns}
             noDataComponent="No hay pagos que mostrar"
@@ -239,10 +275,8 @@ const Rechazados = (prop) => {
             customStyles={customStyles}
             theme="solarized"
             pagination
-            paginationPerPage={6}
+            paginationPerPage={5}
             paginationResetDefaultPage={resetPaginationToggle}
-            subHeader
-            subHeaderComponent={subHeaderComponentMemo}
             responsive={true}
             persistTableHead
           />

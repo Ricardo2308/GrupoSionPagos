@@ -1,5 +1,5 @@
 import React from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { Tab, Tabs } from 'react-bootstrap'
 import Rechazados from './Rechazados'
 import Autorizados from './Autorizados'
@@ -9,7 +9,6 @@ import '../../../../scss/estilos.scss'
 
 const Transferencia = () => {
   const history = useHistory()
-  const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
 
   if (session) {

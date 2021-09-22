@@ -33,6 +33,7 @@ const Autorizados = (prop) => {
   const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [autorizados, setAutorizados] = useState([])
   const [filterText, setFilterText] = useState('')
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false)
   const filteredItems = results.filter(
@@ -42,11 +43,18 @@ const Autorizados = (prop) => {
       item.doc_num.toLowerCase().includes(filterText.toLowerCase()) ||
       item.activo.toLowerCase().includes(filterText.toLowerCase()),
   )
+  const filteredItemsA = autorizados.filter(
+    (item) =>
+      item.comments.toLowerCase().includes(filterText.toLowerCase()) ||
+      item.doc_date.toLowerCase().includes(filterText.toLowerCase()) ||
+      item.Pago.toLowerCase().includes(filterText.toLowerCase()) ||
+      item.activo.toLowerCase().includes(filterText.toLowerCase()),
+  )
 
   useEffect(() => {
     let mounted = true
-    console.log(location.autorizados)
     if (location.comentario && location.tipo) {
+      setAutorizados(location.autorizados)
       getBitacora(null, location.comentario, session.id, location.tipo).then((items) => {
         if (mounted) {
           setList(items.bitacora)
@@ -135,9 +143,12 @@ const Autorizados = (prop) => {
               title="Consultar Detalle Pago"
               onClick={() =>
                 history.push({
-                  pathname: '/compensacion/tabs',
+                  pathname: '/pagos/tabs',
                   id_flujo: row.IdFlujo,
                   pago: row.doc_num,
+                  estado: row.estado,
+                  nivel: row.nivel,
+                  id_grupo: row.id_grupoautorizacion,
                 })
               }
             >
@@ -192,9 +203,12 @@ const Autorizados = (prop) => {
               title="Consultar Detalle Pago"
               onClick={() =>
                 history.push({
-                  pathname: '/compensacion/tabs',
+                  pathname: '/pagos/tabs',
                   id_flujo: row.IdFlujo,
-                  pago: row.doc_num,
+                  pago: row.Pago,
+                  id_grupo: row.IdGrupo,
+                  estado: row.estado,
+                  nivel: row.nivel,
                 })
               }
             >
@@ -224,40 +238,51 @@ const Autorizados = (prop) => {
   }, [filterText, resetPaginationToggle])
 
   if (session) {
-    return (
-      <div>
-        <div>
-          <div className="datatable-title">Recien Autorizados</div>
-          <DataTable
-            columns={columnsA}
-            noDataComponent="No hay pagos que mostrar"
-            data={location.autorizados}
-            customStyles={customStyles}
-            theme="solarized"
-            pagination
-            paginationPerPage={5}
-            responsive={true}
-            persistTableHead
-          />
+    if (!location.tipo && !prop.tipo) {
+      history.push('/dashboard')
+      return (
+        <div className="sin-sesion">
+          NO SE CARGÓ EL NÚMERO DE PAGO. REGRESE A LA PANTALLA DE PAGOS.
         </div>
+      )
+    } else {
+      return (
         <div>
-          <DataTable
-            columns={columns}
-            noDataComponent="No hay pagos que mostrar"
-            data={filteredItems}
-            customStyles={customStyles}
-            theme="solarized"
-            pagination
-            paginationPerPage={5}
-            paginationResetDefaultPage={resetPaginationToggle}
-            subHeader
-            subHeaderComponent={subHeaderComponentMemo}
-            responsive={true}
-            persistTableHead
-          />
+          <div>
+            <div className="datatable-title">Pagos Notificados</div>
+            <DataTable
+              columns={columnsA}
+              noDataComponent="No hay pagos que mostrar"
+              data={filteredItemsA}
+              customStyles={customStyles}
+              theme="solarized"
+              pagination
+              paginationPerPage={5}
+              paginationResetDefaultPage={resetPaginationToggle}
+              subHeader
+              subHeaderComponent={subHeaderComponentMemo}
+              responsive={true}
+              persistTableHead
+            />
+          </div>
+          <div>
+            <div className="datatable-title">Pagos Aprobados</div>
+            <DataTable
+              columns={columns}
+              noDataComponent="No hay pagos que mostrar"
+              data={filteredItems}
+              customStyles={customStyles}
+              theme="solarized"
+              pagination
+              paginationPerPage={5}
+              paginationResetDefaultPage={resetPaginationToggle}
+              responsive={true}
+              persistTableHead
+            />
+          </div>
         </div>
-      </div>
-    )
+      )
+    }
   } else {
     history.push('/dashboard')
     return <div className="sin-sesion">SIN SESIÓN ACTIVA.</div>

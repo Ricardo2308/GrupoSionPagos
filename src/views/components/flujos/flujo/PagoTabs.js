@@ -117,7 +117,7 @@ const PagoTabs = () => {
       if (location.id_grupo) {
         grupo = location.id_grupo
       }
-      if (location.estado > 2) {
+      if (location.estado > 2 && location.estado < 5) {
         return (
           <div className="div-tabs">
             <Modal responsive variant="primary" show={show} onHide={handleClose} centered>
@@ -218,14 +218,6 @@ const PagoTabs = () => {
                 </Tabs>
               </div>
             </div>
-            <Chat
-              id_usuario={session.id}
-              id_flujo={location.id_flujo}
-              pago={location.pago}
-              id_grupo={grupo}
-              nivel={nivel}
-              estado={location.estado}
-            />
           </div>
         )
       }

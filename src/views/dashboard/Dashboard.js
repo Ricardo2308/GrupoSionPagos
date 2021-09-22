@@ -19,11 +19,13 @@ const Dashboard = () => {
   const [results, setList] = useState([])
   const [estados, setEstados] = useState([])
   const [pagos, setPagos] = useState([])
+  const [tipos, setTipos] = useState([])
 
   useEffect(() => {
     let estados = []
     let labelestados = []
     let pagos = []
+    let labeltipos = []
     getFlujos('0', null, null, '1').then((items) => {
       for (const pago of items.flujos) {
         estados.push(parseInt(pago.CantidadEstados))
@@ -35,13 +37,16 @@ const Dashboard = () => {
     getFlujos('0', null, null, '2').then((items) => {
       for (const pago of items.flujos) {
         pagos.push(parseInt(pago.PagosAprobados))
+        labeltipos.push(pago.tipo)
       }
       setPagos(pagos)
+      setTipos(labeltipos)
     })
     const interval = setInterval(() => {
       let estados = []
       let labelestados = []
       let pagos = []
+      let labeltipos = []
       getFlujos('0', null, null, '1').then((items) => {
         for (const pago of items.flujos) {
           estados.push(parseInt(pago.CantidadEstados))
@@ -53,8 +58,10 @@ const Dashboard = () => {
       getFlujos('0', null, null, '2').then((items) => {
         for (const pago of items.flujos) {
           pagos.push(parseInt(pago.PagosAprobados))
+          labeltipos.push(pago.tipo)
         }
         setPagos(pagos)
+        setTipos(labeltipos)
       })
     }, 60000)
     return () => clearInterval(interval)
@@ -102,7 +109,7 @@ const Dashboard = () => {
             <CCardBody>
               <CChartPie
                 data={{
-                  labels: ['Bancario', 'Interno', 'Transferencia'],
+                  labels: tipos,
                   datasets: [
                     {
                       data: pagos,
