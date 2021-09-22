@@ -24,7 +24,7 @@ const NotificationDropdown = (props) => {
           autorizados.push(item)
           const respuesta = await postNotificacion(item.IdFlujo, session.id, '', '', '1')
           if (respuesta == 'OK') {
-            history.replace({
+            history.push({
               pathname: '/pagos/autorizados',
               autorizados: autorizados,
               tipo: item.tipo,

@@ -14,6 +14,21 @@ const MessageDropdown = (props) => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
 
+  async function responderMensajes(tipo) {
+    let mensajes = []
+    for (let item of props.mensajes) {
+      if (item.tipo == tipo && item.leido == '0') {
+        mensajes.push(item)
+      }
+    }
+    history.push({
+      pathname: '/pagos/autorizados',
+      comentario: 'Aprobado',
+      tipo: tipo,
+      autorizados: mensajes,
+    })
+  }
+
   if (session) {
     return (
       <CDropdown variant="nav-item">
@@ -28,22 +43,11 @@ const MessageDropdown = (props) => {
                 <CDropdownItem
                   title="Ir al Pago"
                   key={item.id_mensaje}
-                  onClick={() =>
-                    history.push({
-                      pathname: '/pagos/tabs',
-                      id_flujo: item.id_flujo,
-                      pago: item.pago,
-                      id_usuario: session.id,
-                      nivel: item.nivel,
-                      estado: item.estado,
-                      id_grupo: item.id_grupoautorizacion,
-                      pagina: 'transferencia',
-                    })
-                  }
+                  onClick={() => responderMensajes(item.tipo)}
                 >
                   {item.usuarioenvia}
                   {'->'}
-                  {item.pago}
+                  {item.Pago}
                   {'->"'}
                   {item.mensaje}
                   {'"'}
