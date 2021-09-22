@@ -18,34 +18,30 @@ const NotificationDropdown = (props) => {
   async function leerNotificacion(estado, tipo) {
     let autorizados = []
     let rechazados = []
-    for (let item of props.notificaciones) {
-      if (estado == 5) {
+    if (estado == 5) {
+      for (let item of props.notificaciones) {
         if (item.Leido == 0 && item.estado == estado && item.tipo == tipo) {
           autorizados.push(item)
-          const respuesta = await postNotificacion(item.IdFlujo, session.id, '', '', '1')
-          if (respuesta == 'OK') {
-            history.push({
-              pathname: '/pagos/autorizados',
-              autorizados: autorizados,
-              tipo: item.tipo,
-              comentario: 'Aprobado',
-            })
-          }
-        }
-      } else if (estado == 6) {
-        if (item.Leido == 0 && item.estado == estado && item.tipo == tipo) {
-          rechazados.push(item)
-          const respuesta = await postNotificacion(item.IdFlujo, session.id, '', '', '1')
-          if (respuesta == 'OK') {
-            history.push({
-              pathname: '/pagos/rechazados',
-              rechazados: rechazados,
-              tipo: item.tipo,
-              comentario: 'Rechazado',
-            })
-          }
         }
       }
+      history.push({
+        pathname: '/pagos/autorizados',
+        autorizados: autorizados,
+        tipo: tipo,
+        comentario: 'Aprobado',
+      })
+    } else if (estado == 6) {
+      for (let item of props.notificaciones) {
+        if (item.Leido == 0 && item.estado == estado && item.tipo == tipo) {
+          rechazados.push(item)
+        }
+      }
+      history.push({
+        pathname: '/pagos/rechazados',
+        rechazados: rechazados,
+        tipo: tipo,
+        comentario: 'Rechazado',
+      })
     }
   }
 

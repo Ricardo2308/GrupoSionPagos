@@ -74,7 +74,7 @@ const AppHeader = () => {
         })
         setNotificaciones(items.notificaciones)
       })
-    }, 30000)
+    }, 20000)
     return () => clearInterval(interval)
   }, [])
 
