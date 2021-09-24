@@ -53,8 +53,19 @@ const Autorizados = (prop) => {
   )
 
   async function leerNotificaciones(IdFlujo, Pago, Estado, Nivel, IdGrupo) {
-    const respuesta = await postNotificacion(IdFlujo, session.id, '', '', '1')
-    if (respuesta == 'OK') {
+    if (location.opcion == 1) {
+      const respuesta = await postNotificacion(IdFlujo, session.id, '', '', '1')
+      if (respuesta == 'OK') {
+        history.push({
+          pathname: '/pagos/tabs',
+          id_flujo: IdFlujo,
+          pago: Pago,
+          estado: Estado,
+          nivel: Nivel,
+          id_grupo: IdGrupo,
+        })
+      }
+    } else if (location.opcion == 2) {
       history.push({
         pathname: '/pagos/tabs',
         id_flujo: IdFlujo,
@@ -217,7 +228,7 @@ const Autorizados = (prop) => {
               size="sm"
               title="Consultar Detalle Pago"
               onClick={() =>
-                leerNotificaciones(row.IdFlujo, row.Pago, row.IdGrupo, row.estado, row.nivel)
+                leerNotificaciones(row.IdFlujo, row.Pago, row.estado, row.nivel, row.IdGrupo)
               }
             >
               <FaList />

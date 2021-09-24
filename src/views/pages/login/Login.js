@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom'
 import { Alert } from 'react-bootstrap'
 import { FiUser, FiLock, FiEye } from 'react-icons/fi'
 import { getUsuarios } from '../../../services/getUsuarios'
+import { postLogLogin } from '../../../services/postLogLogin'
 import { useSession } from 'react-use-session'
 import logo from '../../../assets/icons/logo.png'
 import md5 from 'md5'
@@ -22,17 +23,17 @@ import {
 
 const Login = () => {
   const history = useHistory()
+  const { saveJWT } = useSession('PendrogonIT-Session')
+  const [show, setShow] = useState(false)
+  const [passwordShown, setPasswordShown] = useState(false)
+  const [mensaje, setMensaje] = useState('')
+  const [color, setColor] = useState('')
+  const [titulo, setTitulo] = useState('')
 
   const [form, setValues] = useState({
     usuario: '',
     password: '',
   })
-
-  const { saveJWT } = useSession('PendrogonIT-Session')
-  const [results, setList] = useState()
-  const [show, setShow] = useState(false)
-  const [passwordShown, setPasswordShown] = useState(false)
-  const [mensaje, setMensaje] = useState('')
 
   const showPassword = () => {
     setPasswordShown(passwordShown ? false : true)
@@ -45,51 +46,46 @@ const Login = () => {
     })
   }
 
-  useEffect(() => {
-    let mounted = true
-    getUsuarios(null, null, null, null).then((items) => {
-      if (mounted) {
-        setList(items.users)
-      }
-    })
-    return () => (mounted = false)
-  }, [])
-
   const handleSubmit = (event) => {
     event.preventDefault()
-    results.map((item) => {
-      if (
-        md5(form.password, { encoding: 'binary' }) === item.password &&
-        (form.usuario === item.email || form.usuario === item.nombre_usuario)
-      ) {
-        if (item.activo !== '0' && item.eliminado !== '1') {
-          const sign = require('jwt-encode')
-          const secret = 'secret'
-          const data = {
-            email: item.email,
-            name: item.nombre + ' ' + item.apellido,
-            user_name: item.nombre_usuario,
-            id: item.id,
-            estado: item.activo,
+    getUsuarios(null, null, form.usuario, null).then((items) => {
+      for (let item of items.users) {
+        if (md5(form.password, { encoding: 'binary' }) === item.password) {
+          if (item.activo !== '0' && item.eliminado !== '1') {
+            const sign = require('jwt-encode')
+            const secret = 'secret'
+            const data = {
+              email: item.email,
+              name: item.nombre + ' ' + item.apellido,
+              user_name: item.nombre_usuario,
+              id: item.id,
+              estado: item.activo,
+            }
+            const jwt = sign(data, secret)
+            saveJWT(jwt)
+            history.push('/home')
+          } else {
+            setShow(true)
+            setTitulo('Error!')
+            setColor('danger')
+            setMensaje('Parece que tu usuario ha sido bloqueado. Consulta con el soporte técnico.')
           }
-          const jwt = sign(data, secret)
-          saveJWT(jwt)
-          history.push('/home')
         } else {
-          setMensaje(
-            'Parece que tu usuario ha sido bloqueado o inhabilitado. Consulta con el soporte técnico.',
-          )
+          setShow(true)
+          setTitulo('Error!')
+          setColor('danger')
+          setMensaje('Credenciales incorrectas. Vuelva a intentarlo.')
+          if (item.activo === '1') {
+            postLogLogin(item.id, '10')
+          }
         }
-      } else {
-        setShow(true)
-        setMensaje('Usuario o contraseña incorrectos. Vuelva a intentarlo.')
       }
     })
   }
   return (
     <>
-      <Alert show={show} variant="danger" onClose={() => setShow(false)} dismissible>
-        <Alert.Heading>Error!</Alert.Heading>
+      <Alert show={show} variant={color} onClose={() => setShow(false)} dismissible>
+        <Alert.Heading>{titulo}</Alert.Heading>
         <p>{mensaje}</p>
       </Alert>
       <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
@@ -99,7 +95,7 @@ const Login = () => {
               <CCardGroup>
                 <CCard className="p-4">
                   <CCardBody>
-                    <CForm onSubmit={handleSubmit}>
+                    <CForm>
                       <h1>Iniciar Sesión</h1>
                       <p className="text-medium-emphasis">Inicie sesión con su correo o usuario</p>
                       <CInputGroup className="mb-3">
@@ -128,7 +124,7 @@ const Login = () => {
                       </CInputGroup>
                       <CRow>
                         <CCol xs="6">
-                          <CButton color="primary" className="px-4" type="submit">
+                          <CButton color="primary" className="px-4" onClick={handleSubmit}>
                             Iniciar Sesión
                           </CButton>
                         </CCol>
