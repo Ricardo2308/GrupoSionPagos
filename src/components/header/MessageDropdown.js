@@ -26,6 +26,7 @@ const MessageDropdown = (props) => {
       comentario: 'Aprobado',
       tipo: tipo,
       autorizados: mensajes,
+      opcion: 2,
     })
   }
 

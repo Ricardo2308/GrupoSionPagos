@@ -29,6 +29,7 @@ const NotificationDropdown = (props) => {
         autorizados: autorizados,
         tipo: tipo,
         comentario: 'Aprobado',
+        opcion: 1,
       })
     } else if (estado == 6) {
       for (let item of props.notificaciones) {
