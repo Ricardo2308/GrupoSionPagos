@@ -3,16 +3,30 @@ const API = `${process.env.REACT_APP_API_URL}flujodetalle`
 export function getBitacora(idFlujo, Comentario, idUsuario, Tipo) {
   let ApiFinal = API
   let ApiWhere = ''
-  if (idFlujo !== null) {
-    ApiWhere += '/' + idFlujo + '/0/' + idUsuario + '/0'
+
+  var datos = {
+    comentarios: Comentario,
   }
-  if (Comentario !== null) {
-    ApiWhere += '/0/' + Comentario + '/' + idUsuario + '/' + Tipo
+
+  if (idFlujo !== null) {
+    ApiWhere += '/' + idFlujo + '/' + idUsuario + '/0'
+  }
+  if (Comentario[0] !== '0') {
+    ApiWhere += '/0/' + idUsuario + '/' + Tipo
   }
   ApiFinal += ApiWhere
-  return fetch(ApiFinal)
-    .then(function (response) {
-      return response.json()
+  const data = JSON.stringify(datos)
+  return fetch(ApiFinal, {
+    method: 'POST',
+    body: data,
+    headers: {
+      Accept: 'application/json',
+      'Content-type': 'application/json;charset=UTF-8',
+    },
+  })
+    .then((response) => response.json())
+    .then((response) => {
+      return response
     })
-    .catch((err) => err)
+    .catch((error) => error)
 }
