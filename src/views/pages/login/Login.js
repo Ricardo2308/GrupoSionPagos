@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Alert } from 'react-bootstrap'
 import { FiUser, FiLock, FiEye } from 'react-icons/fi'
@@ -49,36 +49,45 @@ const Login = () => {
   const handleSubmit = (event) => {
     event.preventDefault()
     getUsuarios(null, null, form.usuario, null).then((items) => {
-      for (let item of items.users) {
-        if (md5(form.password, { encoding: 'binary' }) === item.password) {
-          if (item.activo !== '0' && item.eliminado !== '1') {
-            const sign = require('jwt-encode')
-            const secret = 'secret'
-            const data = {
-              email: item.email,
-              name: item.nombre + ' ' + item.apellido,
-              user_name: item.nombre_usuario,
-              id: item.id,
-              estado: item.activo,
+      if (items.users.length > 0) {
+        for (let item of items.users) {
+          if (md5(form.password, { encoding: 'binary' }) === item.password) {
+            if (item.activo !== '0' && item.eliminado !== '1') {
+              const sign = require('jwt-encode')
+              const secret = 'secret'
+              const data = {
+                email: item.email,
+                name: item.nombre + ' ' + item.apellido,
+                user_name: item.nombre_usuario,
+                id: item.id,
+                estado: item.activo,
+              }
+              const jwt = sign(data, secret)
+              saveJWT(jwt)
+              history.push('/home')
+            } else {
+              setShow(true)
+              setTitulo('Error!')
+              setColor('danger')
+              setMensaje(
+                'Parece que tu usuario ha sido bloqueado o eliminado. Consulta con el soporte técnico.',
+              )
             }
-            const jwt = sign(data, secret)
-            saveJWT(jwt)
-            history.push('/home')
           } else {
             setShow(true)
             setTitulo('Error!')
             setColor('danger')
-            setMensaje('Parece que tu usuario ha sido bloqueado. Consulta con el soporte técnico.')
-          }
-        } else {
-          setShow(true)
-          setTitulo('Error!')
-          setColor('danger')
-          setMensaje('Credenciales incorrectas. Vuelva a intentarlo.')
-          if (item.activo === '1') {
-            postLogLogin(item.id, '10')
+            setMensaje('Credenciales incorrectas. Vuelva a intentarlo.')
+            if (item.activo === '1') {
+              postLogLogin(item.id, '10')
+            }
           }
         }
+      } else {
+        setShow(true)
+        setTitulo('Error!')
+        setColor('danger')
+        setMensaje('Credenciales incorrectas. Vuelva a intentarlo.')
       }
     })
   }

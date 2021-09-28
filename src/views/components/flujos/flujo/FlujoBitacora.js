@@ -16,10 +16,11 @@ const FlujoBitacora = (prop) => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const array = ['0']
 
   useEffect(() => {
     let mounted = true
-    getBitacora(prop.id_flujo, null, session.id, null).then((items) => {
+    getBitacora(prop.id_flujo, array, session.id, null).then((items) => {
       if (mounted) {
         setList(items.bitacora)
       }

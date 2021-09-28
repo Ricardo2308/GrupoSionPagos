@@ -79,15 +79,15 @@ const Autorizados = (prop) => {
 
   useEffect(() => {
     let mounted = true
-    if (location.comentario && location.tipo) {
+    if (location.comentarios && location.tipo) {
       setAutorizados(location.autorizados)
-      getBitacora(null, location.comentario, session.id, location.tipo).then((items) => {
+      getBitacora(null, location.comentarios, session.id, location.tipo).then((items) => {
         if (mounted) {
           setList(items.bitacora)
         }
       })
     } else {
-      getBitacora(null, prop.comentario, session.id, prop.tipo).then((items) => {
+      getBitacora(null, prop.comentarios, session.id, prop.tipo).then((items) => {
         if (mounted) {
           setList(items.bitacora)
         }

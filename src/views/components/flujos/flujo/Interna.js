@@ -1,5 +1,5 @@
 import React from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { Tab, Tabs } from 'react-bootstrap'
 import Rechazados from './Rechazados'
 import Autorizados from './Autorizados'
@@ -9,8 +9,9 @@ import '../../../../scss/estilos.scss'
 
 const Interna = () => {
   const history = useHistory()
-  const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
+  const comentarios = ['Aprobado', 'Autorización completa']
+  const comentariosR = ['Rechazado']
 
   if (session) {
     return (
@@ -22,10 +23,10 @@ const Interna = () => {
                 <Pendientes tipo={'INTERNA'} />
               </Tab>
               <Tab eventKey="autorizados" title="Autorizados">
-                <Autorizados comentario={'Aprobado'} tipo={'INTERNA'} />
+                <Autorizados comentarios={comentarios} tipo={'INTERNA'} />
               </Tab>
               <Tab eventKey="rechazados" title="Rechazados">
-                <Rechazados comentario={'Rechazado'} tipo={'INTERNA'} />
+                <Rechazados comentarios={comentariosR} tipo={'INTERNA'} />
               </Tab>
             </Tabs>
           </div>

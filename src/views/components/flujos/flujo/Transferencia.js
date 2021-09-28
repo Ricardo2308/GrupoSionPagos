@@ -10,6 +10,8 @@ import '../../../../scss/estilos.scss'
 const Transferencia = () => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
+  const comentarios = ['Aprobado', 'Autorización completa']
+  const comentariosR = ['Rechazado']
 
   if (session) {
     return (
@@ -21,10 +23,10 @@ const Transferencia = () => {
                 <Pendientes tipo={'TRANSFERENCIA'} />
               </Tab>
               <Tab eventKey="autorizados" title="Autorizados">
-                <Autorizados comentario={'Aprobado'} tipo={'TRANSFERENCIA'} />
+                <Autorizados comentarios={comentarios} tipo={'TRANSFERENCIA'} />
               </Tab>
               <Tab eventKey="rechazados" title="Rechazados">
-                <Rechazados comentario={'Rechazado'} tipo={'TRANSFERENCIA'} />
+                <Rechazados comentarios={comentariosR} tipo={'TRANSFERENCIA'} />
               </Tab>
             </Tabs>
           </div>

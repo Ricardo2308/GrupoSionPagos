@@ -64,21 +64,14 @@ const PagoTabs = () => {
             history.go(-1)
           }
         } else if (respuesta == 'Finalizado') {
-          const aprobado = await postFlujoDetalle(
-            id_flujo,
-            '4',
-            session.id,
-            'Aprobado',
-            location.nivel,
-          )
           const finalizado = await postFlujoDetalle(
             id_flujo,
             '5',
             session.id,
             'Autorización completa',
-            '0',
+            location.nivel,
           )
-          if (aprobado == 'OK' && finalizado == 'OK') {
+          if (finalizado == 'OK') {
             const enviada = await postNotificacion(
               id_flujo,
               session.id,

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { CCard, CCardBody, CCol, CCardHeader, CRow } from '@coreui/react'
 import { getFlujos } from '../../services/getFlujos'
-import { DocsLink } from 'src/reusable'
 import { useSession } from 'react-use-session'
 import '../../scss/estilos.scss'
 import {
@@ -20,12 +19,18 @@ const Dashboard = () => {
   const [estados, setEstados] = useState([])
   const [pagos, setPagos] = useState([])
   const [tipos, setTipos] = useState([])
+  const [promedioT, setPromedioT] = useState([])
+  const [semaforos, setSemaforos] = useState([])
+  const [semaforosNom, setSemaforosNom] = useState([])
 
   useEffect(() => {
     let estados = []
     let labelestados = []
     let pagos = []
     let labeltipos = []
+    let promedioT = []
+    let semaforos = []
+    let semaforosNom = []
     getFlujos('0', null, null, '1').then((items) => {
       for (const pago of items.flujos) {
         estados.push(parseInt(pago.CantidadEstados))
@@ -42,11 +47,28 @@ const Dashboard = () => {
       setPagos(pagos)
       setTipos(labeltipos)
     })
+    getFlujos('0', null, null, '4').then((items) => {
+      for (const pago of items.flujos) {
+        promedioT.push(parseInt(pago.promedioPorNivel))
+      }
+      setPromedioT(promedioT)
+    })
+    getFlujos('0', null, null, '5').then((items) => {
+      for (const pago of items.flujos) {
+        semaforos.push(parseInt(pago.cantidad))
+        semaforosNom.push(pago.nombreSemaforo)
+      }
+      setSemaforos(semaforos)
+      setSemaforosNom(semaforosNom)
+    })
     const interval = setInterval(() => {
       let estados = []
       let labelestados = []
       let pagos = []
       let labeltipos = []
+      let promedioT = []
+      let semaforos = []
+      let semaforosNom = []
       getFlujos('0', null, null, '1').then((items) => {
         for (const pago of items.flujos) {
           estados.push(parseInt(pago.CantidadEstados))
@@ -63,7 +85,21 @@ const Dashboard = () => {
         setPagos(pagos)
         setTipos(labeltipos)
       })
-    }, 60000)
+      getFlujos('0', null, null, '4').then((items) => {
+        for (const pago of items.flujos) {
+          promedioT.push(parseInt(pago.promedioPorNivel))
+        }
+        setPromedioT(promedioT)
+      })
+      getFlujos('0', null, null, '5').then((items) => {
+        for (const pago of items.flujos) {
+          semaforos.push(parseInt(pago.cantidad))
+          semaforosNom.push(pago.nombreSemaforo)
+        }
+        setSemaforos(semaforos)
+        setSemaforosNom(semaforosNom)
+      })
+    }, 120000)
     return () => clearInterval(interval)
   }, [])
 
@@ -72,7 +108,7 @@ const Dashboard = () => {
       <CRow>
         <CCol xs={6}>
           <CCard className="mb-4">
-            <CCardHeader>Cantidad de Pagos por Estado</CCardHeader>
+            <CCardHeader>Cantidad de pagos por estado</CCardHeader>
             <CCardBody>
               <CChartDoughnut
                 data={{
@@ -105,7 +141,7 @@ const Dashboard = () => {
         </CCol>
         <CCol xs={6}>
           <CCard className="mb-4">
-            <CCardHeader>Cantidad de Pagos Aprobados por Tipo</CCardHeader>
+            <CCardHeader>Cantidad de pagos aprobados por tipo</CCardHeader>
             <CCardBody>
               <CChartPie
                 data={{
@@ -122,25 +158,45 @@ const Dashboard = () => {
             </CCardBody>
           </CCard>
         </CCol>
-        <CCol xs={6}>
+        <CCol xs={12}>
           <CCard className="mb-4">
-            <CCardHeader>
-              Bar Chart
-              <DocsLink href="http://www.chartjs.org" />
-            </CCardHeader>
+            <CCardHeader>Promedio de tiempo de pagos entre estados (Horas)</CCardHeader>
             <CCardBody>
               <CChartBar
                 data={{
-                  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                  labels: [
+                    'Pago cargado->Archivo cargado',
+                    'Archivo cargado->Responsable asignado',
+                    'Responsable asignado->Aprobación de nivel',
+                    'Aprobación de nivel->Autorización completa',
+                  ],
                   datasets: [
                     {
-                      label: 'GitHub Commits',
-                      backgroundColor: '#f87979',
-                      data: [40, 20, 12, 39, 10, 40, 39, 80, 40],
+                      label: 'Horas',
+                      backgroundColor: '#1D2377',
+                      data: promedioT,
                     },
                   ],
                 }}
-                labels="months"
+              />
+            </CCardBody>
+          </CCard>
+        </CCol>
+        <CCol xs={6}>
+          <CCard className="mb-4">
+            <CCardHeader>Semáforo de aprobación vs días de credito</CCardHeader>
+            <CCardBody>
+              <CChartBar
+                data={{
+                  labels: semaforosNom,
+                  datasets: [
+                    {
+                      label: 'Pagos',
+                      backgroundColor: ['#D02F2F', '#AF940B', '#428A49'],
+                      data: semaforos,
+                    },
+                  ],
+                }}
               />
             </CCardBody>
           </CCard>
