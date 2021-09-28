@@ -13,6 +13,7 @@ import { FiMail } from 'react-icons/fi'
 const MessageDropdown = (props) => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
+  const comentarios = ['Aprobado', 'Autorización completa']
 
   async function responderMensajes(tipo) {
     let mensajes = []
@@ -23,7 +24,7 @@ const MessageDropdown = (props) => {
     }
     history.push({
       pathname: '/pagos/autorizados',
-      comentario: 'Aprobado',
+      comentarios: comentarios,
       tipo: tipo,
       autorizados: mensajes,
       opcion: 2,

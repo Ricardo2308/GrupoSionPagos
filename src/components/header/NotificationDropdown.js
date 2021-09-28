@@ -14,6 +14,8 @@ import { FiBell } from 'react-icons/fi'
 const NotificationDropdown = (props) => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
+  const comentarios = ['Aprobado', 'Autorización completa']
+  const comentariosR = ['Rechazado']
 
   async function leerNotificacion(estado, tipo) {
     let autorizados = []
@@ -28,7 +30,7 @@ const NotificationDropdown = (props) => {
         pathname: '/pagos/autorizados',
         autorizados: autorizados,
         tipo: tipo,
-        comentario: 'Aprobado',
+        comentarios: comentarios,
         opcion: 1,
       })
     } else if (estado == 6) {
@@ -41,7 +43,7 @@ const NotificationDropdown = (props) => {
         pathname: '/pagos/rechazados',
         rechazados: rechazados,
         tipo: tipo,
-        comentario: 'Rechazado',
+        comentarios: comentariosR,
       })
     }
   }
