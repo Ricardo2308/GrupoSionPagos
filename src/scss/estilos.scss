@@ -66,6 +66,11 @@
   position: relative;
 }
 
+.search-button {
+  width: 40px;
+  height: 38px;
+}
+
 .account-row {
   font-size: 14px;
   text-align: center;
@@ -125,4 +130,14 @@
   text-align: center;
   justify-content: center;
   font-weight: bold;
+}
+
+.datatable-aprobados{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-top: 15px;
 }
