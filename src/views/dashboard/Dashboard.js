@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { CCard, CCardBody, CCol, CCardHeader, CRow } from '@coreui/react'
+import { CCard, CCardBody, CCol, CCardHeader, CRow, CFormSelect } from '@coreui/react'
+import { CChartBar, CChartDoughnut, CChartPie } from '@coreui/react-chartjs'
+import { FormControl, Button } from 'react-bootstrap'
 import { getFlujos } from '../../services/getFlujos'
 import { useSession } from 'react-use-session'
+import { FaSearch } from 'react-icons/fa'
 import '../../scss/estilos.scss'
-import {
-  CChartBar,
-  CChartDoughnut,
-  CChartLine,
-  CChartPie,
-  CChartPolarArea,
-  CChartRadar,
-} from '@coreui/react-chartjs'
 
 const Dashboard = () => {
   const { session } = useSession('PendrogonIT-Session')
-  const random = () => Math.round(Math.random() * 100)
   const [results, setList] = useState([])
   const [estados, setEstados] = useState([])
   const [pagos, setPagos] = useState([])
@@ -22,6 +16,12 @@ const Dashboard = () => {
   const [promedioT, setPromedioT] = useState([])
   const [semaforos, setSemaforos] = useState([])
   const [semaforosNom, setSemaforosNom] = useState([])
+  const [years, setYears] = useState([])
+
+  const [form, setValues] = useState({
+    year: '0',
+    mes: '0',
+  })
 
   useEffect(() => {
     let estados = []
@@ -31,7 +31,12 @@ const Dashboard = () => {
     let promedioT = []
     let semaforos = []
     let semaforosNom = []
-    getFlujos('0', null, null, '1').then((items) => {
+    let years = []
+    for (var i = 0; i < 30; i++) {
+      years.push(2021 + i)
+    }
+    setYears(years)
+    getFlujos('0', null, null, '1', '0', '0').then((items) => {
       for (const pago of items.flujos) {
         estados.push(parseInt(pago.CantidadEstados))
         labelestados.push(pago.estado)
@@ -39,7 +44,7 @@ const Dashboard = () => {
       setList(estados)
       setEstados(labelestados)
     })
-    getFlujos('0', null, null, '2').then((items) => {
+    getFlujos('0', null, null, '2', '0', '0').then((items) => {
       for (const pago of items.flujos) {
         pagos.push(parseInt(pago.PagosAprobados))
         labeltipos.push(pago.tipo)
@@ -47,13 +52,13 @@ const Dashboard = () => {
       setPagos(pagos)
       setTipos(labeltipos)
     })
-    getFlujos('0', null, null, '4').then((items) => {
+    getFlujos('0', null, null, '4', '0', '0').then((items) => {
       for (const pago of items.flujos) {
         promedioT.push(parseInt(pago.promedioPorNivel))
       }
       setPromedioT(promedioT)
     })
-    getFlujos('0', null, null, '5').then((items) => {
+    getFlujos('0', null, null, '5', '0', '0').then((items) => {
       for (const pago of items.flujos) {
         semaforos.push(parseInt(pago.cantidad))
         semaforosNom.push(pago.nombreSemaforo)
@@ -69,7 +74,7 @@ const Dashboard = () => {
       let promedioT = []
       let semaforos = []
       let semaforosNom = []
-      getFlujos('0', null, null, '1').then((items) => {
+      getFlujos('0', null, null, '1', '0', '0').then((items) => {
         for (const pago of items.flujos) {
           estados.push(parseInt(pago.CantidadEstados))
           labelestados.push(pago.estado)
@@ -77,7 +82,7 @@ const Dashboard = () => {
         setList(estados)
         setEstados(labelestados)
       })
-      getFlujos('0', null, null, '2').then((items) => {
+      getFlujos('0', null, null, '2', '0', '0').then((items) => {
         for (const pago of items.flujos) {
           pagos.push(parseInt(pago.PagosAprobados))
           labeltipos.push(pago.tipo)
@@ -85,13 +90,13 @@ const Dashboard = () => {
         setPagos(pagos)
         setTipos(labeltipos)
       })
-      getFlujos('0', null, null, '4').then((items) => {
+      getFlujos('0', null, null, '4', '0', '0').then((items) => {
         for (const pago of items.flujos) {
           promedioT.push(parseInt(pago.promedioPorNivel))
         }
         setPromedioT(promedioT)
       })
-      getFlujos('0', null, null, '5').then((items) => {
+      getFlujos('0', null, null, '5', '0', '0').then((items) => {
         for (const pago of items.flujos) {
           semaforos.push(parseInt(pago.cantidad))
           semaforosNom.push(pago.nombreSemaforo)
@@ -99,14 +104,100 @@ const Dashboard = () => {
         setSemaforos(semaforos)
         setSemaforosNom(semaforosNom)
       })
-    }, 120000)
+    }, 300000)
     return () => clearInterval(interval)
   }, [])
+
+  const handleInput = (event) => {
+    setValues({
+      ...form,
+      [event.target.name]: event.target.value,
+    })
+  }
+
+  const filtrar = async () => {
+    let estados = []
+    let labelestados = []
+    let pagos = []
+    let labeltipos = []
+    let promedioT = []
+    let semaforos = []
+    let semaforosNom = []
+    getFlujos('0', null, null, '1', form.year, form.mes).then((items) => {
+      for (const pago of items.flujos) {
+        estados.push(parseInt(pago.CantidadEstados))
+        labelestados.push(pago.estado)
+      }
+      setList(estados)
+      setEstados(labelestados)
+    })
+    getFlujos('0', null, null, '2', form.year, form.mes).then((items) => {
+      for (const pago of items.flujos) {
+        pagos.push(parseInt(pago.PagosAprobados))
+        labeltipos.push(pago.tipo)
+      }
+      setPagos(pagos)
+      setTipos(labeltipos)
+    })
+    getFlujos('0', null, null, '4', form.year, form.mes).then((items) => {
+      for (const pago of items.flujos) {
+        promedioT.push(parseInt(pago.promedioPorNivel))
+      }
+      setPromedioT(promedioT)
+    })
+    getFlujos('0', null, null, '5', form.year, form.mes).then((items) => {
+      for (const pago of items.flujos) {
+        semaforos.push(parseInt(pago.cantidad))
+        semaforosNom.push(pago.nombreSemaforo)
+      }
+      setSemaforos(semaforos)
+      setSemaforosNom(semaforosNom)
+    })
+  }
 
   if (session) {
     return (
       <CRow>
-        <CCol xs={6}>
+        <div className="div-search">
+          <CFormSelect
+            name="year"
+            style={{ marginLeft: '51%', marginRight: '10px' }}
+            onChange={handleInput}
+          >
+            <option>Seleccione año</option>
+            {years.map((item, i) => {
+              return (
+                <option key={i} value={item}>
+                  {item}
+                </option>
+              )
+            })}
+          </CFormSelect>
+          <CFormSelect name="mes" style={{ marginRight: '10px' }} onChange={handleInput}>
+            <option>Seleccione mes</option>
+            <option value="1">Enero</option>
+            <option value="2">Febrero</option>
+            <option value="3">Marzo</option>
+            <option value="4">Abril</option>
+            <option value="5">Mayo</option>
+            <option value="6">Junio</option>
+            <option value="7">Julio</option>
+            <option value="8">Agosto</option>
+            <option value="9">Septiembre</option>
+            <option value="10">Octubre</option>
+            <option value="11">Noviembre</option>
+            <option value="12">Diciembre</option>
+          </CFormSelect>
+          <Button
+            color="primary"
+            className="search-button"
+            title="Filtrar por año y mes"
+            onClick={filtrar}
+          >
+            <FaSearch />
+          </Button>
+        </div>
+        <CCol xs={6} style={{ marginTop: '10px' }}>
           <CCard className="mb-4">
             <CCardHeader>Cantidad de pagos por estado</CCardHeader>
             <CCardBody>
@@ -139,7 +230,7 @@ const Dashboard = () => {
             </CCardBody>
           </CCard>
         </CCol>
-        <CCol xs={6}>
+        <CCol xs={6} style={{ marginTop: '10px' }}>
           <CCard className="mb-4">
             <CCardHeader>Cantidad de pagos aprobados por tipo</CCardHeader>
             <CCardBody>
@@ -194,96 +285,6 @@ const Dashboard = () => {
                       label: 'Pagos',
                       backgroundColor: ['#D02F2F', '#AF940B', '#428A49'],
                       data: semaforos,
-                    },
-                  ],
-                }}
-              />
-            </CCardBody>
-          </CCard>
-        </CCol>
-        <CCol xs={6}>
-          <CCard className="mb-4">
-            <CCardHeader>Line Chart</CCardHeader>
-            <CCardBody>
-              <CChartLine
-                data={{
-                  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-                  datasets: [
-                    {
-                      label: 'My First dataset',
-                      backgroundColor: 'rgba(220, 220, 220, 0.2)',
-                      borderColor: 'rgba(220, 220, 220, 1)',
-                      pointBackgroundColor: 'rgba(220, 220, 220, 1)',
-                      pointBorderColor: '#fff',
-                      data: [random(), random(), random(), random(), random(), random(), random()],
-                    },
-                    {
-                      label: 'My Second dataset',
-                      backgroundColor: 'rgba(151, 187, 205, 0.2)',
-                      borderColor: 'rgba(151, 187, 205, 1)',
-                      pointBackgroundColor: 'rgba(151, 187, 205, 1)',
-                      pointBorderColor: '#fff',
-                      data: [random(), random(), random(), random(), random(), random(), random()],
-                    },
-                  ],
-                }}
-              />
-            </CCardBody>
-          </CCard>
-        </CCol>
-        <CCol xs={6}>
-          <CCard className="mb-4">
-            <CCardHeader>Polar Area Chart</CCardHeader>
-            <CCardBody>
-              <CChartPolarArea
-                data={{
-                  labels: ['Red', 'Green', 'Yellow', 'Grey', 'Blue'],
-                  datasets: [
-                    {
-                      data: [11, 16, 7, 3, 14],
-                      backgroundColor: ['#FF6384', '#4BC0C0', '#FFCE56', '#E7E9ED', '#36A2EB'],
-                    },
-                  ],
-                }}
-              />
-            </CCardBody>
-          </CCard>
-        </CCol>
-        <CCol xs={6}>
-          <CCard className="mb-4">
-            <CCardHeader>Radar Chart</CCardHeader>
-            <CCardBody>
-              <CChartRadar
-                data={{
-                  labels: [
-                    'Eating',
-                    'Drinking',
-                    'Sleeping',
-                    'Designing',
-                    'Coding',
-                    'Cycling',
-                    'Running',
-                  ],
-                  datasets: [
-                    {
-                      label: 'My First dataset',
-                      backgroundColor: 'rgba(220, 220, 220, 0.2)',
-                      borderColor: 'rgba(220, 220, 220, 1)',
-                      pointBackgroundColor: 'rgba(220, 220, 220, 1)',
-                      pointBorderColor: '#fff',
-                      pointHighlightFill: '#fff',
-                      pointHighlightStroke: 'rgba(220, 220, 220, 1)',
-                      data: [65, 59, 90, 81, 56, 55, 40],
-                    },
-                    {
-                      label: 'My Second dataset',
-                      backgroundColor: 'rgba(151, 187, 205, 0.2)',
-                      borderColor: 'rgba(151, 187, 205, 1)',
-                      pointBackgroundColor: 'rgba(151, 187, 205, 1)',
-                      pointBorderColor: '#fff',
-                      pointHighlightFill: '#fff',
-                      pointHighlightStroke: 'rgba(151, 187, 205, 1)',
-                      data: [28, 48, 40, 19, 96, 27, 100],
                     },
                   ],
                 }}

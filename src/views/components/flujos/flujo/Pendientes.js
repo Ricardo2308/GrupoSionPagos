@@ -44,13 +44,13 @@ const Pendientes = (prop) => {
 
   useEffect(() => {
     let mounted = true
-    getFlujos(null, prop.tipo, session.id, null).then((items) => {
+    getFlujos(null, prop.tipo, session.id, null, null, null).then((items) => {
       if (mounted) {
         setList(items.flujos)
       }
     })
     const interval = setInterval(() => {
-      getFlujos(null, prop.tipo, session.id, null).then((items) => {
+      getFlujos(null, prop.tipo, session.id, null, null, null).then((items) => {
         if (mounted) {
           setList(items.flujos)
         }

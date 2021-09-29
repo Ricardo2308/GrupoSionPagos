@@ -264,7 +264,8 @@ const Autorizados = (prop) => {
           NO SE CARGÓ EL NÚMERO DE PAGO. REGRESE A LA PANTALLA DE PAGOS.
         </div>
       )
-    } else {
+    }
+    if (location.tipo) {
       return (
         <div>
           <div>
@@ -285,7 +286,7 @@ const Autorizados = (prop) => {
             />
           </div>
           <div>
-            <div className="datatable-title">Pagos Aprobados</div>
+            <div className="datatable-aprobados">Pagos Aprobados</div>
             <DataTable
               columns={columns}
               noDataComponent="No hay pagos que mostrar"
@@ -302,6 +303,26 @@ const Autorizados = (prop) => {
         </div>
       )
     }
+    return (
+      <div>
+        <div>
+          <DataTable
+            columns={columns}
+            noDataComponent="No hay pagos que mostrar"
+            data={filteredItems}
+            customStyles={customStyles}
+            theme="solarized"
+            pagination
+            paginationPerPage={5}
+            paginationResetDefaultPage={resetPaginationToggle}
+            subHeader
+            subHeaderComponent={subHeaderComponentMemo}
+            responsive={true}
+            persistTableHead
+          />
+        </div>
+      </div>
+    )
   } else {
     history.push('/dashboard')
     return <div className="sin-sesion">SIN SESIÓN ACTIVA.</div>

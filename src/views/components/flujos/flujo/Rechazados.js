@@ -255,27 +255,47 @@ const Rechazados = (prop) => {
         </div>
       )
     }
+    if (location.tipo) {
+      return (
+        <div>
+          <div>
+            <div className="datatable-title">Pagos Notificados</div>
+            <DataTable
+              columns={columnsR}
+              noDataComponent="No hay pagos que mostrar"
+              data={filteredItemsR}
+              customStyles={customStyles}
+              theme="solarized"
+              pagination
+              paginationPerPage={5}
+              paginationResetDefaultPage={resetPaginationToggle}
+              subHeader
+              subHeaderComponent={subHeaderComponentMemo}
+              responsive={true}
+              persistTableHead
+            />
+          </div>
+          <div>
+            <div className="datatable-aprobados">Pagos Rechazados</div>
+            <DataTable
+              columns={columns}
+              noDataComponent="No hay pagos que mostrar"
+              data={filteredItems}
+              customStyles={customStyles}
+              theme="solarized"
+              pagination
+              paginationPerPage={5}
+              paginationResetDefaultPage={resetPaginationToggle}
+              responsive={true}
+              persistTableHead
+            />
+          </div>
+        </div>
+      )
+    }
     return (
       <div>
         <div>
-          <div className="datatable-title">Pagos Notificados</div>
-          <DataTable
-            columns={columnsR}
-            noDataComponent="No hay pagos que mostrar"
-            data={filteredItemsR}
-            customStyles={customStyles}
-            theme="solarized"
-            pagination
-            paginationPerPage={5}
-            paginationResetDefaultPage={resetPaginationToggle}
-            subHeader
-            subHeaderComponent={subHeaderComponentMemo}
-            responsive={true}
-            persistTableHead
-          />
-        </div>
-        <div>
-          <div className="datatable-title">Pagos Rechazados</div>
           <DataTable
             columns={columns}
             noDataComponent="No hay pagos que mostrar"
@@ -285,6 +305,8 @@ const Rechazados = (prop) => {
             pagination
             paginationPerPage={5}
             paginationResetDefaultPage={resetPaginationToggle}
+            subHeader
+            subHeaderComponent={subHeaderComponentMemo}
             responsive={true}
             persistTableHead
           />
