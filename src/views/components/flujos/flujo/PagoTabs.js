@@ -45,13 +45,13 @@ const PagoTabs = () => {
   async function Aprobar_Rechazar(id_flujo, opcion) {
     if (opcion === 1) {
       if (location.estado === '3') {
-        const respuesta = await postFlujos(id_flujo, '2', '')
+        const respuesta = await postFlujos(id_flujo, '2', '', '', null)
         const aprobado = await postFlujoDetalle(id_flujo, '4', session.id, 'Aprobado', '1')
         if (respuesta == 'OK' && aprobado == 'OK') {
           history.go(-1)
         }
       } else if (location.estado === '4') {
-        const respuesta = await postFlujos(id_flujo, location.nivel, '')
+        const respuesta = await postFlujos(id_flujo, location.nivel, '', '', null)
         if (respuesta == 'OK') {
           const aprobado = await postFlujoDetalle(
             id_flujo,
@@ -86,7 +86,7 @@ const PagoTabs = () => {
         }
       }
     } else if (opcion == 2) {
-      const respuesta = await postFlujos(id_flujo, '', '')
+      const respuesta = await postFlujos(id_flujo, '', '', '1', null)
       const rechazado = await postFlujoDetalle(id_flujo, '6', session.id, 'Rechazado', '0')
       if (respuesta == 'OK' && rechazado == 'OK') {
         const enviada = await postNotificacion(

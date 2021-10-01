@@ -52,7 +52,7 @@ const FlujoGrupo = (props) => {
   const handleSubmit = async (event) => {
     if (form.grupo_autorizacion !== '') {
       event.preventDefault()
-      const respuesta = await postFlujos(location.id_flujo, '', form.grupo_autorizacion)
+      const respuesta = await postFlujos(location.id_flujo, '', form.grupo_autorizacion, '', null)
       if (respuesta === 'OK') {
         const answer = await postFlujoDetalle(
           location.id_flujo,

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { CCard, CCardBody, CCol, CCardHeader, CRow, CFormSelect } from '@coreui/react'
 import { CChartBar, CChartDoughnut, CChartPie } from '@coreui/react-chartjs'
-import { FormControl, Button } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 import { getFlujos } from '../../services/getFlujos'
 import { useSession } from 'react-use-session'
 import { FaSearch } from 'react-icons/fa'
@@ -58,14 +58,14 @@ const Dashboard = () => {
       }
       setPromedioT(promedioT)
     })
-    getFlujos('0', null, null, '5', '0', '0').then((items) => {
-      for (const pago of items.flujos) {
-        semaforos.push(parseInt(pago.cantidad))
-        semaforosNom.push(pago.nombreSemaforo)
-      }
-      setSemaforos(semaforos)
-      setSemaforosNom(semaforosNom)
-    })
+    //getFlujos('0', null, null, '5', form.year, form.mes).then((items) => {
+    //for (const pago of items.flujos) {
+    //semaforos.push(parseInt(pago.cantidad))
+    //semaforosNom.push(pago.nombreSemaforo)
+    //}
+    //setSemaforos(semaforos)
+    //setSemaforosNom(semaforosNom)
+    //})
     const interval = setInterval(() => {
       let estados = []
       let labelestados = []
@@ -96,14 +96,14 @@ const Dashboard = () => {
         }
         setPromedioT(promedioT)
       })
-      getFlujos('0', null, null, '5', '0', '0').then((items) => {
-        for (const pago of items.flujos) {
-          semaforos.push(parseInt(pago.cantidad))
-          semaforosNom.push(pago.nombreSemaforo)
-        }
-        setSemaforos(semaforos)
-        setSemaforosNom(semaforosNom)
-      })
+      //getFlujos('0', null, null, '5', form.year, form.mes).then((items) => {
+      //for (const pago of items.flujos) {
+      //semaforos.push(parseInt(pago.cantidad))
+      //semaforosNom.push(pago.nombreSemaforo)
+      //}
+      //setSemaforos(semaforos)
+      //setSemaforosNom(semaforosNom)
+      //})
     }, 300000)
     return () => clearInterval(interval)
   }, [])
@@ -145,14 +145,14 @@ const Dashboard = () => {
       }
       setPromedioT(promedioT)
     })
-    getFlujos('0', null, null, '5', form.year, form.mes).then((items) => {
-      for (const pago of items.flujos) {
-        semaforos.push(parseInt(pago.cantidad))
-        semaforosNom.push(pago.nombreSemaforo)
-      }
-      setSemaforos(semaforos)
-      setSemaforosNom(semaforosNom)
-    })
+    //getFlujos('0', null, null, '5', form.year, form.mes).then((items) => {
+    //for (const pago of items.flujos) {
+    //semaforos.push(parseInt(pago.cantidad))
+    //semaforosNom.push(pago.nombreSemaforo)
+    //}
+    //setSemaforos(semaforos)
+    //setSemaforosNom(semaforosNom)
+    //})
   }
 
   if (session) {
@@ -273,6 +273,7 @@ const Dashboard = () => {
             </CCardBody>
           </CCard>
         </CCol>
+        {/*
         <CCol xs={6}>
           <CCard className="mb-4">
             <CCardHeader>Semáforo de aprobación vs días de credito</CCardHeader>
@@ -292,6 +293,7 @@ const Dashboard = () => {
             </CCardBody>
           </CCard>
         </CCol>
+        */}
       </CRow>
     )
   } else {
