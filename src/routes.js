@@ -99,14 +99,12 @@ const NuevoArchivoFlujo = React.lazy(() =>
   import('./views/components/flujos/archivoflujo/NuevoArchivoFlujo'),
 )
 const CompensacionBancario = React.lazy(() =>
-  import('./views/components/flujos/flujo/CompensacionBancario'),
+  import('./views/components/flujos/flujo/PagoBancario'),
 )
 const CompensacionTransferencia = React.lazy(() =>
-  import('./views/components/flujos/flujo/CompensacionTransferencia'),
+  import('./views/components/flujos/flujo/PagoTransferencia'),
 )
-const CompensacionInterna = React.lazy(() =>
-  import('./views/components/flujos/flujo/CompensacionInterna'),
-)
+const CompensacionInterna = React.lazy(() => import('./views/components/flujos/flujo/PagoInterna'))
 const CompensacionTabs = React.lazy(() =>
   import('./views/components/flujos/flujo/CompensacionTabs'),
 )
