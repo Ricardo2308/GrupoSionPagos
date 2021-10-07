@@ -1,14 +1,13 @@
 const API = `${process.env.REACT_APP_API_URL}notificacion`
 
-export function postNotificacion(idFlujo, idUsuario, mensaje, idGrupo, opcion) {
+export function postNotificacion(pagos, idUsuario, mensaje, opcion) {
   let ApiFinal = API
   let ApiWhere = ''
 
   var datos = {
-    IdFlujo: idFlujo,
+    pagos: pagos,
     IdUsuario: idUsuario,
     Mensaje: mensaje,
-    IdGrupo: idGrupo,
   }
 
   if (opcion !== '') {

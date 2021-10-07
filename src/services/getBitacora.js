@@ -1,17 +1,24 @@
 const API = `${process.env.REACT_APP_API_URL}flujodetalle`
 
 export function getBitacora(idFlujo, Comentario, idUsuario, Tipo) {
+  let array = ['0']
   let ApiFinal = API
   let ApiWhere = ''
 
-  var datos = {
-    comentarios: Comentario,
+  if (Comentario !== null) {
+    var datos = {
+      comentarios: Comentario,
+    }
+  } else {
+    var datos = {
+      comentarios: array,
+    }
   }
 
   if (idFlujo !== null) {
     ApiWhere += '/' + idFlujo + '/' + idUsuario + '/0'
   }
-  if (Comentario[0] !== '0') {
+  if (Comentario !== null) {
     ApiWhere += '/0/' + idUsuario + '/' + Tipo
   }
   ApiFinal += ApiWhere
