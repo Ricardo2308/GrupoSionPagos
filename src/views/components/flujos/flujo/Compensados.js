@@ -34,7 +34,7 @@ const Compensados = (prop) => {
   const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
-  const [autorizados, setAutorizados] = useState([])
+  const [compensados, setCompensados] = useState([])
   const [filterText, setFilterText] = useState('')
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false)
   const filteredItems = results.filter(
@@ -44,7 +44,7 @@ const Compensados = (prop) => {
       item.doc_num.toLowerCase().includes(filterText.toLowerCase()) ||
       item.activo.toLowerCase().includes(filterText.toLowerCase()),
   )
-  const filteredItemsA = autorizados.filter(
+  const filteredItemsA = compensados.filter(
     (item) =>
       item.comments.toLowerCase().includes(filterText.toLowerCase()) ||
       item.doc_date.toLowerCase().includes(filterText.toLowerCase()) ||
@@ -53,21 +53,12 @@ const Compensados = (prop) => {
   )
 
   async function leerNotificaciones(IdFlujo, Pago, Estado, Nivel, IdGrupo) {
-    if (location.opcion == 1) {
-      const respuesta = await postNotificacion(IdFlujo, session.id, '', '', '1')
-      if (respuesta == 'OK') {
-        history.push({
-          pathname: '/pagos/tabs',
-          id_flujo: IdFlujo,
-          pago: Pago,
-          estado: Estado,
-          nivel: Nivel,
-          id_grupo: IdGrupo,
-        })
-      }
-    } else if (location.opcion == 2) {
+    let pagos = []
+    pagos.push(IdFlujo)
+    const respuesta = await postNotificacion(pagos, session.id, '', '1')
+    if (respuesta == 'OK') {
       history.push({
-        pathname: '/pagos/tabs',
+        pathname: '/compensacion/tabs',
         id_flujo: IdFlujo,
         pago: Pago,
         estado: Estado,
@@ -80,7 +71,7 @@ const Compensados = (prop) => {
   useEffect(() => {
     let mounted = true
     if (location.comentarios && location.tipo) {
-      setAutorizados(location.autorizados)
+      setCompensados(location.compensados)
       getBitacora(null, location.comentarios, session.id, location.tipo).then((items) => {
         if (mounted) {
           setList(items.bitacora)
@@ -158,7 +149,7 @@ const Compensados = (prop) => {
               title="Consultar Detalle Pago"
               onClick={() =>
                 history.push({
-                  pathname: '/pagos/tabs',
+                  pathname: '/compensacion/tabs',
                   id_flujo: row.IdFlujo,
                   pago: row.doc_num,
                   estado: row.estado,

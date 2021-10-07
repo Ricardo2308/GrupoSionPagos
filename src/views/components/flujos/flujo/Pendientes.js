@@ -256,7 +256,7 @@ const Pendientes = (prop) => {
         customStyles={customStyles}
         theme="solarized"
         pagination
-        paginationPerPage={6}
+        paginationPerPage={5}
         paginationResetDefaultPage={resetPaginationToggle}
         subHeader
         subHeaderComponent={subHeaderComponentMemo}

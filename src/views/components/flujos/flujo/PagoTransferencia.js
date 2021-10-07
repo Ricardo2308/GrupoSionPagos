@@ -9,7 +9,7 @@ import '../../../../scss/estilos.scss'
 const PagoTransferencia = () => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
-  const comentarios = ['Aprobado', 'Autorización completa']
+  const comentarios = ['Compensado']
 
   if (session) {
     return (

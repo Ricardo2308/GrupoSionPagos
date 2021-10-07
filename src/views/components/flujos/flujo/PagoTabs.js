@@ -43,6 +43,8 @@ const PagoTabs = () => {
   }
 
   async function Aprobar_Rechazar(id_flujo, opcion) {
+    let pagos = []
+    pagos.push(id_flujo)
     if (opcion === 1) {
       if (location.estado === '3') {
         const respuesta = await postFlujos(id_flujo, '2', '', '', null)
@@ -73,10 +75,9 @@ const PagoTabs = () => {
           )
           if (finalizado == 'OK') {
             const enviada = await postNotificacion(
-              id_flujo,
+              pagos,
               session.id,
-              'Autorización completa del pago ' + location.pago,
-              location.id_grupo,
+              'autorizado por completo.',
               '',
             )
             if (enviada == 'OK') {
@@ -89,13 +90,7 @@ const PagoTabs = () => {
       const respuesta = await postFlujos(id_flujo, '', '', '1', null)
       const rechazado = await postFlujoDetalle(id_flujo, '6', session.id, 'Rechazado', '0')
       if (respuesta == 'OK' && rechazado == 'OK') {
-        const enviada = await postNotificacion(
-          id_flujo,
-          session.id,
-          'Pago ' + location.pago + ' rechazado.',
-          location.id_grupo,
-          '',
-        )
+        const enviada = await postNotificacion(pagos, session.id, 'rechazado.', '')
         if (enviada == 'OK') {
           history.go(-1)
         }

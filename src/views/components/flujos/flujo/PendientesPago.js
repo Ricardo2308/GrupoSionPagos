@@ -4,6 +4,8 @@ import { Alert, Modal, Button, FormControl } from 'react-bootstrap'
 import DataTable, { createTheme } from 'react-data-table-component'
 import { getFlujos } from '../../../../services/getFlujos'
 import { postFlujos } from '../../../../services/postFlujos'
+import { postFlujoDetalle } from '../../../../services/postFlujoDetalle'
+import { postNotificacion } from '../../../../services/postNotificacion'
 import { useSession } from 'react-use-session'
 import { FaList } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
@@ -80,6 +82,7 @@ const PendientesPago = (prop) => {
 
   async function Compensar() {
     let pagos = []
+    let bandera = 1
     var markedCheckbox = document.getElementsByName('pagos')
     for (var checkbox of markedCheckbox) {
       if (checkbox.checked) {
@@ -87,8 +90,25 @@ const PendientesPago = (prop) => {
       }
     }
     if (pagos.length > 0) {
-      //const respuesta = await postFlujos('', '', '', '2', pagos)
-      alert(pagos)
+      const respuesta = await postFlujos('0', '', '', '2', pagos)
+      if (respuesta === 'OK') {
+        for (let pago of pagos) {
+          const pagado = await postFlujoDetalle(pago, '7', session.id, 'Compensado', '0')
+          if (pagado === 'OK') {
+            bandera *= 1
+          } else {
+            bandera *= 0
+          }
+        }
+        if (bandera == 1) {
+          const enviada = await postNotificacion(pagos, session.id, 'compensado.', '')
+          if (enviada == 'OK') {
+            await getFlujos(null, prop.tipo, session.id, '2', null, null).then((items) => {
+              setList(items.flujos)
+            })
+          }
+        }
+      }
     } else {
       setShowAlert(true)
       setTitulo('Error!')
@@ -241,6 +261,7 @@ const PendientesPago = (prop) => {
           customStyles={customStyles}
           theme="solarized"
           pagination
+          paginationPerPage={5}
           paginationResetDefaultPage={resetPaginationToggle}
           subHeader
           subHeaderComponent={subHeaderComponentMemo}

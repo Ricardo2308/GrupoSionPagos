@@ -54,7 +54,9 @@ const Rechazados = (prop) => {
   )
 
   async function leerNotificaciones(IdFlujo, Pago, Estado, Nivel, IdGrupo) {
-    const respuesta = await postNotificacion(IdFlujo, session.id, '', '', '1')
+    let pagos = []
+    pagos.push(IdFlujo)
+    const respuesta = await postNotificacion(pagos, session.id, '', '1')
     if (respuesta == 'OK') {
       history.push({
         pathname: '/pagos/tabs',
