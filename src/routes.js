@@ -108,6 +108,7 @@ const CompensacionInterna = React.lazy(() => import('./views/components/flujos/f
 const CompensacionTabs = React.lazy(() =>
   import('./views/components/flujos/flujo/CompensacionTabs'),
 )
+const Compensados = React.lazy(() => import('./views/components/flujos/flujo/Compensados'))
 const EditarArchivoFlujo = React.lazy(() =>
   import('./views/components/flujos/archivoflujo/EditarArchivoFlujo'),
 )
@@ -222,6 +223,7 @@ const routes = [
   { path: '/pagos/detalle', name: 'Detalle Flujo', component: DetalleFlujo },
   { path: '/pagos/autorizados', name: 'Autorizados', component: Autorizados },
   { path: '/pagos/rechazados', name: 'Rechazados', component: Rechazados },
+  { path: '/pagos/compensados', name: 'Rechazados', component: Compensados },
   {
     path: '/compensacion',
     exact: true,
