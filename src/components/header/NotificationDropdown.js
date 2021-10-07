@@ -16,10 +16,12 @@ const NotificationDropdown = (props) => {
   const { session } = useSession('PendrogonIT-Session')
   const comentarios = ['Aprobado', 'Autorización completa']
   const comentariosR = ['Rechazado']
+  const comentariosC = ['Compensado']
 
   async function leerNotificacion(estado, tipo) {
     let autorizados = []
     let rechazados = []
+    let compensados = []
     if (estado == 5) {
       for (let item of props.notificaciones) {
         if (item.Leido == 0 && item.estado == estado && item.tipo == tipo) {
@@ -44,6 +46,18 @@ const NotificationDropdown = (props) => {
         rechazados: rechazados,
         tipo: tipo,
         comentarios: comentariosR,
+      })
+    } else if (estado == 7) {
+      for (let item of props.notificaciones) {
+        if (item.Leido == 0 && item.estado == estado && item.tipo == tipo) {
+          compensados.push(item)
+        }
+      }
+      history.push({
+        pathname: '/pagos/compensados',
+        compensados: compensados,
+        tipo: tipo,
+        comentarios: comentariosC,
       })
     }
   }
