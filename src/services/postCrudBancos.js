@@ -1,6 +1,15 @@
 const API = `${process.env.REACT_APP_API_URL}bancos`
 
-export function postCrudBancos(idBanco, nombre, direccion, estado, opcion) {
+export function postCrudBancos(
+  idBanco,
+  nombre,
+  direccion,
+  codigoTransferencia,
+  codigoSAP,
+  idPais,
+  estado,
+  opcion,
+) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -8,6 +17,9 @@ export function postCrudBancos(idBanco, nombre, direccion, estado, opcion) {
     id_banco: idBanco,
     nombre: nombre,
     direccion: direccion,
+    codigo_transferencia: codigoTransferencia,
+    codigo_SAP: codigoSAP,
+    id_pais: idPais,
     activo: estado,
     opcion: opcion,
   }
