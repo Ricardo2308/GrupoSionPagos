@@ -1,21 +1,44 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Modal } from 'react-bootstrap'
+import { Modal, FormControl } from 'react-bootstrap'
+import DataTable, { createTheme } from 'react-data-table-component'
 import { getBancos } from '../../../../services/getBancos'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { postCrudBancos } from '../../../../services/postCrudBancos'
 import { useSession } from 'react-use-session'
 import { FaUserEdit, FaTrash } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
-import {
-  CButton,
-  CTable,
-  CTableBody,
-  CTableDataCell,
-  CTableHead,
-  CTableHeaderCell,
-  CTableRow,
-} from '@coreui/react'
+import { CButton } from '@coreui/react'
+
+const FilterComponent = (prop) => (
+  <div className="div-search">
+    <CButton
+      color="primary"
+      size="sm"
+      className="btn-compensacion"
+      disabled={prop.deshabilitar}
+      onClick={prop.crearNuevo}
+    >
+      Crear Nuevo
+    </CButton>
+    <FormControl
+      id="search"
+      type="text"
+      placeholder="Buscar Banco"
+      aria-label="Search Input"
+      value={prop.filterText}
+      onChange={prop.onFilter}
+    />
+    <CButton
+      color="primary"
+      className="clear-search"
+      onClick={prop.onClear}
+      title="Limpiar Campo Búsqueda"
+    >
+      X
+    </CButton>
+  </div>
+)
 
 const Bancos = () => {
   const history = useHistory()
@@ -24,6 +47,15 @@ const Bancos = () => {
   const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [idBanco, setIdBanco] = useState(0)
+  const [filterText, setFilterText] = useState('')
+  const [resetPaginationToggle, setResetPaginationToggle] = useState(false)
+  const filteredItems = results.filter(
+    (item) =>
+      item.codigo_transferencia.toLowerCase().includes(filterText.toLowerCase()) ||
+      item.nombre.toLowerCase().includes(filterText.toLowerCase()) ||
+      item.direccion.toLowerCase().includes(filterText.toLowerCase()) ||
+      item.Nombre.toLowerCase().includes(filterText.toLowerCase()),
+  )
 
   const handleClose = () => setShow(false)
 
@@ -41,6 +73,125 @@ const Bancos = () => {
     })
     return () => (mounted = false)
   }, [])
+
+  const customStyles = {
+    headCells: {
+      style: {
+        paddingLeft: '8px', // override the cell padding for head cells
+        paddingRight: '8px',
+        fontSize: '14px',
+      },
+    },
+  }
+
+  createTheme('solarized', {
+    text: {
+      primary: 'black',
+    },
+    background: {
+      default: 'white',
+    },
+    context: {
+      background: '#cb4b16',
+      text: '#FFFFFF',
+    },
+    divider: {
+      default: '#073642',
+    },
+    action: {
+      button: 'rgba(0,0,0,.54)',
+      hover: 'rgba(0,0,0,.08)',
+      disabled: 'rgba(0,0,0,.12)',
+    },
+  })
+
+  const columns = useMemo(() => [
+    {
+      name: 'No.',
+      selector: 'codigo_transferencia',
+      center: true,
+      width: '8%',
+    },
+    {
+      name: 'Nombre',
+      selector: 'nombre',
+      center: true,
+      width: '25%',
+    },
+    {
+      name: 'Dirección',
+      selector: 'direccion',
+      center: true,
+      width: '25%',
+    },
+    {
+      name: 'País',
+      selector: 'Nombre',
+      center: true,
+    },
+    {
+      name: 'Código SAP',
+      selector: 'codigo_SAP',
+      center: true,
+      width: '10%',
+    },
+    {
+      name: 'Estado',
+      center: true,
+      width: '10%',
+      cell: function OrderItems(row) {
+        if (row.activo === '1') {
+          return <div>Activo</div>
+        } else if (row.activo === '0') {
+          return <div>Inactivo</div>
+        }
+      },
+    },
+    {
+      name: 'Acciones',
+      width: '10%',
+      cell: function OrderItems(row) {
+        let deshabilitar = false
+        if (ExistePermiso('Modulo Bancos') == 0) {
+          deshabilitar = true
+        }
+        return (
+          <div>
+            <CButton
+              color="primary"
+              size="sm"
+              title="Editar Banco"
+              disabled={deshabilitar}
+              onClick={() =>
+                history.push({
+                  pathname: '/bancos/editar',
+                  id_banco: row.id_banco,
+                  nombre: row.nombre,
+                  direccion: row.direccion,
+                  codigoTransferencia: row.codigo_transferencia,
+                  codigoSAP: row.codigo_SAP,
+                  pais: row.id_pais,
+                  estado: row.activo,
+                })
+              }
+            >
+              <FaUserEdit />
+            </CButton>{' '}
+            <CButton
+              color="danger"
+              size="sm"
+              title="Eliminar Banco"
+              disabled={deshabilitar}
+              onClick={() => mostrarModal(row.id_banco)}
+            >
+              <FaTrash />
+            </CButton>
+          </div>
+        )
+      },
+      center: true,
+    },
+  ])
 
   function ExistePermiso(objeto) {
     let result = 0
@@ -66,6 +217,17 @@ const Bancos = () => {
     }
   }
 
+  const handleClear = () => {
+    if (filterText) {
+      setResetPaginationToggle(!resetPaginationToggle)
+      setFilterText('')
+    }
+  }
+
+  const crearNuevo = () => {
+    history.push('/bancos/nuevo')
+  }
+
   if (session) {
     let deshabilitar = false
     if (ExistePermiso('Modulo Bancos') == 0) {
@@ -88,70 +250,26 @@ const Bancos = () => {
           </Modal.Footer>
         </Modal>
         <div className="float-right" style={{ marginBottom: '10px' }}>
-          <CButton
-            color="primary"
-            size="sm"
-            disabled={deshabilitar}
-            onClick={() => history.push('/bancos/nuevo')}
-          >
-            Crear Nuevo
-          </CButton>
+          <FilterComponent
+            onFilter={(e) => setFilterText(e.target.value)}
+            onClear={handleClear}
+            crearNuevo={crearNuevo}
+            filterText={filterText}
+            deshabilitar={deshabilitar}
+          />
         </div>
-        <CTable hover responsive align="middle" className="mb-0 border">
-          <CTableHead color="light">
-            <CTableRow>
-              <CTableHeaderCell className="text-center">Nombre</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Dirección</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Estado</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Acciones</CTableHeaderCell>
-            </CTableRow>
-          </CTableHead>
-          <CTableBody>
-            {results.map((item, i) => {
-              let estado = 'Inactivo'
-              if (item.eliminado !== '1') {
-                if (item.activo === '1') {
-                  estado = 'Activo'
-                }
-                return (
-                  <CTableRow key={item.id_banco}>
-                    <CTableDataCell className="text-center">{item.nombre}</CTableDataCell>
-                    <CTableDataCell className="text-center">{item.direccion}</CTableDataCell>
-                    <CTableDataCell className="text-center">{estado}</CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CButton
-                        color="primary"
-                        size="sm"
-                        title="Editar Banco"
-                        disabled={deshabilitar}
-                        onClick={() =>
-                          history.push({
-                            pathname: '/bancos/editar',
-                            id_banco: item.id_banco,
-                            nombre: item.nombre,
-                            direccion: item.direccion,
-                            estado: item.activo,
-                          })
-                        }
-                      >
-                        <FaUserEdit />
-                      </CButton>{' '}
-                      <CButton
-                        color="danger"
-                        size="sm"
-                        title="Eliminar Banco"
-                        disabled={deshabilitar}
-                        onClick={() => mostrarModal(item.id_banco)}
-                      >
-                        <FaTrash />
-                      </CButton>
-                    </CTableDataCell>
-                  </CTableRow>
-                )
-              }
-            })}
-          </CTableBody>
-        </CTable>
+        <DataTable
+          columns={columns}
+          noDataComponent="No hay pagos que mostrar"
+          data={filteredItems}
+          customStyles={customStyles}
+          theme="solarized"
+          pagination
+          paginationPerPage={6}
+          paginationResetDefaultPage={resetPaginationToggle}
+          responsive={true}
+          persistTableHead
+        />
       </>
     )
   } else {

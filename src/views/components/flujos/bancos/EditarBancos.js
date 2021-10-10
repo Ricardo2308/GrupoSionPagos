@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postCrudBancos } from '../../../../services/postCrudBancos'
-import { FiSettings } from 'react-icons/fi'
+import { getPaises } from '../../../../services/getPaises'
+import { FiSettings, FiFlag } from 'react-icons/fi'
 import { GrLocation } from 'react-icons/gr'
-import { RiBankLine } from 'react-icons/ri'
+import { RiBankLine, RiBarcodeFill } from 'react-icons/ri'
 import '../../../../scss/estilos.scss'
 import {
   CButton,
@@ -25,12 +26,26 @@ const EditarBancos = (props) => {
   const { session } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
   const [mensaje, setMensaje] = useState('')
+  const [results, setList] = useState([])
 
   const [form, setValues] = useState({
     nombre: location.nombre,
     direccion: location.direccion,
     estado: location.estado,
+    pais: location.pais,
+    codigoTransferencia: location.codigoTransferencia,
+    codigoSAP: location.codigoSAP,
   })
+
+  useEffect(() => {
+    let mounted = true
+    getPaises(null, null).then((items) => {
+      if (mounted) {
+        setList(items.paises)
+      }
+    })
+    return () => (mounted = false)
+  }, [])
 
   const handleInput = (event) => {
     setValues({
@@ -40,12 +55,21 @@ const EditarBancos = (props) => {
   }
 
   const handleSubmit = async (event) => {
-    if (form.nombre !== '' && form.direccion !== '') {
+    if (
+      form.nombre !== '' &&
+      form.direccion !== '' &&
+      form.pais !== '' &&
+      form.codigoTransferencia !== '' &&
+      form.codigoSAP !== ''
+    ) {
       event.preventDefault()
       const respuesta = await postCrudBancos(
         location.id_banco,
         form.nombre,
         form.direccion,
+        form.codigoTransferencia,
+        form.codigoSAP,
+        form.pais,
         form.estado,
         '1',
       )
@@ -95,6 +119,45 @@ const EditarBancos = (props) => {
                       defaultValue={location.direccion}
                       onChange={handleInput}
                     />
+                  </CInputGroup>
+                  <CInputGroup className="mb-3">
+                    <CInputGroupText>
+                      <RiBarcodeFill />
+                    </CInputGroupText>
+                    <CFormControl
+                      type="text"
+                      placeholder="Código Transferencia"
+                      name="codigoTransferencia"
+                      defaultValue={location.codigoTransferencia}
+                      onChange={handleInput}
+                    />
+                  </CInputGroup>
+                  <CInputGroup className="mb-3">
+                    <CInputGroupText>
+                      <RiBarcodeFill />
+                    </CInputGroupText>
+                    <CFormControl
+                      type="text"
+                      placeholder="Código SAP"
+                      name="codigoSAP"
+                      defaultValue={location.codigoSAP}
+                      onChange={handleInput}
+                    />
+                  </CInputGroup>
+                  <CInputGroup className="mb-3">
+                    <CInputGroupText>
+                      <FiFlag />
+                    </CInputGroupText>
+                    <CFormSelect name="pais" onChange={handleInput}>
+                      <option>Seleccione país. (Opcional)</option>
+                      {results.map((item, i) => {
+                        return (
+                          <option key={item.IdPais} value={item.IdPais}>
+                            {item.Nombre}
+                          </option>
+                        )
+                      })}
+                    </CFormSelect>
                   </CInputGroup>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>

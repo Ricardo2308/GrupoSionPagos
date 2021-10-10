@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
 import { postCrudBancos } from '../../../../services/postCrudBancos'
+import { getPaises } from '../../../../services/getPaises'
+import { FiFlag } from 'react-icons/fi'
 import { GrLocation } from 'react-icons/gr'
-import { RiBankLine } from 'react-icons/ri'
+import { RiBankLine, RiBarcodeFill } from 'react-icons/ri'
 import '../../../../scss/estilos.scss'
 import {
   CButton,
@@ -12,6 +14,7 @@ import {
   CCardBody,
   CContainer,
   CForm,
+  CFormSelect,
   CFormControl,
   CInputGroup,
   CInputGroupText,
@@ -22,11 +25,25 @@ const NuevoBanco = (props) => {
   const { session } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
   const [mensaje, setMensaje] = useState('')
+  const [results, setList] = useState([])
 
   const [form, setValues] = useState({
     nombre: '',
     direccion: '',
+    pais: '',
+    codigoTransferencia: '',
+    codigoSAP: '',
   })
+
+  useEffect(() => {
+    let mounted = true
+    getPaises(null, null).then((items) => {
+      if (mounted) {
+        setList(items.paises)
+      }
+    })
+    return () => (mounted = false)
+  }, [])
 
   const handleInput = (event) => {
     setValues({
@@ -36,11 +53,28 @@ const NuevoBanco = (props) => {
   }
 
   const handleSubmit = async (event) => {
-    if (form.nombre !== '' && form.direccion !== '') {
+    if (
+      form.nombre !== '' &&
+      form.direccion !== '' &&
+      form.pais !== '' &&
+      form.codigoTransferencia !== ''
+    ) {
       event.preventDefault()
-      const respuesta = await postCrudBancos('', form.nombre, form.direccion, '', '')
+      const respuesta = await postCrudBancos(
+        '',
+        form.nombre,
+        form.direccion,
+        form.codigoTransferencia,
+        form.codigoSAP,
+        form.pais,
+        '',
+        '',
+      )
       if (respuesta === 'OK') {
         history.push('/bancos')
+      } else if (respuesta === 'Repetido') {
+        setShow(true)
+        setMensaje('Este banco según el código de transferencia ingresado ya existe.')
       }
     } else {
       setShow(true)
@@ -82,6 +116,43 @@ const NuevoBanco = (props) => {
                     name="direccion"
                     onChange={handleInput}
                   />
+                </CInputGroup>
+                <CInputGroup className="mb-3">
+                  <CInputGroupText>
+                    <RiBarcodeFill />
+                  </CInputGroupText>
+                  <CFormControl
+                    type="text"
+                    placeholder="Código Transferencia"
+                    name="codigoTransferencia"
+                    onChange={handleInput}
+                  />
+                </CInputGroup>
+                <CInputGroup className="mb-3">
+                  <CInputGroupText>
+                    <RiBarcodeFill />
+                  </CInputGroupText>
+                  <CFormControl
+                    type="text"
+                    placeholder="Código SAP"
+                    name="codigoSAP"
+                    onChange={handleInput}
+                  />
+                </CInputGroup>
+                <CInputGroup className="mb-3">
+                  <CInputGroupText>
+                    <FiFlag />
+                  </CInputGroupText>
+                  <CFormSelect name="pais" onChange={handleInput}>
+                    <option>Seleccione país. (Opcional)</option>
+                    {results.map((item, i) => {
+                      return (
+                        <option key={item.IdPais} value={item.IdPais}>
+                          {item.Nombre}
+                        </option>
+                      )
+                    })}
+                  </CFormSelect>
                 </CInputGroup>
                 <CButton color="primary" onClick={handleSubmit}>
                   Crear Banco

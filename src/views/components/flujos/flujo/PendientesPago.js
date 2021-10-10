@@ -108,6 +108,11 @@ const PendientesPago = (prop) => {
             })
           }
         }
+      } else {
+        setShowAlert(true)
+        setTitulo('Error!')
+        setColor('danger')
+        setMensaje('Pagos no compensados: ' + respuesta)
       }
     } else {
       setShowAlert(true)
