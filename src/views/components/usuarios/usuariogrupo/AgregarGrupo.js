@@ -25,14 +25,10 @@ const AgregarGrupo = (props) => {
   const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
-  const [showAlert, setShowAlert] = useState(false)
   const [results, setList] = useState([])
   const [mensaje, setMensaje] = useState('')
   const [titulo, setTitulo] = useState('Error!')
   const [color, setColor] = useState('danger')
-  const [idUsuario, setIdUsuario] = useState(0)
-
-  const handleClose = () => setShow(false)
 
   const [form, setValues] = useState({
     grupo_autorizacion: '',
@@ -98,25 +94,6 @@ const AgregarGrupo = (props) => {
     }
   }
 
-  function mostrarModal(id_usuario) {
-    setIdUsuario(id_usuario)
-    setShow(true)
-  }
-
-  async function editarUsuarioGrupo(id_usuario) {
-    const respuesta = await postUsuarioGrupo(
-      '0',
-      id_usuario,
-      '2',
-      form.grupo_autorizacion,
-      form.nivel,
-      '',
-    )
-    if (respuesta === 'OK') {
-      history.push('/usuarios')
-    }
-  }
-
   if (session) {
     if (location.id_usuario) {
       return (
@@ -163,7 +140,7 @@ const AgregarGrupo = (props) => {
                     <CFormSelect name="grupo_autorizacion" onChange={handleInput}>
                       <option>Primero seleccione un grupo. (Opcional)</option>
                       {results.map((item, i) => {
-                        if (item.eliminado !== '1' && item.activo !== '0') {
+                        if (item.eliminado == 0 && item.activo == 1) {
                           return (
                             <option key={item.id_grupo} value={item.id_grupo}>
                               {item.identificador}

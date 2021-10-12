@@ -152,9 +152,9 @@ const Autorizados = (prop) => {
       name: 'Estado',
       center: true,
       cell: function OrderItems(row) {
-        if (row.activo === '1') {
+        if (row.activo == 1) {
           return <div>Activo</div>
-        } else if (row.activo === '0') {
+        } else if (row.activo == 0) {
           return <div>Inactivo</div>
         }
       },
@@ -212,9 +212,9 @@ const Autorizados = (prop) => {
       name: 'Estado',
       center: true,
       cell: function OrderItems(row) {
-        if (row.activo === '1') {
+        if (row.activo == 1) {
           return <div>Activo</div>
-        } else if (row.activo === '0') {
+        } else if (row.activo == 0) {
           return <div>Inactivo</div>
         }
       },

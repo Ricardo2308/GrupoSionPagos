@@ -5,7 +5,7 @@ import { postUsuarioGrupo } from '../../../../services/postUsuarioGrupo'
 import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
 import { getUsuarioGrupo } from '../../../../services/getUsuarioGrupo'
 import { FiUser, FiAtSign } from 'react-icons/fi'
-import { FaNetworkWired, FaUsers } from 'react-icons/fa'
+import { FaUsers } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import { Modal, Alert } from 'react-bootstrap'
 import {
@@ -218,8 +218,8 @@ const EditarUsuarioGrupo = (props) => {
                       </option>
                       {results.map((item, i) => {
                         if (
-                          item.eliminado !== '1' &&
-                          item.activo !== '0' &&
+                          item.eliminado == 0 &&
+                          item.activo == 1 &&
                           item.id_grupo !== location.id_grupo
                         ) {
                           return (

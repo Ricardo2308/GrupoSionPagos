@@ -30,10 +30,10 @@ class Chat extends Component {
         if (
           item.id_usuariorecibe == this.props.id_usuario &&
           item.id_usuarioenvia != this.props.id_usuario &&
-          item.eliminado !== '1' &&
+          item.eliminado == 0 &&
           item.id_flujo == this.props.id_flujo
         ) {
-          if (item.leido == '0') {
+          if (item.leido == 0) {
             cont++
           }
         }
@@ -52,10 +52,10 @@ class Chat extends Component {
           if (
             item.id_usuariorecibe == this.props.id_usuario &&
             item.id_usuarioenvia != this.props.id_usuario &&
-            item.eliminado !== '1' &&
+            item.eliminado == 0 &&
             item.id_flujo == this.props.id_flujo
           ) {
-            if (item.leido == '0') {
+            if (item.leido == 0) {
               cont++
             }
           }
@@ -87,20 +87,20 @@ class Chat extends Component {
           if (
             item.id_usuariorecibe == this.props.id_usuario &&
             item.id_usuarioenvia == receptor &&
-            item.eliminado != '1' &&
+            item.eliminado == 0 &&
             item.id_flujo == this.props.id_flujo
           ) {
-            if (item.leido == '0') {
+            if (item.leido == 0) {
               this.setState({ newCount: this.state.newCount + 1 })
             }
             this._sendMessage(item.mensaje, item.usuarioenvia, item.fecha_hora)
           } else if (
             item.id_usuariorecibe == receptor &&
             item.id_usuarioenvia == this.props.id_usuario &&
-            item.eliminado != '1' &&
+            item.eliminado == 0 &&
             item.id_flujo == this.props.id_flujo
           ) {
-            if (item.leido == '0') {
+            if (item.leido == 0) {
               this._sendMessageMe(item.mensaje, item.fecha_hora, 'Enviado')
             } else {
               this._sendMessageMe(item.mensaje, item.fecha_hora, 'Leído')

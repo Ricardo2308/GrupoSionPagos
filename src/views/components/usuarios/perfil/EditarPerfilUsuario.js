@@ -138,7 +138,7 @@ const EditarPerfilUsuario = () => {
                     <CFormSelect name="perfil" onChange={handleInput}>
                       <option>Seleccione un nuevo perfil. (Opcional)</option>
                       {results.map((item, i) => {
-                        if (item.eliminado !== '1' && item.activo !== '0') {
+                        if (item.eliminado == 0 && item.activo == 1) {
                           return (
                             <option key={item.id_perfil} value={item.id_perfil}>
                               {item.descripcion}

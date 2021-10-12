@@ -108,7 +108,7 @@ const RolPermiso = () => {
                     />
                   </CInputGroup>
                   {results.map((item, i) => {
-                    if (item.eliminado !== '1' && item.activo !== '0') {
+                    if (item.eliminado == 0 && item.activo == 1) {
                       return (
                         <CFormCheck
                           key={item.id_permiso}

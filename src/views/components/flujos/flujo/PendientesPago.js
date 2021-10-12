@@ -112,7 +112,12 @@ const PendientesPago = (prop) => {
         setShowAlert(true)
         setTitulo('Error!')
         setColor('danger')
-        setMensaje('Pagos no compensados: ' + respuesta)
+        setMensaje(
+          'Los pagos ' +
+            respuesta +
+            'no fueron compensados debido a que sus códigos bancarios no coinciden con ' +
+            'ninguno de los bancos existentes.',
+        )
       }
     } else {
       setShowAlert(true)

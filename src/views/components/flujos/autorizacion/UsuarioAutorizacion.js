@@ -136,7 +136,7 @@ const UsuarioGrupo = () => {
                       {session.name}
                     </option>
                     {results.map((item, i) => {
-                      if (item.eliminado !== '1' && item.activo !== '0') {
+                      if (item.eliminado == 0 && item.activo == 1) {
                         return (
                           <option key={item.id} value={item.id}>
                             {item.nombre} {item.apellido}
@@ -151,7 +151,7 @@ const UsuarioGrupo = () => {
                   <CFormSelect name="temporal" onChange={handleInput}>
                     <option>Seleccione usuario temporal.</option>
                     {results.map((item, i) => {
-                      if (item.eliminado !== '1' && item.activo !== '0' && item.id !== session.id) {
+                      if (item.eliminado == 0 && item.activo == 1 && item.id !== session.id) {
                         return (
                           <option key={item.id} value={item.id}>
                             {item.nombre} {item.apellido}

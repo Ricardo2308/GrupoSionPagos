@@ -108,8 +108,8 @@ const Permisos = () => {
           <CTableBody>
             {results.map((item, i) => {
               let estado = 'Inactivo'
-              if (item.eliminado !== '1') {
-                if (item.activo === '1') {
+              if (item.eliminado == 0) {
+                if (item.activo == 1) {
                   estado = 'Activo'
                 }
                 return (

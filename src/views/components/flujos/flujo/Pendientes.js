@@ -50,7 +50,7 @@ const Pendientes = (prop) => {
       }
     })
     const interval = setInterval(() => {
-      getFlujos(null, prop.tipo, session.id, null, null, null).then((items) => {
+      getFlujos(null, prop.tipo, session.id, '1', null, null).then((items) => {
         if (mounted) {
           setList(items.flujos)
         }
@@ -113,9 +113,9 @@ const Pendientes = (prop) => {
       name: 'Estado',
       center: true,
       cell: function OrderItems(row) {
-        if (row.activo === '1') {
+        if (row.activo == 1) {
           return <div>Activo</div>
-        } else if (row.activo === '0') {
+        } else if (row.activo == 0) {
           return <div>Inactivo</div>
         }
       },

@@ -148,7 +148,7 @@ const EditarBancos = (props) => {
                     <CFormSelect name="id_banco" onChange={handleInput}>
                       <option>Seleccione un banco. (Opcional)</option>
                       {results.map((item, i) => {
-                        if (item.eliminado !== '1' && item.activo !== '0') {
+                        if (item.eliminado == 0 && item.activo == 1) {
                           return (
                             <option key={item.id_banco} value={item.id_banco}>
                               {item.nombre}
@@ -165,7 +165,7 @@ const EditarBancos = (props) => {
                     <CFormSelect name="id_moneda" onChange={handleInput}>
                       <option>Seleccione un tipo de moneda. (Opcional)</option>
                       {results1.map((item, i) => {
-                        if (item.eliminado !== '1' && item.activo !== '0') {
+                        if (item.eliminado == 0 && item.activo == 1) {
                           return (
                             <option key={item.id_moneda} value={item.id_moneda}>
                               {item.nombre}

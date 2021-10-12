@@ -132,8 +132,8 @@ const Consultar = () => {
                 history.push({
                   pathname: '/usuarios/agregargrupo',
                   id_usuario: location.id_usuario,
-                  nombre: session.name,
-                  email: session.email,
+                  nombre: location.nombre,
+                  email: location.email,
                   estado: session.estado,
                 })
               }
@@ -163,8 +163,8 @@ const Consultar = () => {
               <CTableBody>
                 {results.map((item, i) => {
                   let estado = 'Inactivo'
-                  if (item.eliminado !== '1') {
-                    if (item.activo === '1') {
+                  if (item.eliminado == 0) {
+                    if (item.activo == 1) {
                       estado = 'Activo'
                     }
                     return (
