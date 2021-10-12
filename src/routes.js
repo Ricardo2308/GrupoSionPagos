@@ -128,8 +128,6 @@ const NuevaCuenta = React.lazy(() => import('./views/components/flujos/cuentas/N
 
 const Autorizados = React.lazy(() => import('./views/components/flujos/flujo/Autorizados'))
 const Rechazados = React.lazy(() => import('./views/components/flujos/flujo/Rechazados'))
-const Modals = React.lazy(() => import('./views/components/notifications/modals/Modals'))
-const Toasts = React.lazy(() => import('./views/components/notifications/toasts/Toasts'))
 
 // const Login = React.lazy(() => import('./views/examples/pages/login/Login'))
 // const Register = React.lazy(() => import('./views/examples/pages/register/Register'))
@@ -241,9 +239,6 @@ const routes = [
   { path: '/archivoflujo', exact: true, name: 'Archivos Flujo', component: ArchivosFlujoU },
   { path: '/archivoflujo/nuevo', name: 'Nuevo', component: NuevoArchivoFlujo },
   { path: '/archivoflujo/editar', name: 'Nuevo', component: EditarArchivoFlujo },
-
-  { path: '/notifications/modals', name: 'Modals', component: Modals },
-  { path: '/notifications/toasts', name: 'Toasts', component: Toasts },
   // { path: '/login', name: 'Login', component: Login },
   // { path: '/register', name: 'Register', component: Register },
   // { path: '/404', name: '404', component: Page404 },
