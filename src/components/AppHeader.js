@@ -37,7 +37,7 @@ const AppHeader = () => {
     let contN = 0
     getMensajes(null, session.id).then((items) => {
       items.mensajes.map((item) => {
-        if (item.leido === '0') {
+        if (item.leido == 0) {
           cont++
         }
         Contar(cont)
@@ -46,7 +46,7 @@ const AppHeader = () => {
     })
     getNotificaciones(null, session.id).then((items) => {
       items.notificaciones.map((item) => {
-        if (item.Leido === '0') {
+        if (item.Leido == 0) {
           contN++
         }
         ContarN(contN)
@@ -58,7 +58,7 @@ const AppHeader = () => {
       let contN = 0
       getMensajes(null, session.id).then((items) => {
         items.mensajes.map((item) => {
-          if (item.leido === '0') {
+          if (item.leido == 0) {
             cont++
           }
           Contar(cont)
@@ -67,7 +67,7 @@ const AppHeader = () => {
       })
       getNotificaciones(null, session.id).then((items) => {
         items.notificaciones.map((item) => {
-          if (item.Leido === '0') {
+          if (item.Leido == 0) {
             contN++
           }
           ContarN(contN)
