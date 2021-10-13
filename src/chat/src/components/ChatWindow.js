@@ -39,11 +39,7 @@ class ChatWindow extends Component {
   }
 
   async onUserInputSubmit(message) {
-    if (
-      this.props.id_flujo !== '' &&
-      this.props.id_usuario !== '' &&
-      this.state.id_receptor !== '0'
-    ) {
+    if (this.props.id_flujo !== '' && this.props.id_usuario !== '' && this.state.id_receptor != 0) {
       const respuesta = await postMensajes(
         this.props.id_flujo,
         this.props.id_usuario,
@@ -93,7 +89,7 @@ class ChatWindow extends Component {
           <option value="0">Seleccione receptor</option>
           {this.state.usuarios.map((item, i) => {
             if (this.props.id_usuario != item.id_usuario) {
-              if (item.nivel == '0') {
+              if (item.nivel == 0) {
                 return (
                   <option key={item.id_usuario} value={item.id_usuario}>
                     {item.nombre_usuario}
@@ -102,7 +98,7 @@ class ChatWindow extends Component {
                   </option>
                 )
               }
-              if (item.nivel != '0') {
+              if (item.nivel != 0) {
                 return (
                   <option key={item.id_usuario} value={item.id_usuario}>
                     {item.nombre_usuario}

@@ -25,7 +25,7 @@
   line-height: 1.33;
   white-space: pre-wrap;
   word-wrap: break-word;
-  color: #565867;
+  color: #060925;
   -webkit-font-smoothing: antialiased;
   max-height: 200px;
   overflow: scroll;
@@ -98,7 +98,7 @@
 
 .sc-user-input--file-icon:hover path,
 .sc-user-input--send-icon:hover path {
-  fill: rgba(86, 88, 103, 1);
+  fill: rgb(10, 13, 32);
 }
 
 .sc-user-input--emoji-icon-wrapper,
