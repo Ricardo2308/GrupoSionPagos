@@ -15,7 +15,7 @@ class Chat extends Component {
       isOpen: false,
       mensajes: [],
       show: false,
-      id_receptor: '',
+      id_receptor: 0,
     }
     this.obtenerReceptor = this.obtenerReceptor.bind(this)
   }
@@ -78,7 +78,7 @@ class Chat extends Component {
     this.setState({ messageList: [] })
     this.setState({ newCount: 0 })
     this.setState({ id_receptor: receptor })
-    if (receptor !== '0') {
+    if (receptor != 0) {
       getMensajes(null, null).then((items) => {
         this.setState({
           mensajes: items.mensajes,

@@ -52,7 +52,7 @@ const Login = () => {
       if (items.users.length > 0) {
         for (let item of items.users) {
           if (md5(form.password, { encoding: 'binary' }) === item.password) {
-            if (item.activo !== '0' && item.eliminado !== '1') {
+            if (item.activo == 1 && item.eliminado == 0) {
               const sign = require('jwt-encode')
               const secret = 'secret'
               const data = {
@@ -78,7 +78,7 @@ const Login = () => {
             setTitulo('Error!')
             setColor('danger')
             setMensaje('Credenciales incorrectas. Vuelva a intentarlo.')
-            if (item.activo === '1') {
+            if (item.activo == 1) {
               postLogLogin(item.id, '10')
             }
           }

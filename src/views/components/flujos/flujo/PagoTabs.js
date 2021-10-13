@@ -46,13 +46,13 @@ const PagoTabs = () => {
     let pagos = []
     pagos.push(id_flujo)
     if (opcion === 1) {
-      if (location.estado === '3') {
+      if (location.estado == 3) {
         const respuesta = await postFlujos(id_flujo, '2', '', '', null)
         const aprobado = await postFlujoDetalle(id_flujo, '4', session.id, 'Aprobado', '1')
         if (respuesta == 'OK' && aprobado == 'OK') {
           history.go(-1)
         }
-      } else if (location.estado === '4') {
+      } else if (location.estado == 4) {
         const respuesta = await postFlujos(id_flujo, location.nivel, '', '', null)
         if (respuesta == 'OK') {
           const aprobado = await postFlujoDetalle(
@@ -100,8 +100,8 @@ const PagoTabs = () => {
 
   if (session) {
     if (location.id_flujo) {
-      let grupo = '0'
-      let nivel = '0'
+      let grupo = 0
+      let nivel = 0
       if (location.id_grupo) {
         grupo = location.id_grupo
       }

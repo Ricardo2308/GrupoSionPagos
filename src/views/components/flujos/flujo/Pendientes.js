@@ -123,7 +123,7 @@ const Pendientes = (prop) => {
     {
       name: 'Acciones',
       cell: function OrderItems(row) {
-        if (row.estado === '1') {
+        if (row.estado == 1) {
           return (
             <div>
               <Button
@@ -162,7 +162,7 @@ const Pendientes = (prop) => {
               </Button>
             </div>
           )
-        } else if (row.estado === '2') {
+        } else if (row.estado == 2) {
           return (
             <div>
               <Button

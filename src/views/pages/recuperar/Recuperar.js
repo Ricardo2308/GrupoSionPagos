@@ -2,8 +2,6 @@ import React, { useState } from 'react'
 import { Alert } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
 import logo from '../../../assets/icons/logo.png'
-import { postEditarUsuario } from '../../../services/postEditarUsuario'
-import md5 from 'md5'
 import {
   CButton,
   CCard,
@@ -17,18 +15,14 @@ import {
   CRow,
   CCol,
 } from '@coreui/react'
-import { FiLock, FiAtSign } from 'react-icons/fi'
+import { FiAtSign } from 'react-icons/fi'
 
 const Recuperar = () => {
   const history = useHistory()
   const [show, setShow] = useState(false)
   const [mensaje, setMensaje] = useState('')
-  const [color, setColor] = useState('danger')
-  const [titulo, setTitulo] = useState('Error!')
   const [form, setValues] = useState({
     usuario: '',
-    password: '',
-    password_repetida: '',
   })
 
   const handleInput = (event) => {
@@ -38,44 +32,10 @@ const Recuperar = () => {
     })
   }
 
-  const handleSubmit = async (event) => {
-    if (form.usuario !== '' && form.password !== '' && form.password_repetida !== '') {
-      if (form.password === form.password_repetida) {
-        if (form.password.length >= 10) {
-          event.preventDefault()
-          const respuesta = await postEditarUsuario(
-            '1',
-            '',
-            '',
-            form.usuario,
-            md5(form.password_repetida, { encoding: 'binary' }),
-            '',
-            '',
-            '2',
-          )
-          if (respuesta === 'OK') {
-            history.push('/')
-          } else if (respuesta === 'Vacio') {
-            setShow(true)
-            setTitulo('Error!')
-            setMensaje('El nombre o el correo del usuario no está registrado.')
-          }
-        } else {
-          if (form.password.length < 5) {
-            setShow(true)
-            setTitulo('Contraseña muy débil!')
-            setMensaje('La contraseña debe contener al menos 10 caracteres.')
-          } else if (form.password.length >= 5 || form.password.length < 10) {
-            setShow(true)
-            setTitulo('Contraseña débil!')
-            setMensaje('La contraseña debe contener al menos 10 caracteres.')
-            setColor('warning')
-          }
-        }
-      } else {
-        setShow(true)
-        setMensaje('Las contraseñas no coinciden.')
-      }
+  const Recuperar = (event) => {
+    if (form.usuario !== '') {
+      event.preventDefault()
+      history.push(`/cambiarpassword/${form.usuario}`)
     } else {
       setShow(true)
       setMensaje('No has llenado todos los campos.')
@@ -83,8 +43,8 @@ const Recuperar = () => {
   }
   return (
     <>
-      <Alert show={show} variant={color} onClose={() => setShow(false)} dismissible>
-        <Alert.Heading>{titulo}</Alert.Heading>
+      <Alert show={show} variant="danger" onClose={() => setShow(false)} dismissible>
+        <Alert.Heading>Error!</Alert.Heading>
         <p>{mensaje}</p>
       </Alert>
       <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
@@ -96,7 +56,9 @@ const Recuperar = () => {
                   <CCardBody>
                     <CForm>
                       <h1 style={{ fontSize: '36px' }}>Recuperar Contraseña</h1>
-                      <p className="text-medium-emphasis">Recupere su contraseña olvidada</p>
+                      <p className="text-medium-emphasis">
+                        Ingrese su usuario o correo electrónico
+                      </p>
                       <CInputGroup className="mb-3">
                         <CInputGroupText>
                           <FiAtSign />
@@ -108,29 +70,7 @@ const Recuperar = () => {
                           onChange={handleInput}
                         />
                       </CInputGroup>
-                      <CInputGroup className="mb-3">
-                        <CInputGroupText>
-                          <FiLock />
-                        </CInputGroupText>
-                        <CFormControl
-                          type="password"
-                          placeholder="Contraseña"
-                          name="password"
-                          onChange={handleInput}
-                        />
-                      </CInputGroup>
-                      <CInputGroup className="mb-4">
-                        <CInputGroupText>
-                          <FiLock />
-                        </CInputGroupText>
-                        <CFormControl
-                          name="password_repetida"
-                          type="password"
-                          placeholder="Repetir Contraseña"
-                          onChange={handleInput}
-                        />
-                      </CInputGroup>
-                      <CButton color="primary" onClick={handleSubmit}>
+                      <CButton color="primary" onClick={Recuperar}>
                         Recuperar Contraseña
                       </CButton>
                     </CForm>

@@ -209,7 +209,7 @@ const Bancos = () => {
   }
 
   async function eliminarBanco(id_banco) {
-    const respuesta = await postCrudBancos(id_banco, '', '', '', '2')
+    const respuesta = await postCrudBancos(id_banco, '', '', '', '', '', '', '2')
     if (respuesta === 'OK') {
       await getBancos(null, null).then((items) => {
         setList(items.bancos)

@@ -103,7 +103,7 @@ const FlujoGrupo = (props) => {
                     <CFormSelect name="grupo_autorizacion" onChange={handleInput}>
                       <option>Seleccione un grupo de autorización. (Obligatorio)</option>
                       {results.map((item, i) => {
-                        if (item.eliminado !== '1' && item.activo !== '0') {
+                        if (item.eliminado == 0 && item.activo == 1) {
                           return (
                             <option key={item.id_grupo} value={item.id_grupo}>
                               {item.identificador}
