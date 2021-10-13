@@ -14,7 +14,8 @@ const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
 
 // Pages
 const Login = React.lazy(() => import('./views/pages/login/Login'))
-const Page500 = React.lazy(() => import('./views/pages/recuperar/Recuperar'))
+const Recuperar = React.lazy(() => import('./views/pages/recuperar/Recuperar'))
+const CambiarPassword = React.lazy(() => import('./views/pages/recuperar/CambiarPassword'))
 
 class App extends Component {
   render() {
@@ -26,10 +27,15 @@ class App extends Component {
             <Route
               exact
               path="/recuperar"
-              name="Page 500"
-              render={(props) => <Page500 {...props} />}
+              name="Recuperar Usuario"
+              render={(props) => <Recuperar {...props} />}
             />
-            <Route exact path="/500" name="Page 500" render={(props) => <Page500 {...props} />} />
+            <Route
+              exact
+              path="/cambiarpassword/:usuario"
+              name="Cambiar Contraseña"
+              render={(props) => <CambiarPassword {...props} />}
+            />
             <Route path="/" name="Home" render={(props) => <DefaultLayout {...props} />} />
           </Switch>
         </React.Suspense>
