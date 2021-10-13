@@ -17,7 +17,7 @@ const AppHeaderDropdown = () => {
 
   const salir = (e) => {
     clear()
-    history.push('/#')
+    history.push('/')
   }
 
   if (session) {

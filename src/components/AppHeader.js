@@ -35,7 +35,11 @@ const AppHeader = () => {
   useEffect(() => {
     let cont = 0
     let contN = 0
-    getMensajes(null, session.id).then((items) => {
+    let idUsuario = 0
+    if (session) {
+      idUsuario = session.id
+    }
+    getMensajes(null, idUsuario).then((items) => {
       items.mensajes.map((item) => {
         if (item.leido == 0) {
           cont++
@@ -44,7 +48,7 @@ const AppHeader = () => {
       })
       setList(items.mensajes)
     })
-    getNotificaciones(null, session.id).then((items) => {
+    getNotificaciones(null, idUsuario).then((items) => {
       items.notificaciones.map((item) => {
         if (item.Leido == 0) {
           contN++
@@ -56,7 +60,7 @@ const AppHeader = () => {
     const interval = setInterval(() => {
       let cont = 0
       let contN = 0
-      getMensajes(null, session.id).then((items) => {
+      getMensajes(null, idUsuario).then((items) => {
         items.mensajes.map((item) => {
           if (item.leido == 0) {
             cont++
@@ -65,7 +69,7 @@ const AppHeader = () => {
         })
         setList(items.mensajes)
       })
-      getNotificaciones(null, session.id).then((items) => {
+      getNotificaciones(null, idUsuario).then((items) => {
         items.notificaciones.map((item) => {
           if (item.Leido == 0) {
             contN++
