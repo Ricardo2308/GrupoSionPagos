@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Alert } from 'react-bootstrap'
 import { FiUser, FiLock, FiEye } from 'react-icons/fi'
 import { getUsuarios } from '../../../services/getUsuarios'
+import { getPoliticas } from '../../../services/getPoliticas'
 import { postLogLogin } from '../../../services/postLogLogin'
 import { useSession } from 'react-use-session'
 import logo from '../../../assets/icons/logo.png'
@@ -29,6 +30,17 @@ const Login = () => {
   const [mensaje, setMensaje] = useState('')
   const [color, setColor] = useState('')
   const [titulo, setTitulo] = useState('')
+  const [politicas, setPoliticas] = useState([])
+
+  useEffect(() => {
+    let mounted = true
+    getPoliticas(null, null).then((items) => {
+      if (mounted) {
+        setPoliticas(items.politicas)
+      }
+    })
+    return () => (mounted = false)
+  }, [])
 
   const [form, setValues] = useState({
     usuario: '',
@@ -44,6 +56,16 @@ const Login = () => {
       ...form,
       [event.target.name]: event.target.value,
     })
+  }
+
+  function limiteLogin(politica) {
+    let result = ''
+    for (let item of politicas) {
+      if (item.identificador == politica) {
+        result = item.valor
+      }
+    }
+    return result
   }
 
   const handleSubmit = (event) => {
@@ -79,7 +101,8 @@ const Login = () => {
             setColor('danger')
             setMensaje('Credenciales incorrectas. Vuelva a intentarlo.')
             if (item.activo == 1) {
-              postLogLogin(item.id, '10')
+              let valor = limiteLogin('_LIMITE_ERROR_LOGIN_')
+              postLogLogin(item.id, valor)
             }
           }
         }

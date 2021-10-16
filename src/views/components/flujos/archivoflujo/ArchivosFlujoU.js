@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import { Modal } from 'react-bootstrap'
+import React, { useState, useEffect, useMemo } from 'react'
+import DataTable, { createTheme } from 'react-data-table-component'
+import { Modal, Button, FormControl } from 'react-bootstrap'
 import { PDFReader } from 'reactjs-pdf-view'
 import { getArchivosFlujo } from '../../../../services/getArchivosFlujo'
 import { postArchivoFlujo } from '../../../../services/postArchivoFlujo'
@@ -7,15 +8,27 @@ import { useSession } from 'react-use-session'
 import { useHistory } from 'react-router-dom'
 import { FaRegFilePdf } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
-import {
-  CButton,
-  CTable,
-  CTableBody,
-  CTableDataCell,
-  CTableHead,
-  CTableHeaderCell,
-  CTableRow,
-} from '@coreui/react'
+
+const FilterComponent = (prop) => (
+  <div className="div-search">
+    <FormControl
+      id="search"
+      type="text"
+      placeholder="Buscar Archivo"
+      aria-label="Search Input"
+      value={prop.filterText}
+      onChange={prop.onFilter}
+    />
+    <Button
+      color="primary"
+      className="clear-search"
+      onClick={prop.onClear}
+      title="Limpiar Campo Búsqueda"
+    >
+      X
+    </Button>
+  </div>
+)
 
 const ArchivosFlujo = () => {
   const history = useHistory()
@@ -27,6 +40,14 @@ const ArchivosFlujo = () => {
   const [urlArchivo, setUrlArchivo] = useState('')
   const [mensaje, setMensaje] = useState('')
   const [titulo, setTitulo] = useState('')
+  const [filterText, setFilterText] = useState('')
+  const [resetPaginationToggle, setResetPaginationToggle] = useState(false)
+  const filteredItems = results.filter(
+    (item) =>
+      item.nombre_usuario.toLowerCase().includes(filterText.toLowerCase()) ||
+      item.descripcion.toLowerCase().includes(filterText.toLowerCase()) ||
+      item.activo.toLowerCase().includes(filterText.toLowerCase()),
+  )
 
   const handleClose = () => setShow(false)
   const cerrarPDF = () => setMostrar(false)
@@ -40,6 +61,99 @@ const ArchivosFlujo = () => {
     })
     return () => (mounted = false)
   }, [])
+
+  const customStyles = {
+    headCells: {
+      style: {
+        paddingLeft: '8px', // override the cell padding for head cells
+        paddingRight: '8px',
+        fontSize: '14px',
+      },
+    },
+  }
+
+  createTheme('solarized', {
+    text: {
+      primary: 'black',
+    },
+    background: {
+      default: 'white',
+    },
+    context: {
+      background: '#cb4b16',
+      text: '#FFFFFF',
+    },
+    divider: {
+      default: '#073642',
+    },
+    action: {
+      button: 'rgba(0,0,0,.54)',
+      hover: 'rgba(0,0,0,.08)',
+      disabled: 'rgba(0,0,0,.12)',
+    },
+  })
+
+  const columns = useMemo(() => [
+    {
+      name: 'Usuario',
+      selector: 'nombre_usuario',
+      center: true,
+      width: '30%',
+    },
+    {
+      name: 'Nombre Archvo',
+      selector: 'descripcion',
+      center: true,
+      width: '30%',
+    },
+    {
+      name: 'Estado',
+      center: true,
+      width: '30%',
+      cell: function OrderItems(row) {
+        if (row.activo == 1) {
+          return <div>Activo</div>
+        } else if (row.activo == 0) {
+          return <div>Inactivo</div>
+        }
+      },
+    },
+    {
+      name: 'Acciones',
+      cell: function OrderItems(row) {
+        return (
+          <div style={{ alignItems: 'center' }}>
+            <Button
+              variant="outline-danger"
+              size="sm"
+              target="_blank"
+              title="Ver PDF"
+              onClick={() => mostrarModal('', row.archivo, session.user_name)}
+            >
+              <FaRegFilePdf />
+            </Button>
+          </div>
+        )
+      },
+      center: true,
+    },
+  ])
+
+  const subHeaderComponentMemo = useMemo(() => {
+    const handleClear = () => {
+      if (filterText) {
+        setResetPaginationToggle(!resetPaginationToggle)
+        setFilterText('')
+      }
+    }
+    return (
+      <FilterComponent
+        onFilter={(e) => setFilterText(e.target.value)}
+        onClear={handleClear}
+        filterText={filterText}
+      />
+    )
+  }, [filterText, resetPaginationToggle])
 
   function mostrarModal(id_archivoflujo, url_archivo, usuario) {
     if (id_archivoflujo !== '' && url_archivo === '' && usuario === '') {
@@ -76,11 +190,11 @@ const ArchivosFlujo = () => {
             </div>
           </Modal.Body>
           <Modal.Footer className="modal-bg">
-            <CButton color="success">
+            <Button variant="success">
               <a style={{ textDecoration: 'none', color: 'white' }} href={urlArchivo} download>
                 Descargar
               </a>
-            </CButton>
+            </Button>
           </Modal.Footer>
         </Modal>
         <Modal show={show} onHide={handleClose} centered>
@@ -89,77 +203,31 @@ const ArchivosFlujo = () => {
           </Modal.Header>
           <Modal.Body>{mensaje}</Modal.Body>
           <Modal.Footer>
-            <CButton color="secondary" onClick={handleClose}>
+            <Button variant="secondary" onClick={handleClose}>
               Cancelar
-            </CButton>
-            <CButton
-              color="primary"
+            </Button>
+            <Button
+              variant="primary"
               onClick={() => eliminarArchivoFlujo(idArchivoFlujo).then(handleClose)}
             >
               Aceptar
-            </CButton>
+            </Button>
           </Modal.Footer>
         </Modal>
-        <CTable hover responsive align="middle" className="mb-0 border">
-          <CTableHead color="light">
-            <CTableRow>
-              <CTableHeaderCell className="text-center">Usuario</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Descripcion Archvo</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Estado</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Acciones</CTableHeaderCell>
-            </CTableRow>
-          </CTableHead>
-          <CTableBody>
-            {results.map((item, i) => {
-              let estado = 'Inactivo'
-              if (item.eliminado == 0) {
-                if (item.activo == 1) {
-                  estado = 'Activo'
-                }
-                return (
-                  <CTableRow key={item.id_archivoflujo}>
-                    <CTableDataCell className="text-center">{item.nombre_usuario}</CTableDataCell>
-                    <CTableDataCell className="text-center">{item.descripcion}</CTableDataCell>
-                    <CTableDataCell className="text-center">{estado}</CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CButton
-                        color="danger"
-                        variant="outline"
-                        size="sm"
-                        target="_blank"
-                        title="Ver PDF"
-                        onClick={() => mostrarModal('', item.archivo, session.user_name)}
-                      >
-                        <FaRegFilePdf />
-                      </CButton>{' '}
-                      {/*
-                      <CButton
-                        color="primary"
-                        size="sm"
-                        onClick={() =>
-                          history.push({
-                            pathname: '/archivoflujo/editar',
-                            id_archivoflujo: item.id_archivoflujo,
-                            id_flujo: item.id_flujo,
-                            id_usuario: item.id_usuario,
-                            nombre_usuario: item.nombre_usuario,
-                            descripcion: item.descripcion,
-                            url_archivo: item.archivo,
-                            estado: item.estado_activo,
-                            opcion: '0',
-                          })
-                        }
-                      >
-                        <FaPen />
-                      </CButton>
-                      */}
-                    </CTableDataCell>
-                  </CTableRow>
-                )
-              }
-            })}
-          </CTableBody>
-        </CTable>
+        <DataTable
+          columns={columns}
+          noDataComponent="No hay archivos que mostrar"
+          data={filteredItems}
+          customStyles={customStyles}
+          theme="solarized"
+          pagination
+          paginationPerPage={6}
+          paginationResetDefaultPage={resetPaginationToggle}
+          subHeader
+          subHeaderComponent={subHeaderComponentMemo}
+          responsive={true}
+          persistTableHead
+        />
       </>
     )
   } else {

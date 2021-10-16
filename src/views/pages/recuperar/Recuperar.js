@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Alert } from 'react-bootstrap'
-import { useHistory } from 'react-router-dom'
 import logo from '../../../assets/icons/logo.png'
+import { postRecuperarPassword } from '../../../services/postRecuperarPassword'
 import {
   CButton,
   CCard,
@@ -18,9 +18,9 @@ import {
 import { FiAtSign } from 'react-icons/fi'
 
 const Recuperar = () => {
-  const history = useHistory()
   const [show, setShow] = useState(false)
   const [mensaje, setMensaje] = useState('')
+  const [titulo, setTitulo] = useState('')
   const [form, setValues] = useState({
     usuario: '',
   })
@@ -32,19 +32,27 @@ const Recuperar = () => {
     })
   }
 
-  const Recuperar = (event) => {
+  const Recuperar = async (event) => {
     if (form.usuario !== '') {
       event.preventDefault()
-      history.push(`/cambiarpassword/${form.usuario}`)
+      const respuesta = await postRecuperarPassword(form.usuario)
+      if (respuesta === 'Vacio') {
+        setShow(true)
+        setTitulo('Usuario inexistente!')
+        setMensaje('El usuario ' + form.usuario + ' no existe en el sistema.')
+      } else {
+        window.location.href = respuesta
+      }
     } else {
       setShow(true)
+      setTitulo('Error!')
       setMensaje('No has llenado todos los campos.')
     }
   }
   return (
     <>
       <Alert show={show} variant="danger" onClose={() => setShow(false)} dismissible>
-        <Alert.Heading>Error!</Alert.Heading>
+        <Alert.Heading>{titulo}</Alert.Heading>
         <p>{mensaje}</p>
       </Alert>
       <div className="bg-light min-vh-100 d-flex flex-row align-items-center">

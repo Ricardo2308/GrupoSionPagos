@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Alert } from 'react-bootstrap'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import logo from '../../../assets/icons/logo.png'
 import { postEditarUsuario } from '../../../services/postEditarUsuario'
 import md5 from 'md5'
@@ -21,13 +21,13 @@ import { FiLock } from 'react-icons/fi'
 
 const CambiarPassword = (props) => {
   const history = useHistory()
-  const { usuario } = useParams()
+  const { token } = useParams()
   const [show, setShow] = useState(false)
   const [mensaje, setMensaje] = useState('')
   const [color, setColor] = useState('danger')
   const [titulo, setTitulo] = useState('Error!')
   const [form, setValues] = useState({
-    usuario: usuario,
+    usuario: token,
     password: '',
     password_repetida: '',
   })
@@ -97,6 +97,7 @@ const CambiarPassword = (props) => {
                   <CCardBody>
                     <CForm>
                       <h1 style={{ fontSize: '36px' }}>Cambiar Contraseña</h1>
+                      <p className="text-medium-emphasis">Token: {token}</p>
                       <p className="text-medium-emphasis">Ingrese una nueva contraseña</p>
                       <CInputGroup className="mb-3">
                         <CInputGroupText>
@@ -120,7 +121,7 @@ const CambiarPassword = (props) => {
                           onChange={handleInput}
                         />
                       </CInputGroup>
-                      <CButton color="primary" onClick={handleSubmit}>
+                      <CButton color="primary" onClick={() => history.push('/')}>
                         Recuperar Contraseña
                       </CButton>
                     </CForm>

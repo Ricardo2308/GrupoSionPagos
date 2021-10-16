@@ -6,7 +6,7 @@ import { getBancos } from '../../../../services/getBancos'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { postCrudBancos } from '../../../../services/postCrudBancos'
 import { useSession } from 'react-use-session'
-import { FaUserEdit, FaTrash } from 'react-icons/fa'
+import { FaPen, FaTrash } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import { CButton } from '@coreui/react'
 
@@ -110,35 +110,36 @@ const Bancos = () => {
       name: 'No.',
       selector: 'codigo_transferencia',
       center: true,
-      width: '8%',
+      width: '65px',
     },
     {
       name: 'Nombre',
       selector: 'nombre',
       center: true,
-      width: '25%',
+      width: '320px',
     },
     {
       name: 'Dirección',
       selector: 'direccion',
       center: true,
-      width: '25%',
+      width: '300px',
     },
     {
       name: 'País',
       selector: 'Nombre',
       center: true,
+      width: '100px',
     },
     {
-      name: 'Código SAP',
+      name: 'SAP',
       selector: 'codigo_SAP',
       center: true,
-      width: '10%',
+      width: '90px',
     },
     {
       name: 'Estado',
       center: true,
-      width: '10%',
+      width: '80px',
       cell: function OrderItems(row) {
         if (row.activo == 1) {
           return <div>Activo</div>
@@ -175,7 +176,7 @@ const Bancos = () => {
                 })
               }
             >
-              <FaUserEdit />
+              <FaPen />
             </CButton>{' '}
             <CButton
               color="danger"

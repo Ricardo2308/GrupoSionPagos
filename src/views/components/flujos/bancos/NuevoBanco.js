@@ -112,7 +112,7 @@ const NuevoBanco = (props) => {
                   </CInputGroupText>
                   <CFormControl
                     type="text"
-                    placeholder="Direccion"
+                    placeholder="Dirección"
                     name="direccion"
                     onChange={handleInput}
                   />
