@@ -32,7 +32,7 @@ class App extends Component {
             />
             <Route
               exact
-              path="/cambiarpassword/:usuario"
+              path="/cambiarpassword/:token"
               name="Cambiar Contraseña"
               render={(props) => <CambiarPassword {...props} />}
             />
