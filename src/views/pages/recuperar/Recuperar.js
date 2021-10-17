@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import { Alert } from 'react-bootstrap'
 import logo from '../../../assets/icons/logo.png'
 import { postRecuperarPassword } from '../../../services/postRecuperarPassword'
@@ -18,6 +19,7 @@ import {
 import { FiAtSign } from 'react-icons/fi'
 
 const Recuperar = () => {
+  const history = useHistory()
   const [show, setShow] = useState(false)
   const [mensaje, setMensaje] = useState('')
   const [titulo, setTitulo] = useState('')
@@ -41,7 +43,7 @@ const Recuperar = () => {
         setTitulo('Usuario inexistente!')
         setMensaje('El usuario ' + form.usuario + ' no existe en el sistema.')
       } else {
-        window.location.href = respuesta
+        history.push('/correoenviado')
       }
     } else {
       setShow(true)
@@ -63,7 +65,7 @@ const Recuperar = () => {
                 <CCard className="p-4">
                   <CCardBody>
                     <CForm>
-                      <h1 style={{ fontSize: '36px' }}>Recuperar Contraseña</h1>
+                      <h1 style={{ fontSize: '36px' }}>Actualizar Contraseña</h1>
                       <p className="text-medium-emphasis">
                         Ingrese su usuario o correo electrónico
                       </p>
@@ -79,7 +81,7 @@ const Recuperar = () => {
                         />
                       </CInputGroup>
                       <CButton color="primary" onClick={Recuperar}>
-                        Recuperar Contraseña
+                        Actualizar Contraseña
                       </CButton>
                     </CForm>
                   </CCardBody>

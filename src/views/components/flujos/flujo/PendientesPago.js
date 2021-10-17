@@ -92,6 +92,8 @@ const PendientesPago = (prop) => {
     if (pagos.length > 0) {
       const respuesta = await postFlujos('0', '', '', '2', pagos)
       if (respuesta === 'OK') {
+        {
+          /*
         for (let pago of pagos) {
           const pagado = await postFlujoDetalle(pago, '7', session.id, 'Compensado', '0')
           if (pagado === 'OK') {
@@ -108,6 +110,11 @@ const PendientesPago = (prop) => {
             })
           }
         }
+        */
+        }
+        await getFlujos(null, prop.tipo, session.id, '2', null, null).then((items) => {
+          setList(items.flujos)
+        })
       } else {
         setShowAlert(true)
         setTitulo('Error!')

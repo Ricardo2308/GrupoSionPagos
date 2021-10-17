@@ -60,7 +60,7 @@ const Usuarios = () => {
   }
 
   async function eliminarUsuario(id) {
-    const respuesta = await postEditarUsuario(id, '', '', '', '', '', '', '3')
+    const respuesta = await postEditarUsuario(id, '', '', '', '', '', '2')
     if (respuesta === 'OK') {
       await getUsuarios(null, null, null, null).then((items) => {
         setList(items.users)

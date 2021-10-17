@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Alert } from 'react-bootstrap'
 import { useHistory, useParams } from 'react-router-dom'
 import logo from '../../../assets/icons/logo.png'
-import { postEditarUsuario } from '../../../services/postEditarUsuario'
+import { postCambiarPassword } from '../../../services/postCambiarPassword'
 import md5 from 'md5'
 import {
   CButton,
@@ -27,7 +27,6 @@ const CambiarPassword = (props) => {
   const [color, setColor] = useState('danger')
   const [titulo, setTitulo] = useState('Error!')
   const [form, setValues] = useState({
-    usuario: token,
     password: '',
     password_repetida: '',
   })
@@ -40,21 +39,15 @@ const CambiarPassword = (props) => {
   }
 
   const handleSubmit = async (event) => {
-    if (form.usuario !== '' && form.password !== '' && form.password_repetida !== '') {
+    if (token && form.password !== '' && form.password_repetida !== '') {
       if (form.password === form.password_repetida) {
         if (form.password.length >= 10) {
           event.preventDefault()
-          const respuesta = await postEditarUsuario(
-            '1',
-            '',
-            '',
-            form.usuario,
+          const respuesta = await postCambiarPassword(
+            token,
             md5(form.password_repetida, { encoding: 'binary' }),
-            '',
-            '',
-            '2',
           )
-          if (respuesta === 'OK') {
+          if (respuesta === 'ok') {
             history.push('/')
           } else if (respuesta === 'Vacio') {
             setShow(true)
@@ -96,8 +89,7 @@ const CambiarPassword = (props) => {
                 <CCard className="p-4">
                   <CCardBody>
                     <CForm>
-                      <h1 style={{ fontSize: '36px' }}>Cambiar Contraseña</h1>
-                      <p className="text-medium-emphasis">Token: {token}</p>
+                      <h1 style={{ fontSize: '36px' }}>Actualizar Contraseña</h1>
                       <p className="text-medium-emphasis">Ingrese una nueva contraseña</p>
                       <CInputGroup className="mb-3">
                         <CInputGroupText>
@@ -121,8 +113,8 @@ const CambiarPassword = (props) => {
                           onChange={handleInput}
                         />
                       </CInputGroup>
-                      <CButton color="primary" onClick={() => history.push('/')}>
-                        Recuperar Contraseña
+                      <CButton color="primary" onClick={handleSubmit}>
+                        Actualizar Contraseña
                       </CButton>
                     </CForm>
                   </CCardBody>

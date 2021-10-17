@@ -41,20 +41,13 @@ const EditarUsuarios = (props) => {
   }
 
   const handleSubmit = async (event) => {
-    if (
-      form.nombre !== '' &&
-      form.apellido !== '' &&
-      form.email !== '' &&
-      form.estado !== '' &&
-      form.password !== ''
-    ) {
+    if (form.nombre !== '' && form.apellido !== '' && form.email !== '' && form.estado !== '') {
       event.preventDefault()
       const respuesta = await postEditarUsuario(
         location.id,
         form.nombre,
         form.apellido,
         form.email,
-        form.password,
         form.usuario,
         form.estado,
         '1',
