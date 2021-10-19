@@ -51,6 +51,13 @@ const _nav = [
       {
         _component: 'CNavItem',
         as: NavLink,
+        anchor: 'Conectados',
+        to: '/conectados',
+        icon: <FiUsers size={16} style={{ marginRight: '4px' }} />,
+      },
+      {
+        _component: 'CNavItem',
+        as: NavLink,
         anchor: 'Perfiles',
         icon: <BiUserCircle size={18} style={{ marginRight: '4px' }} />,
         to: '/perfiles',
