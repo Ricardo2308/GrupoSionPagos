@@ -1,7 +1,6 @@
 import React from 'react'
 import { useSession } from 'react-use-session'
 import { useHistory } from 'react-router-dom'
-import { postNotificacion } from '../../services/postNotificacion'
 import {
   CDropdown,
   CDropdownHeader,

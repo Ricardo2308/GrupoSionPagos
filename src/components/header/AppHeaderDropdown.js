@@ -1,6 +1,7 @@
 import React from 'react'
 import { useSession } from 'react-use-session'
 import { useHistory } from 'react-router-dom'
+import { postSesionUsuario } from '../../services/postSesionUsuario'
 import {
   CDropdown,
   CDropdownHeader,
@@ -15,9 +16,16 @@ const AppHeaderDropdown = () => {
   const history = useHistory()
   const { session, clear } = useSession('PendrogonIT-Session')
 
-  const salir = (e) => {
-    clear()
-    history.push('/')
+  const salir = async (e) => {
+    let idUsuario = 0
+    if (session) {
+      idUsuario = session.id
+    }
+    const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+    if (respuesta === 'OK') {
+      clear()
+      history.push('/')
+    }
   }
 
   if (session) {

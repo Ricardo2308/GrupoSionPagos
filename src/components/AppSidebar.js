@@ -15,7 +15,6 @@ import 'simplebar/dist/simplebar.min.css'
 
 // sidebar nav config
 import navigation from '../_nav'
-import seguridad from '../_seguridadnav'
 
 const AppSidebar = () => {
   const { session } = useSession('PendrogonIT-Session')
