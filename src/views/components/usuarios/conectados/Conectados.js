@@ -86,7 +86,7 @@ const Conectados = () => {
                         color="primary"
                         size="sm"
                         title="Histórico Usuario"
-                        //disabled={deshabilitar}
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/conectados/historico',
