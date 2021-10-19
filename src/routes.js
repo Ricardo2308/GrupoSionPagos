@@ -10,6 +10,8 @@ const ConsultaPU = React.lazy(() => import('./views/components/usuarios/perfil/C
 const EditarPerfilUsuario = React.lazy(() =>
   import('./views/components/usuarios/perfil/EditarPerfilUsuario'),
 )
+const Conectados = React.lazy(() => import('./views/components/usuarios/conectados/Conectados'))
+const Historico = React.lazy(() => import('./views/components/usuarios/conectados/Historico'))
 const ConsultaUG = React.lazy(() => import('./views/components/usuarios/usuariogrupo/ConsultaUG'))
 const AgregarGrupo = React.lazy(() =>
   import('./views/components/usuarios/usuariogrupo/AgregarGrupo'),
@@ -152,6 +154,8 @@ const routes = [
     name: 'Usuario Grupo Autorización',
     component: EditarUsuarioGrupo,
   },
+  { path: '/conectados', name: 'Usuarios Conectados', component: Conectados, exact: true },
+  { path: '/conectados/historico', name: 'Histórico', component: Historico },
   { path: '/perfiles', name: 'Perfiles', component: Perfiles, exact: true },
   { path: '/perfiles/nuevo', name: 'Nuevo', component: NuevoPerfil },
   { path: '/perfiles/editar', name: 'Modificación', component: EditarPerfil },
@@ -216,7 +220,7 @@ const routes = [
   { path: '/pagos/transferencia', name: 'Transferencia', component: Transferencia },
   { path: '/pagos/interna', name: 'Interna', component: GridInterna },
   { path: '/pagos/tabs', name: 'Detalle Pagos', component: PagoTabs },
-  { path: '/pagos/archivos', name: 'Archivos Flujo', component: ArchivosFlujoF },
+  { path: '/pagos/archivos', name: 'Cargar Archivo', component: ArchivosFlujoF },
   { path: '/pagos/flujogrupo', name: 'Flujo Grupo Autorización', component: FlujoGrupo },
   { path: '/pagos/detalle', name: 'Detalle Flujo', component: DetalleFlujo },
   { path: '/pagos/autorizados', name: 'Autorizados', component: Autorizados },
@@ -236,7 +240,7 @@ const routes = [
   },
   { path: '/compensacion/interna', name: 'Interna', component: CompensacionInterna },
   { path: '/compensacion/tabs', name: 'Detalle Pagos', component: CompensacionTabs },
-  { path: '/archivoflujo', exact: true, name: 'Archivos Flujo', component: ArchivosFlujoU },
+  { path: '/archivoflujo', exact: true, name: 'Archivos Pagos', component: ArchivosFlujoU },
   { path: '/archivoflujo/nuevo', name: 'Nuevo', component: NuevoArchivoFlujo },
   { path: '/archivoflujo/editar', name: 'Nuevo', component: EditarArchivoFlujo },
   // { path: '/login', name: 'Login', component: Login },
