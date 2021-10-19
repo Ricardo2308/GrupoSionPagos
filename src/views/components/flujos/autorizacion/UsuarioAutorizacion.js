@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory } from 'react-router'
+import { useHistory, useLocation } from 'react-router'
 import { Alert } from 'react-bootstrap'
 import DatePicker, { registerLocale } from 'react-datepicker'
 import es from 'date-fns/locale/es'
@@ -23,6 +23,7 @@ import {
 
 const UsuarioGrupo = () => {
   const history = useHistory()
+  const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
   const [mensaje, setMensaje] = useState('')
@@ -33,7 +34,7 @@ const UsuarioGrupo = () => {
   registerLocale('es', es)
 
   const [form, setValues] = useState({
-    aprobador: session.id,
+    aprobador: location.id,
     temporal: '',
   })
 
@@ -42,12 +43,16 @@ const UsuarioGrupo = () => {
 
   useEffect(() => {
     let mounted = true
+    let idUsuario = 0
+    if (session) {
+      idUsuario = session.id
+    }
     getUsuarios(null, null, null, null).then((items) => {
       if (mounted) {
         setList(items.users)
       }
     })
-    getPerfilUsuario(session.id, '2').then((items) => {
+    getPerfilUsuario(idUsuario, '2').then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }

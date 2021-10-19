@@ -29,7 +29,11 @@ const ListaAutorizaciones = () => {
 
   useEffect(() => {
     let mounted = true
-    getUsuarioAutorizacion(session.id, null).then((items) => {
+    let idUsuario = 0
+    if (session) {
+      idUsuario = session.id
+    }
+    getUsuarioAutorizacion(idUsuario, null).then((items) => {
       if (mounted) {
         setList(items.autorizacion)
       }
@@ -86,7 +90,12 @@ const ListaAutorizaciones = () => {
             color="primary"
             size="sm"
             //disabled={deshabilitar}
-            onClick={() => history.push('/autorizacion/nueva')}
+            onClick={() =>
+              history.push({
+                pathname: '/autorizacion/nueva',
+                id_usuario: session.id,
+              })
+            }
           >
             Crear Nueva
           </CButton>

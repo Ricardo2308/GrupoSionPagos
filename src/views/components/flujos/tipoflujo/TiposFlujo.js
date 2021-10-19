@@ -29,12 +29,16 @@ const TiposFlujo = () => {
 
   useEffect(() => {
     let mounted = true
+    let idUsuario = 0
+    if (session) {
+      idUsuario = session.id
+    }
     getTiposFlujo(null, null).then((items) => {
       if (mounted) {
         setList(items.tipos)
       }
     })
-    getPerfilUsuario(session.id, '2').then((items) => {
+    getPerfilUsuario(idUsuario, '2').then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }

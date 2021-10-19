@@ -33,12 +33,19 @@ const Consultar = () => {
 
   useEffect(() => {
     let mounted = true
-    getPerfilUsuario(location.id_usuario, '1').then((items) => {
+    let idUsuario = 0
+    if (session) {
+      idUsuario = session.id
+    }
+    if (location.id_usuario) {
+      idUsuario = location.id_usuario
+    }
+    getPerfilUsuario(idUsuario, '1').then((items) => {
       if (mounted) {
         setList(items.detalle)
       }
     })
-    getPerfilUsuario(session.id, '2').then((items) => {
+    getPerfilUsuario(idUsuario, '2').then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }

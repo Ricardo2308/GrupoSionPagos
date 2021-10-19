@@ -19,7 +19,7 @@ import {
 
 const Usuarios = () => {
   const history = useHistory()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
@@ -30,15 +30,24 @@ const Usuarios = () => {
 
   useEffect(() => {
     let mounted = true
+    let idUsuario = 0
+    if (session) {
+      idUsuario = session.id
+    }
     getUsuarios(null, null, null, null).then((items) => {
       if (mounted) {
         setList(items.users)
       }
     })
-    getPerfilUsuario(session.id, '2').then((items) => {
+    getPerfilUsuario(idUsuario, '2').then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
+    })
+    window.addEventListener('beforeunload', (ev) => {
+      console.log(ev)
+      ev.preventDefault()
+      return (ev.returnValue = 'Esta seguro de cerrar sesión?')
     })
     return () => (mounted = false)
   }, [])
@@ -71,7 +80,6 @@ const Usuarios = () => {
   if (session) {
     let deshabilitar = false
     let deshabilitar_grupo = false
-    let deshabilitar_perfil = false
     if (ExistePermiso('Modulo Usuarios')) {
       deshabilitar_grupo = true
     }
@@ -85,7 +93,6 @@ const Usuarios = () => {
     if (!ExistePermiso('Modulo Usuarios') && !ExistePermiso('Modulo Grupos Autorizacion')) {
       deshabilitar_grupo = true
       deshabilitar = true
-      deshabilitar_perfil = true
     }
     return (
       <>
@@ -143,7 +150,7 @@ const Usuarios = () => {
                         color="info"
                         size="sm"
                         title="Consultar Usuario Perfil"
-                        disabled={deshabilitar_perfil}
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/usuarios/consulta',

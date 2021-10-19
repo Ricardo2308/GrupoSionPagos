@@ -4,6 +4,7 @@ import { Alert } from 'react-bootstrap'
 import { FiUser, FiLock, FiEye } from 'react-icons/fi'
 import { getUsuarios } from '../../../services/getUsuarios'
 import { getPoliticas } from '../../../services/getPoliticas'
+import { postSesionUsuario } from '../../../services/postSesionUsuario'
 import { postLogLogin } from '../../../services/postLogLogin'
 import { useSession } from 'react-use-session'
 import logo from '../../../assets/icons/logo.png'
@@ -68,6 +69,23 @@ const Login = () => {
     return result
   }
 
+  async function crearSesion(id) {
+    const publicIp = require('public-ip')
+    let agente = window.navigator.userAgent
+    var navegadores = ['Chrome', 'Firefox', 'Safari', 'Opera', 'Trident', 'MSIE', 'Edge']
+    const myip = await publicIp.v4()
+    for (var i in navegadores) {
+      if (agente.indexOf(navegadores[i]) != -1) {
+        const respuesta = await postSesionUsuario(id, navegadores[i], myip, '1')
+        if (respuesta === 'OK') {
+          return true
+        } else {
+          return false
+        }
+      }
+    }
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault()
     getUsuarios(null, null, form.usuario, null).then((items) => {
@@ -75,18 +93,20 @@ const Login = () => {
         for (let item of items.users) {
           if (md5(form.password, { encoding: 'binary' }) === item.password) {
             if (item.activo == 1 && item.eliminado == 0) {
-              const sign = require('jwt-encode')
-              const secret = 'secret'
-              const data = {
-                email: item.email,
-                name: item.nombre + ' ' + item.apellido,
-                user_name: item.nombre_usuario,
-                id: item.id,
-                estado: item.activo,
+              if (crearSesion(item.id)) {
+                const sign = require('jwt-encode')
+                const secret = 'secret'
+                const data = {
+                  email: item.email,
+                  name: item.nombre + ' ' + item.apellido,
+                  user_name: item.nombre_usuario,
+                  id: item.id,
+                  estado: item.activo,
+                }
+                const jwt = sign(data, secret)
+                saveJWT(jwt)
+                history.push('/home')
               }
-              const jwt = sign(data, secret)
-              saveJWT(jwt)
-              history.push('/home')
             } else {
               setShow(true)
               setTitulo('Error!')
