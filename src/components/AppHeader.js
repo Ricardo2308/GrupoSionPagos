@@ -40,42 +40,46 @@ const AppHeader = () => {
       idUsuario = session.id
     }
     getMensajes(null, idUsuario).then((items) => {
-      items.mensajes.map((item) => {
+      for (let item of items.mensajes) {
         if (item.leido == 0) {
           cont++
         }
-        Contar(cont)
-      })
+      }
+      Contar(cont)
       setList(items.mensajes)
     })
     getNotificaciones(null, idUsuario).then((items) => {
-      items.notificaciones.map((item) => {
+      for (let item of items.notificaciones) {
         if (item.Leido == 0) {
           contN++
         }
-        ContarN(contN)
-      })
+      }
+      ContarN(contN)
       setNotificaciones(items.notificaciones)
     })
     const interval = setInterval(() => {
       let cont = 0
       let contN = 0
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
       getMensajes(null, idUsuario).then((items) => {
-        items.mensajes.map((item) => {
+        for (let item of items.mensajes) {
           if (item.leido == 0) {
             cont++
           }
-          Contar(cont)
-        })
+        }
+        Contar(cont)
         setList(items.mensajes)
       })
       getNotificaciones(null, idUsuario).then((items) => {
-        items.notificaciones.map((item) => {
+        for (let item of items.notificaciones) {
           if (item.Leido == 0) {
             contN++
           }
-          ContarN(contN)
-        })
+        }
+        ContarN(contN)
         setNotificaciones(items.notificaciones)
       })
     }, 20000)
