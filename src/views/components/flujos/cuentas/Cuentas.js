@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
+import { Modal } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
 import { getCuentas } from '../../../../services/getCuentas'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
+import { useIdleTimer } from 'react-idle-timer'
 import { useSession } from 'react-use-session'
 import { FaUserEdit } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
@@ -17,9 +20,11 @@ import {
 
 const Cuentas = () => {
   const history = useHistory()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [permisos, setPermisos] = useState([])
+  const [show, setShow] = useState(false)
+  const [mensaje, setMensaje] = useState('')
 
   useEffect(() => {
     let mounted = true
@@ -29,6 +34,7 @@ const Cuentas = () => {
     }
     getCuentas(null, null).then((items) => {
       if (mounted) {
+        console.log(items)
         setList(items.cuentas)
       }
     })
@@ -50,6 +56,42 @@ const Cuentas = () => {
     return result
   }
 
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
+
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShow(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+    }
+  }
+
   if (session) {
     let deshabilitar = false
     if (ExistePermiso('Modulo Cuentas') == 0) {
@@ -57,6 +99,20 @@ const Cuentas = () => {
     }
     return (
       <>
+        <Modal responsive variant="primary" show={show} onHide={() => Cancelar(2)} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmación</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>{mensaje}</Modal.Body>
+          <Modal.Footer>
+            <CButton color="secondary" onClick={() => Cancelar(2)}>
+              Cancelar
+            </CButton>
+            <CButton color="primary" onClick={() => Cancelar(1)}>
+              Aceptar
+            </CButton>
+          </Modal.Footer>
+        </Modal>
         <div className="float-right" style={{ marginBottom: '10px' }}>
           <CButton
             color="primary"
@@ -85,44 +141,38 @@ const Cuentas = () => {
           </CTableHead>
           <CTableBody>
             {results.map((item, i) => {
-              let estado = 'Inactivo'
-              if (item.eliminado == 0) {
-                if (item.activo == 1) {
-                  estado = 'Activo'
-                }
-                return (
-                  <CTableRow key={item.id_banco}>
-                    <CTableDataCell className="account-row">{item.numero_cuenta}</CTableDataCell>
-                    <CTableDataCell className="account-row">{item.nombre}</CTableDataCell>
-                    <CTableDataCell className="account-row">{item.empresa}</CTableDataCell>
-                    <CTableDataCell className="account-row">{item.banco}</CTableDataCell>
-                    <CTableDataCell className="account-row">{item.moneda}</CTableDataCell>
-                    <CTableDataCell className="account-row">{item.codigo_ach}</CTableDataCell>
-                    <CTableDataCell className="account-row">
-                      <CButton
-                        color="primary"
-                        size="sm"
-                        title="Editar Banco"
-                        disabled={deshabilitar}
-                        onClick={() =>
-                          history.push({
-                            pathname: '/cuentas/editar',
-                            id_cuenta: item.id_cuenta,
-                            numero_cuenta: item.numero_cuenta,
-                            nombre: item.nombre,
-                            id_empresa: item.id_empresa,
-                            id_banco: item.id_banco,
-                            id_moneda: item.id_moneda,
-                            codigo_ach: item.codigo_ach,
-                          })
-                        }
-                      >
-                        <FaUserEdit />
-                      </CButton>
-                    </CTableDataCell>
-                  </CTableRow>
-                )
-              }
+              return (
+                <CTableRow key={item.id_cuenta}>
+                  <CTableDataCell className="account-row">{item.numero_cuenta}</CTableDataCell>
+                  <CTableDataCell className="account-row">{item.nombre}</CTableDataCell>
+                  <CTableDataCell className="account-row">{item.empresa}</CTableDataCell>
+                  <CTableDataCell className="account-row">{item.banco}</CTableDataCell>
+                  <CTableDataCell className="account-row">{item.moneda}</CTableDataCell>
+                  <CTableDataCell className="account-row">{item.codigo_ach}</CTableDataCell>
+                  <CTableDataCell className="account-row">
+                    <CButton
+                      color="primary"
+                      size="sm"
+                      title="Editar Cuenta"
+                      disabled={deshabilitar}
+                      onClick={() =>
+                        history.push({
+                          pathname: '/cuentas/editar',
+                          id_cuenta: item.id_cuenta,
+                          numero_cuenta: item.numero_cuenta,
+                          nombre: item.nombre,
+                          id_empresa: item.id_empresa,
+                          id_banco: item.id_banco,
+                          id_moneda: item.id_moneda,
+                          codigo_ach: item.codigo_ach,
+                        })
+                      }
+                    >
+                      <FaUserEdit />
+                    </CButton>
+                  </CTableDataCell>
+                </CTableRow>
+              )
             })}
           </CTableBody>
         </CTable>

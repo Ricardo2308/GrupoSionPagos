@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Modal } from 'react-bootstrap'
+import { useIdleTimer } from 'react-idle-timer'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { getUsuarioAutorizacion } from '../../../../services/getUsuarioAutorizacion'
 import { postUsuarioAutorizacion } from '../../../../services/postUsuarioAutorizacion'
 import { useSession } from 'react-use-session'
@@ -20,10 +22,12 @@ const ListaAutorizaciones = () => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [idAutorizacion, setidAutorizacion] = useState(0)
   const [estado, setEstado] = useState(0)
   const [opcion, setOpcion] = useState(0)
+  const [mensaje, setMensaje] = useState('')
 
   const handleClose = () => setShow(false)
 
@@ -38,8 +42,44 @@ const ListaAutorizaciones = () => {
         setList(items.autorizacion)
       }
     })
+    getPerfilUsuario(idUsuario, '2').then((items) => {
+      if (mounted) {
+        setPermisos(items.detalle)
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  function ExistePermiso(objeto) {
+    let result = 0
+    for (let item of permisos) {
+      if (objeto === item.objeto) {
+        result = 1
+      }
+    }
+    return result
+  }
+
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setOpcion(2)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
 
   function mostrarModal(id_autorizacion, opcion, estado) {
     setidAutorizacion(id_autorizacion)
@@ -64,6 +104,10 @@ const ListaAutorizaciones = () => {
   }
 
   if (session) {
+    let deshabilitar = false
+    if (ExistePermiso('Modulo Autorizacion') == 0) {
+      deshabilitar = true
+    }
     return (
       <>
         <Modal responsive variant="primary" show={show} onHide={handleClose} centered>
@@ -89,7 +133,7 @@ const ListaAutorizaciones = () => {
           <CButton
             color="primary"
             size="sm"
-            //disabled={deshabilitar}
+            disabled={deshabilitar}
             onClick={() =>
               history.push({
                 pathname: '/autorizacion/nueva',

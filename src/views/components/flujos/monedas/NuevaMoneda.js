@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { useSession } from 'react-use-session'
-import { Alert } from 'react-bootstrap'
+import { Alert, Modal } from 'react-bootstrap'
+import { useIdleTimer } from 'react-idle-timer'
 import { useHistory } from 'react-router-dom'
 import { postCrudMonedas } from '../../../../services/postCrudMonedas'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import '../../../../scss/estilos.scss'
 import {
   CButton,
@@ -19,8 +21,9 @@ import { FaCoins } from 'react-icons/fa'
 
 const NuevaMoneda = (props) => {
   const history = useHistory()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
+  const [showM, setShowM] = useState(false)
   const [mensaje, setMensaje] = useState('')
 
   const [form, setValues] = useState({
@@ -48,10 +51,60 @@ const NuevaMoneda = (props) => {
     }
   }
 
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShowM(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+    }
+  }
+
+  const handleOnIdle = (event) => {
+    setShowM(true)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
+
   if (session) {
     return (
       <div style={{ flexDirection: 'row' }}>
         <CContainer>
+          <Modal responsive variant="primary" show={showM} onHide={() => Cancelar(2)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Confirmación</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>{mensaje}</Modal.Body>
+            <Modal.Footer>
+              <CButton color="secondary" onClick={() => Cancelar(2)}>
+                Cancelar
+              </CButton>
+              <CButton color="primary" onClick={() => Cancelar(1)}>
+                Aceptar
+              </CButton>
+            </Modal.Footer>
+          </Modal>
           <Alert show={show} variant="danger" onClose={() => setShow(false)} dismissible>
             <Alert.Heading>Error!</Alert.Heading>
             <p>{mensaje}</p>

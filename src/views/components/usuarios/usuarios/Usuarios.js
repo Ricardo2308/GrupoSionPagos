@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
-import { getUsuarios } from '../../../../services/getUsuarios'
+import { useIdleTimer } from 'react-idle-timer'
 import { postEditarUsuario } from '../../../../services/postEditarUsuario'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
+import { getUsuarios } from '../../../../services/getUsuarios'
 import { useSession } from 'react-use-session'
 import { FaUserEdit, FaTrash, FaUserCog, FaUserCircle, FaUsersCog } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
@@ -23,10 +25,9 @@ const Usuarios = () => {
   const [results, setList] = useState([])
   const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
-  const [nombreUsuario, setNombreUsuario] = useState('')
   const [idUsuario, setIdUsuario] = useState(0)
-
-  const handleClose = () => setShow(false)
+  const [opcion, setOpcion] = useState(0)
+  const [mensaje, setMensaje] = useState('')
 
   useEffect(() => {
     let mounted = true
@@ -62,20 +63,62 @@ const Usuarios = () => {
     return result
   }
 
-  function mostrarModal(id, nombre) {
+  function mostrarModal(id, nombre, opcion) {
     setIdUsuario(id)
-    setNombreUsuario(nombre)
+    setOpcion(opcion)
     setShow(true)
+    setMensaje('Está seguro de eliminar al usuario ' + nombre + '?')
   }
 
-  async function eliminarUsuario(id) {
-    const respuesta = await postEditarUsuario(id, '', '', '', '', '', '2')
-    if (respuesta === 'OK') {
-      await getUsuarios(null, null, null, null).then((items) => {
-        setList(items.users)
-      })
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShow(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
     }
   }
+
+  async function eliminarUsuario(id, opcion) {
+    if (opcion == 1) {
+      const respuesta = await postEditarUsuario(id, '', '', '', '', '', '2')
+      if (respuesta === 'OK') {
+        await getUsuarios(null, null, null, null).then((items) => {
+          setList(items.users)
+        })
+      }
+    } else if (opcion == 2) {
+      setShow(false)
+    }
+  }
+
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setOpcion(2)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
 
   if (session) {
     let deshabilitar = false
@@ -96,16 +139,19 @@ const Usuarios = () => {
     }
     return (
       <>
-        <Modal responsive variant="primary" show={show} onHide={handleClose} centered>
+        <Modal responsive variant="primary" show={show} onHide={() => Cancelar(opcion)} centered>
           <Modal.Header closeButton>
             <Modal.Title>Confirmación</Modal.Title>
           </Modal.Header>
-          <Modal.Body>Está seguro de eliminar al usuario {nombreUsuario}?</Modal.Body>
+          <Modal.Body>{mensaje}</Modal.Body>
           <Modal.Footer>
-            <CButton color="secondary" onClick={handleClose}>
+            <CButton color="secondary" onClick={() => Cancelar(opcion)}>
               Cancelar
             </CButton>
-            <CButton color="primary" onClick={() => eliminarUsuario(idUsuario).then(handleClose)}>
+            <CButton
+              color="primary"
+              onClick={() => eliminarUsuario(idUsuario, opcion).then(() => Cancelar(1))}
+            >
               Aceptar
             </CButton>
           </Modal.Footer>
@@ -223,7 +269,7 @@ const Usuarios = () => {
                         size="sm"
                         title="Eliminar Usuario"
                         disabled={deshabilitar}
-                        onClick={() => mostrarModal(item.id, item.nombre + ' ' + item.apellido)}
+                        onClick={() => mostrarModal(item.id, item.nombre + ' ' + item.apellido, 1)}
                       >
                         <FaTrash />
                       </CButton>

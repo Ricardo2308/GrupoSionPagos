@@ -59,7 +59,7 @@ const Login = () => {
     })
   }
 
-  function limiteLogin(politica) {
+  function obtenerPolitica(politica) {
     let result = ''
     for (let item of politicas) {
       if (item.identificador == politica) {
@@ -94,6 +94,7 @@ const Login = () => {
           if (md5(form.password, { encoding: 'binary' }) === item.password) {
             if (item.activo == 1 && item.eliminado == 0) {
               if (crearSesion(item.id)) {
+                let limiteconexion = obtenerPolitica('_LIMITE_TIEMPO_CONEXION_')
                 const sign = require('jwt-encode')
                 const secret = 'secret'
                 const data = {
@@ -102,6 +103,7 @@ const Login = () => {
                   user_name: item.nombre_usuario,
                   id: item.id,
                   estado: item.activo,
+                  limiteconexion: limiteconexion,
                 }
                 const jwt = sign(data, secret)
                 saveJWT(jwt)
@@ -121,7 +123,7 @@ const Login = () => {
             setColor('danger')
             setMensaje('Credenciales incorrectas. Vuelva a intentarlo.')
             if (item.activo == 1) {
-              let valor = limiteLogin('_LIMITE_ERROR_LOGIN_')
+              let valor = obtenerPolitica('_LIMITE_ERROR_LOGIN_')
               postLogLogin(item.id, valor)
             }
           }

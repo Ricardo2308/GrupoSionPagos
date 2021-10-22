@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { CCard, CCardBody, CCol, CCardHeader, CRow, CFormSelect } from '@coreui/react'
 import { CChartBar, CChartDoughnut, CChartPie } from '@coreui/react-chartjs'
-import { Button } from 'react-bootstrap'
+import { useIdleTimer } from 'react-idle-timer'
+import { Button, Modal } from 'react-bootstrap'
+import { useHistory } from 'react-router-dom'
+import { postSesionUsuario } from '../../services/postSesionUsuario'
 import { getFlujos } from '../../services/getFlujos'
 import { useSession } from 'react-use-session'
 import { FaSearch } from 'react-icons/fa'
 import '../../scss/estilos.scss'
 
 const Dashboard = () => {
-  const { session } = useSession('PendrogonIT-Session')
+  const history = useHistory()
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [estados, setEstados] = useState([])
   const [pagos, setPagos] = useState([])
@@ -17,6 +21,7 @@ const Dashboard = () => {
   const [semaforos, setSemaforos] = useState([])
   const [semaforosNom, setSemaforosNom] = useState([])
   const [years, setYears] = useState([])
+  const [show, setShow] = useState(false)
 
   const [form, setValues] = useState({
     year: '0',
@@ -115,6 +120,8 @@ const Dashboard = () => {
     })
   }
 
+  const handleClose = () => setShow(false)
+
   const filtrar = async () => {
     let estados = []
     let labelestados = []
@@ -155,144 +162,193 @@ const Dashboard = () => {
     })
   }
 
+  const handleOnIdle = (event) => {
+    setShow(true)
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
+
+  async function Salir() {
+    let idUsuario = 0
+    if (session) {
+      idUsuario = session.id
+    }
+    const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+    if (respuesta === 'OK') {
+      clear()
+      history.push('/')
+    }
+  }
+
   if (session) {
     return (
-      <CRow>
-        <div className="div-search">
-          <CFormSelect
-            name="year"
-            style={{ marginLeft: '51%', marginRight: '10px' }}
-            onChange={handleInput}
-          >
-            <option>Seleccione año</option>
-            {years.map((item, i) => {
-              return (
-                <option key={i} value={item}>
-                  {item}
-                </option>
-              )
-            })}
-          </CFormSelect>
-          <CFormSelect name="mes" style={{ marginRight: '10px' }} onChange={handleInput}>
-            <option>Seleccione mes</option>
-            <option value="1">Enero</option>
-            <option value="2">Febrero</option>
-            <option value="3">Marzo</option>
-            <option value="4">Abril</option>
-            <option value="5">Mayo</option>
-            <option value="6">Junio</option>
-            <option value="7">Julio</option>
-            <option value="8">Agosto</option>
-            <option value="9">Septiembre</option>
-            <option value="10">Octubre</option>
-            <option value="11">Noviembre</option>
-            <option value="12">Diciembre</option>
-          </CFormSelect>
-          <Button
-            color="primary"
-            className="search-button"
-            title="Filtrar por año y mes"
-            onClick={filtrar}
-          >
-            <FaSearch />
-          </Button>
-        </div>
-        <CCol xs={6} style={{ marginTop: '10px' }}>
-          <CCard className="mb-4">
-            <CCardHeader>Cantidad de pagos por estado</CCardHeader>
-            <CCardBody>
-              <CChartDoughnut
-                data={{
-                  labels: estados,
-                  datasets: [
-                    {
-                      backgroundColor: [
-                        '#D02F2F',
-                        '#ADBC3C',
-                        '#40389D',
-                        '#8A5C84',
-                        '#428A49',
-                        '#553D26',
-                      ],
-                      hoverBackgroundColor: [
-                        '#CC5855',
-                        '#C7C246',
-                        '#6F72C5',
-                        '#8E6BC2',
-                        '#56A05A',
-                        '#825E3D',
-                      ],
-                      data: results,
-                    },
-                  ],
-                }}
-              />
-            </CCardBody>
-          </CCard>
-        </CCol>
-        <CCol xs={6} style={{ marginTop: '10px' }}>
-          <CCard className="mb-4">
-            <CCardHeader>Cantidad de pagos aprobados por tipo</CCardHeader>
-            <CCardBody>
-              <CChartPie
-                data={{
-                  labels: tipos,
-                  datasets: [
-                    {
-                      data: pagos,
-                      backgroundColor: ['#D02F2F', '#40389D', '#428A49'],
-                      hoverBackgroundColor: ['#CC5855', '#6F72C5', '#56A05A'],
-                    },
-                  ],
-                }}
-              />
-            </CCardBody>
-          </CCard>
-        </CCol>
-        <CCol xs={12}>
-          <CCard className="mb-4">
-            <CCardHeader>Promedio de tiempo de pagos entre estados (Horas)</CCardHeader>
-            <CCardBody>
-              <CChartBar
-                data={{
-                  labels: [
-                    'Pago cargado->Archivo cargado',
-                    'Archivo cargado->Responsable asignado',
-                    'Responsable asignado->Aprobación de nivel',
-                    'Aprobación de nivel->Autorización completa',
-                  ],
-                  datasets: [
-                    {
-                      label: 'Horas',
-                      backgroundColor: '#1D2377',
-                      data: promedioT,
-                    },
-                  ],
-                }}
-              />
-            </CCardBody>
-          </CCard>
-        </CCol>
-        <CCol xs={6}>
-          <CCard className="mb-4">
-            <CCardHeader>Semáforo de aprobación vs días de credito</CCardHeader>
-            <CCardBody>
-              <CChartBar
-                data={{
-                  labels: semaforosNom,
-                  datasets: [
-                    {
-                      label: 'Pagos',
-                      backgroundColor: ['#D02F2F', '#AF940B', '#428A49'],
-                      data: semaforos,
-                    },
-                  ],
-                }}
-              />
-            </CCardBody>
-          </CCard>
-        </CCol>
-      </CRow>
+      <>
+        <Modal responsive variant="primary" show={show} onHide={() => Salir()} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmación</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => Salir()}>
+              Cancelar
+            </Button>
+            <Button variant="primary" onClick={handleClose}>
+              Aceptar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <CRow>
+          <div className="div-search">
+            <CFormSelect
+              name="year"
+              style={{ marginLeft: '51%', marginRight: '10px' }}
+              onChange={handleInput}
+            >
+              <option>Seleccione año</option>
+              {years.map((item, i) => {
+                return (
+                  <option key={i} value={item}>
+                    {item}
+                  </option>
+                )
+              })}
+            </CFormSelect>
+            <CFormSelect name="mes" style={{ marginRight: '10px' }} onChange={handleInput}>
+              <option>Seleccione mes</option>
+              <option value="1">Enero</option>
+              <option value="2">Febrero</option>
+              <option value="3">Marzo</option>
+              <option value="4">Abril</option>
+              <option value="5">Mayo</option>
+              <option value="6">Junio</option>
+              <option value="7">Julio</option>
+              <option value="8">Agosto</option>
+              <option value="9">Septiembre</option>
+              <option value="10">Octubre</option>
+              <option value="11">Noviembre</option>
+              <option value="12">Diciembre</option>
+            </CFormSelect>
+            <Button
+              color="primary"
+              className="search-button"
+              title="Filtrar por año y mes"
+              onClick={filtrar}
+            >
+              <FaSearch />
+            </Button>
+          </div>
+          <CCol xs={6} style={{ marginTop: '10px' }}>
+            <CCard className="mb-4">
+              <CCardHeader>Cantidad de pagos por estado</CCardHeader>
+              <CCardBody>
+                <CChartDoughnut
+                  data={{
+                    labels: estados,
+                    datasets: [
+                      {
+                        backgroundColor: [
+                          '#D02F2F',
+                          '#ADBC3C',
+                          '#40389D',
+                          '#8A5C84',
+                          '#428A49',
+                          '#553D26',
+                        ],
+                        hoverBackgroundColor: [
+                          '#CC5855',
+                          '#C7C246',
+                          '#6F72C5',
+                          '#8E6BC2',
+                          '#56A05A',
+                          '#825E3D',
+                        ],
+                        data: results,
+                      },
+                    ],
+                  }}
+                />
+              </CCardBody>
+            </CCard>
+          </CCol>
+          <CCol xs={6} style={{ marginTop: '10px' }}>
+            <CCard className="mb-4">
+              <CCardHeader>Cantidad de pagos aprobados por tipo</CCardHeader>
+              <CCardBody>
+                <CChartPie
+                  data={{
+                    labels: tipos,
+                    datasets: [
+                      {
+                        data: pagos,
+                        backgroundColor: ['#D02F2F', '#40389D', '#428A49'],
+                        hoverBackgroundColor: ['#CC5855', '#6F72C5', '#56A05A'],
+                      },
+                    ],
+                  }}
+                />
+              </CCardBody>
+            </CCard>
+          </CCol>
+          <CCol xs={12}>
+            <CCard className="mb-4">
+              <CCardHeader>Promedio de tiempo de pagos entre estados (Horas)</CCardHeader>
+              <CCardBody>
+                <CChartBar
+                  data={{
+                    labels: [
+                      'Pago cargado->Archivo cargado',
+                      'Archivo cargado->Responsable asignado',
+                      'Responsable asignado->Aprobación de nivel',
+                      'Aprobación de nivel->Autorización completa',
+                    ],
+                    datasets: [
+                      {
+                        label: 'Horas',
+                        backgroundColor: '#1D2377',
+                        data: promedioT,
+                      },
+                    ],
+                  }}
+                />
+              </CCardBody>
+            </CCard>
+          </CCol>
+          <CCol xs={6}>
+            <CCard className="mb-4">
+              <CCardHeader>Semáforo de aprobación vs días de credito</CCardHeader>
+              <CCardBody>
+                <CChartBar
+                  data={{
+                    labels: semaforosNom,
+                    datasets: [
+                      {
+                        label: 'Pagos',
+                        backgroundColor: ['#D02F2F', '#AF940B', '#428A49'],
+                        data: semaforos,
+                      },
+                    ],
+                  }}
+                />
+              </CCardBody>
+            </CCard>
+          </CCol>
+        </CRow>
+      </>
     )
   } else {
     return <div className="sin-sesion">SIN SESIÓN ACTIVA.</div>

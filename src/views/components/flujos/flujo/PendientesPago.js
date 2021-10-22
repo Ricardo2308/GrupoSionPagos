@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
+import { useIdleTimer } from 'react-idle-timer'
 import { Alert, Modal, Button, FormControl } from 'react-bootstrap'
 import DataTable, { createTheme } from 'react-data-table-component'
 import { getFlujos } from '../../../../services/getFlujos'
@@ -45,9 +46,10 @@ const PendientesPago = (prop) => {
   const [results, setList] = useState([])
   const [show, setShow] = useState(false)
   const [showAlert, setShowAlert] = useState(false)
-  const [filterText, setFilterText] = useState('')
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false)
+  const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
+  const [filterText, setFilterText] = useState('')
   const [titulo, setTitulo] = useState('Error!')
   const [color, setColor] = useState('danger')
   const filteredItems = results.filter(
@@ -133,6 +135,27 @@ const PendientesPago = (prop) => {
       setMensaje('No has seleccionado ningún pago.')
     }
   }
+
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setOpcion(2)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
 
   const customStyles = {
     headCells: {

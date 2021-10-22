@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
+import { Modal } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
+import { useIdleTimer } from 'react-idle-timer'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { getSesionUsuario } from '../../../../services/getSesionUsuario'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { useSession } from 'react-use-session'
@@ -17,9 +20,11 @@ import {
 
 const Conectados = () => {
   const history = useHistory()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [permisos, setPermisos] = useState([])
+  const [show, setShow] = useState(false)
+  const [mensaje, setMensaje] = useState('')
 
   useEffect(() => {
     let mounted = true
@@ -55,6 +60,42 @@ const Conectados = () => {
     return result
   }
 
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShow(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+    }
+  }
+
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
+
   if (session) {
     let deshabilitar = false
     if (!ExistePermiso('Modulo Conectados')) {
@@ -62,6 +103,20 @@ const Conectados = () => {
     }
     return (
       <>
+        <Modal responsive variant="primary" show={show} onHide={() => Cancelar(2)} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmación</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>{mensaje}</Modal.Body>
+          <Modal.Footer>
+            <CButton color="secondary" onClick={() => Cancelar(2)}>
+              Cancelar
+            </CButton>
+            <CButton color="primary" onClick={() => Cancelar(1)}>
+              Aceptar
+            </CButton>
+          </Modal.Footer>
+        </Modal>
         <CTable hover responsive align="middle" className="mb-0 border">
           <CTableHead color="light">
             <CTableRow>

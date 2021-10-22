@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
+import { useIdleTimer } from 'react-idle-timer'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postCrudPermiso } from '../../../../services/postCrudPermiso'
 import { FiUserCheck, FiSettings } from 'react-icons/fi'
@@ -21,6 +22,7 @@ const EditarPermiso = () => {
   const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
+  const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
 
   const [form, setValues] = useState({

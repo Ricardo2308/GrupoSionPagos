@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
+import { useIdleTimer } from 'react-idle-timer'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postCrudCuentas } from '../../../../services/postCrudCuentas'
 import { getBancos } from '../../../../services/getBancos'
@@ -27,6 +28,7 @@ const EditarBancos = (props) => {
   const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
+  const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
   const [results, setList] = useState([])
   const [results1, setList1] = useState([])
@@ -90,6 +92,27 @@ const EditarBancos = (props) => {
       setMensaje('No has llenado todos los campos.')
     }
   }
+
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setOpcion(2)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
 
   if (session) {
     if (location.id_cuenta) {

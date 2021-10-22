@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
+import { useIdleTimer } from 'react-idle-timer'
 import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { postGruposAutorizacion } from '../../../../services/postGruposAutorizacion'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { useSession } from 'react-use-session'
 import { FaPen, FaTrash } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
@@ -19,11 +21,13 @@ import {
 
 const GruposAutorizacion = () => {
   const history = useHistory()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [idGrupo, setIdGrupo] = useState(0)
+  const [opcion, setOpcion] = useState(0)
+  const [mensaje, setMensaje] = useState('')
 
   const handleClose = () => setShow(false)
 
@@ -56,17 +60,60 @@ const GruposAutorizacion = () => {
     return result
   }
 
-  function mostrarModal(id_grupo) {
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setOpcion(2)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
+
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShow(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+    }
+  }
+
+  function mostrarModal(id_grupo, nombre, opcion) {
     setIdGrupo(id_grupo)
+    setOpcion(opcion)
+    setMensaje('Está seguro de eliminar el grupo ' + nombre + '?')
     setShow(true)
   }
 
-  async function eliminarGrupo(id_grupo) {
-    const respuesta = await postGruposAutorizacion(id_grupo, '', '', '', '', '2')
-    if (respuesta === 'OK') {
-      await getGruposAutorizacion(null, null).then((items) => {
-        setList(items.grupos)
-      })
+  async function eliminarGrupo(id_grupo, opcion) {
+    if (opcion == 1) {
+      const respuesta = await postGruposAutorizacion(id_grupo, '', '', '', '', '2')
+      if (respuesta === 'OK') {
+        await getGruposAutorizacion(null, null).then((items) => {
+          setList(items.grupos)
+        })
+      }
+    } else if (opcion == 2) {
+      setShow(false)
     }
   }
 
@@ -77,16 +124,19 @@ const GruposAutorizacion = () => {
     }
     return (
       <>
-        <Modal variant="primary" show={show} onHide={handleClose} centered>
+        <Modal responsive variant="primary" show={show} onHide={() => Cancelar(opcion)} centered>
           <Modal.Header closeButton>
             <Modal.Title>Confirmación</Modal.Title>
           </Modal.Header>
-          <Modal.Body>Está seguro de eliminar este grupo de autorización?</Modal.Body>
+          <Modal.Body>{mensaje}</Modal.Body>
           <Modal.Footer>
-            <CButton color="secondary" onClick={handleClose}>
+            <CButton color="secondary" onClick={() => Cancelar(opcion)}>
               Cancelar
             </CButton>
-            <CButton color="primary" onClick={() => eliminarGrupo(idGrupo).then(handleClose)}>
+            <CButton
+              color="primary"
+              onClick={() => eliminarGrupo(idGrupo, opcion).then(() => Cancelar(1))}
+            >
               Aceptar
             </CButton>
           </Modal.Footer>
@@ -150,7 +200,7 @@ const GruposAutorizacion = () => {
                         size="sm"
                         title="Eliminar Grupo Autorización"
                         disabled={deshabilitar}
-                        onClick={() => mostrarModal(item.id_grupo)}
+                        onClick={() => mostrarModal(item.id_grupo, item.identificador, 1)}
                       >
                         <FaTrash />
                       </CButton>

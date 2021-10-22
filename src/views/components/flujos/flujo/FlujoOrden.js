@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Row, Col, Container } from 'react-bootstrap'
 import { useSession } from 'react-use-session'
 import { useHistory } from 'react-router-dom'
+import { useIdleTimer } from 'react-idle-timer'
 import { getFlujoOrden } from '../../../../services/getFlujoOrden'
 import '../../../../scss/estilos.scss'
 
@@ -9,6 +10,9 @@ const FlujoOrden = (prop) => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [show, setShow] = useState(false)
+  const [opcion, setOpcion] = useState(0)
+  const [mensaje, setMensaje] = useState('')
 
   useEffect(() => {
     let mounted = true
@@ -19,6 +23,27 @@ const FlujoOrden = (prop) => {
     })
     return () => (mounted = false)
   }, [])
+
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setOpcion(2)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
 
   if (session) {
     if (results) {

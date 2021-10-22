@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Tab, Tabs } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
+import { useIdleTimer } from 'react-idle-timer'
 import FlujoSolicitud from './FlujoSolicitud'
 import FlujoOferta from './FlujoOferta'
 import FlujoOrden from './FlujoOrden'
@@ -15,7 +16,31 @@ import FlujoBitacora from './FlujoBitacora'
 const PagoTabs = () => {
   const history = useHistory()
   const location = useLocation()
+  const [show, setShow] = useState(false)
+  const [opcion, setOpcion] = useState(0)
+  const [mensaje, setMensaje] = useState('')
   const { session } = useSession('PendrogonIT-Session')
+
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setOpcion(2)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
 
   if (session) {
     if (location.id_flujo) {

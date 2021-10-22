@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
+import { useIdleTimer } from 'react-idle-timer'
 import { getPerfilRol } from '../../../../services/getPerfilRol'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { postPerfilRol } from 'src/services/postPerfilRol'
 import { useSession } from 'react-use-session'
 import { FaTrash, FaPen } from 'react-icons/fa'
@@ -20,15 +22,13 @@ import {
 const ConsultarPR = () => {
   const history = useHistory()
   const location = useLocation()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [show, setShow] = useState(false)
   const [idRol, setIdRol] = useState(0)
   const [estado, setEstado] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
-
-  const handleClose = () => setShow(false)
 
   useEffect(() => {
     let mounted = true
@@ -40,13 +40,34 @@ const ConsultarPR = () => {
     return () => (mounted = false)
   }, [])
 
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setOpcion(3)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
+
   function mostrarModal(id_rol, opcion, estado) {
-    if (opcion === '1') {
+    if (opcion == 1) {
       setMensaje('Está seguro de eliminar este detalle de roles del perfil?')
       setIdRol(id_rol)
       setOpcion(opcion)
       setShow(true)
-    } else if (opcion === '3') {
+    } else if (opcion == 2) {
       setMensaje('Está seguro de cambiar el estado de este rol del perfil?')
       setIdRol(id_rol)
       setEstado(estado)
@@ -55,17 +76,33 @@ const ConsultarPR = () => {
     }
   }
 
+  async function Cancelar(opcion) {
+    if (opcion == 3) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+    } else {
+      setShow(false)
+    }
+  }
+
   async function crudPerfilRol(id_perfil, id_perfilrol, opcion, estado) {
     let result
-    if (opcion === '1') {
+    if (opcion == 1) {
       const respuesta = await postPerfilRol(id_perfilrol, '', '', '1', '', '')
       if (respuesta === 'OK') {
         await getPerfilRol(id_perfil, null).then((items) => {
           setList(items.detalle)
         })
       }
-    } else if (opcion === '3') {
-      if (estado === '0') {
+    } else if (opcion == 2) {
+      if (estado == 0) {
         result = '1'
       } else {
         result = '0'
@@ -76,6 +113,8 @@ const ConsultarPR = () => {
           setList(items.detalle)
         })
       }
+    } else if (opcion == 3) {
+      setShow(false)
     }
   }
 
@@ -83,19 +122,19 @@ const ConsultarPR = () => {
     if (location.id_perfil) {
       return (
         <>
-          <Modal variant="primary" show={show} onHide={handleClose} centered>
+          <Modal variant="primary" show={show} onHide={() => Cancelar(opcion)} centered>
             <Modal.Header closeButton>
               <Modal.Title>Confirmación</Modal.Title>
             </Modal.Header>
             <Modal.Body>{mensaje}</Modal.Body>
             <Modal.Footer>
-              <CButton color="secondary" onClick={handleClose}>
+              <CButton color="secondary" onClick={() => Cancelar(opcion)}>
                 Cancelar
               </CButton>
               <CButton
                 color="primary"
                 onClick={() =>
-                  crudPerfilRol(location.id_perfil, idRol, opcion, estado).then(handleClose)
+                  crudPerfilRol(location.id_perfil, idRol, opcion, estado).then(() => Cancelar(1))
                 }
               >
                 Aceptar
@@ -154,7 +193,7 @@ const ConsultarPR = () => {
                           color="danger"
                           size="sm"
                           title="Eliminar Rol"
-                          onClick={() => mostrarModal(item.id_perfilrol, '1', '')}
+                          onClick={() => mostrarModal(item.id_perfilrol, 1, '')}
                         >
                           <FaTrash />
                         </CButton>{' '}
@@ -162,7 +201,7 @@ const ConsultarPR = () => {
                           color="info"
                           size="sm"
                           title="Cambiar Estado"
-                          onClick={() => mostrarModal(item.id_perfilrol, '3', item.activo)}
+                          onClick={() => mostrarModal(item.id_perfilrol, 2, item.activo)}
                         >
                           <BsToggles />
                         </CButton>

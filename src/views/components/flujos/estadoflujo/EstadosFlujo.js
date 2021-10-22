@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
+import { useIdleTimer } from 'react-idle-timer'
 import { getEstadosFlujo } from '../../../../services/getEstadosFlujo'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { postEstadoFlujo } from '../../../../services/postEstadoFlujo'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { useSession } from 'react-use-session'
 import { FaPen, FaTrash } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
@@ -19,11 +21,13 @@ import {
 
 const EstadosFlujo = () => {
   const history = useHistory()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [idEstado, setIdEstado] = useState(0)
+  const [opcion, setOpcion] = useState(0)
+  const [mensaje, setMensaje] = useState('')
 
   const handleClose = () => setShow(false)
 
@@ -56,17 +60,60 @@ const EstadosFlujo = () => {
     return result
   }
 
-  function mostrarModal(id_estado) {
-    setIdEstado(id_estado)
+  const handleOnIdle = (event) => {
     setShow(true)
+    setOpcion(2)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
   }
 
-  async function eliminarEstado(id_estado) {
-    const respuesta = await postEstadoFlujo(id_estado, '', '', '', '2')
-    if (respuesta === 'OK') {
-      await getEstadosFlujo(null, null).then((items) => {
-        setList(items.estados)
-      })
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
+
+  function mostrarModal(id_estado, nombre, opcion) {
+    setIdEstado(id_estado)
+    setOpcion(opcion)
+    setShow(true)
+    setMensaje('Está seguro de eliminar el estado de pago ' + nombre + '?')
+  }
+
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShow(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+    }
+  }
+
+  async function eliminarEstado(id_estado, opcion) {
+    if (opcion == 1) {
+      const respuesta = await postEstadoFlujo(id_estado, '', '', '', '2')
+      if (respuesta === 'OK') {
+        await getEstadosFlujo(null, null).then((items) => {
+          setList(items.estados)
+        })
+      }
+    } else if (opcion == 2) {
+      setShow(false)
     }
   }
 
@@ -77,16 +124,19 @@ const EstadosFlujo = () => {
     }
     return (
       <>
-        <Modal variant="primary" show={show} onHide={handleClose} centered>
+        <Modal responsive variant="primary" show={show} onHide={() => Cancelar(opcion)} centered>
           <Modal.Header closeButton>
             <Modal.Title>Confirmación</Modal.Title>
           </Modal.Header>
-          <Modal.Body>Está seguro de eliminar este estado de flujo?</Modal.Body>
+          <Modal.Body>{mensaje}</Modal.Body>
           <Modal.Footer>
-            <CButton color="secondary" onClick={handleClose}>
+            <CButton color="secondary" onClick={() => Cancelar(opcion)}>
               Cancelar
             </CButton>
-            <CButton color="primary" onClick={() => eliminarEstado(idEstado).then(handleClose)}>
+            <CButton
+              color="primary"
+              onClick={() => eliminarEstado(idEstado, opcion).then(() => Cancelar(1))}
+            >
               Aceptar
             </CButton>
           </Modal.Footer>
@@ -153,7 +203,7 @@ const EstadosFlujo = () => {
                         size="sm"
                         title="Eliminar Estado Flujo"
                         disabled={deshabilitar}
-                        onClick={() => mostrarModal(item.id_estadoflujo)}
+                        onClick={() => mostrarModal(item.id_estadoflujo, item.descripcion, 1)}
                       >
                         <FaTrash />
                       </CButton>

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Modal } from 'react-bootstrap'
 import { PDFReader } from 'reactjs-pdf-view'
+import { useIdleTimer } from 'react-idle-timer'
 import { getArchivosFlujo } from '../../../../services/getArchivosFlujo'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { postArchivoFlujo } from '../../../../services/postArchivoFlujo'
 import { useSession } from 'react-use-session'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { FaTrash, FaRegFilePdf } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import {
@@ -20,13 +21,13 @@ import {
 
 const ArchivosFlujo = (prop) => {
   const history = useHistory()
-  const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [mostrar, setMostrar] = useState(false)
   const [idArchivoFlujo, setIdArchivoFlujo] = useState(0)
+  const [opcion, setOpcion] = useState(0)
   const [urlArchivo, setUrlArchivo] = useState('')
   const [mensaje, setMensaje] = useState('')
   const [titulo, setTitulo] = useState('')
@@ -58,6 +59,27 @@ const ArchivosFlujo = (prop) => {
     }
     return result
   }
+
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setOpcion(2)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
 
   function mostrarModal(id_archivoflujo, url_archivo, usuario) {
     if (id_archivoflujo !== '' && url_archivo === '' && usuario === '') {

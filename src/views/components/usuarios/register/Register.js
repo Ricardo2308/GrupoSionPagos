@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
-import { Alert } from 'react-bootstrap'
+import { Alert, Modal } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
+import { useIdleTimer } from 'react-idle-timer'
 import { FiUser, FiLock, FiAtSign } from 'react-icons/fi'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { postCrearUsuario } from '../../../../services/postCrearUsuario'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import '../../../../scss/estilos.scss'
@@ -20,8 +22,9 @@ import {
 
 const Register = (props) => {
   const history = useHistory()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
+  const [showM, setShowM] = useState(false)
   const [mensaje, setMensaje] = useState('')
   const [color, setColor] = useState('danger')
   const [titulo, setTitulo] = useState('Error!')
@@ -29,7 +32,11 @@ const Register = (props) => {
 
   useEffect(() => {
     let mounted = true
-    getPerfilUsuario(session.id, '2').then((items) => {
+    let idUsuario = 0
+    if (session) {
+      idUsuario = session.id
+    }
+    getPerfilUsuario(idUsuario, '2').then((items) => {
       if (mounted) {
         setList(items.detalle)
       }
@@ -111,11 +118,61 @@ const Register = (props) => {
     }
   }
 
+  const handleOnIdle = (event) => {
+    setShowM(true)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
+
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShowM(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+    }
+  }
+
   if (session) {
     if (ExistePermiso('1', 'Modulo Usuarios')) {
       return (
         <div style={{ flexDirection: 'row' }}>
           <CContainer>
+            <Modal responsive variant="primary" show={showM} onHide={() => Cancelar(2)} centered>
+              <Modal.Header closeButton>
+                <Modal.Title>Confirmación</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>{mensaje}</Modal.Body>
+              <Modal.Footer>
+                <CButton color="secondary" onClick={() => Cancelar(2)}>
+                  Cancelar
+                </CButton>
+                <CButton color="primary" onClick={() => Cancelar(1)}>
+                  Aceptar
+                </CButton>
+              </Modal.Footer>
+            </Modal>
             <Alert show={show} variant={color} onClose={() => setShow(false)} dismissible>
               <Alert.Heading>{titulo}</Alert.Heading>
               <p>{mensaje}</p>

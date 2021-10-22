@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal, FormControl } from 'react-bootstrap'
+import { useIdleTimer } from 'react-idle-timer'
 import DataTable, { createTheme } from 'react-data-table-component'
 import { getBancos } from '../../../../services/getBancos'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { postCrudBancos } from '../../../../services/postCrudBancos'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { useSession } from 'react-use-session'
 import { FaPen, FaTrash } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
@@ -42,11 +44,13 @@ const FilterComponent = (prop) => (
 
 const Bancos = () => {
   const history = useHistory()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [idBanco, setIdBanco] = useState(0)
+  const [opcion, setOpcion] = useState(0)
+  const [mensaje, setMensaje] = useState('')
   const [filterText, setFilterText] = useState('')
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false)
   const filteredItems = results.filter(
@@ -56,8 +60,6 @@ const Bancos = () => {
       item.direccion.toLowerCase().includes(filterText.toLowerCase()) ||
       item.Nombre.toLowerCase().includes(filterText.toLowerCase()),
   )
-
-  const handleClose = () => setShow(false)
 
   useEffect(() => {
     let mounted = true
@@ -77,6 +79,27 @@ const Bancos = () => {
     })
     return () => (mounted = false)
   }, [])
+
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setOpcion(2)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
 
   const customStyles = {
     headCells: {
@@ -187,7 +210,7 @@ const Bancos = () => {
               size="sm"
               title="Eliminar Banco"
               disabled={deshabilitar}
-              onClick={() => mostrarModal(row.id_banco)}
+              onClick={() => mostrarModal(row.id_banco, 1, row.nombre)}
             >
               <FaTrash />
             </CButton>
@@ -208,17 +231,39 @@ const Bancos = () => {
     return result
   }
 
-  function mostrarModal(id_banco) {
+  function mostrarModal(id_banco, opcion, nombre) {
     setIdBanco(id_banco)
+    setOpcion(opcion)
+    setMensaje('Está seguro de eliminar el banco ' + nombre + '?')
     setShow(true)
   }
 
-  async function eliminarBanco(id_banco) {
-    const respuesta = await postCrudBancos(id_banco, '', '', '', '', '', '', '2')
-    if (respuesta === 'OK') {
-      await getBancos(null, null).then((items) => {
-        setList(items.bancos)
-      })
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShow(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+    }
+  }
+
+  async function eliminarBanco(id_banco, opcion) {
+    if (opcion == 1) {
+      const respuesta = await postCrudBancos(id_banco, '', '', '', '', '', '', '2')
+      if (respuesta === 'OK') {
+        await getBancos(null, null).then((items) => {
+          setList(items.bancos)
+        })
+      }
+    } else if (opcion == 2) {
+      setShow(false)
     }
   }
 
@@ -240,16 +285,19 @@ const Bancos = () => {
     }
     return (
       <>
-        <Modal variant="primary" show={show} onHide={handleClose} centered>
+        <Modal responsive variant="primary" show={show} onHide={() => Cancelar(opcion)} centered>
           <Modal.Header closeButton>
             <Modal.Title>Confirmación</Modal.Title>
           </Modal.Header>
-          <Modal.Body>Está seguro de eliminar este banco?</Modal.Body>
+          <Modal.Body>{mensaje}</Modal.Body>
           <Modal.Footer>
-            <CButton color="secondary" onClick={handleClose}>
+            <CButton color="secondary" onClick={() => Cancelar(opcion)}>
               Cancelar
             </CButton>
-            <CButton color="primary" onClick={() => eliminarBanco(idBanco).then(handleClose)}>
+            <CButton
+              color="primary"
+              onClick={() => eliminarBanco(idBanco, opcion).then(() => Cancelar(1))}
+            >
               Aceptar
             </CButton>
           </Modal.Footer>

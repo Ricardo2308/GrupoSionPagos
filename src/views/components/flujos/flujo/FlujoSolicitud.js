@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Row, Col, Container } from 'react-bootstrap'
 import { useSession } from 'react-use-session'
 import { useHistory } from 'react-router-dom'
+import { useIdleTimer } from 'react-idle-timer'
 import { getFlujoSolicitud } from '../../../../services/getFlujoSolicitud'
 import '../../../../scss/estilos.scss'
 

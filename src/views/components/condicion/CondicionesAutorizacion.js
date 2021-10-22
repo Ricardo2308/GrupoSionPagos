@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useSession } from 'react-use-session'
 import { Modal } from 'react-bootstrap'
+import { useIdleTimer } from 'react-idle-timer'
 import { FaPen, FaTrash, FaUsersCog, FaUsers } from 'react-icons/fa'
 import { getCondicionesAutorizacion } from '../../../services/getCondicionesAutorizacion'
 import { getPerfilUsuario } from '../../../services/getPerfilUsuario'
 import { postCondicionAutorizacion } from '../../../services/postCondicionAutorizacion'
+import { postSesionUsuario } from '../../../services/postSesionUsuario'
 import '../../../scss/estilos.scss'
 import {
   CButton,
@@ -19,13 +21,13 @@ import {
 
 const Cards = () => {
   const history = useHistory()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [idCondicion, setIdCondicion] = useState(0)
-
-  const handleClose = () => setShow(false)
+  const [opcion, setOpcion] = useState(0)
+  const [mensaje, setMensaje] = useState('')
 
   useEffect(() => {
     let mounted = true
@@ -56,19 +58,62 @@ const Cards = () => {
     return result
   }
 
-  function mostrarModal(id_condicion) {
+  function mostrarModal(id_condicion, opcion) {
+    setOpcion(opcion)
     setIdCondicion(id_condicion)
+    setMensaje('Está seguro de eliminar esta condición de autorización?')
     setShow(true)
   }
 
-  async function eliminarCondicion(id_condicion) {
-    const respuesta = await postCondicionAutorizacion(id_condicion, '', '', '', '2')
-    if (respuesta === 'OK') {
-      await getCondicionesAutorizacion(null, null).then((items) => {
-        setList(items.condiciones)
-      })
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShow(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
     }
   }
+
+  async function eliminarCondicion(id_condicion, opcion) {
+    if (opcion == 1) {
+      const respuesta = await postCondicionAutorizacion(id_condicion, '', '', '', '2')
+      if (respuesta === 'OK') {
+        await getCondicionesAutorizacion(null, null).then((items) => {
+          setList(items.condiciones)
+        })
+      }
+    } else if (opcion == 2) {
+      setShow(false)
+    }
+  }
+
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setOpcion(2)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
 
   if (session) {
     let deshabilitar = false
@@ -89,18 +134,18 @@ const Cards = () => {
     }
     return (
       <>
-        <Modal variant="primary" show={show} onHide={handleClose} centered>
+        <Modal responsive variant="primary" show={show} onHide={() => Cancelar(opcion)} centered>
           <Modal.Header closeButton>
             <Modal.Title>Confirmación</Modal.Title>
           </Modal.Header>
-          <Modal.Body>Está seguro de eliminar esta condición de autorización?</Modal.Body>
+          <Modal.Body>{mensaje}</Modal.Body>
           <Modal.Footer>
-            <CButton color="secondary" onClick={handleClose}>
+            <CButton color="secondary" onClick={() => Cancelar(opcion)}>
               Cancelar
             </CButton>
             <CButton
               color="primary"
-              onClick={() => eliminarCondicion(idCondicion).then(handleClose)}
+              onClick={() => eliminarCondicion(idCondicion, opcion).then(() => Cancelar(1))}
             >
               Aceptar
             </CButton>
@@ -196,7 +241,7 @@ const Cards = () => {
                         size="sm"
                         title="Eliminar Condición Autorización"
                         disabled={deshabilitar}
-                        onClick={() => mostrarModal(item.id_condicionautorizacion)}
+                        onClick={() => mostrarModal(item.id_condicionautorizacion, 1)}
                       >
                         <FaTrash />
                       </CButton>

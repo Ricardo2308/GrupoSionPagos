@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
+import { useIdleTimer } from 'react-idle-timer'
 import { getPoliticas } from '../../../services/getPoliticas'
 import { getPerfilUsuario } from '../../../services/getPerfilUsuario'
 import { postCrudPoliticas } from '../../../services/postCrudPoliticas'
+import { postSesionUsuario } from '../../../services/postSesionUsuario'
 import { useSession } from 'react-use-session'
 import { FaUserEdit, FaTrash } from 'react-icons/fa'
 import '../../../scss/estilos.scss'
@@ -19,13 +21,13 @@ import {
 
 const Politicas = () => {
   const history = useHistory()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [idPolitica, setIdPolitica] = useState(0)
-
-  const handleClose = () => setShow(false)
+  const [opcion, setOpcion] = useState(0)
+  const [mensaje, setMensaje] = useState('')
 
   useEffect(() => {
     let mounted = true
@@ -56,19 +58,62 @@ const Politicas = () => {
     return result
   }
 
-  function mostrarModal(id_politica) {
-    setIdPolitica(id_politica)
+  function mostrarModal(idPolitica, opcion, nombre) {
+    setIdPolitica(idPolitica)
+    setMensaje('Está seguro de eliminar la política ' + nombre + '?')
+    setOpcion(opcion)
     setShow(true)
   }
 
-  async function eliminarUsuario(id_politica) {
-    const respuesta = await postCrudPoliticas(id_politica, '', '', '', '', '2')
-    if (respuesta === 'OK') {
-      await getPoliticas(null, null).then((items) => {
-        setList(items.politicas)
-      })
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShow(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
     }
   }
+
+  async function eliminarPolitica(idPolitica, opcion) {
+    if (opcion == 1) {
+      const respuesta = await postCrudPoliticas(idPolitica, '', '', '', '', '2')
+      if (respuesta === 'OK') {
+        await getPoliticas(null, null).then((items) => {
+          setList(items.politicas)
+        })
+      } else if (opcion == 2) {
+        setShow(false)
+      }
+    }
+  }
+
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setOpcion(2)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
 
   if (session) {
     let deshabilitar = false
@@ -77,16 +122,19 @@ const Politicas = () => {
     }
     return (
       <>
-        <Modal variant="primary" show={show} onHide={handleClose} centered>
+        <Modal variant="primary" show={show} onHide={() => Cancelar(opcion)} centered>
           <Modal.Header closeButton>
             <Modal.Title>Confirmación</Modal.Title>
           </Modal.Header>
-          <Modal.Body>Está seguro de eliminar esta política?</Modal.Body>
+          <Modal.Body>{mensaje}</Modal.Body>
           <Modal.Footer>
-            <CButton color="secondary" onClick={handleClose}>
+            <CButton color="secondary" onClick={() => Cancelar(opcion)}>
               Cancelar
             </CButton>
-            <CButton color="primary" onClick={() => eliminarUsuario(idPolitica).then(handleClose)}>
+            <CButton
+              color="primary"
+              onClick={() => eliminarPolitica(idPolitica, opcion).then(() => Cancelar(1))}
+            >
               Aceptar
             </CButton>
           </Modal.Footer>
@@ -105,7 +153,7 @@ const Politicas = () => {
           <CTableHead color="light">
             <CTableRow>
               <CTableHeaderCell className="text-center">Descripción</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Indentificador</CTableHeaderCell>
+              <CTableHeaderCell className="text-center">Identificador</CTableHeaderCell>
               <CTableHeaderCell className="text-center">Valor</CTableHeaderCell>
               <CTableHeaderCell className="text-center">Estado</CTableHeaderCell>
               <CTableHeaderCell className="text-center">Acciones</CTableHeaderCell>
@@ -148,7 +196,7 @@ const Politicas = () => {
                         size="sm"
                         title="Eliminar Política"
                         disabled={deshabilitar}
-                        onClick={() => mostrarModal(item.id_politica)}
+                        onClick={() => mostrarModal(item.id_politica, 1, item.identificador)}
                       >
                         <FaTrash />
                       </CButton>

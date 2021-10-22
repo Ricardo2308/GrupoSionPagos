@@ -1,34 +1,28 @@
 import React, { useState, useEffect } from 'react'
+import { Modal } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { getSesionUsuario } from '../../../../services/getSesionUsuario'
-import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { useSession } from 'react-use-session'
-import { FaTrash, FaPen, FaUsersCog } from 'react-icons/fa'
-import { BsToggles } from 'react-icons/bs'
+import { useIdleTimer } from 'react-idle-timer'
 import '../../../../scss/estilos.scss'
 import {
-  CButton,
   CTable,
   CTableBody,
   CTableDataCell,
   CTableHead,
   CTableHeaderCell,
   CTableRow,
+  CButton,
 } from '@coreui/react'
 
 const Historico = () => {
   const history = useHistory()
   const location = useLocation()
-  const { session } = useSession('PendrogonIT-Session')
-  const [results, setList] = useState([])
-  const [permisos, setPermisos] = useState([])
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
-  const [idPerfil, setIdPerfil] = useState(0)
-  const [estado, setEstado] = useState(0)
-  const [opcion, setOpcion] = useState(0)
+  const [results, setList] = useState([])
   const [mensaje, setMensaje] = useState('')
-
-  const handleClose = () => setShow(false)
 
   useEffect(() => {
     let mounted = true
@@ -44,28 +38,63 @@ const Historico = () => {
         setList(items.sesiones)
       }
     })
-    getPerfilUsuario(idUsuario, '2').then((items) => {
-      if (mounted) {
-        setPermisos(items.detalle)
-      }
-    })
     return () => (mounted = false)
   }, [])
 
-  function ExistePermiso(objeto) {
-    let result = false
-    for (let item of permisos) {
-      if (objeto === item.objeto) {
-        result = true
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShow(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
       }
     }
-    return result
   }
+
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
 
   if (session) {
     if (location.IdUsuario) {
       return (
         <>
+          <Modal responsive variant="primary" show={show} onHide={() => Cancelar(2)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Confirmación</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>{mensaje}</Modal.Body>
+            <Modal.Footer>
+              <CButton color="secondary" onClick={() => Cancelar(2)}>
+                Cancelar
+              </CButton>
+              <CButton color="primary" onClick={() => Cancelar(1)}>
+                Aceptar
+              </CButton>
+            </Modal.Footer>
+          </Modal>
           <div className="user-name-profile">{location.NombreUsuario}</div>
           <CTable hover responsive align="middle" className="mb-0 border">
             <CTableHead color="light">

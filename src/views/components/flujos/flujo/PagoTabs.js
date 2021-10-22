@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { CButton } from '@coreui/react'
 import { Modal, Tab, Tabs } from 'react-bootstrap'
+import { useIdleTimer } from 'react-idle-timer'
 import { useHistory, useLocation } from 'react-router-dom'
 import FlujoSolicitud from './FlujoSolicitud'
 import FlujoOferta from './FlujoOferta'
@@ -28,6 +29,27 @@ const PagoTabs = () => {
 
   const handleClose = () => setShow(false)
 
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setOpcion(2)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
+
   function mostrarModal(id_flujo, opcion) {
     if (opcion == 1) {
       setIdFlujo(id_flujo)
@@ -43,12 +65,16 @@ const PagoTabs = () => {
   }
 
   async function Aprobar_Rechazar(id_flujo, opcion) {
+    let idUsuario = 0
+    if (session) {
+      idUsuario = session.id
+    }
     let pagos = []
     pagos.push(id_flujo)
     if (opcion === 1) {
       if (location.estado == 3) {
         const respuesta = await postFlujos(id_flujo, '2', '', '', null)
-        const aprobado = await postFlujoDetalle(id_flujo, '4', session.id, 'Aprobado', '1')
+        const aprobado = await postFlujoDetalle(id_flujo, '4', idUsuario, 'Aprobado', '1')
         if (respuesta == 'OK' && aprobado == 'OK') {
           history.go(-1)
         }
@@ -58,7 +84,7 @@ const PagoTabs = () => {
           const aprobado = await postFlujoDetalle(
             id_flujo,
             '4',
-            session.id,
+            idUsuario,
             'Aprobado',
             location.nivel,
           )
@@ -69,17 +95,12 @@ const PagoTabs = () => {
           const finalizado = await postFlujoDetalle(
             id_flujo,
             '5',
-            session.id,
+            idUsuario,
             'Autorización completa',
             location.nivel,
           )
           if (finalizado == 'OK') {
-            const enviada = await postNotificacion(
-              pagos,
-              session.id,
-              'autorizado por completo.',
-              '',
-            )
+            const enviada = await postNotificacion(pagos, idUsuario, 'autorizado por completo.', '')
             if (enviada == 'OK') {
               history.push('/compensacion/' + location.pagina)
             }
@@ -88,9 +109,9 @@ const PagoTabs = () => {
       }
     } else if (opcion == 2) {
       const respuesta = await postFlujos(id_flujo, '', '', '1', null)
-      const rechazado = await postFlujoDetalle(id_flujo, '6', session.id, 'Rechazado', '0')
+      const rechazado = await postFlujoDetalle(id_flujo, '6', idUsuario, 'Rechazado', '0')
       if (respuesta == 'OK' && rechazado == 'OK') {
-        const enviada = await postNotificacion(pagos, session.id, 'rechazado.', '')
+        const enviada = await postNotificacion(pagos, idUsuario, 'rechazado.', '')
         if (enviada == 'OK') {
           history.go(-1)
         }

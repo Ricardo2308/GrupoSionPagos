@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { getPermisos } from '../../../../services/getPermisos'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { postCrudPermiso } from '../../../../services/postCrudPermiso'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
 import { useSession } from 'react-use-session'
+import { useIdleTimer } from 'react-idle-timer'
 import { FaUserEdit, FaTrash } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import {
@@ -19,11 +21,13 @@ import {
 
 const Permisos = () => {
   const history = useHistory()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [idPermiso, setIdPermiso] = useState(0)
+  const [opcion, setOpcion] = useState(0)
+  const [mensaje, setMensaje] = useState('')
 
   const handleClose = () => setShow(false)
 
@@ -56,17 +60,60 @@ const Permisos = () => {
     return result
   }
 
-  function mostrarModal(id_permiso) {
-    setIdPermiso(id_permiso)
+  const handleOnIdle = (event) => {
     setShow(true)
+    setOpcion(2)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
   }
 
-  async function eliminarPermiso(id_permiso) {
-    const respuesta = await postCrudPermiso(id_permiso, '', '', '2')
-    if (respuesta === 'OK') {
-      await getPermisos(null, null).then((items) => {
-        setList(items.permisos)
-      })
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
+
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShow(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+    }
+  }
+
+  function mostrarModal(id_permiso, nombre, opcion) {
+    setIdPermiso(id_permiso)
+    setOpcion(opcion)
+    setShow(true)
+    setMensaje('Está seguro de eliminar el permiso ' + nombre + '?')
+  }
+
+  async function eliminarPermiso(id_permiso, opcion) {
+    if (opcion == 1) {
+      const respuesta = await postCrudPermiso(id_permiso, '', '', '2')
+      if (respuesta === 'OK') {
+        await getPermisos(null, null).then((items) => {
+          setList(items.permisos)
+        })
+      }
+    } else if (opcion == 2) {
+      setShow(false)
     }
   }
 
@@ -77,16 +124,19 @@ const Permisos = () => {
     }
     return (
       <>
-        <Modal variant="primary" show={show} onHide={handleClose} centered>
+        <Modal responsive variant="primary" show={show} onHide={() => Cancelar(opcion)} centered>
           <Modal.Header closeButton>
             <Modal.Title>Confirmación</Modal.Title>
           </Modal.Header>
-          <Modal.Body>Está seguro de eliminar este permiso?</Modal.Body>
+          <Modal.Body>{mensaje}</Modal.Body>
           <Modal.Footer>
-            <CButton color="secondary" onClick={handleClose}>
+            <CButton color="secondary" onClick={() => Cancelar(opcion)}>
               Cancelar
             </CButton>
-            <CButton color="primary" onClick={() => eliminarPermiso(idPermiso).then(handleClose)}>
+            <CButton
+              color="primary"
+              onClick={() => eliminarPermiso(idPermiso, opcion).then(() => Cancelar(1))}
+            >
               Aceptar
             </CButton>
           </Modal.Footer>
@@ -142,7 +192,7 @@ const Permisos = () => {
                         size="sm"
                         title="Eliminar Permiso"
                         disabled={deshabilitar}
-                        onClick={() => mostrarModal(item.id_permiso)}
+                        onClick={() => mostrarModal(item.id_permiso, item.descripcion, 1)}
                       >
                         <FaTrash />
                       </CButton>

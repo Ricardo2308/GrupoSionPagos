@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
 import { Alert } from 'react-bootstrap'
+import { useIdleTimer } from 'react-idle-timer'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postCondicionGrupo } from '../../../../services/postCondicionGrupo'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
 import { FiAlertTriangle } from 'react-icons/fi'
 import '../../../../scss/estilos.scss'
@@ -25,6 +27,7 @@ const CondicionGrupo = () => {
   const [show, setShow] = useState(false)
   const [results, setList] = useState([])
   const [mensaje, setMensaje] = useState('')
+  const [opcion, setOpcion] = useState(0)
   const [titulo, setTitulo] = useState('Error!')
   const [color, setColor] = useState('danger')
 
@@ -76,6 +79,27 @@ const CondicionGrupo = () => {
       console.log(respuesta)
     }
   }
+
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setOpcion(2)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
 
   if (session) {
     if (location.id_condicion) {

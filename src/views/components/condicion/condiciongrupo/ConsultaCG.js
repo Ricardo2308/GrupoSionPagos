@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postCondicionGrupo } from '../../../../services/postCondicionGrupo'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { getCondicionGrupo } from '../../../../services/getCondicionGrupo'
+import { useIdleTimer } from 'react-idle-timer'
 import { useSession } from 'react-use-session'
 import { Modal } from 'react-bootstrap'
 import { FaTrash, FaPen } from 'react-icons/fa'
@@ -20,15 +22,13 @@ import {
 const ConsultarPR = () => {
   const history = useHistory()
   const location = useLocation()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [show, setShow] = useState(false)
   const [idGrupo, setIdGrupo] = useState(0)
   const [estado, setEstado] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
-
-  const handleClose = () => setShow(false)
 
   useEffect(() => {
     let mounted = true
@@ -41,12 +41,12 @@ const ConsultarPR = () => {
   }, [])
 
   function mostrarModal(id_grupo, opcion, estado) {
-    if (opcion === '1') {
+    if (opcion == 1) {
       setMensaje('Está seguro de eliminar este detalle de grupos asociados a la condición?')
       setIdGrupo(id_grupo)
       setOpcion(opcion)
       setShow(true)
-    } else if (opcion === '3') {
+    } else if (opcion == 2) {
       setMensaje('Está seguro de cambiar el estado de este grupo asociado a la condición?')
       setIdGrupo(id_grupo)
       setEstado(estado)
@@ -55,17 +55,33 @@ const ConsultarPR = () => {
     }
   }
 
+  async function Cancelar(opcion) {
+    if (opcion == 3) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+    } else {
+      setShow(false)
+    }
+  }
+
   async function crudCondicionGrupo(id_condicion, id_condiciongrupo, opcion, estado) {
     let result
-    if (opcion === '1') {
+    if (opcion == 1) {
       const respuesta = await postCondicionGrupo(id_condiciongrupo, '', '', '1', '', '')
       if (respuesta === 'OK') {
         await getCondicionGrupo(id_condicion, null).then((items) => {
           setList(items.detalle)
         })
       }
-    } else if (opcion === '3') {
-      if (estado === '0') {
+    } else if (opcion == 2) {
+      if (estado == 0) {
         result = '1'
       } else {
         result = '0'
@@ -76,27 +92,50 @@ const ConsultarPR = () => {
           setList(items.detalle)
         })
       }
+    } else if (opcion == 3) {
+      setShow(false)
     }
   }
+
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setOpcion(2)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
 
   if (session) {
     if (location.id_condicion) {
       return (
         <>
-          <Modal variant="primary" show={show} onHide={handleClose} centered>
+          <Modal variant="primary" show={show} onHide={() => Cancelar(opcion)} centered>
             <Modal.Header closeButton>
               <Modal.Title>Confirmación</Modal.Title>
             </Modal.Header>
             <Modal.Body>{mensaje}</Modal.Body>
             <Modal.Footer>
-              <CButton color="secondary" onClick={handleClose}>
+              <CButton color="secondary" onClick={() => Cancelar(opcion)}>
                 Cancelar
               </CButton>
               <CButton
                 color="primary"
                 onClick={() =>
-                  crudCondicionGrupo(location.id_condicion, idGrupo, opcion, estado).then(
-                    handleClose,
+                  crudCondicionGrupo(location.id_condicion, idGrupo, opcion, estado).then(() =>
+                    Cancelar(1),
                   )
                 }
               >
@@ -158,7 +197,7 @@ const ConsultarPR = () => {
                           color="danger"
                           size="sm"
                           title="Eliminar Grupo"
-                          onClick={() => mostrarModal(item.id_condiciongrupo, '1', '')}
+                          onClick={() => mostrarModal(item.id_condiciongrupo, 1, '')}
                         >
                           <FaTrash />
                         </CButton>{' '}
@@ -166,7 +205,7 @@ const ConsultarPR = () => {
                           color="info"
                           size="sm"
                           title="Cambiar Estado"
-                          onClick={() => mostrarModal(item.id_condiciongrupo, '3', item.activo)}
+                          onClick={() => mostrarModal(item.id_condiciongrupo, 2, item.activo)}
                         >
                           <BsToggles />
                         </CButton>

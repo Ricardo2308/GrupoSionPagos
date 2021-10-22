@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
+import { useIdleTimer } from 'react-idle-timer'
 import { getMonedas } from '../../../../services/getMonedas'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { postCrudMonedas } from '../../../../services/postCrudMonedas'
 import { useSession } from 'react-use-session'
 import { FaUserEdit, FaTrash } from 'react-icons/fa'
@@ -19,13 +21,13 @@ import {
 
 const Monedas = () => {
   const history = useHistory()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [idMoneda, setIdMoneda] = useState(0)
-
-  const handleClose = () => setShow(false)
+  const [opcion, setOpcion] = useState(0)
+  const [mensaje, setMensaje] = useState('')
 
   useEffect(() => {
     let mounted = true
@@ -56,17 +58,60 @@ const Monedas = () => {
     return result
   }
 
-  function mostrarModal(id_moneda) {
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setOpcion(2)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
+
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShow(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+    }
+  }
+
+  function mostrarModal(id_moneda, nombre, opcion) {
     setIdMoneda(id_moneda)
+    setOpcion(opcion)
+    setMensaje('Está seguro de eliminar la moneda ' + nombre + '?')
     setShow(true)
   }
 
-  async function eliminarMoneda(id_moneda) {
-    const respuesta = await postCrudMonedas(id_moneda, '', '', '', '2')
-    if (respuesta === 'OK') {
-      await getMonedas(null, null).then((items) => {
-        setList(items.monedas)
-      })
+  async function eliminarMoneda(id_moneda, opcion) {
+    if (opcion == 1) {
+      const respuesta = await postCrudMonedas(id_moneda, '', '', '', '2')
+      if (respuesta === 'OK') {
+        await getMonedas(null, null).then((items) => {
+          setList(items.monedas)
+        })
+      }
+    } else if (opcion == 2) {
+      setShow(false)
     }
   }
 
@@ -77,16 +122,19 @@ const Monedas = () => {
     }
     return (
       <>
-        <Modal variant="primary" show={show} onHide={handleClose} centered>
+        <Modal responsive variant="primary" show={show} onHide={() => Cancelar(opcion)} centered>
           <Modal.Header closeButton>
             <Modal.Title>Confirmación</Modal.Title>
           </Modal.Header>
-          <Modal.Body>Está seguro de eliminar este tipo de moneda?</Modal.Body>
+          <Modal.Body>{mensaje}</Modal.Body>
           <Modal.Footer>
-            <CButton color="secondary" onClick={handleClose}>
+            <CButton color="secondary" onClick={() => Cancelar(opcion)}>
               Cancelar
             </CButton>
-            <CButton color="primary" onClick={() => eliminarMoneda(idMoneda).then(handleClose)}>
+            <CButton
+              color="primary"
+              onClick={() => eliminarMoneda(idMoneda, opcion).then(() => Cancelar(1))}
+            >
               Aceptar
             </CButton>
           </Modal.Footer>
@@ -145,7 +193,7 @@ const Monedas = () => {
                         size="sm"
                         title="Eliminar Banco"
                         disabled={deshabilitar}
-                        onClick={() => mostrarModal(item.id_moneda)}
+                        onClick={() => mostrarModal(item.id_moneda, item.nombre, 1)}
                       >
                         <FaTrash />
                       </CButton>

@@ -2,8 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react'
 import DataTable, { createTheme } from 'react-data-table-component'
 import { Modal, Button, FormControl } from 'react-bootstrap'
 import { PDFReader } from 'reactjs-pdf-view'
+import { useIdleTimer } from 'react-idle-timer'
 import { getArchivosFlujo } from '../../../../services/getArchivosFlujo'
-import { postArchivoFlujo } from '../../../../services/postArchivoFlujo'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { useSession } from 'react-use-session'
 import { useHistory } from 'react-router-dom'
 import { FaRegFilePdf } from 'react-icons/fa'
@@ -32,11 +33,10 @@ const FilterComponent = (prop) => (
 
 const ArchivosFlujo = () => {
   const history = useHistory()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [show, setShow] = useState(false)
   const [mostrar, setMostrar] = useState(false)
-  const [idArchivoFlujo, setIdArchivoFlujo] = useState(0)
   const [urlArchivo, setUrlArchivo] = useState('')
   const [mensaje, setMensaje] = useState('')
   const [titulo, setTitulo] = useState('')
@@ -48,8 +48,6 @@ const ArchivosFlujo = () => {
       item.descripcion.toLowerCase().includes(filterText.toLowerCase()) ||
       item.activo.toLowerCase().includes(filterText.toLowerCase()),
   )
-
-  const handleClose = () => setShow(false)
   const cerrarPDF = () => setMostrar(false)
 
   useEffect(() => {
@@ -61,6 +59,26 @@ const ArchivosFlujo = () => {
     })
     return () => (mounted = false)
   }, [])
+
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
 
   const customStyles = {
     headCells: {
@@ -128,7 +146,7 @@ const ArchivosFlujo = () => {
               size="sm"
               target="_blank"
               title="Ver PDF"
-              onClick={() => mostrarModal('', row.archivo, session.user_name)}
+              onClick={() => mostrarModal(row.archivo, session.user_name)}
             >
               <FaRegFilePdf />
             </Button>
@@ -155,26 +173,26 @@ const ArchivosFlujo = () => {
     )
   }, [filterText, resetPaginationToggle])
 
-  function mostrarModal(id_archivoflujo, url_archivo, usuario) {
-    if (id_archivoflujo !== '' && url_archivo === '' && usuario === '') {
-      setIdArchivoFlujo(id_archivoflujo)
-      setMensaje('Está seguro de eliminar este documento de pago?')
-      setTitulo('Confirmación')
-      setShow(true)
-    } else if (id_archivoflujo === '' && url_archivo !== '' && usuario !== '') {
-      setUrlArchivo(url_archivo)
-      setTitulo('Cargado por ' + usuario)
-      setMostrar(true)
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShow(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
     }
   }
 
-  async function eliminarArchivoFlujo(id_archivoflujo) {
-    const respuesta = await postArchivoFlujo(id_archivoflujo, '', '', '', '', '', '2', '')
-    if (respuesta === 'OK') {
-      await getArchivosFlujo(null, session.id).then((items) => {
-        setList(items.archivos)
-      })
-    }
+  function mostrarModal(url_archivo, usuario) {
+    setUrlArchivo(url_archivo)
+    setTitulo('Cargado por ' + usuario)
+    setMostrar(true)
   }
 
   if (session) {
@@ -197,19 +215,16 @@ const ArchivosFlujo = () => {
             </Button>
           </Modal.Footer>
         </Modal>
-        <Modal show={show} onHide={handleClose} centered>
+        <Modal responsive variant="primary" show={show} onHide={() => Cancelar(2)} centered>
           <Modal.Header closeButton>
-            <Modal.Title>{titulo}</Modal.Title>
+            <Modal.Title>Confirmación</Modal.Title>
           </Modal.Header>
           <Modal.Body>{mensaje}</Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="secondary" onClick={() => Cancelar(2)}>
               Cancelar
             </Button>
-            <Button
-              variant="primary"
-              onClick={() => eliminarArchivoFlujo(idArchivoFlujo).then(handleClose)}
-            >
+            <Button variant="primary" onClick={() => Cancelar(1)}>
               Aceptar
             </Button>
           </Modal.Footer>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
 import { Modal, Alert } from 'react-bootstrap'
+import { useIdleTimer } from 'react-idle-timer'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postUsuarioGrupo } from '../../../../services/postUsuarioGrupo'
 import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
@@ -27,8 +28,9 @@ const UsuarioGrupo = (props) => {
   const [show, setShow] = useState(false)
   const [showAlert, setShowAlert] = useState(false)
   const [results, setList] = useState([])
-  const [mensaje, setMensaje] = useState('')
   const [idUsuario, setIdUsuario] = useState(0)
+  const [opcion, setOpcion] = useState(0)
+  const [mensaje, setMensaje] = useState('')
 
   const handleClose = () => setShow(false)
 
@@ -87,6 +89,27 @@ const UsuarioGrupo = (props) => {
       setShowAlert(true)
     }
   }
+
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setOpcion(2)
+    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {}
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
 
   function mostrarModal(id_usuario) {
     setIdUsuario(id_usuario)
