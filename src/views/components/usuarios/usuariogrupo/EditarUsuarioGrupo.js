@@ -3,6 +3,7 @@ import { useSession } from 'react-use-session'
 import { useIdleTimer } from 'react-idle-timer'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postUsuarioGrupo } from '../../../../services/postUsuarioGrupo'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
 import { getUsuarioGrupo } from '../../../../services/getUsuarioGrupo'
 import { FiUser, FiAtSign } from 'react-icons/fi'
@@ -24,12 +25,12 @@ import {
 const EditarUsuarioGrupo = (props) => {
   const history = useHistory()
   const location = useLocation()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [detalle, setDetalle] = useState([])
   const [show, setShow] = useState(false)
   const [showModal, setShowModal] = useState(false)
-  const [opcion, setOpcion] = useState(0)
+  const [showM, setShowM] = useState(false)
   const [mensaje, setMensaje] = useState('')
   const [titulo, setTitulo] = useState('Error!')
   const [color, setColor] = useState('danger')
@@ -133,10 +134,27 @@ const EditarUsuarioGrupo = (props) => {
     }
   }
 
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShowM(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+    }
+  }
+
   const handleOnIdle = (event) => {
-    setShow(true)
-    setOpcion(2)
-    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    setShowM(true)
+    setMensaje(
+      'Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar.',
+    )
     console.log('last active', getLastActiveTime())
   }
 
@@ -197,6 +215,20 @@ const EditarUsuarioGrupo = (props) => {
                   Cancelar
                 </CButton>
                 <CButton color="primary" onClick={CambiarNivel}>
+                  Aceptar
+                </CButton>
+              </Modal.Footer>
+            </Modal>
+            <Modal responsive variant="primary" show={showM} onHide={() => Cancelar(2)} centered>
+              <Modal.Header closeButton>
+                <Modal.Title>Confirmación</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>{mensaje}</Modal.Body>
+              <Modal.Footer>
+                <CButton color="secondary" onClick={() => Cancelar(2)}>
+                  Cancelar
+                </CButton>
+                <CButton color="primary" onClick={() => Cancelar(1)}>
                   Aceptar
                 </CButton>
               </Modal.Footer>

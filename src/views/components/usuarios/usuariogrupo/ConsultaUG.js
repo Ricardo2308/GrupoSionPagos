@@ -34,12 +34,20 @@ const Consultar = () => {
 
   useEffect(() => {
     let mounted = true
-    getUsuarioGrupo(location.id_usuario, null).then((items) => {
+    let idUsuario1 = 0
+    let idUsuario2 = 0
+    if (location.id_usuario) {
+      idUsuario1 = location.id_usuario
+    }
+    if (session) {
+      idUsuario2 = session.id
+    }
+    getUsuarioGrupo(idUsuario1, null).then((items) => {
       if (mounted) {
         setList(items.detalle)
       }
     })
-    getPerfilUsuario(session.id, '2').then((items) => {
+    getPerfilUsuario(idUsuario2, '2').then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -47,11 +55,11 @@ const Consultar = () => {
     return () => (mounted = false)
   }, [])
 
-  function ExistePermiso(id_permiso, objeto) {
-    let result = 0
+  function ExistePermiso(objeto) {
+    let result = false
     for (let item of permisos) {
-      if (objeto === item.objeto) {
-        result = 1
+      if (objeto == item.objeto) {
+        result = true
       }
     }
     return result
@@ -59,8 +67,10 @@ const Consultar = () => {
 
   const handleOnIdle = (event) => {
     setShow(true)
-    setOpcion(2)
-    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    setOpcion(3)
+    setMensaje(
+      'Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar.',
+    )
     console.log('last active', getLastActiveTime())
   }
 
@@ -138,7 +148,7 @@ const Consultar = () => {
   if (session) {
     if (location.id_usuario) {
       let deshabilitar = false
-      if (ExistePermiso('6', 'Modulo Grupos Autorizacion') == 0) {
+      if (!ExistePermiso('Modulo Grupos Autorizacion')) {
         deshabilitar = true
       }
       return (

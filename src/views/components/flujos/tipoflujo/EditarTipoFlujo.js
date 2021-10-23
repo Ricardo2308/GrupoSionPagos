@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
 import { useIdleTimer } from 'react-idle-timer'
-import { Alert, FormControl } from 'react-bootstrap'
+import { Alert, FormControl, Modal } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { getEstadosFlujo } from '../../../../services/getEstadosFlujo'
 import { postTipoFlujo } from '../../../../services/postTipoFlujo'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import {
   CButton,
   CCard,
@@ -22,9 +23,9 @@ const EditarEstadoFlujo = () => {
   const history = useHistory()
   const location = useLocation()
   const [results, setList] = useState([])
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
-  const [opcion, setOpcion] = useState(0)
+  const [showM, setShowM] = useState(false)
   const [mensaje, setMensaje] = useState('')
 
   const [form, setValues] = useState({
@@ -69,10 +70,27 @@ const EditarEstadoFlujo = () => {
     }
   }
 
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShowM(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+    }
+  }
+
   const handleOnIdle = (event) => {
-    setShow(true)
-    setOpcion(2)
-    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    setShowM(true)
+    setMensaje(
+      'Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar.',
+    )
     console.log('last active', getLastActiveTime())
   }
 
@@ -95,6 +113,20 @@ const EditarEstadoFlujo = () => {
       return (
         <div style={{ flexDirection: 'row' }}>
           <CContainer>
+            <Modal responsive variant="primary" show={showM} onHide={() => Cancelar(2)} centered>
+              <Modal.Header closeButton>
+                <Modal.Title>Confirmación</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>{mensaje}</Modal.Body>
+              <Modal.Footer>
+                <CButton color="secondary" onClick={() => Cancelar(2)}>
+                  Cancelar
+                </CButton>
+                <CButton color="primary" onClick={() => Cancelar(1)}>
+                  Aceptar
+                </CButton>
+              </Modal.Footer>
+            </Modal>
             <Alert show={show} variant="danger" onClose={() => setShow(false)} dismissible>
               <Alert.Heading>Error!</Alert.Heading>
               <p>{mensaje}</p>

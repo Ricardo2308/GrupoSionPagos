@@ -4,6 +4,7 @@ import { useIdleTimer } from 'react-idle-timer'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { getUsuarioAutorizacion } from '../../../../services/getUsuarioAutorizacion'
 import { postUsuarioAutorizacion } from '../../../../services/postUsuarioAutorizacion'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { useSession } from 'react-use-session'
 import { useHistory } from 'react-router-dom'
 import { BsToggles } from 'react-icons/bs'
@@ -20,7 +21,7 @@ import {
 
 const ListaAutorizaciones = () => {
   const history = useHistory()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
@@ -28,8 +29,6 @@ const ListaAutorizaciones = () => {
   const [estado, setEstado] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
-
-  const handleClose = () => setShow(false)
 
   useEffect(() => {
     let mounted = true
@@ -63,7 +62,9 @@ const ListaAutorizaciones = () => {
   const handleOnIdle = (event) => {
     setShow(true)
     setOpcion(2)
-    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    setMensaje(
+      'Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar.',
+    )
     console.log('last active', getLastActiveTime())
   }
 
@@ -86,20 +87,49 @@ const ListaAutorizaciones = () => {
     setEstado(estado)
     setOpcion(opcion)
     setShow(true)
+    setMensaje('Está seguro de cambiar el estado de la autorización de encargado temporal?')
+  }
+
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShow(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+    }
   }
 
   async function cambiarEstado(id_autorizacion, opcion, estado) {
-    let result
-    if (estado === '0') {
-      result = '1'
-    } else {
-      result = '0'
-    }
-    const respuesta = await postUsuarioAutorizacion(id_autorizacion, '', '', '', '', opcion, result)
-    if (respuesta === 'OK') {
-      await getUsuarioAutorizacion(session.id, null).then((items) => {
-        setList(items.autorizacion)
-      })
+    if (opcion == 1) {
+      let result
+      if (estado == 0) {
+        result = '1'
+      } else {
+        result = '0'
+      }
+      const respuesta = await postUsuarioAutorizacion(
+        id_autorizacion,
+        '',
+        '',
+        '',
+        '',
+        opcion,
+        result,
+      )
+      if (respuesta === 'OK') {
+        await getUsuarioAutorizacion(session.id, null).then((items) => {
+          setList(items.autorizacion)
+        })
+      }
+    } else if (opcion == 2) {
+      setShow(false)
     }
   }
 
@@ -110,20 +140,18 @@ const ListaAutorizaciones = () => {
     }
     return (
       <>
-        <Modal responsive variant="primary" show={show} onHide={handleClose} centered>
+        <Modal responsive variant="primary" show={show} onHide={() => Cancelar(opcion)} centered>
           <Modal.Header closeButton>
             <Modal.Title>Confirmación</Modal.Title>
           </Modal.Header>
-          <Modal.Body>
-            Está seguro de cambiar el estado de la autorización de encargado temporal?
-          </Modal.Body>
+          <Modal.Body>{mensaje}</Modal.Body>
           <Modal.Footer>
-            <CButton color="secondary" onClick={handleClose}>
+            <CButton color="secondary" onClick={() => Cancelar(opcion)}>
               Cancelar
             </CButton>
             <CButton
               color="primary"
-              onClick={() => cambiarEstado(idAutorizacion, opcion, estado).then(handleClose)}
+              onClick={() => cambiarEstado(idAutorizacion, opcion, estado).then(() => Cancelar(1))}
             >
               Aceptar
             </CButton>
@@ -133,7 +161,7 @@ const ListaAutorizaciones = () => {
           <CButton
             color="primary"
             size="sm"
-            disabled={deshabilitar}
+            //disabled={deshabilitar}
             onClick={() =>
               history.push({
                 pathname: '/autorizacion/nueva',
@@ -172,7 +200,8 @@ const ListaAutorizaciones = () => {
                         color="info"
                         size="sm"
                         title="Cambiar Estado"
-                        onClick={() => mostrarModal(item.id_usuarioautorizacion, '1', item.activo)}
+                        //disabled={deshabilitar}
+                        onClick={() => mostrarModal(item.id_usuarioautorizacion, 1, item.activo)}
                       >
                         <BsToggles />
                       </CButton>

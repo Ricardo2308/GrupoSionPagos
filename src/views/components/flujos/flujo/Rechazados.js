@@ -36,9 +36,6 @@ const Rechazados = (prop) => {
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [rechazados, setRechazados] = useState([])
-  const [show, setShow] = useState(false)
-  const [opcion, setOpcion] = useState(0)
-  const [mensaje, setMensaje] = useState('')
   const [filterText, setFilterText] = useState('')
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false)
   const filteredItems = results.filter(
@@ -91,27 +88,6 @@ const Rechazados = (prop) => {
     }
     return () => (mounted = false)
   }, [])
-
-  const handleOnIdle = (event) => {
-    setShow(true)
-    setOpcion(2)
-    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {}
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
 
   const customStyles = {
     headCells: {

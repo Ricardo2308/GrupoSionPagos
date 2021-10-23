@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
-import { useIdleTimer } from 'react-idle-timer'
 import { Alert, Modal, Button, FormControl } from 'react-bootstrap'
 import DataTable, { createTheme } from 'react-data-table-component'
 import { getFlujos } from '../../../../services/getFlujos'
@@ -44,10 +43,10 @@ const PendientesPago = (prop) => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [pagos, setPagos] = useState([])
   const [show, setShow] = useState(false)
   const [showAlert, setShowAlert] = useState(false)
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false)
-  const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
   const [filterText, setFilterText] = useState('')
   const [titulo, setTitulo] = useState('Error!')
@@ -83,79 +82,37 @@ const PendientesPago = (prop) => {
   }
 
   async function Compensar() {
-    let pagos = []
     let bandera = 1
-    var markedCheckbox = document.getElementsByName('pagos')
-    for (var checkbox of markedCheckbox) {
-      if (checkbox.checked) {
-        pagos.push(checkbox.value)
+    const respuesta = await postFlujos('0', '', '', '2', pagos)
+    if (respuesta === 'OK') {
+      for (let pago of pagos) {
+        const pagado = await postFlujoDetalle(pago, '7', session.id, 'Compensado', '0')
+        if (pagado === 'OK') {
+          bandera *= 1
+        } else {
+          bandera *= 0
+        }
       }
-    }
-    if (pagos.length > 0) {
-      const respuesta = await postFlujos('0', '', '', '2', pagos)
-      if (respuesta === 'OK') {
-        {
-          /*
-        for (let pago of pagos) {
-          const pagado = await postFlujoDetalle(pago, '7', session.id, 'Compensado', '0')
-          if (pagado === 'OK') {
-            bandera *= 1
-          } else {
-            bandera *= 0
-          }
+      if (bandera == 1) {
+        const enviada = await postNotificacion(pagos, session.id, 'compensado.', '')
+        if (enviada == 'OK') {
+          await getFlujos(null, prop.tipo, session.id, '2', null, null).then((items) => {
+            setList(items.flujos)
+          })
         }
-        if (bandera == 1) {
-          const enviada = await postNotificacion(pagos, session.id, 'compensado.', '')
-          if (enviada == 'OK') {
-            await getFlujos(null, prop.tipo, session.id, '2', null, null).then((items) => {
-              setList(items.flujos)
-            })
-          }
-        }
-        */
-        }
-        await getFlujos(null, prop.tipo, session.id, '2', null, null).then((items) => {
-          setList(items.flujos)
-        })
-      } else {
-        setShowAlert(true)
-        setTitulo('Error!')
-        setColor('danger')
-        setMensaje(
-          'Los pagos ' +
-            respuesta +
-            'no fueron compensados debido a que sus códigos bancarios no coinciden con ' +
-            'ninguno de los bancos existentes.',
-        )
       }
     } else {
       setShowAlert(true)
       setTitulo('Error!')
       setColor('danger')
-      setMensaje('No has seleccionado ningún pago.')
+      setMensaje(
+        'Los pagos ' +
+          respuesta +
+          'no fueron compensados debido a que sus códigos bancarios no coinciden con ' +
+          'ninguno de los bancos existentes.',
+      )
     }
   }
-
-  const handleOnIdle = (event) => {
-    setShow(true)
-    setOpcion(2)
-    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {}
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
 
   const customStyles = {
     headCells: {
@@ -270,7 +227,22 @@ const PendientesPago = (prop) => {
   }, [filterText, resetPaginationToggle])
 
   function mostrarModal() {
-    setShow(true)
+    let pagos = []
+    var markedCheckbox = document.getElementsByName('pagos')
+    for (var checkbox of markedCheckbox) {
+      if (checkbox.checked) {
+        pagos.push(checkbox.value)
+      }
+    }
+    if (pagos.length > 0) {
+      setShow(true)
+      setPagos(pagos)
+    } else {
+      setShowAlert(true)
+      setTitulo('Error!')
+      setColor('danger')
+      setMensaje('No has seleccionado ningún pago.')
+    }
   }
 
   if (session) {

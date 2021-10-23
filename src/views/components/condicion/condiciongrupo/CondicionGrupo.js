@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
-import { Alert } from 'react-bootstrap'
+import { Alert, Modal } from 'react-bootstrap'
 import { useIdleTimer } from 'react-idle-timer'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postCondicionGrupo } from '../../../../services/postCondicionGrupo'
@@ -23,11 +23,11 @@ import {
 const CondicionGrupo = () => {
   const history = useHistory()
   const location = useLocation()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
+  const [showM, setShowM] = useState(false)
   const [results, setList] = useState([])
   const [mensaje, setMensaje] = useState('')
-  const [opcion, setOpcion] = useState(0)
   const [titulo, setTitulo] = useState('Error!')
   const [color, setColor] = useState('danger')
 
@@ -81,9 +81,10 @@ const CondicionGrupo = () => {
   }
 
   const handleOnIdle = (event) => {
-    setShow(true)
-    setOpcion(2)
-    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    setShowM(true)
+    setMensaje(
+      'Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar.',
+    )
     console.log('last active', getLastActiveTime())
   }
 
@@ -101,11 +102,41 @@ const CondicionGrupo = () => {
     debounce: 500,
   })
 
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShowM(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+    }
+  }
+
   if (session) {
     if (location.id_condicion) {
       return (
         <div style={{ flexDirection: 'row' }}>
           <CContainer>
+            <Modal responsive variant="primary" show={showM} onHide={() => Cancelar(2)} centered>
+              <Modal.Header closeButton>
+                <Modal.Title>Confirmación</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>{mensaje}</Modal.Body>
+              <Modal.Footer>
+                <CButton color="secondary" onClick={() => Cancelar(2)}>
+                  Cancelar
+                </CButton>
+                <CButton color="primary" onClick={() => Cancelar(1)}>
+                  Aceptar
+                </CButton>
+              </Modal.Footer>
+            </Modal>
             <Alert show={show} variant={color} onClose={() => setShow(false)} dismissible>
               <Alert.Heading>{titulo}</Alert.Heading>
               <p>{mensaje}</p>

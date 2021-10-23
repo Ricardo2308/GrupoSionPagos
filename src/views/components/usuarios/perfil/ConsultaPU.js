@@ -33,19 +33,20 @@ const Consultar = () => {
 
   useEffect(() => {
     let mounted = true
-    let idUsuario = 0
-    if (session) {
-      idUsuario = session.id
-    }
+    let idUsuario1 = 0
+    let idUsuario2 = 0
     if (location.id_usuario) {
-      idUsuario = location.id_usuario
+      idUsuario1 = location.id_usuario
     }
-    getPerfilUsuario(idUsuario, '1').then((items) => {
+    if (session) {
+      idUsuario2 = session.id
+    }
+    getPerfilUsuario(idUsuario1, '1').then((items) => {
       if (mounted) {
         setList(items.detalle)
       }
     })
-    getPerfilUsuario(idUsuario, '2').then((items) => {
+    getPerfilUsuario(idUsuario2, '2').then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -82,7 +83,9 @@ const Consultar = () => {
   const handleOnIdle = (event) => {
     setShow(true)
     setOpcion(2)
-    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    setMensaje(
+      'Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar.',
+    )
     console.log('last active', getLastActiveTime())
   }
 

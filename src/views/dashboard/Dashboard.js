@@ -201,7 +201,7 @@ const Dashboard = () => {
             <Modal.Title>Confirmación</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?
+            Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar?
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={() => Salir()}>

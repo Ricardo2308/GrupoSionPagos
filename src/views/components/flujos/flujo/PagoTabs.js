@@ -11,17 +11,18 @@ import DetalleFlujo from './DetalleFlujo'
 import ArchivosFlujo from './ArchivosFlujoF'
 import { postFlujos } from '../../../../services/postFlujos'
 import { postFlujoDetalle } from '../../../../services/postFlujoDetalle'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { postNotificacion } from '../../../../services/postNotificacion'
 import { useSession } from 'react-use-session'
 import Chat from './Chat'
-import '../../../../scss/estilos.scss'
 import FlujoFactura from './FlujoFactura'
 import FlujoBitacora from './FlujoBitacora'
+import '../../../../scss/estilos.scss'
 
 const PagoTabs = () => {
   const history = useHistory()
   const location = useLocation()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
   const [mensaje, setMensaje] = useState('')
   const [opcion, setOpcion] = useState(0)
@@ -31,8 +32,10 @@ const PagoTabs = () => {
 
   const handleOnIdle = (event) => {
     setShow(true)
-    setOpcion(2)
-    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    setOpcion(3)
+    setMensaje(
+      'Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar.',
+    )
     console.log('last active', getLastActiveTime())
   }
 
@@ -49,6 +52,22 @@ const PagoTabs = () => {
     onAction: handleOnAction,
     debounce: 500,
   })
+
+  async function Cancelar(opcion) {
+    if (opcion == 3) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+    } else {
+      setShow(false)
+    }
+  }
 
   function mostrarModal(id_flujo, opcion) {
     if (opcion == 1) {
@@ -116,6 +135,8 @@ const PagoTabs = () => {
           history.go(-1)
         }
       }
+    } else if (opcion == 3) {
+      setShow(true)
     }
   }
 
@@ -129,18 +150,18 @@ const PagoTabs = () => {
       if (location.estado > 2 && location.estado < 5) {
         return (
           <div className="div-tabs">
-            <Modal responsive variant="primary" show={show} onHide={handleClose} centered>
+            <Modal responsive show={show} onHide={() => Cancelar(opcion)} centered>
               <Modal.Header closeButton>
                 <Modal.Title>Confirmación</Modal.Title>
               </Modal.Header>
               <Modal.Body>{mensaje}</Modal.Body>
               <Modal.Footer>
-                <CButton color="secondary" onClick={handleClose}>
+                <CButton color="secondary" onClick={() => Cancelar(opcion)}>
                   Cancelar
                 </CButton>
                 <CButton
                   color="primary"
-                  onClick={() => Aprobar_Rechazar(idFlujo, opcion).then(handleClose)}
+                  onClick={() => Aprobar_Rechazar(idFlujo, opcion).then(() => Cancelar(1))}
                 >
                   Aceptar
                 </CButton>
@@ -167,10 +188,10 @@ const PagoTabs = () => {
                     <FlujoOrden id_flujo={location.id_flujo} />
                   </Tab>
                   <Tab eventKey="ingreso" title="Ingreso Bodega">
-                    <FlujoIngreso id_flujo1={location.id_flujo} />
+                    <FlujoIngreso id_flujo={location.id_flujo} />
                   </Tab>
                   <Tab eventKey="facturas" title="Facturas">
-                    <FlujoFactura id_flujo1={location.id_flujo} />
+                    <FlujoFactura id_flujo={location.id_flujo} />
                   </Tab>
                   <Tab eventKey="detalle" title="Detalle">
                     <DetalleFlujo id_flujo={location.id_flujo} />
@@ -197,6 +218,23 @@ const PagoTabs = () => {
       } else {
         return (
           <div className="div-tabs">
+            <Modal responsive show={show} onHide={() => Cancelar(opcion)} centered>
+              <Modal.Header closeButton>
+                <Modal.Title>Confirmación</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>{mensaje}</Modal.Body>
+              <Modal.Footer>
+                <CButton color="secondary" onClick={() => Cancelar(opcion)}>
+                  Cancelar
+                </CButton>
+                <CButton
+                  color="primary"
+                  onClick={() => Aprobar_Rechazar(idFlujo, opcion).then(() => Cancelar(1))}
+                >
+                  Aceptar
+                </CButton>
+              </Modal.Footer>
+            </Modal>
             <div className="div-content">
               <div style={{ width: '100%' }}>
                 <Tabs defaultActiveKey="solicitud" id="uncontrolled-tab-example" className="mb-3">
@@ -210,10 +248,10 @@ const PagoTabs = () => {
                     <FlujoOrden id_flujo={location.id_flujo} />
                   </Tab>
                   <Tab eventKey="ingreso" title="Ingreso Bodega">
-                    <FlujoIngreso id_flujo1={location.id_flujo} />
+                    <FlujoIngreso id_flujo={location.id_flujo} />
                   </Tab>
                   <Tab eventKey="facturas" title="Facturas">
-                    <FlujoFactura id_flujo1={location.id_flujo} />
+                    <FlujoFactura id_flujo={location.id_flujo} />
                   </Tab>
                   <Tab eventKey="detalle" title="Detalle">
                     <DetalleFlujo id_flujo={location.id_flujo} />

@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { Row, Col, Container } from 'react-bootstrap'
+import { Row, Col, Container, Modal } from 'react-bootstrap'
 import { useSession } from 'react-use-session'
 import { useHistory } from 'react-router-dom'
 import { useIdleTimer } from 'react-idle-timer'
 import { getFlujos } from '../../../../services/getFlujos'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import '../../../../scss/estilos.scss'
 
 const DetalleFlujo = (prop) => {
   const history = useHistory()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
-  const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
   const [results, setList] = useState([])
 
@@ -24,10 +24,27 @@ const DetalleFlujo = (prop) => {
     return () => (mounted = false)
   }, [])
 
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShow(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+    }
+  }
+
   const handleOnIdle = (event) => {
     setShow(true)
-    setOpcion(2)
-    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    setMensaje(
+      'Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar.',
+    )
     console.log('last active', getLastActiveTime())
   }
 

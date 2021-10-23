@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory, useLocation } from 'react-router'
 import { useIdleTimer } from 'react-idle-timer'
-import { Alert } from 'react-bootstrap'
+import { Alert, Modal } from 'react-bootstrap'
 import DatePicker, { registerLocale } from 'react-datepicker'
 import es from 'date-fns/locale/es'
 import 'react-datepicker/dist/react-datepicker.css'
 import { useSession } from 'react-use-session'
 import { postUsuarioAutorizacion } from '../../../../services/postUsuarioAutorizacion'
-import { getUsuarios } from '../../../../services/getUsuarios'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
+import { getUsuarios } from '../../../../services/getUsuarios'
 import '../../../../scss/estilos.scss'
 import {
   CButton,
@@ -25,9 +26,9 @@ import {
 const UsuarioGrupo = () => {
   const history = useHistory()
   const location = useLocation()
-  const { session } = useSession('PendrogonIT-Session')
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
-  const [opcion, setOpcion] = useState(0)
+  const [showM, setShowM] = useState(false)
   const [mensaje, setMensaje] = useState('')
   const [color, setColor] = useState('danger')
   const [titulo, setTitulo] = useState('Error!')
@@ -118,9 +119,10 @@ const UsuarioGrupo = () => {
   }
 
   const handleOnIdle = (event) => {
-    setShow(true)
-    setOpcion(2)
-    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    setShowM(true)
+    setMensaje(
+      'Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar.',
+    )
     console.log('last active', getLastActiveTime())
   }
 
@@ -138,6 +140,22 @@ const UsuarioGrupo = () => {
     debounce: 500,
   })
 
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShowM(false)
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+    }
+  }
+
   if (session) {
     let deshabilitar = false
     if (ExistePermiso('Modulo Autorizacion') == 0) {
@@ -146,6 +164,20 @@ const UsuarioGrupo = () => {
     return (
       <div style={{ flexDirection: 'row' }}>
         <CContainer>
+          <Modal responsive variant="primary" show={showM} onHide={() => Cancelar(2)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Confirmación</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>{mensaje}</Modal.Body>
+            <Modal.Footer>
+              <CButton color="secondary" onClick={() => Cancelar(2)}>
+                Cancelar
+              </CButton>
+              <CButton color="primary" onClick={() => Cancelar(1)}>
+                Aceptar
+              </CButton>
+            </Modal.Footer>
+          </Modal>
           <Alert show={show} variant={color} onClose={() => setShow(false)} dismissible>
             <Alert.Heading>{titulo}</Alert.Heading>
             <p>{mensaje}</p>

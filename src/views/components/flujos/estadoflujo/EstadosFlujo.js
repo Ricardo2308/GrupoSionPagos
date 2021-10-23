@@ -29,8 +29,6 @@ const EstadosFlujo = () => {
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
 
-  const handleClose = () => setShow(false)
-
   useEffect(() => {
     let mounted = true
     let idUsuario = 0
@@ -63,7 +61,9 @@ const EstadosFlujo = () => {
   const handleOnIdle = (event) => {
     setShow(true)
     setOpcion(2)
-    setMensaje('Ya estuvo mucho tiempo sin realizar ninguna acción. Desea continuar?')
+    setMensaje(
+      'Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar.',
+    )
     console.log('last active', getLastActiveTime())
   }
 
