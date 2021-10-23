@@ -1,21 +1,10 @@
-const API = `${process.env.REACT_APP_BACKEND_URL}flujo_oferta.php`
+const API = `${process.env.REACT_APP_API_URL}flujoingreso`
 
-export function getFlujoIngreso(idFlujo, docNum) {
+export function getFlujoIngreso(idFlujo) {
   let ApiFinal = API
   let ApiWhere = ''
   if (idFlujo !== null) {
-    if (ApiWhere.length > 0) {
-      ApiWhere += '&id_flujo=' + idFlujo
-    } else {
-      ApiWhere += '?id_flujo=' + idFlujo
-    }
-  }
-  if (docNum !== null) {
-    if (ApiWhere.length > 0) {
-      ApiWhere += '&doc_num=' + docNum
-    } else {
-      ApiWhere += '?doc_num=' + docNum
-    }
+    ApiWhere += '/' + idFlujo
   }
   ApiFinal += ApiWhere
   return fetch(ApiFinal)
