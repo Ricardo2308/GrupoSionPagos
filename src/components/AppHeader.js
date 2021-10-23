@@ -82,7 +82,7 @@ const AppHeader = () => {
         ContarN(contN)
         setNotificaciones(items.notificaciones)
       })
-    }, 20000)
+    }, 300000)
     return () => clearInterval(interval)
   }, [])
 
