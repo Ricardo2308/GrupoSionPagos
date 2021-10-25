@@ -53,18 +53,7 @@ const Pendientes = (prop) => {
         setList(items.flujos)
       }
     })
-    const interval = setInterval(() => {
-      let idUsuario = 0
-      if (session) {
-        idUsuario = session.id
-      }
-      getFlujos(null, prop.tipo, idUsuario, '1', null, null).then((items) => {
-        if (mounted) {
-          setList(items.flujos)
-        }
-      })
-    }, 60000)
-    return () => clearInterval(interval)
+    return () => (mounted = false)
   }, [])
 
   const customStyles = {

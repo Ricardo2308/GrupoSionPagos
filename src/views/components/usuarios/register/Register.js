@@ -16,6 +16,7 @@ import {
   CContainer,
   CForm,
   CFormControl,
+  CFormCheck,
   CInputGroup,
   CInputGroupText,
 } from '@coreui/react'
@@ -71,6 +72,7 @@ const Register = (props) => {
   }
 
   const handleSubmit = async (event) => {
+    let result = 0
     if (
       form.nombre !== '' &&
       form.apellido !== '' &&
@@ -82,12 +84,21 @@ const Register = (props) => {
       if (form.password === form.password_repetida) {
         if (form.password.length >= 10) {
           event.preventDefault()
+          var markedCheckbox = document.getElementsByName('cambiapassword')
+          for (var checkbox of markedCheckbox) {
+            if (checkbox.checked) {
+              result = 1
+            } else {
+              result = 0
+            }
+          }
           const respuesta = await postCrearUsuario(
             form.nombre,
             form.apellido,
             form.usuario,
             form.email,
             md5(form.password_repetida, { encoding: 'binary' }),
+            result,
           )
           if (respuesta === 'OK') {
             history.push('/usuarios')
@@ -184,6 +195,15 @@ const Register = (props) => {
                 <CForm style={{ width: '100%' }}>
                   <h1>Creación de Usuario</h1>
                   <p className="text-medium-emphasis">Crear un nuevo usuario</p>
+                  <div className="float-right" style={{ marginBottom: '10px' }}>
+                    <CFormCheck
+                      value=""
+                      type="checkbox"
+                      name="cambiapassword"
+                      label="Cambiar Contraseña"
+                      defaultChecked={true}
+                    />
+                  </div>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
                       <FiUser />

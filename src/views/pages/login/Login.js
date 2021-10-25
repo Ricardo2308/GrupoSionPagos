@@ -4,6 +4,8 @@ import { Alert } from 'react-bootstrap'
 import { FiUser, FiLock, FiEye } from 'react-icons/fi'
 import { getUsuarios } from '../../../services/getUsuarios'
 import { getPoliticas } from '../../../services/getPoliticas'
+import { getCantidadDias } from '../../../services/getCantidadDias'
+import { postLogPassword } from '../../../services/postLogPassword'
 import { postSesionUsuario } from '../../../services/postSesionUsuario'
 import { postLogLogin } from '../../../services/postLogLogin'
 import { useSession } from 'react-use-session'
@@ -27,6 +29,7 @@ const Login = () => {
   const history = useHistory()
   const { saveJWT } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
+  const [mostrar, setMostrar] = useState(false)
   const [passwordShown, setPasswordShown] = useState(false)
   const [mensaje, setMensaje] = useState('')
   const [color, setColor] = useState('')
@@ -86,6 +89,36 @@ const Login = () => {
     }
   }
 
+  async function revisarPolitica(idUsuario, cambiaPassword) {
+    let result = false
+    let politica = obtenerPolitica('_LIMITE_CAMBIO_PASSWORD_')
+    const respuesta = await getCantidadDias(idUsuario)
+    if (respuesta == 'Vacio') {
+      const logpassword = await postLogPassword(idUsuario)
+      if (logpassword == 'OK') {
+        result = true
+      }
+    } else {
+      if (cambiaPassword == 1) {
+        if (parseInt(respuesta) >= parseInt(politica)) {
+          setMostrar(true)
+          setTitulo('Aviso!')
+          setColor('info')
+          setMensaje(
+            'Ya pasaron ' +
+              respuesta +
+              ' días desde la última vez que cambió su contraseña. Debe actualizarla.',
+          )
+        } else if (parseInt(respuesta) < parseInt(politica)) {
+          result = true
+        }
+      } else if (cambiaPassword == 0) {
+        result = true
+      }
+    }
+    return result
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault()
     getUsuarios(null, null, form.usuario, null).then((items) => {
@@ -93,22 +126,28 @@ const Login = () => {
         for (let item of items.users) {
           if (md5(form.password, { encoding: 'binary' }) === item.password) {
             if (item.activo == 1 && item.eliminado == 0) {
-              if (crearSesion(item.id)) {
-                let limiteconexion = obtenerPolitica('_LIMITE_TIEMPO_CONEXION_')
-                const sign = require('jwt-encode')
-                const secret = 'secret'
-                const data = {
-                  email: item.email,
-                  name: item.nombre + ' ' + item.apellido,
-                  user_name: item.nombre_usuario,
-                  id: item.id,
-                  estado: item.activo,
-                  limiteconexion: limiteconexion,
+              revisarPolitica(item.id, item.cambia_password).then((respuesta) => {
+                if (respuesta == true) {
+                  crearSesion(item.id).then((sesion) => {
+                    if (sesion == true) {
+                      let limiteconexion = obtenerPolitica('_LIMITE_TIEMPO_CONEXION_')
+                      const sign = require('jwt-encode')
+                      const secret = 'secret'
+                      const data = {
+                        email: item.email,
+                        name: item.nombre + ' ' + item.apellido,
+                        user_name: item.nombre_usuario,
+                        id: item.id,
+                        estado: item.activo,
+                        limiteconexion: limiteconexion,
+                      }
+                      const jwt = sign(data, secret)
+                      saveJWT(jwt)
+                      history.push('/home')
+                    }
+                  })
                 }
-                const jwt = sign(data, secret)
-                saveJWT(jwt)
-                history.push('/home')
-              }
+              })
             } else {
               setShow(true)
               setTitulo('Error!')
@@ -141,6 +180,16 @@ const Login = () => {
       <Alert show={show} variant={color} onClose={() => setShow(false)} dismissible>
         <Alert.Heading>{titulo}</Alert.Heading>
         <p>{mensaje}</p>
+      </Alert>
+      <Alert show={mostrar} variant={color} onClose={() => setMostrar(false)} dismissible>
+        <Alert.Heading>{titulo}</Alert.Heading>
+        <p>{mensaje}</p>
+        <hr />
+        <div className="d-flex justify-content-end">
+          <CButton onClick={() => history.push('/recuperar')} color="primary" variant="outline">
+            Actualizar Contraseña
+          </CButton>
+        </div>
       </Alert>
       <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
         <CContainer>

@@ -31,7 +31,7 @@ const FlujoSolicitud = (prop) => {
               <Col className="mb-0 border">{results.doc_num}</Col>
             </Row>
             <Row className="mb-0 border">
-              <Col className="mb-0 border column">Nombre Request</Col>
+              <Col className="mb-0 border column">Nombre</Col>
               <Col className="mb-0 border">{results.req_name}</Col>
             </Row>
             <Row className="mb-0 border">

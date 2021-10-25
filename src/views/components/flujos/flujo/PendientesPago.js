@@ -66,7 +66,11 @@ const PendientesPago = (prop) => {
 
   useEffect(() => {
     let mounted = true
-    getFlujos(null, prop.tipo, session.id, '2', null, null).then((items) => {
+    let idUsuario = 0
+    if (session) {
+      idUsuario = session.id
+    }
+    getFlujos(null, prop.tipo, idUsuario, '2', null, null).then((items) => {
       if (mounted) {
         setList(items.flujos)
       }

@@ -17,6 +17,7 @@ import {
   CInputGroup,
   CInputGroupText,
   CFormSelect,
+  CFormCheck,
 } from '@coreui/react'
 
 const EditarUsuarios = (props) => {
@@ -44,8 +45,17 @@ const EditarUsuarios = (props) => {
   }
 
   const handleSubmit = async (event) => {
+    let result = 0
     if (form.nombre !== '' && form.apellido !== '' && form.email !== '' && form.estado !== '') {
       event.preventDefault()
+      var markedCheckbox = document.getElementsByName('cambiapassword')
+      for (var checkbox of markedCheckbox) {
+        if (checkbox.checked) {
+          result = 1
+        } else {
+          result = 0
+        }
+      }
       const respuesta = await postEditarUsuario(
         location.id,
         form.nombre,
@@ -53,6 +63,7 @@ const EditarUsuarios = (props) => {
         form.email,
         form.usuario,
         form.estado,
+        result,
         '1',
       )
       if (respuesta === 'OK') {
@@ -104,6 +115,10 @@ const EditarUsuarios = (props) => {
 
   if (session) {
     if (location.id) {
+      let selected = false
+      if (location.cambia_password == 1) {
+        selected = true
+      }
       return (
         <div style={{ flexDirection: 'row' }}>
           <CContainer>
@@ -130,6 +145,15 @@ const EditarUsuarios = (props) => {
                 <CForm style={{ width: '100%' }}>
                   <h1>Modificación de Usuario</h1>
                   <p className="text-medium-emphasis">Modifique la información del usuario</p>
+                  <div className="float-right" style={{ marginBottom: '10px' }}>
+                    <CFormCheck
+                      value=""
+                      type="checkbox"
+                      name="cambiapassword"
+                      label="Cambiar Contraseña"
+                      defaultChecked={selected}
+                    />
+                  </div>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
                       <FiUser />

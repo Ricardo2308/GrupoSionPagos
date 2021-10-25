@@ -45,11 +45,11 @@ const Usuarios = () => {
         setPermisos(items.detalle)
       }
     })
-    window.addEventListener('beforeunload', (ev) => {
-      console.log(ev)
-      ev.preventDefault()
-      return (ev.returnValue = 'Esta seguro de cerrar sesión?')
-    })
+    //window.addEventListener('beforeunload', (ev) => {
+    //console.log(ev)
+    //ev.preventDefault()
+    //return (ev.returnValue = 'Esta seguro de cerrar sesión?')
+    //})
     return () => (mounted = false)
   }, [])
 
@@ -261,6 +261,7 @@ const Usuarios = () => {
                             email: item.email,
                             password: item.password,
                             estado: item.activo,
+                            cambia_password: item.cambia_password,
                           })
                         }
                       >
