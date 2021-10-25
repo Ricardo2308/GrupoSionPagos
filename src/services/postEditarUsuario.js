@@ -1,6 +1,15 @@
 const API = `${process.env.REACT_APP_API_URL}usuarios`
 
-export function postEditarUsuario(id, nombre, apellido, email, username, estado, opcion) {
+export function postEditarUsuario(
+  id,
+  nombre,
+  apellido,
+  email,
+  username,
+  estado,
+  cambiaPassword,
+  opcion,
+) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -11,6 +20,7 @@ export function postEditarUsuario(id, nombre, apellido, email, username, estado,
     correo: email,
     nombre_usuario: username,
     activo: estado,
+    cambia_password: cambiaPassword,
     opcion: opcion,
   }
 
