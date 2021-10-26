@@ -20,6 +20,7 @@ import {
 
 const NuevaCondicion = () => {
   const history = useHistory()
+  const [time, setTime] = useState(null)
   const { session, clear } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
   const [showM, setShowM] = useState(false)

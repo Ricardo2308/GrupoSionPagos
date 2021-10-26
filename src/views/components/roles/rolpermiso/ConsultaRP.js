@@ -22,6 +22,7 @@ import {
 const ConsultarRP = () => {
   const history = useHistory()
   const location = useLocation()
+  const [time, setTime] = useState(null)
   const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [show, setShow] = useState(false)
@@ -40,12 +41,29 @@ const ConsultarRP = () => {
     return () => (mounted = false)
   }, [])
 
+  function iniciar(minutos) {
+    let segundos = 60 * minutos
+    const intervalo = setInterval(() => {
+      segundos--
+      if (segundos == 0) {
+        Cancelar(3)
+      }
+    }, 1000)
+    setTime(intervalo)
+  }
+
+  function detener() {
+    clearInterval(time)
+  }
+
   const handleOnIdle = (event) => {
     setShow(true)
     setOpcion(3)
     setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar.',
+      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
+        ' Si desea continuar presione Aceptar',
     )
+    iniciar(2)
     console.log('last active', getLastActiveTime())
   }
 
@@ -63,6 +81,24 @@ const ConsultarRP = () => {
     debounce: 500,
   })
 
+  async function Cancelar(opcion) {
+    if (opcion == 3) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+      detener()
+    } else {
+      setShow(false)
+      detener()
+    }
+  }
+
   function mostrarModal(id_permiso, opcion, estado) {
     if (opcion == 1) {
       setMensaje('Está seguro de eliminar este detalle de permisos del rol?')
@@ -75,22 +111,6 @@ const ConsultarRP = () => {
       setEstado(estado)
       setOpcion(opcion)
       setShow(true)
-    }
-  }
-
-  async function Cancelar(opcion) {
-    if (opcion == 3) {
-      let idUsuario = 0
-      if (session) {
-        idUsuario = session.id
-      }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
-      if (respuesta === 'OK') {
-        clear()
-        history.push('/')
-      }
-    } else {
-      setShow(false)
     }
   }
 
@@ -117,6 +137,7 @@ const ConsultarRP = () => {
       }
     } else if (opcion == 3) {
       setShow(false)
+      detener()
     }
   }
 

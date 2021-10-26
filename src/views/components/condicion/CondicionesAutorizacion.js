@@ -21,6 +21,7 @@ import {
 
 const Cards = () => {
   const history = useHistory()
+  const [time, setTime] = useState(null)
   const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [permisos, setPermisos] = useState([])
@@ -65,22 +66,6 @@ const Cards = () => {
     setShow(true)
   }
 
-  async function Cancelar(opcion) {
-    if (opcion == 1) {
-      setShow(false)
-    } else if (opcion == 2) {
-      let idUsuario = 0
-      if (session) {
-        idUsuario = session.id
-      }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
-      if (respuesta === 'OK') {
-        clear()
-        history.push('/')
-      }
-    }
-  }
-
   async function eliminarCondicion(id_condicion, opcion) {
     if (opcion == 1) {
       const respuesta = await postCondicionAutorizacion(id_condicion, '', '', '', '2')
@@ -91,15 +76,51 @@ const Cards = () => {
       }
     } else if (opcion == 2) {
       setShow(false)
+      detener()
     }
+  }
+
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShow(false)
+      detener()
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+      detener()
+    }
+  }
+
+  function iniciar(minutos) {
+    let segundos = 60 * minutos
+    const intervalo = setInterval(() => {
+      segundos--
+      if (segundos == 0) {
+        Cancelar(2)
+      }
+    }, 1000)
+    setTime(intervalo)
+  }
+
+  function detener() {
+    clearInterval(time)
   }
 
   const handleOnIdle = (event) => {
     setShow(true)
     setOpcion(2)
     setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar.',
+      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
+        ' Si desea continuar presione Aceptar',
     )
+    iniciar(2)
     console.log('last active', getLastActiveTime())
   }
 

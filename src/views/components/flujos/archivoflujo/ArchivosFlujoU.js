@@ -33,6 +33,7 @@ const FilterComponent = (prop) => (
 
 const ArchivosFlujo = () => {
   const history = useHistory()
+  const [time, setTime] = useState(null)
   const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [show, setShow] = useState(false)
@@ -60,11 +61,46 @@ const ArchivosFlujo = () => {
     return () => (mounted = false)
   }, [])
 
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShow(false)
+      detener()
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+      detener()
+    }
+  }
+
+  function iniciar(minutos) {
+    let segundos = 60 * minutos
+    const intervalo = setInterval(() => {
+      segundos--
+      if (segundos == 0) {
+        Cancelar(2)
+      }
+    }, 1000)
+    setTime(intervalo)
+  }
+
+  function detener() {
+    clearInterval(time)
+  }
+
   const handleOnIdle = (event) => {
     setShow(true)
     setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar.',
+      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
+        ' Si desea continuar presione Aceptar',
     )
+    iniciar(2)
     console.log('last active', getLastActiveTime())
   }
 
@@ -174,22 +210,6 @@ const ArchivosFlujo = () => {
       />
     )
   }, [filterText, resetPaginationToggle])
-
-  async function Cancelar(opcion) {
-    if (opcion == 1) {
-      setShow(false)
-    } else if (opcion == 2) {
-      let idUsuario = 0
-      if (session) {
-        idUsuario = session.id
-      }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
-      if (respuesta === 'OK') {
-        clear()
-        history.push('/')
-      }
-    }
-  }
 
   function mostrarModal(url_archivo, usuario) {
     setUrlArchivo(url_archivo)

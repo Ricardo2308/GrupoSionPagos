@@ -23,6 +23,7 @@ import {
 const EditarUsuarios = (props) => {
   const history = useHistory()
   const location = useLocation()
+  const [time, setTime] = useState(null)
   const { session, clear } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
   const [showM, setShowM] = useState(false)

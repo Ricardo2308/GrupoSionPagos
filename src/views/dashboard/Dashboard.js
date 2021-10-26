@@ -12,7 +12,9 @@ import '../../scss/estilos.scss'
 
 const Dashboard = () => {
   const history = useHistory()
+  const [time, setTime] = useState(null)
   const { session, clear } = useSession('PendrogonIT-Session')
+  const [mensaje, setMensaje] = useState('')
   const [results, setList] = useState([])
   const [estados, setEstados] = useState([])
   const [pagos, setPagos] = useState([])
@@ -162,8 +164,28 @@ const Dashboard = () => {
     })
   }
 
+  function iniciar(minutos) {
+    let segundos = 60 * minutos
+    const intervalo = setInterval(() => {
+      segundos--
+      if (segundos == 0) {
+        Salir()
+      }
+    }, 1000)
+    setTime(intervalo)
+  }
+
+  function detener() {
+    clearInterval(time)
+  }
+
   const handleOnIdle = (event) => {
     setShow(true)
+    setMensaje(
+      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
+        ' Si desea continuar presione Aceptar',
+    )
+    iniciar(2)
     console.log('last active', getLastActiveTime())
   }
 
@@ -191,6 +213,7 @@ const Dashboard = () => {
       clear()
       history.push('/')
     }
+    detener()
   }
 
   if (session) {
@@ -200,9 +223,7 @@ const Dashboard = () => {
           <Modal.Header closeButton>
             <Modal.Title>Confirmación</Modal.Title>
           </Modal.Header>
-          <Modal.Body>
-            Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar?
-          </Modal.Body>
+          <Modal.Body>{mensaje}</Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={() => Salir()}>
               Cancelar

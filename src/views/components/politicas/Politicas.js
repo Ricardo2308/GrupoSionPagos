@@ -7,7 +7,7 @@ import { getPerfilUsuario } from '../../../services/getPerfilUsuario'
 import { postCrudPoliticas } from '../../../services/postCrudPoliticas'
 import { postSesionUsuario } from '../../../services/postSesionUsuario'
 import { useSession } from 'react-use-session'
-import { FaUserEdit, FaTrash } from 'react-icons/fa'
+import { FaPen, FaTrash } from 'react-icons/fa'
 import '../../../scss/estilos.scss'
 import {
   CButton,
@@ -21,6 +21,7 @@ import {
 
 const Politicas = () => {
   const history = useHistory()
+  const [time, setTime] = useState(null)
   const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [permisos, setPermisos] = useState([])
@@ -65,9 +66,23 @@ const Politicas = () => {
     setShow(true)
   }
 
+  async function eliminarPolitica(idPolitica, opcion) {
+    if (opcion == 1) {
+      const respuesta = await postCrudPoliticas(idPolitica, '', '', '', '', '2')
+      if (respuesta === 'OK') {
+        await getPoliticas(null, null).then((items) => {
+          setList(items.politicas)
+        })
+      } else if (opcion == 2) {
+        setShow(false)
+        detener()
+      }
+    }
+  }
   async function Cancelar(opcion) {
     if (opcion == 1) {
       setShow(false)
+      detener()
     } else if (opcion == 2) {
       let idUsuario = 0
       if (session) {
@@ -78,28 +93,33 @@ const Politicas = () => {
         clear()
         history.push('/')
       }
+      detener()
     }
   }
 
-  async function eliminarPolitica(idPolitica, opcion) {
-    if (opcion == 1) {
-      const respuesta = await postCrudPoliticas(idPolitica, '', '', '', '', '2')
-      if (respuesta === 'OK') {
-        await getPoliticas(null, null).then((items) => {
-          setList(items.politicas)
-        })
-      } else if (opcion == 2) {
-        setShow(false)
+  function iniciar(minutos) {
+    let segundos = 60 * minutos
+    const intervalo = setInterval(() => {
+      segundos--
+      if (segundos == 0) {
+        Cancelar(2)
       }
-    }
+    }, 1000)
+    setTime(intervalo)
+  }
+
+  function detener() {
+    clearInterval(time)
   }
 
   const handleOnIdle = (event) => {
     setShow(true)
     setOpcion(2)
     setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar.',
+      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
+        ' Si desea continuar presione Aceptar',
     )
+    iniciar(2)
     console.log('last active', getLastActiveTime())
   }
 
@@ -191,7 +211,7 @@ const Politicas = () => {
                           })
                         }
                       >
-                        <FaUserEdit />
+                        <FaPen />
                       </CButton>{' '}
                       <CButton
                         color="danger"

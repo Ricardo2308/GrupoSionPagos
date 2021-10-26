@@ -22,6 +22,7 @@ import '../../../../scss/estilos.scss'
 const EditarEstadoFlujo = () => {
   const history = useHistory()
   const location = useLocation()
+  const [time, setTime] = useState(null)
   const [results, setList] = useState([])
   const { session, clear } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
@@ -70,27 +71,28 @@ const EditarEstadoFlujo = () => {
     }
   }
 
-  async function Cancelar(opcion) {
-    if (opcion == 1) {
-      setShowM(false)
-    } else if (opcion == 2) {
-      let idUsuario = 0
-      if (session) {
-        idUsuario = session.id
+  function iniciar(minutos) {
+    let segundos = 60 * minutos
+    const intervalo = setInterval(() => {
+      segundos--
+      if (segundos == 0) {
+        Cancelar(2)
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
-      if (respuesta === 'OK') {
-        clear()
-        history.push('/')
-      }
-    }
+    }, 1000)
+    setTime(intervalo)
+  }
+
+  function detener() {
+    clearInterval(time)
   }
 
   const handleOnIdle = (event) => {
     setShowM(true)
     setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar.',
+      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
+        ' Si desea continuar presione Aceptar',
     )
+    iniciar(2)
     console.log('last active', getLastActiveTime())
   }
 
@@ -107,6 +109,24 @@ const EditarEstadoFlujo = () => {
     onAction: handleOnAction,
     debounce: 500,
   })
+
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShowM(false)
+      detener()
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+      detener()
+    }
+  }
 
   if (session) {
     if (location.id_tipoflujo) {
