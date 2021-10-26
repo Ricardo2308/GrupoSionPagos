@@ -105,13 +105,15 @@ const AppHeader = () => {
             </CNavLink>
           </CNavItem>
         </CHeaderNav>
-        <CHeaderNav title="Mensajes Pagos">
+        <CHeaderNav title="Notificaciones Pagos">
           <CNavItem>
             <CNavLink>
               <NotificationDropdown notificaciones={notificaciones} />
               <NotificationsCount count={contadorN} />
             </CNavLink>
           </CNavItem>
+        </CHeaderNav>
+        <CHeaderNav title="Mensajes Pagos">
           <CNavItem>
             <CNavLink>
               <MessageDropdown mensajes={results} />
@@ -120,7 +122,9 @@ const AppHeader = () => {
           </CNavItem>
         </CHeaderNav>
         <CHeaderNav title="Perfil Usuario">
-          <AppHeaderDropdown />
+          <CNavLink>
+            <AppHeaderDropdown />
+          </CNavLink>
         </CHeaderNav>
       </CContainer>
       <CHeaderDivider />
