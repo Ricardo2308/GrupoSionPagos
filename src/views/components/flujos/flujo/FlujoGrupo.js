@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
-import { Alert } from 'react-bootstrap'
+import { Alert, Modal } from 'react-bootstrap'
 import { useIdleTimer } from 'react-idle-timer'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postFlujos } from '../../../../services/postFlujos'
 import { postFlujoDetalle } from '../../../../services/postFlujoDetalle'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
 import '../../../../scss/estilos.scss'
 import { FiCreditCard } from 'react-icons/fi'
@@ -24,10 +25,11 @@ import {
 const FlujoGrupo = (props) => {
   const history = useHistory()
   const location = useLocation()
-  const { session } = useSession('PendrogonIT-Session')
+  const [time, setTime] = useState(null)
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
+  const [showM, setShowM] = useState(false)
   const [results, setList] = useState([])
-  const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
 
   const [form, setValues] = useState({
@@ -73,12 +75,28 @@ const FlujoGrupo = (props) => {
     }
   }
 
+  function iniciar(minutos) {
+    let segundos = 60 * minutos
+    const intervalo = setInterval(() => {
+      segundos--
+      if (segundos == 0) {
+        Cancelar(2)
+      }
+    }, 1000)
+    setTime(intervalo)
+  }
+
+  function detener() {
+    clearInterval(time)
+  }
+
   const handleOnIdle = (event) => {
-    setShow(true)
-    setOpcion(2)
+    setShowM(true)
     setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar.',
+      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
+        ' Si desea continuar presione Aceptar',
     )
+    iniciar(2)
     console.log('last active', getLastActiveTime())
   }
 
@@ -96,6 +114,24 @@ const FlujoGrupo = (props) => {
     debounce: 500,
   })
 
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShowM(false)
+      detener()
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+      detener()
+    }
+  }
+
   if (session) {
     if (location.id_flujo) {
       return (
@@ -105,6 +141,20 @@ const FlujoGrupo = (props) => {
               <Alert.Heading>Error!</Alert.Heading>
               <p>No has llenado todos los campos.</p>
             </Alert>
+            <Modal responsive variant="primary" show={showM} onHide={() => Cancelar(2)} centered>
+              <Modal.Header closeButton>
+                <Modal.Title>Confirmación</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>{mensaje}</Modal.Body>
+              <Modal.Footer>
+                <CButton color="secondary" onClick={() => Cancelar(2)}>
+                  Cancelar
+                </CButton>
+                <CButton color="primary" onClick={() => Cancelar(1)}>
+                  Aceptar
+                </CButton>
+              </Modal.Footer>
+            </Modal>
             <CCard style={{ display: 'flex', alignItems: 'center' }}>
               <CCardBody style={{ width: '80%' }}>
                 <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>

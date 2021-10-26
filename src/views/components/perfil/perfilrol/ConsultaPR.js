@@ -101,12 +101,12 @@ const ConsultarPR = () => {
 
   function mostrarModal(id_rol, opcion, estado) {
     if (opcion == 1) {
-      setMensaje('Está seguro de eliminar este detalle de roles del perfil?')
+      setMensaje('Está seguro de eliminar este rol?')
       setIdRol(id_rol)
       setOpcion(opcion)
       setShow(true)
     } else if (opcion == 2) {
-      setMensaje('Está seguro de cambiar el estado de este rol del perfil?')
+      setMensaje('Está seguro de cambiar el estado de este rol?')
       setIdRol(id_rol)
       setEstado(estado)
       setOpcion(opcion)

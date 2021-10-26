@@ -101,12 +101,12 @@ const ConsultarRP = () => {
 
   function mostrarModal(id_permiso, opcion, estado) {
     if (opcion == 1) {
-      setMensaje('Está seguro de eliminar este detalle de permisos del rol?')
+      setMensaje('Está seguro de eliminar este permiso?')
       setIdPermiso(id_permiso)
       setOpcion(opcion)
       setShow(true)
     } else if (opcion == 2) {
-      setMensaje('Está seguro de cambiar el estado de este permiso del rol?')
+      setMensaje('Está seguro de cambiar el estado de este permiso')
       setIdPermiso(id_permiso)
       setEstado(estado)
       setOpcion(opcion)

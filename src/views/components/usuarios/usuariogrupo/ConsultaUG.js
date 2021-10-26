@@ -126,12 +126,12 @@ const Consultar = () => {
 
   function mostrarModal(id_grupo, opcion, estado) {
     if (opcion == 1) {
-      setMensaje('Está seguro de eliminar este grupo?')
+      setMensaje('Está seguro de eliminar este grupo de autorización?')
       setIdGrupo(id_grupo)
       setOpcion(opcion)
       setShow(true)
     } else if (opcion == 2) {
-      setMensaje('Está seguro de cambiar el estado de este grupo?')
+      setMensaje('Está seguro de cambiar el estado de este grupo de autorización?')
       setIdGrupo(id_grupo)
       setEstado(estado)
       setOpcion(opcion)

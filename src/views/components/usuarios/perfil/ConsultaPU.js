@@ -125,12 +125,12 @@ const Consultar = () => {
 
   function mostrarModal(id_perfil, opcion, estado) {
     if (opcion == 1) {
-      setMensaje('Está seguro de eliminar este perfil de usuario?')
+      setMensaje('Está seguro de eliminar este perfil?')
       setIdPerfil(id_perfil)
       setOpcion(opcion)
       setShow(true)
     } else if (opcion == 2) {
-      setMensaje('Está seguro de cambiar el estado de este perfil de usuario?')
+      setMensaje('Está seguro de cambiar el estado de este perfil?')
       setIdPerfil(id_perfil)
       setEstado(estado)
       setOpcion(opcion)
