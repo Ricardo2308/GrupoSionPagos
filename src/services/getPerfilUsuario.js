@@ -14,5 +14,9 @@ export function getPerfilUsuario(idUsuario, opcion) {
     .then(function (response) {
       return response.json()
     })
-    .catch((err) => err)
+    .catch((err) => {
+      if (err.message === 'Failed to fetch') {
+        throw new Error('Server responds with error!')
+      }
+    })
 }

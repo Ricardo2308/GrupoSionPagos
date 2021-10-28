@@ -35,5 +35,9 @@ export function getBitacora(idFlujo, Comentario, idUsuario, Tipo) {
     .then((response) => {
       return response
     })
-    .catch((error) => error)
+    .catch((err) => {
+      if (err.message == 'Failed to fetch') {
+        alert('Error de conexión. Revise si está conectado a Internet.')
+      }
+    })
 }

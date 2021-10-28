@@ -11,5 +11,9 @@ export function getSesionUsuario(IdUsuario) {
     .then(function (response) {
       return response.json()
     })
-    .catch((err) => err)
+    .catch((err) => {
+      if (err.message == 'Failed to fetch') {
+        alert('Error de conexión. Revise si está conectado a Internet.')
+      }
+    })
 }

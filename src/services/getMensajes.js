@@ -14,5 +14,11 @@ export function getMensajes(idUsuarioEnvia, idUsuarioRecibe) {
     .then(function (response) {
       return response.json()
     })
-    .catch((err) => err)
+    .catch((err) => {
+      if (err.message === 'Timeout' || err.message === 'Network request failed') {
+        // retry
+      } else {
+        throw err // rethrow other unexpected errors
+      }
+    })
 }
