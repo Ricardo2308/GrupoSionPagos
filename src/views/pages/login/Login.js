@@ -77,6 +77,7 @@ const Login = () => {
     let agente = window.navigator.userAgent
     var navegadores = ['Chrome', 'Firefox', 'Safari', 'Opera', 'Trident', 'MSIE', 'Edge']
     const myip = await publicIp.v4()
+    console.log(agente)
     for (var i in navegadores) {
       if (agente.indexOf(navegadores[i]) != -1) {
         const respuesta = await postSesionUsuario(id, navegadores[i], myip, '1')

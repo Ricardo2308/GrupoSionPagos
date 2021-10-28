@@ -43,7 +43,7 @@ class Chat extends Component {
       })
     })
     const interval = setInterval(() => {
-      cont = 0
+      let cont = 0
       getMensajes(null, null).then((items) => {
         this.setState({
           mensajes: items.mensajes,
