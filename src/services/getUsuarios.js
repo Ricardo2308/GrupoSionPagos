@@ -20,9 +20,5 @@ export function getUsuarios(idGrupo, idFlujo, Usuario, Estado) {
     .then(function (response) {
       return response.json()
     })
-    .catch((err) => {
-      if (err.message == 'Failed to fetch') {
-        alert('Error de conexión. Revise si está conectado a Internet.')
-      }
-    })
+    .catch((error) => error)
 }
