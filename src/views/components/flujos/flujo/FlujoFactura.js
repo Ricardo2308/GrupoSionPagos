@@ -98,7 +98,7 @@ const FlujoFactura = (prop) => {
       return <div className="sin-array">AÚN NO EXISTE FACTURA.</div>
     }
   } else {
-    history.push('/dashboard')
+    history.push('/')
     return <div className="sin-sesion">SIN SESIÓN ACTIVA.</div>
   }
 }

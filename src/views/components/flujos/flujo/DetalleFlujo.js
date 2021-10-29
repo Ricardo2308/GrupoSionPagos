@@ -163,7 +163,7 @@ const DetalleFlujo = (prop) => {
       return <div className="sin-array">AÚN NO EXISTE DETALLE DE PAGO.</div>
     }
   } else {
-    history.push('/dashboard')
+    history.push('/')
     return <div className="sin-sesion">SIN SESIÓN ACTIVA.</div>
   }
 }

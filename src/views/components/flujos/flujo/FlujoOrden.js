@@ -140,7 +140,7 @@ const FlujoOrden = (prop) => {
       return <div className="sin-array">AÚN NO EXISTE ORDEN DE COMPRA.</div>
     }
   } else {
-    history.push('/dashboard')
+    history.push('/')
     return <div className="sin-sesion">SIN SESIÓN ACTIVA.</div>
   }
 }

@@ -241,6 +241,7 @@ const EditarPerfilRol = () => {
       )
     }
   } else {
+    history.push('/')
     return <div className="sin-sesion">SIN SESIÓN ACTIVA.</div>
   }
 }

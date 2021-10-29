@@ -190,7 +190,7 @@ const NuevoEstadoFlujo = () => {
       </div>
     )
   } else {
-    history.push('/dashboard')
+    history.push('/')
     return <div className="sin-sesion">SIN SESIÓN ACTIVA.</div>
   }
 }

@@ -74,7 +74,7 @@ const FlujoIngreso = (prop) => {
       return <div className="sin-array">AÚN NO EXISTE UN INGRESO A BODEGA.</div>
     }
   } else {
-    history.push('/dashboard')
+    history.push('/')
     return <div className="sin-sesion">SIN SESIÓN ACTIVA.</div>
   }
 }

@@ -46,9 +46,9 @@ const Usuarios = () => {
         setPermisos(items.detalle)
       }
     })
-    //window.addEventListener('beforeunload', (ev) => {
-    //console.log(ev)
-    //ev.preventDefault()
+    //window.addEventListener('beforeunload', function (ev) {
+    //windowpostSesionUsuario(idUsuario, null, null, '2')
+    //clear()
     //return (ev.returnValue = 'Esta seguro de cerrar sesión?')
     //})
     return () => (mounted = false)
@@ -307,7 +307,7 @@ const Usuarios = () => {
       </>
     )
   } else {
-    history.push('/dashboard')
+    history.push('/')
     return <div className="sin-sesion">SIN SESIÓN ACTIVA.</div>
   }
 }

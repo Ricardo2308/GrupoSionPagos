@@ -96,7 +96,7 @@ const FlujoOferta = (prop) => {
       return <div className="sin-array">AÚN NO EXISTE OFERTA DE COMPRA.</div>
     }
   } else {
-    history.push('/dashboard')
+    history.push('/')
     return <div className="sin-sesion">SIN SESIÓN ACTIVA.</div>
   }
 }

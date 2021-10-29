@@ -303,7 +303,7 @@ const Register = (props) => {
       return <div className="sin-sesion">NO ESTÁS AUTORIZADO PARA CREAR UN USUARIO.</div>
     }
   } else {
-    history.push('/dashboard')
+    history.push('/')
     return <div className="sin-sesion">SIN SESIÓN ACTIVA.</div>
   }
 }
