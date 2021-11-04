@@ -5,6 +5,7 @@ import { FiUser, FiLock, FiEye } from 'react-icons/fi'
 import { getUsuarios } from '../../../services/getUsuarios'
 import { getPoliticas } from '../../../services/getPoliticas'
 import { getCantidadDias } from '../../../services/getCantidadDias'
+import { verificarConexion } from '../../../services/verificarConexion'
 import { postLogPassword } from '../../../services/postLogPassword'
 import { postSesionUsuario } from '../../../services/postSesionUsuario'
 import { postLogLogin } from '../../../services/postLogLogin'
@@ -72,6 +73,15 @@ const Login = () => {
     return result
   }
 
+  async function estoyConectado(id) {
+    let result = false
+    const respuesta = await verificarConexion(id)
+    if (respuesta == 'Conectado') {
+      result = true
+    }
+    return result
+  }
+
   async function crearSesion(id) {
     const publicIp = require('public-ip')
     let agente = window.navigator.userAgent
@@ -129,22 +139,33 @@ const Login = () => {
             if (item.activo == 1 && item.eliminado == 0) {
               revisarPolitica(item.id, item.cambia_password).then((respuesta) => {
                 if (respuesta == true) {
-                  crearSesion(item.id).then((sesion) => {
-                    if (sesion == true) {
-                      let limiteconexion = obtenerPolitica('_LIMITE_TIEMPO_CONEXION_')
-                      const sign = require('jwt-encode')
-                      const secret = 'secret'
-                      const data = {
-                        email: item.email,
-                        name: item.nombre + ' ' + item.apellido,
-                        user_name: item.nombre_usuario,
-                        id: item.id,
-                        estado: item.activo,
-                        limiteconexion: limiteconexion,
-                      }
-                      const jwt = sign(data, secret)
-                      saveJWT(jwt)
-                      history.push('/home')
+                  estoyConectado(item.id).then((conexion) => {
+                    if (conexion == true) {
+                      setShow(true)
+                      setTitulo('Aviso!')
+                      setColor('info')
+                      setMensaje(
+                        'Parece que tu usuario tiene una sesión activa, cierra sesión y vuelve a intentarlo.',
+                      )
+                    } else {
+                      crearSesion(item.id).then((sesion) => {
+                        if (sesion == true) {
+                          let limiteconexion = obtenerPolitica('_LIMITE_TIEMPO_CONEXION_')
+                          const sign = require('jwt-encode')
+                          const secret = 'secret'
+                          const data = {
+                            email: item.email,
+                            name: item.nombre + ' ' + item.apellido,
+                            user_name: item.nombre_usuario,
+                            id: item.id,
+                            estado: item.activo,
+                            limiteconexion: limiteconexion,
+                          }
+                          const jwt = sign(data, secret)
+                          saveJWT(jwt)
+                          history.push('/home')
+                        }
+                      })
                     }
                   })
                 }
