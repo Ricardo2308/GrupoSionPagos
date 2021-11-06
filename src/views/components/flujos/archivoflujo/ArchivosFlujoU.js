@@ -46,8 +46,7 @@ const ArchivosFlujo = () => {
   const filteredItems = results.filter(
     (item) =>
       item.nombre_usuario.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.descripcion.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.activo.toLowerCase().includes(filterText.toLowerCase()),
+      item.descripcion.toLowerCase().includes(filterText.toLowerCase()),
   )
   const cerrarPDF = () => setMostrar(false)
 

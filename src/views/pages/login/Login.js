@@ -183,7 +183,7 @@ const Login = () => {
             setTitulo('Error!')
             setColor('danger')
             setMensaje('Credenciales incorrectas. Vuelva a intentarlo.')
-            if (item.activo == 1) {
+            if (item.activo == 1 && item.eliminado == 0) {
               let valor = obtenerPolitica('_LIMITE_ERROR_LOGIN_')
               postLogLogin(item.id, valor)
             }

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Alert, Modal, Button, FormControl } from 'react-bootstrap'
 import DataTable, { createTheme } from 'react-data-table-component'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { getFlujos } from '../../../../services/getFlujos'
 import { postFlujos } from '../../../../services/postFlujos'
 import { postFlujoDetalle } from '../../../../services/postFlujoDetalle'
@@ -14,9 +15,11 @@ const FilterComponent = (prop) => (
   <div className="div-search">
     <Button
       variant="warning"
+      size="sm"
       className="btn-compensacion"
       onClick={prop.enviar}
       title="Limpiar Campo Búsqueda"
+      disabled={prop.deshabilitar}
     >
       Compensar Pagos
     </Button>
@@ -43,6 +46,7 @@ const PendientesPago = (prop) => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [permisos, setPermisos] = useState([])
   const [pagos, setPagos] = useState([])
   const [show, setShow] = useState(false)
   const [showAlert, setShowAlert] = useState(false)
@@ -55,8 +59,7 @@ const PendientesPago = (prop) => {
     (item) =>
       item.comments.toLowerCase().includes(filterText.toLowerCase()) ||
       item.doc_date.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.doc_num.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.activo.toLowerCase().includes(filterText.toLowerCase()),
+      item.doc_num.toLowerCase().includes(filterText.toLowerCase()),
   )
   const [form, setValues] = useState({
     pagos: '',
@@ -75,8 +78,24 @@ const PendientesPago = (prop) => {
         setList(items.flujos)
       }
     })
+    getPerfilUsuario(idUsuario, '2').then((items) => {
+      if (mounted) {
+        setPermisos(items.detalle)
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  function ExistePermiso(objeto) {
+    let result = false
+    for (let item of permisos) {
+      console.log(item.objeto)
+      if (objeto == item.objeto) {
+        result = true
+      }
+    }
+    return result
+  }
 
   const handleInput = (event) => {
     setValues({
@@ -213,22 +232,12 @@ const PendientesPago = (prop) => {
     },
   ])
 
-  const subHeaderComponentMemo = useMemo(() => {
-    const handleClear = () => {
-      if (filterText) {
-        setResetPaginationToggle(!resetPaginationToggle)
-        setFilterText('')
-      }
+  const handleClear = () => {
+    if (filterText) {
+      setResetPaginationToggle(!resetPaginationToggle)
+      setFilterText('')
     }
-    return (
-      <FilterComponent
-        onFilter={(e) => setFilterText(e.target.value)}
-        onClear={handleClear}
-        filterText={filterText}
-        enviar={mostrarModal}
-      />
-    )
-  }, [filterText, resetPaginationToggle])
+  }
 
   function mostrarModal() {
     let pagos = []
@@ -250,6 +259,10 @@ const PendientesPago = (prop) => {
   }
 
   if (session) {
+    let deshabilitar = false
+    if (!ExistePermiso('Modulo Compensacion Pagos')) {
+      deshabilitar = true
+    }
     return (
       <>
         <Alert show={showAlert} variant={color} onClose={() => setShowAlert(false)} dismissible>
@@ -270,6 +283,15 @@ const PendientesPago = (prop) => {
             </Button>
           </Modal.Footer>
         </Modal>
+        <div className="float-right" style={{ marginBottom: '10px' }}>
+          <FilterComponent
+            onFilter={(e) => setFilterText(e.target.value)}
+            onClear={handleClear}
+            filterText={filterText}
+            enviar={mostrarModal}
+            deshabilitar={deshabilitar}
+          />
+        </div>
         <DataTable
           columns={columns}
           noDataComponent="No hay pagos que mostrar"
@@ -279,8 +301,6 @@ const PendientesPago = (prop) => {
           pagination
           paginationPerPage={5}
           paginationResetDefaultPage={resetPaginationToggle}
-          subHeader
-          subHeaderComponent={subHeaderComponentMemo}
           persistTableHead
         />
       </>
