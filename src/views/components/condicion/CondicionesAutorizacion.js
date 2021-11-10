@@ -32,6 +32,7 @@ const Cards = () => {
 
   useEffect(() => {
     let mounted = true
+    const array = ['Modulo Condiciones', 'Modulo Grupos Autorizacion']
     let idUsuario = 0
     if (session) {
       idUsuario = session.id
@@ -41,7 +42,7 @@ const Cards = () => {
         setList(items.condiciones)
       }
     })
-    getPerfilUsuario(idUsuario, '2').then((items) => {
+    getPerfilUsuario(idUsuario, '2', array).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { Row, Col, Container } from 'react-bootstrap'
 import { useSession } from 'react-use-session'
 import { useHistory } from 'react-router-dom'
-import { useIdleTimer } from 'react-idle-timer'
 import { getFlujoSolicitud } from '../../../../services/getFlujoSolicitud'
 import '../../../../scss/estilos.scss'
 
@@ -13,7 +12,7 @@ const FlujoFactura = (prop) => {
 
   useEffect(() => {
     let mounted = true
-    getFlujoSolicitud(prop.id_flujo, null).then((items) => {
+    getFlujoSolicitud(0, null).then((items) => {
       if (mounted) {
         setList(items.solicitud[0])
       }

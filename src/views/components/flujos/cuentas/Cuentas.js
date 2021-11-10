@@ -29,6 +29,7 @@ const Cuentas = () => {
 
   useEffect(() => {
     let mounted = true
+    const array = ['Modulo Cuentas']
     let idUsuario = 0
     if (session) {
       idUsuario = session.id
@@ -39,7 +40,7 @@ const Cuentas = () => {
         setList(items.cuentas)
       }
     })
-    getPerfilUsuario(idUsuario, '2').then((items) => {
+    getPerfilUsuario(idUsuario, '2', array).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }

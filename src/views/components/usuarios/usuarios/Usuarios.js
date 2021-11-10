@@ -32,6 +32,7 @@ const Usuarios = () => {
 
   useEffect(() => {
     let mounted = true
+    const array = ['Modulo Usuarios', 'Modulo Grupos Autorizacion']
     let idUsuario = 0
     if (session) {
       idUsuario = session.id
@@ -41,8 +42,9 @@ const Usuarios = () => {
         setList(items.users)
       }
     })
-    getPerfilUsuario(idUsuario, '2').then((items) => {
+    getPerfilUsuario(idUsuario, '2', array).then((items) => {
       if (mounted) {
+        console.log(items.detalle)
         setPermisos(items.detalle)
       }
     })

@@ -32,6 +32,7 @@ const TiposFlujo = () => {
 
   useEffect(() => {
     let mounted = true
+    const array = ['Modulo Tipos Flujo']
     let idUsuario = 0
     if (session) {
       idUsuario = session.id
@@ -41,7 +42,7 @@ const TiposFlujo = () => {
         setList(items.tipos)
       }
     })
-    getPerfilUsuario(idUsuario, '2').then((items) => {
+    getPerfilUsuario(idUsuario, '2', array).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }

@@ -32,6 +32,7 @@ const Perfiles = () => {
 
   useEffect(() => {
     let mounted = true
+    const array = ['Modulo Perfiles']
     let idUsuario = 0
     if (session) {
       idUsuario = session.id
@@ -41,7 +42,7 @@ const Perfiles = () => {
         setList(items.perfiles)
       }
     })
-    getPerfilUsuario(idUsuario, '2').then((items) => {
+    getPerfilUsuario(idUsuario, '2', array).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }

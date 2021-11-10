@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { Button, FormControl } from 'react-bootstrap'
-import { useIdleTimer } from 'react-idle-timer'
 import DataTable, { createTheme } from 'react-data-table-component'
 import { getBitacora } from '../../../../services/getBitacora'
 import { postNotificacion } from '../../../../services/postNotificacion'

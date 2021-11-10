@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Tab, Tabs, Modal, Button } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import FlujoSolicitud from './FlujoSolicitud'
@@ -12,6 +12,11 @@ import FlujoFactura from './FlujoFactura'
 import FlujoBitacora from './FlujoBitacora'
 import { useIdleTimer } from 'react-idle-timer'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
+import { getFlujoSolicitud } from '../../../../services/getFlujoSolicitud'
+import { getArchivosFlujo } from '../../../../services/getArchivosFlujo'
+import { getFlujoIngreso } from '../../../../services/getFlujoIngreso'
+import { getFlujoOferta } from '../../../../services/getFlujoOferta'
+import { getFlujoOrden } from '../../../../services/getFlujoOrden'
 import '../../../../scss/estilos.scss'
 
 const CompensacionTabs = () => {
@@ -21,6 +26,41 @@ const CompensacionTabs = () => {
   const [show, setShow] = useState(false)
   const [mensaje, setMensaje] = useState('')
   const { session, clear } = useSession('PendrogonIT-Session')
+  const [solicitud, setSolicitud] = useState([])
+  const [oferta, setOferta] = useState([])
+  const [orden, setOrden] = useState([])
+  const [ingreso, setIngreso] = useState([])
+  const [archivos, setArchivos] = useState([])
+
+  useEffect(() => {
+    let mounted = true
+    getFlujoSolicitud(location.id_flujo, null).then((items) => {
+      if (mounted) {
+        setSolicitud(items.solicitud[0])
+      }
+    })
+    getFlujoOferta(location.id_flujo, null).then((items) => {
+      if (mounted) {
+        setOferta(items.oferta[0])
+      }
+    })
+    getFlujoOrden(location.id_flujo, null).then((items) => {
+      if (mounted) {
+        setOrden(items.orden[0])
+      }
+    })
+    getFlujoIngreso(location.id_flujo).then((items) => {
+      if (mounted) {
+        setIngreso(items.ingreso[0])
+      }
+    })
+    getArchivosFlujo(location.id_flujo, null).then((items) => {
+      if (mounted) {
+        setArchivos(items.archivos)
+      }
+    })
+    return () => (mounted = false)
+  }, [])
 
   function iniciar(minutos) {
     let segundos = 60 * minutos
@@ -81,6 +121,27 @@ const CompensacionTabs = () => {
 
   if (session) {
     if (location.id_flujo) {
+      let MostrarSolicitud = false
+      let MostrarOferta = false
+      let MostrarOrden = false
+      let MostrarIngreso = false
+      let MostrarArchivos = false
+      let MostrarFacturas = false
+      if (solicitud) {
+        MostrarSolicitud = true
+      }
+      if (oferta) {
+        MostrarOferta = true
+      }
+      if (orden) {
+        MostrarOrden = true
+      }
+      if (ingreso) {
+        MostrarIngreso = true
+      }
+      if (archivos.length > 0) {
+        MostrarArchivos = true
+      }
       return (
         <div className="div-tabs">
           <Modal responsive variant="primary" show={show} onHide={() => Cancelar(2)} centered>
@@ -99,30 +160,51 @@ const CompensacionTabs = () => {
           </Modal>
           <div className="div-content">
             <div style={{ width: '100%' }}>
-              <Tabs defaultActiveKey="solicitud" id="uncontrolled-tab-example" className="mb-3">
-                <Tab eventKey="solicitud" title="Solicitud">
-                  <FlujoSolicitud id_flujo={location.id_flujo} />
+              <Tabs defaultActiveKey="detalle" id="uncontrolled-tab-example" className="mb-3">
+                <Tab
+                  eventKey="solicitud"
+                  title="Solicitud"
+                  tabClassName={!MostrarSolicitud ? 'd-none' : ''}
+                >
+                  <FlujoSolicitud results={solicitud} />
                 </Tab>
-                <Tab eventKey="oferta" title="Oferta Compra">
-                  <FlujoOferta id_flujo={location.id_flujo} />
+                <Tab
+                  eventKey="oferta"
+                  title="Oferta Compra"
+                  tabClassName={!MostrarOferta ? 'd-none' : ''}
+                >
+                  <FlujoOferta results={oferta} />
                 </Tab>
-                <Tab eventKey="orden" title="Orden Compra">
-                  <FlujoOrden id_flujo={location.id_flujo} />
+                <Tab
+                  eventKey="orden"
+                  title="Orden Compra"
+                  tabClassName={!MostrarOrden ? 'd-none' : ''}
+                >
+                  <FlujoOrden results={orden} />
                 </Tab>
-                <Tab eventKey="ingreso" title="Ingreso Bodega">
-                  <FlujoIngreso id_flujo={location.id_flujo} />
+                <Tab
+                  eventKey="ingreso"
+                  title="Ingreso Bodega"
+                  tabClassName={!MostrarIngreso ? 'd-none' : ''}
+                >
+                  <FlujoIngreso results={ingreso} />
                 </Tab>
-                <Tab eventKey="facturas" title="Facturas">
+                <Tab
+                  eventKey="facturas"
+                  title="Facturas"
+                  tabClassName={!MostrarFacturas ? 'd-none' : ''}
+                >
                   <FlujoFactura id_flujo={location.id_flujo} />
                 </Tab>
                 <Tab eventKey="detalle" title="Detalle">
                   <DetalleFlujo id_flujo={location.id_flujo} />
                 </Tab>
-                <Tab eventKey="archivos" title="Archivos">
-                  <ArchivosFlujo
-                    id_flujo={location.id_flujo}
-                    deshabilitar={location.deshabilitar}
-                  />
+                <Tab
+                  eventKey="archivos"
+                  title="Archivos"
+                  tabClassName={!MostrarArchivos ? 'd-none' : ''}
+                >
+                  <ArchivosFlujo results={archivos} />
                 </Tab>
                 <Tab eventKey="bitacora" title="Bitácora">
                   <FlujoBitacora id_flujo={location.id_flujo} />

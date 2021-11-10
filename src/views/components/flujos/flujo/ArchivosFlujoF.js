@@ -35,11 +35,6 @@ const ArchivosFlujo = (prop) => {
 
   useEffect(() => {
     let mounted = true
-    getArchivosFlujo(prop.id_flujo, null).then((items) => {
-      if (mounted) {
-        setList(items.archivos)
-      }
-    })
     getPerfilUsuario(session.id, '2').then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
@@ -127,7 +122,7 @@ const ArchivosFlujo = (prop) => {
             </CTableRow>
           </CTableHead>
           <CTableBody>
-            {results.map((item, i) => {
+            {prop.results.map((item, i) => {
               let estado = 'Inactivo'
               if (item.eliminado == 0) {
                 if (item.activo == 1) {

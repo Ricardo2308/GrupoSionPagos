@@ -69,16 +69,18 @@ const PendientesPago = (prop) => {
 
   useEffect(() => {
     let mounted = true
+    const array = ['Modulo Compensacion Pagos']
     let idUsuario = 0
     if (session) {
       idUsuario = session.id
     }
     getFlujos(null, prop.tipo, idUsuario, '2', null, null).then((items) => {
       if (mounted) {
+        console.log(items.flujos)
         setList(items.flujos)
       }
     })
-    getPerfilUsuario(idUsuario, '2').then((items) => {
+    getPerfilUsuario(idUsuario, '2', array).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
