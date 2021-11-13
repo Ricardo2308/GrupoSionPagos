@@ -1,4 +1,4 @@
-const API = `${process.env.REACT_APP_API_URL}flujos`
+const API = `${process.env.REACT_APP_API_URL}postflujos`
 
 export function postFlujos(idFlujo, nivel, id_grupo, opcion, pagos) {
   let ApiFinal = API
