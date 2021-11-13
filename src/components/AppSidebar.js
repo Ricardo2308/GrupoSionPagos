@@ -2,6 +2,10 @@ import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useSession } from 'react-use-session'
 import { useHistory } from 'react-router-dom'
+import { BiUserCircle } from 'react-icons/bi'
+import { RiBankLine } from 'react-icons/ri'
+import { FaCoins } from 'react-icons/fa'
+import logo from '../assets/icons/GrupoSion.png'
 import {
   CSidebar,
   CSidebarHeader,
@@ -13,10 +17,6 @@ import {
   CNavGroup,
   CNavLink,
 } from '@coreui/react'
-import { BiUserCircle } from 'react-icons/bi'
-import { RiBankLine } from 'react-icons/ri'
-import { FaCoins } from 'react-icons/fa'
-import logo from '../assets/icons/GrupoSion.png'
 
 import {
   FiBook,
@@ -72,49 +72,49 @@ const AppSidebar = () => {
         </CSidebarNav>
         */}
         <CSidebarNav>
-          <CCreateNavItem>
-            <CNavLink onClick={() => history.push('/dashboard')}>
+          <CNavItem>
+            <CNavLink href="#/dashboard">
               <img src={logo} style={{ width: '15%', marginRight: '15px', marginLeft: '30px' }} />
               Dashboard
             </CNavLink>
-          </CCreateNavItem>
+          </CNavItem>
           <CNavTitle>Módulos</CNavTitle>
           <CNavGroup
             toggler="Seguridad"
             icon={<FiLock size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />}
           >
             <CNavItem>
-              <CNavLink onClick={() => history.push('/usuarios')}>
+              <CNavLink href="#/usuarios">
                 <FiUsers size={16} style={{ marginRight: '4px' }} />
                 Usuarios
               </CNavLink>
             </CNavItem>
             <CNavItem>
-              <CNavLink onClick={() => history.push('/conectados')}>
+              <CNavLink href="#/conectados">
                 <FiUsers size={16} style={{ marginRight: '4px' }} />
                 Conectados
               </CNavLink>
             </CNavItem>
             <CNavItem>
-              <CNavLink onClick={() => history.push('/perfiles')}>
+              <CNavLink href="#/perfiles">
                 <BiUserCircle size={18} style={{ marginRight: '4px' }} />
                 Perfiles
               </CNavLink>
             </CNavItem>
             <CNavItem>
-              <CNavLink onClick={() => history.push('/roles')}>
+              <CNavLink href="#/roles">
                 <FiSettings size={16} style={{ marginRight: '4px' }} />
                 Roles
               </CNavLink>
             </CNavItem>
             <CNavItem>
-              <CNavLink onClick={() => history.push('/permisos')}>
+              <CNavLink href="#/permisos">
                 <FiUserCheck size={16} style={{ marginRight: '4px' }} />
                 Permisos
               </CNavLink>
             </CNavItem>
             <CNavItem>
-              <CNavLink onClick={() => history.push('/politicas')}>
+              <CNavLink href="#/politicas">
                 <FiBook size={16} style={{ marginRight: '4px' }} />
                 Políticas
               </CNavLink>
@@ -126,55 +126,55 @@ const AppSidebar = () => {
             icon={<FiCreditCard size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />}
           >
             <CNavItem>
-              <CNavLink onClick={() => history.push('/condiciones')}>
+              <CNavLink href="#/condiciones">
                 <FiAlertOctagon size={16} style={{ marginRight: '4px' }} />
                 Condiciones
               </CNavLink>
             </CNavItem>
             <CNavItem>
-              <CNavLink onClick={() => history.push('/grupos')}>
+              <CNavLink href="#/grupos">
                 <FiUsers size={16} style={{ marginRight: '4px' }} />
                 Grupos
               </CNavLink>
             </CNavItem>
             <CNavItem>
-              <CNavLink onClick={() => history.push('/autorizacion')}>
+              <CNavLink href="#/autorizacion">
                 <FiThumbsUp size={16} style={{ marginRight: '4px' }} />
                 Autorizacion
               </CNavLink>
             </CNavItem>
             <CNavItem>
-              <CNavLink onClick={() => history.push('/estadosflujo')}>
+              <CNavLink href="#/estadosflujo">
                 <FiGrid size={16} style={{ marginRight: '4px' }} />
                 Estado Pago
               </CNavLink>
             </CNavItem>
             <CNavItem>
-              <CNavLink onClick={() => history.push('/tipoflujo')}>
+              <CNavLink href="#/tipoflujo">
                 <FiGitPullRequest size={16} style={{ marginRight: '4px' }} />
                 Tipo Flujo
               </CNavLink>
             </CNavItem>
             <CNavItem>
-              <CNavLink onClick={() => history.push('/archivoflujo')}>
+              <CNavLink href="#/archivoflujo">
                 <FiFile size={16} style={{ marginRight: '4px' }} />
                 Archivos Pago
               </CNavLink>
             </CNavItem>
             <CNavItem>
-              <CNavLink onClick={() => history.push('/bancos')}>
+              <CNavLink href="#/bancos">
                 <RiBankLine size={18} style={{ marginRight: '4px' }} />
                 Bancos
               </CNavLink>
             </CNavItem>
             <CNavItem>
-              <CNavLink onClick={() => history.push('/monedas')}>
+              <CNavLink href="#/monedas">
                 <FaCoins size={16} style={{ marginRight: '4px' }} />
                 Monedas
               </CNavLink>
             </CNavItem>
             <CNavItem>
-              <CNavLink onClick={() => history.push('/cuentas')}>
+              <CNavLink href="#/cuentas">
                 <FiCreditCard size={16} style={{ marginRight: '4px' }} />
                 Cuentas
               </CNavLink>
@@ -185,15 +185,13 @@ const AppSidebar = () => {
               icon={<FiCreditCard size={16} style={{ marginRight: '4px' }} />}
             >
               <CNavItem>
-                <CNavLink onClick={() => history.push('/pagos/bancario')}>Bancaria</CNavLink>
+                <CNavLink href="#/pagos/bancario">Bancaria</CNavLink>
               </CNavItem>
               <CNavItem>
-                <CNavLink onClick={() => history.push('/pagos/transferencia')}>
-                  Transferencia
-                </CNavLink>
+                <CNavLink href="#/pagos/transferencia">Transferencia</CNavLink>
               </CNavItem>
               <CNavItem>
-                <CNavLink onClick={() => history.push('/pagos/interna')}>Interna</CNavLink>
+                <CNavLink href="#/pagos/interna">Interna</CNavLink>
               </CNavItem>
             </CNavGroup>
             <CNavGroup
@@ -202,15 +200,13 @@ const AppSidebar = () => {
               icon={<FiCreditCard size={16} style={{ marginRight: '4px' }} />}
             >
               <CNavItem>
-                <CNavLink onClick={() => history.push('/compensacion/bancario')}>Bancaria</CNavLink>
+                <CNavLink href="#/compensacion/bancario">Bancaria</CNavLink>
               </CNavItem>
               <CNavItem>
-                <CNavLink onClick={() => history.push('/compensacion/transferencia')}>
-                  Transferencia
-                </CNavLink>
+                <CNavLink href="#/compensacion/transferencia">Transferencia</CNavLink>
               </CNavItem>
               <CNavItem>
-                <CNavLink onClick={() => history.push('/compensacion/interna')}>Interna</CNavLink>
+                <CNavLink href="#/compensacion/interna">Interna</CNavLink>
               </CNavItem>
             </CNavGroup>
           </CNavGroup>
