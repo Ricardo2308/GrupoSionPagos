@@ -5,7 +5,7 @@ import { useIdleTimer } from 'react-idle-timer'
 import { Button, Modal } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
 import { postSesionUsuario } from '../../services/postSesionUsuario'
-import { getFlujos } from '../../services/getFlujos'
+import { getReportesFlujos } from '../../services/getReportesFlujos'
 import { useSession } from 'react-use-session'
 import { FaSearch } from 'react-icons/fa'
 import '../../scss/estilos.scss'
@@ -43,7 +43,7 @@ const Dashboard = () => {
       years.push(2021 + i)
     }
     setYears(years)
-    getFlujos('0', null, null, '1', '0', '0').then((items) => {
+    getReportesFlujos('1', '0', '0').then((items) => {
       for (const pago of items.flujos) {
         estados.push(parseInt(pago.CantidadEstados))
         labelestados.push(pago.estado)
@@ -51,7 +51,7 @@ const Dashboard = () => {
       setList(estados)
       setEstados(labelestados)
     })
-    getFlujos('0', null, null, '2', '0', '0').then((items) => {
+    getReportesFlujos('2', '0', '0').then((items) => {
       for (const pago of items.flujos) {
         pagos.push(parseInt(pago.PagosAprobados))
         labeltipos.push(pago.tipo)
@@ -59,13 +59,13 @@ const Dashboard = () => {
       setPagos(pagos)
       setTipos(labeltipos)
     })
-    getFlujos('0', null, null, '4', '0', '0').then((items) => {
+    getReportesFlujos('3', '0', '0').then((items) => {
       for (const pago of items.flujos) {
         promedioT.push(parseInt(pago.promedioPorNivel))
       }
       setPromedioT(promedioT)
     })
-    getFlujos('0', null, null, '5', '0', '0').then((items) => {
+    getReportesFlujos('4', '0', '0').then((items) => {
       for (const pago of items.flujos) {
         semaforos.push(parseInt(pago.cantidad))
         semaforosNom.push(pago.nombreSemaforo)
@@ -81,7 +81,7 @@ const Dashboard = () => {
       let promedioT = []
       let semaforos = []
       let semaforosNom = []
-      getFlujos('0', null, null, '1', '0', '0').then((items) => {
+      getReportesFlujos('1', '0', '0').then((items) => {
         for (const pago of items.flujos) {
           estados.push(parseInt(pago.CantidadEstados))
           labelestados.push(pago.estado)
@@ -89,7 +89,7 @@ const Dashboard = () => {
         setList(estados)
         setEstados(labelestados)
       })
-      getFlujos('0', null, null, '2', '0', '0').then((items) => {
+      getReportesFlujos('2', '0', '0').then((items) => {
         for (const pago of items.flujos) {
           pagos.push(parseInt(pago.PagosAprobados))
           labeltipos.push(pago.tipo)
@@ -97,13 +97,13 @@ const Dashboard = () => {
         setPagos(pagos)
         setTipos(labeltipos)
       })
-      getFlujos('0', null, null, '4', '0', '0').then((items) => {
+      getReportesFlujos('3', '0', '0').then((items) => {
         for (const pago of items.flujos) {
           promedioT.push(parseInt(pago.promedioPorNivel))
         }
         setPromedioT(promedioT)
       })
-      getFlujos('0', null, null, '5', '0', '0').then((items) => {
+      getReportesFlujos('4', '0', '0').then((items) => {
         for (const pago of items.flujos) {
           semaforos.push(parseInt(pago.cantidad))
           semaforosNom.push(pago.nombreSemaforo)
@@ -132,7 +132,7 @@ const Dashboard = () => {
     let promedioT = []
     let semaforos = []
     let semaforosNom = []
-    getFlujos('0', null, null, '1', form.year, form.mes).then((items) => {
+    getReportesFlujos('1', form.year, form.mes).then((items) => {
       for (const pago of items.flujos) {
         estados.push(parseInt(pago.CantidadEstados))
         labelestados.push(pago.estado)
@@ -140,7 +140,7 @@ const Dashboard = () => {
       setList(estados)
       setEstados(labelestados)
     })
-    getFlujos('0', null, null, '2', form.year, form.mes).then((items) => {
+    getReportesFlujos('2', form.year, form.mes).then((items) => {
       for (const pago of items.flujos) {
         pagos.push(parseInt(pago.PagosAprobados))
         labeltipos.push(pago.tipo)
@@ -148,13 +148,13 @@ const Dashboard = () => {
       setPagos(pagos)
       setTipos(labeltipos)
     })
-    getFlujos('0', null, null, '4', form.year, form.mes).then((items) => {
+    getReportesFlujos('3', form.year, form.mes).then((items) => {
       for (const pago of items.flujos) {
         promedioT.push(parseInt(pago.promedioPorNivel))
       }
       setPromedioT(promedioT)
     })
-    getFlujos('0', null, null, '5', form.year, form.year).then((items) => {
+    getReportesFlujos('4', form.year, form.year).then((items) => {
       for (const pago of items.flujos) {
         semaforos.push(parseInt(pago.cantidad))
         semaforosNom.push(pago.nombreSemaforo)

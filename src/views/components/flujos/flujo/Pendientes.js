@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Button, FormControl } from 'react-bootstrap'
 import DataTable, { createTheme } from 'react-data-table-component'
-import { getFlujos } from '../../../../services/getFlujos'
+import { getPendientesAutorizacion } from '../../../../services/getPendientesAutorizacion'
 import { useSession } from 'react-use-session'
 import { FaList, FaFileUpload, FaUsersCog } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
@@ -47,7 +47,7 @@ const Pendientes = (prop) => {
     if (session) {
       idUsuario = session.id
     }
-    getFlujos(null, prop.tipo, idUsuario, '1', null, null).then((items) => {
+    getPendientesAutorizacion(prop.tipo, idUsuario).then((items) => {
       if (mounted) {
         setList(items.flujos)
       }

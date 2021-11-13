@@ -1,5 +1,5 @@
-import React from 'react'
-import { Row, Col, Container } from 'react-bootstrap'
+import React, { useMemo } from 'react'
+import DataTable, { createTheme } from 'react-data-table-component'
 import { useSession } from 'react-use-session'
 import { useHistory } from 'react-router-dom'
 import '../../../../scss/estilos.scss'
@@ -8,50 +8,107 @@ const FlujoOferta = (prop) => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
 
+  const customStyles = {
+    headCells: {
+      style: {
+        paddingLeft: '8px', // override the cell padding for head cells
+        paddingRight: '8px',
+        fontSize: '13px',
+      },
+    },
+  }
+
+  createTheme('solarized', {
+    text: {
+      primary: 'black',
+    },
+    background: {
+      default: 'white',
+    },
+    context: {
+      background: '#cb4b16',
+      text: '#FFFFFF',
+    },
+    divider: {
+      default: '#073642',
+    },
+    action: {
+      button: 'rgba(0,0,0,.54)',
+      hover: 'rgba(0,0,0,.08)',
+      disabled: 'rgba(0,0,0,.12)',
+    },
+  })
+
+  const columns = useMemo(() => [
+    {
+      name: 'Número Documento',
+      selector: 'doc_num',
+      center: true,
+      width: '140px',
+    },
+    {
+      name: 'Fecha Documento',
+      selector: 'doc_date',
+      center: true,
+      width: '140px',
+    },
+    {
+      name: 'Código Tarjeta',
+      selector: 'card_code',
+      center: true,
+      width: '140px',
+    },
+    {
+      name: 'Nombre Tarjeta',
+      selector: 'card_name',
+      center: true,
+      width: '500px',
+    },
+    {
+      name: 'Código Item',
+      selector: 'item_code',
+      center: true,
+      width: '100px',
+    },
+    {
+      name: 'Descripción',
+      selector: 'description',
+      center: true,
+      width: '700px',
+    },
+    {
+      name: 'Código UOM',
+      selector: 'uom_code',
+      center: true,
+      width: '100px',
+    },
+    {
+      name: 'Precio',
+      selector: 'price',
+      center: true,
+      width: '130px',
+    },
+    {
+      name: 'Cantidad',
+      selector: 'quantity',
+      center: true,
+    },
+  ])
+
   if (session) {
     if (prop.results) {
       return (
-        <div>
-          <Container className="mb-0 border">
-            <Row className="mb-0 border">
-              <Col className="mb-0 border column">Número Documento</Col>
-              <Col className="mb-0 border">{prop.results.doc_num}</Col>
-            </Row>
-            <Row className="mb-0 border">
-              <Col className="mb-0 border column">Fecha Documento</Col>
-              <Col className="mb-0 border">{prop.results.doc_date}</Col>
-            </Row>
-            <Row className="mb-0 border">
-              <Col className="mb-0 border column">Código Tarjeta</Col>
-              <Col className="mb-0 border">{prop.results.card_code}</Col>
-            </Row>
-            <Row className="mb-0 border">
-              <Col className="mb-0 border column">Nombre Tarjeta</Col>
-              <Col className="mb-0 border">{prop.results.card_name}</Col>
-            </Row>
-            <Row className="mb-0 border">
-              <Col className="mb-0 border column">Código Item</Col>
-              <Col className="mb-0 border">{prop.results.item_code}</Col>
-            </Row>
-            <Row className="mb-0 border">
-              <Col className="mb-0 border column">Descripción</Col>
-              <Col className="mb-0 border">{prop.results.description}</Col>
-            </Row>
-            <Row className="mb-0 border">
-              <Col className="mb-0 border column">Código UOM</Col>
-              <Col className="mb-0 border">{prop.results.uom_code}</Col>
-            </Row>
-            <Row className="mb-0 border">
-              <Col className="mb-0 border column">Precio</Col>
-              <Col className="mb-0 border">{prop.results.price}</Col>
-            </Row>
-            <Row className="mb-0 border">
-              <Col className="mb-0 border column">Cantidad</Col>
-              <Col className="mb-0 border">{prop.results.quantity}</Col>
-            </Row>
-          </Container>
-          <br />
-        </div>
+        <DataTable
+          columns={columns}
+          data={prop.results}
+          noDataComponent="No hay ingresos a bodega que mostrar"
+          customStyles={customStyles}
+          theme="solarized"
+          pagination
+          paginationPerPage={5}
+          responsive={true}
+          persistTableHead
+        />
       )
     } else {
       return <div className="sin-array">AÚN NO EXISTE OFERTA DE COMPRA.</div>

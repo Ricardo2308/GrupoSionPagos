@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom'
 import { Alert, Modal, Button, FormControl } from 'react-bootstrap'
 import DataTable, { createTheme } from 'react-data-table-component'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
-import { getFlujos } from '../../../../services/getFlujos'
+import { getPendientesCompensacion } from '../../../../services/getPendientesCompensacion'
 import { postFlujos } from '../../../../services/postFlujos'
 import { postFlujoDetalle } from '../../../../services/postFlujoDetalle'
 import { postNotificacion } from '../../../../services/postNotificacion'
@@ -74,7 +74,7 @@ const PendientesPago = (prop) => {
     if (session) {
       idUsuario = session.id
     }
-    getFlujos(null, prop.tipo, idUsuario, '2', null, null).then((items) => {
+    getPendientesCompensacion(prop.tipo, idUsuario).then((items) => {
       if (mounted) {
         console.log(items.flujos)
         setList(items.flujos)
@@ -121,7 +121,7 @@ const PendientesPago = (prop) => {
       if (bandera == 1) {
         const enviada = await postNotificacion(pagos, session.id, 'compensado.', '')
         if (enviada == 'OK') {
-          await getFlujos(null, prop.tipo, session.id, '2', null, null).then((items) => {
+          await getPendientesCompensacion(prop.tipo, session.id).then((items) => {
             setList(items.flujos)
           })
         }

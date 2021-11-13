@@ -3,7 +3,7 @@ import { Row, Col, Container, Modal } from 'react-bootstrap'
 import { useSession } from 'react-use-session'
 import { useHistory } from 'react-router-dom'
 import { useIdleTimer } from 'react-idle-timer'
-import { getFlujos } from '../../../../services/getFlujos'
+import { getDetalle } from '../../../../services/getDetalle'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import '../../../../scss/estilos.scss'
 
@@ -16,7 +16,7 @@ const DetalleFlujo = (prop) => {
 
   useEffect(() => {
     let mounted = true
-    getFlujos(prop.id_flujo, null, null, '3').then((items) => {
+    getDetalle(prop.id_flujo).then((items) => {
       if (mounted) {
         setList(items.flujos[0])
       }

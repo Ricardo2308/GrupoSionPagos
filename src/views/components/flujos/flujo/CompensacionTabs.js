@@ -36,22 +36,22 @@ const CompensacionTabs = () => {
     let mounted = true
     getFlujoSolicitud(location.id_flujo, null).then((items) => {
       if (mounted) {
-        setSolicitud(items.solicitud[0])
+        setSolicitud(items.solicitud)
       }
     })
     getFlujoOferta(location.id_flujo, null).then((items) => {
       if (mounted) {
-        setOferta(items.oferta[0])
+        setOferta(items.oferta)
       }
     })
     getFlujoOrden(location.id_flujo, null).then((items) => {
       if (mounted) {
-        setOrden(items.orden[0])
+        setOrden(items.orden)
       }
     })
     getFlujoIngreso(location.id_flujo).then((items) => {
       if (mounted) {
-        setIngreso(items.ingreso[0])
+        setIngreso(items.ingreso)
       }
     })
     getArchivosFlujo(location.id_flujo, null).then((items) => {
@@ -127,16 +127,16 @@ const CompensacionTabs = () => {
       let MostrarIngreso = false
       let MostrarArchivos = false
       let MostrarFacturas = false
-      if (solicitud) {
+      if (solicitud.length > 0) {
         MostrarSolicitud = true
       }
-      if (oferta) {
+      if (oferta.length > 0) {
         MostrarOferta = true
       }
-      if (orden) {
+      if (orden.length > 0) {
         MostrarOrden = true
       }
-      if (ingreso) {
+      if (ingreso.length > 0) {
         MostrarIngreso = true
       }
       if (archivos.length > 0) {
