@@ -100,6 +100,17 @@ const Login = () => {
     }
   }
 
+  function clone(obj) {
+    if (obj === null || typeof obj !== 'object') {
+      return obj
+    }
+    var temp = obj.constructor()
+    for (var key in obj) {
+      temp[key] = clone(obj[key])
+    }
+    return temp
+  }
+
   async function revisarPolitica(idUsuario, cambiaPassword) {
     let result = false
     let politica = obtenerPolitica('_LIMITE_CAMBIO_PASSWORD_')

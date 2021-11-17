@@ -32,7 +32,7 @@ const Cards = () => {
 
   useEffect(() => {
     let mounted = true
-    const array = ['Modulo Condiciones', 'Modulo Grupos Autorizacion']
+    let objeto = 'Modulo Condiciones'
     let idUsuario = 0
     if (session) {
       idUsuario = session.id
@@ -42,7 +42,7 @@ const Cards = () => {
         setList(items.condiciones)
       }
     })
-    getPerfilUsuario(idUsuario, '2', array).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -141,20 +141,8 @@ const Cards = () => {
 
   if (session) {
     let deshabilitar = false
-    let deshabilitar_grupos = false
-    if (ExistePermiso('Modulo Condiciones')) {
-      deshabilitar_grupos = true
-    }
-    if (ExistePermiso('Modulo Grupos Autorizacion')) {
+    if (!ExistePermiso('Modulo Condiciones')) {
       deshabilitar = true
-    }
-    if (ExistePermiso('Modulo Condiciones') && ExistePermiso('Modulo Grupos Autorizacion')) {
-      deshabilitar = false
-      deshabilitar_grupos = false
-    }
-    if (!ExistePermiso('Modulo Condiciones') && !ExistePermiso('Modulo Grupos Autorizacion')) {
-      deshabilitar = true
-      deshabilitar_grupos = true
     }
     return (
       <>
@@ -215,7 +203,7 @@ const Cards = () => {
                         color="info"
                         size="sm"
                         title="Consultar Condición Grupos"
-                        disabled={deshabilitar_grupos}
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/condiciones/consulta',
@@ -231,7 +219,7 @@ const Cards = () => {
                         color="success"
                         size="sm"
                         title="Asignar Grupo Autorización"
-                        disabled={deshabilitar_grupos}
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/condiciones/condiciongrupo',

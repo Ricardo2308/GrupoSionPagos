@@ -32,7 +32,7 @@ const Usuarios = () => {
 
   useEffect(() => {
     let mounted = true
-    const array = ['Modulo Usuarios', 'Modulo Grupos Autorizacion']
+    let objeto = 'Modulo Usuarios'
     let idUsuario = 0
     if (session) {
       idUsuario = session.id
@@ -42,9 +42,8 @@ const Usuarios = () => {
         setList(items.users)
       }
     })
-    getPerfilUsuario(idUsuario, '2', array).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
       if (mounted) {
-        console.log(items.detalle)
         setPermisos(items.detalle)
       }
     })
@@ -59,7 +58,7 @@ const Usuarios = () => {
   function ExistePermiso(objeto) {
     let result = false
     for (let item of permisos) {
-      if (objeto === item.objeto) {
+      if (objeto == item.objeto) {
         result = true
       }
     }
@@ -147,19 +146,7 @@ const Usuarios = () => {
 
   if (session) {
     let deshabilitar = false
-    let deshabilitar_grupo = false
-    if (ExistePermiso('Modulo Usuarios')) {
-      deshabilitar_grupo = true
-    }
-    if (ExistePermiso('Modulo Grupos Autorizacion')) {
-      deshabilitar = true
-    }
-    if (ExistePermiso('Modulo Usuarios') && ExistePermiso('Modulo Grupos Autorizacion')) {
-      deshabilitar = false
-      deshabilitar_grupo = false
-    }
-    if (!ExistePermiso('Modulo Usuarios') && !ExistePermiso('Modulo Grupos Autorizacion')) {
-      deshabilitar_grupo = true
+    if (!ExistePermiso('Modulo Usuarios')) {
       deshabilitar = true
     }
     return (
@@ -255,7 +242,7 @@ const Usuarios = () => {
                         color="warning"
                         size="sm"
                         title="Asignar Grupo Autorización"
-                        disabled={deshabilitar_grupo}
+                        disabled={deshabilitar}
                         onClick={() =>
                           history.push({
                             pathname: '/usuarios/usuariogrupo',

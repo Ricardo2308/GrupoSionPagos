@@ -64,7 +64,7 @@ const Bancos = () => {
 
   useEffect(() => {
     let mounted = true
-    const array = ['Modulo Bancos']
+    let objeto = 'Modulo Bancos'
     let idUsuario = 0
     if (session) {
       idUsuario = session.id
@@ -74,7 +74,7 @@ const Bancos = () => {
         setList(items.bancos)
       }
     })
-    getPerfilUsuario(idUsuario, '2', array).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }

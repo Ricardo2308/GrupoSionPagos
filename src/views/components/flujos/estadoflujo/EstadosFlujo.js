@@ -32,7 +32,7 @@ const EstadosFlujo = () => {
 
   useEffect(() => {
     let mounted = true
-    const array = ['Modulo Estados Pago']
+    let objeto = 'Modulo Estados Pago'
     let idUsuario = 0
     if (session) {
       idUsuario = session.id
@@ -42,7 +42,7 @@ const EstadosFlujo = () => {
         setList(items.estados)
       }
     })
-    getPerfilUsuario(idUsuario, '2', array).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }

@@ -33,7 +33,7 @@ const ListaAutorizaciones = () => {
 
   useEffect(() => {
     let mounted = true
-    const array = ['Modulo Autorizacion']
+    let objeto = 'Modulo Autorizacion'
     let idUsuario = 0
     if (session) {
       idUsuario = session.id
@@ -43,7 +43,7 @@ const ListaAutorizaciones = () => {
         setList(items.autorizacion)
       }
     })
-    getPerfilUsuario(idUsuario, '2', array).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }

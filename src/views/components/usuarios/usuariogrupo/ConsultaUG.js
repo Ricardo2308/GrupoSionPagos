@@ -35,7 +35,7 @@ const Consultar = () => {
 
   useEffect(() => {
     let mounted = true
-    const array = ['Modulo Grupos Autorizacion']
+    let objeto = 'Modulo Grupos Autorizacion'
     let idUsuario1 = 0
     let idUsuario2 = 0
     if (location.id_usuario) {
@@ -49,7 +49,7 @@ const Consultar = () => {
         setList(items.detalle)
       }
     })
-    getPerfilUsuario(idUsuario2, '2', array).then((items) => {
+    getPerfilUsuario(idUsuario2, '2', objeto).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
