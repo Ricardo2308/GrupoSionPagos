@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useSession } from 'react-use-session'
-import { useHistory } from 'react-router-dom'
-import { BiUserCircle } from 'react-icons/bi'
-import { RiBankLine } from 'react-icons/ri'
-import { FaCoins } from 'react-icons/fa'
+import { NavLink } from 'react-router-dom'
+import { FaRegChartBar } from 'react-icons/fa'
+import { FiLock, FiSettings, FiCreditCard } from 'react-icons/fi'
+import SimpleBar from 'simplebar-react'
+import 'simplebar/dist/simplebar.min.css'
 import logo from '../assets/icons/GrupoSion.png'
+import { getPerfilUsuario } from '../services/getPerfilUsuario'
 import {
   CSidebar,
   CSidebarHeader,
@@ -14,39 +16,125 @@ import {
   CSidebarToggler,
   CNavItem,
   CNavTitle,
-  CNavGroup,
   CNavLink,
 } from '@coreui/react'
 
-import {
-  FiBook,
-  FiLock,
-  FiSettings,
-  FiGitPullRequest,
-  FiUserCheck,
-  FiUsers,
-  FiGrid,
-  FiAlertOctagon,
-  FiFile,
-  FiThumbsUp,
-  FiCreditCard,
-} from 'react-icons/fi'
-
-//import SimpleBar from 'simplebar-react'
-import 'simplebar/dist/simplebar.min.css'
-
 // sidebar nav config
-//import navigation from '../_nav'
+//import navigation from '../secciones/_nav'
+import administracion from '../secciones/administracion'
+import configuracion from '../secciones/configuracion'
+import pagos from '../secciones/pagos'
+import reportes from '../secciones/reportes'
 
 const AppSidebar = () => {
-  const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
+  const [menu, setMenu] = useState([])
   const dispatch = useDispatch()
   const unfoldable = useSelector((state) => state.sidebarUnfoldable)
   const sidebarShow = useSelector((state) => state.sidebarShow)
 
+  useEffect(() => {
+    let mounted = true
+    let permisos = []
+    let idUsuario = 0
+    if (session) {
+      idUsuario = session.id
+    }
+    getPerfilUsuario(idUsuario, '3', '0').then((items) => {
+      for (const item of items.detalle) {
+        permisos.push(item)
+      }
+      const menu = [
+        {
+          _component: 'CNavGroup',
+          as: NavLink,
+          anchor: 'Administración',
+          to: '/to',
+          icon: <FiLock size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+          items: obtenerItems(administracion, permisos),
+        },
+        {
+          _component: 'CNavGroup',
+          as: NavLink,
+          anchor: 'Configuración',
+          to: '/to',
+          icon: <FiSettings size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+          items: obtenerItems(configuracion, permisos),
+        },
+        {
+          _component: 'CNavGroup',
+          as: NavLink,
+          anchor: 'Pagos',
+          to: '/to',
+          icon: <FiCreditCard size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+          items: obtenerItemsPagos(pagos, permisos),
+        },
+        {
+          _component: 'CNavGroup',
+          as: NavLink,
+          anchor: 'Reportes',
+          to: '/to',
+          icon: <FaRegChartBar size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+          items: reportes,
+        },
+      ]
+      setMenu(menu)
+    })
+    return () => (mounted = false)
+  }, [])
+
+  function obtenerItems(items, permisos) {
+    const array = []
+    for (let permiso of permisos) {
+      for (let item of items) {
+        if (item.objeto == permiso.objeto || item.objeto == 'Modulo Autorizacion Pagos') {
+          array.push(item)
+        }
+      }
+    }
+    return array
+  }
+
+  function obtenerItemsPagos(items, permisos) {
+    const array = [
+      {
+        _component: 'CNavGroup',
+        anchor: 'Autorizar Pagos',
+        icon: <FiCreditCard size={16} style={{ marginRight: '4px' }} />,
+        as: NavLink,
+        items: [
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Bancaria',
+            to: '/pagos/bancario',
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Transferencia',
+            to: '/pagos/transferencia',
+          },
+          {
+            _component: 'CNavItem',
+            as: NavLink,
+            anchor: 'Interna',
+            to: '/pagos/interna',
+          },
+        ],
+      },
+    ]
+    for (let permiso of permisos) {
+      for (let item of items) {
+        if (item.objeto == permiso.objeto) {
+          array.push(item)
+        }
+      }
+    }
+    return array
+  }
+
   if (session) {
-    //if (session.perfil === 'Administrador') {
     return (
       <CSidebar
         position="fixed"
@@ -63,14 +151,19 @@ const AppSidebar = () => {
           <br />
           {session.user_name}
         </CSidebarHeader>
-        {/*
         <CSidebarNav>
           <SimpleBar>
-            <CCreateNavItem>HOLA</CCreateNavItem>
-            <CCreateNavItem items={navigation} />
+            <CNavItem>
+              <CNavLink href="#/dashboard">
+                <img src={logo} style={{ width: '15%', marginRight: '15px', marginLeft: '30px' }} />
+                Dashboard
+              </CNavLink>
+            </CNavItem>
+            <CNavTitle>Módulos</CNavTitle>
+            <CCreateNavItem items={menu} />
           </SimpleBar>
         </CSidebarNav>
-        */}
+        {/*
         <CSidebarNav>
           <CNavItem>
             <CNavLink href="#/dashboard">
@@ -211,6 +304,7 @@ const AppSidebar = () => {
             </CNavGroup>
           </CNavGroup>
         </CSidebarNav>
+        */}
         <CSidebarToggler
           className="d-none d-lg-flex"
           onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
