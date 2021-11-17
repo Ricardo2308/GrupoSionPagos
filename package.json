@@ -13,12 +13,12 @@
   },
   "contributors": [
     {
-      "name": "CoreUI Team",
+      "name": "Pendrogon Developers",
       "url": "https://github.com/orgs/coreui/people"
     }
   ],
   "homepage": ".",
-  "copyright": "Copyright 2017-2021 creativeLabs Łukasz Holeczek",
+  "copyright": "Copyright 2021 Grupo Sion",
   "license": "MIT",
   "private": true,
   "repository": {
