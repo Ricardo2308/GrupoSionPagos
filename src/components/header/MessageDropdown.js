@@ -18,7 +18,7 @@ const MessageDropdown = (props) => {
   async function responderMensajes(tipo) {
     let mensajes = []
     for (let item of props.mensajes) {
-      if (item.tipo == tipo && item.leido == '0') {
+      if (item.tipo == tipo && item.leido == 0) {
         mensajes.push(item)
       }
     }
@@ -40,7 +40,7 @@ const MessageDropdown = (props) => {
         <CDropdownMenu className="pt-0" placement="bottom-end">
           <CDropdownHeader className="bg-light fw-semibold py-2">Mensajes</CDropdownHeader>
           {props.mensajes.map((item, i) => {
-            if (item.leido === '0') {
+            if (item.leido == 0) {
               return (
                 <CDropdownItem
                   title="Ir al Pago"

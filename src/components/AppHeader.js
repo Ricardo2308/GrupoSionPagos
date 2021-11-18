@@ -5,6 +5,10 @@ import { useSelector, useDispatch } from 'react-redux'
 import { FiMenu } from 'react-icons/fi'
 import { getMensajesRecibidos } from '../services/getMensajesRecibidos'
 import { getNotificaciones } from '../services/getNotificaciones'
+import { AppBreadcrumb } from './index'
+import { AppHeaderDropdown } from './header/index'
+import { MessageDropdown } from './header/index'
+import { NotificationDropdown } from './header/index'
 import '../chat/src/styles/launcher.css'
 import {
   CContainer,
@@ -17,23 +21,17 @@ import {
   CNavItem,
 } from '@coreui/react'
 
-import { AppBreadcrumb } from './index'
-
-import { AppHeaderDropdown } from './header/index'
-import { MessageDropdown } from './header/index'
-import { NotificationDropdown } from './header/index'
-
 const AppHeader = () => {
   const dispatch = useDispatch()
-  const [results, setList] = useState([])
+  const [mensajes, setMensajes] = useState([])
   const [notificaciones, setNotificaciones] = useState([])
-  const [contador, Contar] = useState(0)
+  const [contadorM, ContarM] = useState(0)
   const [contadorN, ContarN] = useState(0)
   const sidebarShow = useSelector((state) => state.sidebarShow)
   const { session } = useSession('PendrogonIT-Session')
 
   useEffect(() => {
-    let cont = 0
+    let contM = 0
     let contN = 0
     let idUsuario = 0
     if (session) {
@@ -42,11 +40,11 @@ const AppHeader = () => {
     getMensajesRecibidos(idUsuario).then((items) => {
       for (let item of items.mensajes) {
         if (item.leido == 0) {
-          cont++
+          contM++
         }
       }
-      Contar(cont)
-      setList(items.mensajes)
+      ContarM(contM)
+      setMensajes(items.mensajes)
     })
     getNotificaciones(null, idUsuario).then((items) => {
       for (let item of items.notificaciones) {
@@ -67,11 +65,11 @@ const AppHeader = () => {
       getMensajesRecibidos(idUsuario).then((items) => {
         for (let item of items.mensajes) {
           if (item.leido == 0) {
-            cont++
+            contM++
           }
         }
-        Contar(cont)
-        setList(items.mensajes)
+        ContarM(contM)
+        setMensajes(items.mensajes)
       })
       getNotificaciones(null, idUsuario).then((items) => {
         for (let item of items.notificaciones) {
@@ -116,8 +114,8 @@ const AppHeader = () => {
         <CHeaderNav title="Mensajes Pagos">
           <CNavItem>
             <CNavLink>
-              <MessageDropdown mensajes={results} />
-              <MessageCount count={contador} />
+              <MessageDropdown mensajes={mensajes} />
+              <MessageCount count={contadorM} />
             </CNavLink>
           </CNavItem>
         </CHeaderNav>

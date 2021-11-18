@@ -70,7 +70,7 @@ const NotificationDropdown = (props) => {
         <CDropdownMenu className="pt-0" placement="bottom-end">
           <CDropdownHeader className="bg-light fw-semibold py-2">Notificaciones</CDropdownHeader>
           {props.notificaciones.map((item, i) => {
-            if (item.Leido === '0') {
+            if (item.Leido == 0) {
               return (
                 <CDropdownItem
                   title="Ir al Pago"
