@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 import { useSession } from 'react-use-session'
 import { useSelector, useDispatch } from 'react-redux'
 import { FiMenu } from 'react-icons/fi'
-import { getMensajes } from '../services/getMensajes'
+import { getMensajesRecibidos } from '../services/getMensajesRecibidos'
 import { getNotificaciones } from '../services/getNotificaciones'
 import '../chat/src/styles/launcher.css'
 import {
@@ -39,7 +39,7 @@ const AppHeader = () => {
     if (session) {
       idUsuario = session.id
     }
-    getMensajes(null, idUsuario).then((items) => {
+    getMensajesRecibidos(idUsuario).then((items) => {
       for (let item of items.mensajes) {
         if (item.leido == 0) {
           cont++
@@ -64,7 +64,7 @@ const AppHeader = () => {
       if (session) {
         idUsuario = session.id
       }
-      getMensajes(null, idUsuario).then((items) => {
+      getMensajesRecibidos(idUsuario).then((items) => {
         for (let item of items.mensajes) {
           if (item.leido == 0) {
             cont++
