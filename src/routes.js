@@ -131,6 +131,8 @@ const NuevaCuenta = React.lazy(() => import('./views/components/flujos/cuentas/N
 const Autorizados = React.lazy(() => import('./views/components/flujos/flujo/Autorizados'))
 const Rechazados = React.lazy(() => import('./views/components/flujos/flujo/Rechazados'))
 
+const PendientesReporte = React.lazy(() => import('./views/components/reportes/Pendientes'))
+
 // const Login = React.lazy(() => import('./views/examples/pages/login/Login'))
 // const Register = React.lazy(() => import('./views/examples/pages/register/Register'))
 // const Page404 = React.lazy(() => import('./views/examples/pages/page404/Page404'))
@@ -226,6 +228,12 @@ const routes = [
   { path: '/pagos/autorizados', name: 'Autorizados', component: Autorizados },
   { path: '/pagos/rechazados', name: 'Rechazados', component: Rechazados },
   { path: '/pagos/compensados', name: 'Rechazados', component: Compensados },
+  {
+    path: '/reportependientes',
+    exact: true,
+    name: 'Pagos Pendientes',
+    component: PendientesReporte,
+  },
   {
     path: '/compensacion',
     exact: true,
