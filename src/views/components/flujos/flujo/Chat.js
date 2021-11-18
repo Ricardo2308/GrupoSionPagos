@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Launcher } from '../../../../chat/src/'
 import { Alert } from 'react-bootstrap'
-import { getMensajes } from '../../../../services/getMensajes'
+import { getMensajesChat } from '../../../../services/getMensajesChat'
 import { postMensajes } from '../../../../services/postMensajes'
 import '../../../../scss/base.css'
 
@@ -22,7 +22,7 @@ class Chat extends Component {
 
   componentDidMount() {
     let cont = 0
-    getMensajes(null, null).then((items) => {
+    getMensajesChat(this.props.id_flujo).then((items) => {
       this.setState({
         mensajes: items.mensajes,
       })
@@ -30,8 +30,7 @@ class Chat extends Component {
         if (
           item.id_usuariorecibe == this.props.id_usuario &&
           item.id_usuarioenvia != this.props.id_usuario &&
-          item.eliminado == 0 &&
-          item.id_flujo == this.props.id_flujo
+          item.eliminado == 0
         ) {
           if (item.leido == 0) {
             cont++
@@ -44,7 +43,7 @@ class Chat extends Component {
     })
     const interval = setInterval(() => {
       let cont = 0
-      getMensajes(null, null).then((items) => {
+      getMensajesChat(this.props.id_flujo).then((items) => {
         this.setState({
           mensajes: items.mensajes,
         })
@@ -52,8 +51,7 @@ class Chat extends Component {
           if (
             item.id_usuariorecibe == this.props.id_usuario &&
             item.id_usuarioenvia != this.props.id_usuario &&
-            item.eliminado == 0 &&
-            item.id_flujo == this.props.id_flujo
+            item.eliminado == 0
           ) {
             if (item.leido == 0) {
               cont++
@@ -79,7 +77,7 @@ class Chat extends Component {
     this.setState({ newCount: 0 })
     this.setState({ id_receptor: receptor })
     if (receptor != 0) {
-      getMensajes(null, null).then((items) => {
+      getMensajesChat(this.props.id_flujo).then((items) => {
         this.setState({
           mensajes: items.mensajes,
         })
@@ -87,8 +85,7 @@ class Chat extends Component {
           if (
             item.id_usuariorecibe == this.props.id_usuario &&
             item.id_usuarioenvia == receptor &&
-            item.eliminado == 0 &&
-            item.id_flujo == this.props.id_flujo
+            item.eliminado == 0
           ) {
             if (item.leido == 0) {
               this.setState({ newCount: this.state.newCount + 1 })
