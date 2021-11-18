@@ -21,7 +21,7 @@ class ChatWindow extends Component {
   }
 
   handleChange(event) {
-    this.setState({ id_receptor: event.target.value })
+    this.obtenerChat(event.target.value)
   }
 
   setShow(valor) {
@@ -82,10 +82,7 @@ class ChatWindow extends Component {
           <Alert.Heading>Error!</Alert.Heading>
           <p>No has elegido destinatario!</p>
         </Alert>
-        <CFormSelect
-          onChange={this.handleChange}
-          onClick={() => this.obtenerChat(this.state.id_receptor)}
-        >
+        <CFormSelect onChange={this.handleChange}>
           <option value="0">Seleccione receptor</option>
           {this.state.usuarios.map((item, i) => {
             if (this.props.id_usuario != item.id_usuario) {
