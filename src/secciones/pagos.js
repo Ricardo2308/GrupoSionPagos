@@ -7,8 +7,8 @@ const pagos = [
     _component: 'CNavGroup',
     anchor: 'Autorizar Pagos',
     icon: <FiCreditCard size={16} style={{ marginRight: '4px' }} />,
-    objeto: 'Modulo Autorizacion Pagos',
     as: NavLink,
+    objeto: 'Modulo Autorizacion Pagos',
     items: [
       {
         _component: 'CNavItem',

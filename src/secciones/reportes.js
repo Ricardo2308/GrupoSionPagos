@@ -9,7 +9,7 @@ const reportes = [
     as: NavLink,
     anchor: 'Pagos Pendientes',
     icon: <FiCreditCard size={16} style={{ marginRight: '4px' }} />,
-    to: '/to',
+    to: '/reportependientes',
   },
   {
     _component: 'CNavItem',
