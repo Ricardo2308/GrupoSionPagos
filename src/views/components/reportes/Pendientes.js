@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom'
 import { Button, FormControl } from 'react-bootstrap'
 import DataTable, { createTheme } from 'react-data-table-component'
 import { getPendientesReporte } from '../../../services/getPendientesReporte'
+import { getPoliticas } from '../../../services/getPoliticas'
 import { useSession } from 'react-use-session'
 import '../../../scss/estilos.scss'
 
@@ -31,6 +32,7 @@ const Pendientes = (prop) => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [politicas, setPoliticas] = useState([])
   const [filterText, setFilterText] = useState('')
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false)
   const filteredItems = results.filter(
@@ -47,8 +49,23 @@ const Pendientes = (prop) => {
         setList(items.flujos)
       }
     })
+    getPoliticas(null, null).then((items) => {
+      if (mounted) {
+        setPoliticas(items.politicas)
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  function obtenerPolitica(politica) {
+    let result = ''
+    for (let item of politicas) {
+      if (item.identificador == politica) {
+        result = item.valor
+      }
+    }
+    return result
+  }
 
   const customStyles = {
     headCells: {
@@ -83,10 +100,10 @@ const Pendientes = (prop) => {
 
   const columns = useMemo(() => [
     {
-      name: 'Número Documento',
+      name: 'Documento',
       selector: 'doc_num',
       center: true,
-      width: '140px',
+      width: '100px',
     },
     {
       name: 'Fecha Documento',
@@ -97,7 +114,7 @@ const Pendientes = (prop) => {
     {
       name: 'Detalle',
       center: true,
-      width: '300px',
+      width: '270px',
       cell: function OrderItems(row) {
         return <div style={{ textAlign: 'left' }}>{row.comments}</div>
       },
@@ -111,7 +128,7 @@ const Pendientes = (prop) => {
     {
       name: 'Estado',
       center: true,
-      width: '208px',
+      width: '190px',
       cell: function OrderItems(row) {
         if (row.nivel > 0) {
           return <div>Autorizado nivel {row.nivel}</div>
@@ -124,14 +141,53 @@ const Pendientes = (prop) => {
       name: 'Días Crédito',
       selector: 'dias_credito',
       center: true,
+      width: '90px',
     },
     {
       name: 'Días Vencimiento',
-      selector: 'dias_vencimiento',
       center: true,
       width: '120px',
+      cell: function OrderItems(row) {
+        if (row.dias_vencimiento <= 0) {
+          return <div>0</div>
+        } else {
+          return <div>{row.dias_vencimiento}</div>
+        }
+      },
     },
   ])
+
+  const conditionalRowStyles = [
+    {
+      when: (row) => row.porcentaje <= parseInt(obtenerPolitica('_SEMAFORO_VERDE')),
+      style: {
+        backgroundColor: '#DAFDDA',
+        '&:hover': {
+          cursor: 'pointer',
+        },
+      },
+    },
+    {
+      when: (row) =>
+        row.porcentaje > parseInt(obtenerPolitica('_SEMAFORO_VERDE')) &&
+        row.porcentaje <= parseInt(obtenerPolitica('_SEMAFORO_AMARILLO')),
+      style: {
+        backgroundColor: '#F6FAD0',
+        '&:hover': {
+          cursor: 'pointer',
+        },
+      },
+    },
+    {
+      when: (row) => row.porcentaje > parseInt(obtenerPolitica('_SEMAFORO_AMARILLO')),
+      style: {
+        backgroundColor: '#FBE0E0',
+        '&:hover': {
+          cursor: 'pointer',
+        },
+      },
+    },
+  ]
 
   const subHeaderComponentMemo = useMemo(() => {
     const handleClear = () => {
@@ -158,12 +214,13 @@ const Pendientes = (prop) => {
         customStyles={customStyles}
         theme="solarized"
         pagination
-        paginationPerPage={6}
+        paginationPerPage={30}
         paginationResetDefaultPage={resetPaginationToggle}
         subHeader
         subHeaderComponent={subHeaderComponentMemo}
         responsive={true}
         persistTableHead
+        conditionalRowStyles={conditionalRowStyles}
       />
     )
   } else {

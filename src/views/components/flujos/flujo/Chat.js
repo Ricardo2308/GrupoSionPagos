@@ -94,8 +94,7 @@ class Chat extends Component {
           } else if (
             item.id_usuariorecibe == receptor &&
             item.id_usuarioenvia == this.props.id_usuario &&
-            item.eliminado == 0 &&
-            item.id_flujo == this.props.id_flujo
+            item.eliminado == 0
           ) {
             if (item.leido == 0) {
               this._sendMessageMe(item.mensaje, item.fecha_hora, 'Enviado')
