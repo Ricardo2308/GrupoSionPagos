@@ -56,7 +56,7 @@ const AppHeader = () => {
       setNotificaciones(items.notificaciones)
     })
     const interval = setInterval(() => {
-      let cont = 0
+      let contM = 0
       let contN = 0
       let idUsuario = 0
       if (session) {
@@ -80,7 +80,7 @@ const AppHeader = () => {
         ContarN(contN)
         setNotificaciones(items.notificaciones)
       })
-    }, 300000)
+    }, 150000)
     return () => clearInterval(interval)
   }, [])
 
