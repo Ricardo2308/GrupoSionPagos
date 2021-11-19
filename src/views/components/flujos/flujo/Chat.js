@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Launcher } from '../../../../chat/src/'
 import { Alert } from 'react-bootstrap'
 import { getMensajesChat } from '../../../../services/getMensajesChat'
+import { getContadorChat } from '../../../../services/getContadorChat'
 import { postMensajes } from '../../../../services/postMensajes'
 import '../../../../scss/base.css'
 
@@ -22,16 +23,12 @@ class Chat extends Component {
 
   componentDidMount() {
     let cont = 0
-    getMensajesChat(this.props.id_flujo).then((items) => {
+    getContadorChat(this.props.id_flujo, this.props.id_usuario).then((items) => {
       this.setState({
         mensajes: items.mensajes,
       })
       this.state.mensajes.map((item) => {
-        if (
-          item.id_usuariorecibe == this.props.id_usuario &&
-          item.id_usuarioenvia != this.props.id_usuario &&
-          item.eliminado == 0
-        ) {
+        if (item.eliminado == 0) {
           if (item.leido == 0) {
             cont++
           }
@@ -43,16 +40,12 @@ class Chat extends Component {
     })
     const interval = setInterval(() => {
       let cont = 0
-      getMensajesChat(this.props.id_flujo).then((items) => {
+      getContadorChat(this.props.id_flujo, this.props.id_usuario).then((items) => {
         this.setState({
           mensajes: items.mensajes,
         })
         this.state.mensajes.map((item) => {
-          if (
-            item.id_usuariorecibe == this.props.id_usuario &&
-            item.id_usuarioenvia != this.props.id_usuario &&
-            item.eliminado == 0
-          ) {
+          if (item.eliminado == 0) {
             if (item.leido == 0) {
               cont++
             }
@@ -62,7 +55,7 @@ class Chat extends Component {
           newMessagesCount: cont,
         })
       })
-    }, 300000)
+    }, 150000)
     return () => clearInterval(interval)
   }
 
@@ -77,7 +70,7 @@ class Chat extends Component {
     this.setState({ newCount: 0 })
     this.setState({ id_receptor: receptor })
     if (receptor != 0) {
-      getMensajesChat(this.props.id_flujo).then((items) => {
+      getMensajesChat(this.props.id_flujo, this.props.id_usuario).then((items) => {
         this.setState({
           mensajes: items.mensajes,
         })
