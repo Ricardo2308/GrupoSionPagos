@@ -1,6 +1,6 @@
-const API = `${process.env.REACT_APP_API_URL}mensajeschat`
+const API = `${process.env.REACT_APP_API_URL}contadorchat`
 
-export function getMensajesChat(idPago, idUsuario) {
+export function getContadorChat(idPago, idUsuario) {
   let ApiFinal = API
   let ApiWhere = ''
   if (idPago !== null) {
