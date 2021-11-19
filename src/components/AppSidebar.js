@@ -75,15 +75,10 @@ const AppSidebar = () => {
           items: obtenerItems(pagos, eliminaDuplicados(permisos)),
         })
       }
-      if (reportes.length > 0) {
-        menu.push({
-          _component: 'CNavGroup',
-          as: NavLink,
-          anchor: 'Reportes',
-          to: '/to',
-          icon: <FaRegChartBar size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
-          items: reportes,
-        })
+      for (let permiso of eliminaDuplicados(permisos)) {
+        if (permiso == 'Seccion Reportes') {
+          menu.push(reportes)
+        }
       }
       setMenu(menu)
     })
