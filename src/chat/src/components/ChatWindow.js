@@ -22,6 +22,7 @@ class ChatWindow extends Component {
 
   handleChange(event) {
     this.obtenerChat(event.target.value)
+    this.setState({ id_receptor: event.target.value })
   }
 
   setShow(valor) {
