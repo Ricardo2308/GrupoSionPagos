@@ -162,6 +162,8 @@ const Login = () => {
                       crearSesion(item.id).then((sesion) => {
                         if (sesion == true) {
                           let limiteconexion = obtenerPolitica('_LIMITE_TIEMPO_CONEXION_')
+                          let verde = obtenerPolitica('_SEMAFORO_VERDE')
+                          let amarillo = obtenerPolitica('_SEMAFORO_AMARILLO')
                           const sign = require('jwt-encode')
                           const secret = 'secret'
                           const data = {
@@ -171,6 +173,8 @@ const Login = () => {
                             id: item.id,
                             estado: item.activo,
                             limiteconexion: limiteconexion,
+                            verde: verde,
+                            amarillo: amarillo,
                           }
                           const jwt = sign(data, secret)
                           saveJWT(jwt)
