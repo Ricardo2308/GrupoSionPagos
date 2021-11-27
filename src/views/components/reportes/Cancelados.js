@@ -4,12 +4,12 @@ import { useHistory } from 'react-router-dom'
 import { useIdleTimer } from 'react-idle-timer'
 import { useSession } from 'react-use-session'
 import { Button, Modal } from 'react-bootstrap'
-import { getPendientesReporte } from '../../../services/getPendientesReporte'
+import { getReporteCancelados } from '../../../services/getReporteCancelados'
 import { postSesionUsuario } from '../../../services/postSesionUsuario'
 import spanish from '../../../lenguaje/es.json'
 import '../../../scss/estilos.scss'
 
-const Pendientes = (prop) => {
+const Cancelados = (prop) => {
   const history = useHistory()
   const [time, setTime] = useState(null)
   const [show, setShow] = useState(false)
@@ -20,7 +20,7 @@ const Pendientes = (prop) => {
   useEffect(() => {
     let mounted = true
     let pagos = []
-    getPendientesReporte().then((items) => {
+    getReporteCancelados().then((items) => {
       if (mounted) {
         pagos.push(items.flujos)
         var pivot = new WebDataRocks({
@@ -35,36 +35,36 @@ const Pendientes = (prop) => {
             slice: {
               rows: [
                 {
+                  uniqueName: 'empresa_nombre',
+                  caption: 'Empresa',
+                },
+                {
                   uniqueName: 'doc_num',
                   caption: 'Documento',
                 },
                 {
-                  uniqueName: 'doc_date',
-                  caption: 'Fecha',
+                  uniqueName: 'cuenta_orgien',
+                  caption: 'Cuenta',
+                },
+                {
+                  uniqueName: 'en_favor_de',
+                  caption: 'Beneficiario',
                 },
                 {
                   uniqueName: 'comments',
-                  caption: 'Detalle',
+                  caption: 'Concepto',
                 },
                 {
-                  uniqueName: 'tipo',
-                  caption: 'Tipo',
+                  uniqueName: 'doc_total',
+                  caption: 'Monto',
                 },
                 {
-                  uniqueName: 'estado',
-                  caption: 'Estado',
+                  uniqueName: 'doc_date',
+                  caption: 'Emisión',
                 },
                 {
-                  uniqueName: 'dias_credito',
-                  caption: 'Días Crédito',
-                },
-                {
-                  uniqueName: 'dias_vencimiento',
-                  caption: 'Días Vencimiento',
-                },
-                {
-                  uniqueName: 'porcentaje',
-                  caption: 'Semáforo',
+                  uniqueName: 'fecha',
+                  caption: 'Fecha',
                 },
               ],
             },
@@ -217,4 +217,4 @@ const Pendientes = (prop) => {
   }
 }
 
-export default Pendientes
+export default Cancelados
