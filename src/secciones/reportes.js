@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import { FiCreditCard } from 'react-icons/fi'
-import { FaRegListAlt, FaRegChartBar } from 'react-icons/fa'
+import { HiOutlineDocumentReport } from 'react-icons/hi'
+import { FaRegChartBar } from 'react-icons/fa'
 
 const reportes = {
   _component: 'CNavGroup',
@@ -14,15 +14,22 @@ const reportes = {
       _component: 'CNavItem',
       as: NavLink,
       anchor: 'Pagos Pendientes',
-      icon: <FiCreditCard size={16} style={{ marginRight: '4px' }} />,
+      icon: <HiOutlineDocumentReport size={18} style={{ marginRight: '4px' }} />,
       to: '/reportependientes',
     },
     {
       _component: 'CNavItem',
       as: NavLink,
-      anchor: 'Días Conectados',
-      icon: <FaRegListAlt size={16} style={{ marginRight: '4px' }} />,
-      to: '/reportependientes',
+      anchor: 'Cancelados Origen',
+      icon: <HiOutlineDocumentReport size={18} style={{ marginRight: '4px' }} />,
+      to: '/reportecancelados',
+    },
+    {
+      _component: 'CNavItem',
+      as: NavLink,
+      anchor: 'Pendientes Validación',
+      icon: <HiOutlineDocumentReport size={18} style={{ marginRight: '4px' }} />,
+      to: '/pendientesvalidacionreporte',
     },
   ],
 }
