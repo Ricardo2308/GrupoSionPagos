@@ -111,9 +111,6 @@ const CompensacionTabs = React.lazy(() =>
   import('./views/components/flujos/flujo/CompensacionTabs'),
 )
 const Compensados = React.lazy(() => import('./views/components/flujos/flujo/Compensados'))
-const EditarArchivoFlujo = React.lazy(() =>
-  import('./views/components/flujos/archivoflujo/EditarArchivoFlujo'),
-)
 const FlujoGrupo = React.lazy(() => import('./views/components/flujos/flujo/FlujoGrupo'))
 
 const Bancos = React.lazy(() => import('./views/components/flujos/bancos/Bancos'))
@@ -266,7 +263,6 @@ const routes = [
   { path: '/compensacion/tabs', name: 'Detalle Pagos', component: CompensacionTabs },
   { path: '/archivoflujo', exact: true, name: 'Archivos Pagos', component: ArchivosFlujoU },
   { path: '/archivoflujo/nuevo', name: 'Nuevo', component: NuevoArchivoFlujo },
-  { path: '/archivoflujo/editar', name: 'Nuevo', component: EditarArchivoFlujo },
   // { path: '/login', name: 'Login', component: Login },
   // { path: '/register', name: 'Register', component: Register },
   // { path: '/404', name: '404', component: Page404 },
