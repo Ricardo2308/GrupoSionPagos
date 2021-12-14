@@ -4,6 +4,7 @@ import { Alert, Modal } from 'react-bootstrap'
 import { useIdleTimer } from 'react-idle-timer'
 import { useHistory, useLocation } from 'react-router-dom'
 import FileUploader from '../../../../components/FileUploader'
+import { postFlujos } from '../../../../services/postFlujos'
 import { postArchivoFlujo } from '../../../../services/postArchivoFlujo'
 import { postFlujoDetalle } from '../../../../services/postFlujoDetalle'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
@@ -55,18 +56,39 @@ const NuevoArchivoFlujo = (props) => {
         '',
       )
       if (respuesta === 'OK') {
-        const answer = await postFlujoDetalle(
-          location.id_flujo,
-          '2',
-          session.id,
-          'Documento de pago cargado',
-          '0',
-        )
-        if (answer) {
-          history.go(-1)
+        if (location.grupo == null) {
+          const answer = await postFlujoDetalle(
+            location.id_flujo,
+            '2',
+            session.id,
+            'Documento de pago cargado',
+            '0',
+          )
+          if (answer === 'OK') {
+            history.go(-1)
+          }
+        } else {
+          const cargado = await postFlujoDetalle(
+            location.id_flujo,
+            '2',
+            session.id,
+            'Documento de pago cargado',
+            '0',
+          )
+          const asignado = await postFlujoDetalle(
+            location.id_flujo,
+            '3',
+            session.id,
+            'Asignado a responsable',
+            '0',
+          )
+          if (cargado === 'OK' && asignado === 'OK') {
+            const respuesta = await postFlujos(location.id_flujo, '', location.grupo, '', null)
+            if (respuesta === 'OK') {
+              history.go(-1)
+            }
+          }
         }
-      } else {
-        console.log(respuesta)
       }
     } else {
       setShow(true)

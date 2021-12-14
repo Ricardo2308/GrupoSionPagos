@@ -132,6 +132,7 @@ const Pendientes = (prop) => {
                     pathname: '/archivoflujo/nuevo',
                     id_flujo: row.id_flujo,
                     pago: row.doc_num,
+                    grupo: row.id_grupoautorizacion,
                   })
                 }
               >
