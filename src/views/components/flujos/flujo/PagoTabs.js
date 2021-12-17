@@ -185,7 +185,7 @@ const PagoTabs = () => {
           if (finalizado == 'OK') {
             const enviada = await postNotificacion(pagos, idUsuario, 'autorizado por completo.', '')
             if (enviada == 'OK') {
-              history.push('/compensacion/' + location.pagina)
+              history.go(-1)
             }
           }
         }

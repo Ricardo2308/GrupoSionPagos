@@ -124,7 +124,7 @@ const DetalleFlujo = (prop) => {
               <Col className="mb-0 border">{results.bank_code}</Col>
             </Row>
             <Row className="mb-0 border">
-              <Col className="mb-0 border column">Cuenta DFL</Col>
+              <Col className="mb-0 border column">Cuenta Bancaria</Col>
               <Col className="mb-0 border">{results.dfl_account}</Col>
             </Row>
             <Row className="mb-0 border">
