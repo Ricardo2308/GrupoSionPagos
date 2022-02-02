@@ -176,8 +176,8 @@ const EstadosFlujo = () => {
         <CTable hover responsive align="middle" className="mb-0 border">
           <CTableHead color="light">
             <CTableRow>
-              <CTableHeaderCell className="text-center">Estado Flujo</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Estado Flujo Padre</CTableHeaderCell>
+              <CTableHeaderCell className="text-center">Estado Pago Destino</CTableHeaderCell>
+              <CTableHeaderCell className="text-center">Estado Flujo Origen</CTableHeaderCell>
               <CTableHeaderCell className="text-center">Estado</CTableHeaderCell>
               <CTableHeaderCell style={{ textAlign: 'center', width: '20%' }}>
                 Acciones

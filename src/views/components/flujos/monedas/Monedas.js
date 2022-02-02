@@ -190,7 +190,7 @@ const Monedas = () => {
                   estado = 'Activo'
                 }
                 return (
-                  <CTableRow key={item.id_banco}>
+                  <CTableRow key={item.id_moneda}>
                     <CTableDataCell className="text-center">{item.nombre}</CTableDataCell>
                     <CTableDataCell className="text-center">{item.simbolo}</CTableDataCell>
                     <CTableDataCell className="text-center">{estado}</CTableDataCell>

@@ -184,7 +184,7 @@ const NuevoBanco = (props) => {
                   </CInputGroupText>
                   <CFormControl
                     type="text"
-                    placeholder="Nombre Cuenta"
+                    placeholder="Número Cuenta"
                     name="numero_cuenta"
                     onChange={handleInput}
                   />

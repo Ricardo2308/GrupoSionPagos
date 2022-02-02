@@ -38,7 +38,7 @@ const UsuarioGrupo = () => {
   registerLocale('es', es)
 
   const [form, setValues] = useState({
-    aprobador: location.id,
+    aprobador: location.id_usuario,
     temporal: '',
   })
 
