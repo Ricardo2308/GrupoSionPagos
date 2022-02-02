@@ -177,7 +177,7 @@ const EstadosFlujo = () => {
           <CTableHead color="light">
             <CTableRow>
               <CTableHeaderCell className="text-center">Estado Pago Destino</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Estado Flujo Origen</CTableHeaderCell>
+              <CTableHeaderCell className="text-center">Estado Pago Origen</CTableHeaderCell>
               <CTableHeaderCell className="text-center">Estado</CTableHeaderCell>
               <CTableHeaderCell style={{ textAlign: 'center', width: '20%' }}>
                 Acciones
