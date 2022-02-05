@@ -224,7 +224,7 @@ const Cuentas = () => {
                     <CButton
                       color="danger"
                       size="sm"
-                      title="Eliminar Banco"
+                      title="Eliminar Cuenta"
                       disabled={deshabilitar}
                       onClick={() => mostrarModal(item.id_cuenta, 1, item.numero_cuenta)}
                     >
