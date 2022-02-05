@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useSession } from 'react-use-session'
 import { NavLink } from 'react-router-dom'
-import { FaRegChartBar } from 'react-icons/fa'
 import { FiLock, FiSettings, FiCreditCard } from 'react-icons/fi'
 import SimpleBar from 'simplebar-react'
 import 'simplebar/dist/simplebar.min.css'
@@ -52,7 +51,7 @@ const AppSidebar = () => {
           anchor: 'Administración',
           to: '/to',
           icon: <FiLock size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
-          items: obtenerItems(administracion, permisos),
+          items: obtenerItems(administracion, eliminaDuplicados(permisos)),
         })
       }
       if (obtenerItems(configuracion, permisos).length > 0) {
@@ -62,7 +61,7 @@ const AppSidebar = () => {
           anchor: 'Configuración',
           to: '/to',
           icon: <FiSettings size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
-          items: obtenerItems(configuracion, permisos),
+          items: obtenerItems(configuracion, eliminaDuplicados(permisos)),
         })
       }
       if (obtenerItems(pagos, permisos).length > 0) {
