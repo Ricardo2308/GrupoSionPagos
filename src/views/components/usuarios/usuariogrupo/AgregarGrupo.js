@@ -94,7 +94,7 @@ const AgregarGrupo = (props) => {
       setShow(true)
       setTitulo('Error!')
       setColor('danger')
-      setMensaje('No has llenado todos los campos')
+      setMensaje('No has llenado todos los campos.')
     }
   }
 

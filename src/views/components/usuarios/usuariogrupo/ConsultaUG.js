@@ -239,7 +239,7 @@ const Consultar = () => {
                       estado = 'Activo'
                     }
                     return (
-                      <CTableRow key={item.id_usuario}>
+                      <CTableRow key={item.id_usuariogrupo}>
                         <CTableDataCell style={{ textAlign: 'center', width: '40%' }}>
                           {item.identificador}
                         </CTableDataCell>
