@@ -47,7 +47,7 @@ const EditarPerfilUsuario = () => {
         setList(items.perfiles)
       }
     })
-    getPerfilUsuario(location.id_usuario, '1').then((items) => {
+    getPerfilUsuario(location.id_usuario, '1', '0').then((items) => {
       if (mounted) {
         setList1(items.detalle)
       }
