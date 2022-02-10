@@ -151,37 +151,37 @@ const Login = () => {
               revisarPolitica(item.id, item.cambia_password).then((respuesta) => {
                 if (respuesta == true) {
                   estoyConectado(item.id).then((conexion) => {
-                    if (conexion == true) {
-                      setShow(true)
-                      setTitulo('Aviso!')
-                      setColor('info')
-                      setMensaje(
-                        'Parece que tu usuario tiene una sesión activa, cierra sesión y vuelve a intentarlo.',
-                      )
-                    } else {
-                      crearSesion(item.id).then((sesion) => {
-                        if (sesion == true) {
-                          let limiteconexion = obtenerPolitica('_LIMITE_TIEMPO_CONEXION_')
-                          let verde = obtenerPolitica('_SEMAFORO_VERDE')
-                          let amarillo = obtenerPolitica('_SEMAFORO_AMARILLO')
-                          const sign = require('jwt-encode')
-                          const secret = 'secret'
-                          const data = {
-                            email: item.email,
-                            name: item.nombre + ' ' + item.apellido,
-                            user_name: item.nombre_usuario,
-                            id: item.id,
-                            estado: item.activo,
-                            limiteconexion: limiteconexion,
-                            verde: verde,
-                            amarillo: amarillo,
-                          }
-                          const jwt = sign(data, secret)
-                          saveJWT(jwt)
-                          history.push('/home')
+                    //if (conexion == true) {
+                    //setShow(true)
+                    //setTitulo('Aviso!')
+                    //setColor('info')
+                    //setMensaje(
+                    //  'Parece que tu usuario tiene una sesión activa, cierra sesión y vuelve a intentarlo.',
+                    //)
+                    //} else {
+                    crearSesion(item.id).then((sesion) => {
+                      if (sesion == true) {
+                        let limiteconexion = obtenerPolitica('_LIMITE_TIEMPO_CONEXION_')
+                        let verde = obtenerPolitica('_SEMAFORO_VERDE')
+                        let amarillo = obtenerPolitica('_SEMAFORO_AMARILLO')
+                        const sign = require('jwt-encode')
+                        const secret = 'secret'
+                        const data = {
+                          email: item.email,
+                          name: item.nombre + ' ' + item.apellido,
+                          user_name: item.nombre_usuario,
+                          id: item.id,
+                          estado: item.activo,
+                          limiteconexion: limiteconexion,
+                          verde: verde,
+                          amarillo: amarillo,
                         }
-                      })
-                    }
+                        const jwt = sign(data, secret)
+                        saveJWT(jwt)
+                        history.push('/home')
+                      }
+                    })
+                    //}
                   })
                 }
               })

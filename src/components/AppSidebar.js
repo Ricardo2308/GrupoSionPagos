@@ -51,7 +51,7 @@ const AppSidebar = () => {
           as: NavLink,
           anchor: 'Administración',
           to: '/to',
-          icon: <FiLock size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+          icon: <FiLock size={20} style={{ marginRight: '10px', marginLeft: '7px' }} />,
           items: obtenerItems(administracion, permisos),
         })
       }
@@ -61,7 +61,7 @@ const AppSidebar = () => {
           as: NavLink,
           anchor: 'Configuración',
           to: '/to',
-          icon: <FiSettings size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+          icon: <FiSettings size={20} style={{ marginRight: '10px', marginLeft: '7px' }} />,
           items: obtenerItems(configuracion, permisos),
         })
       }
@@ -71,7 +71,7 @@ const AppSidebar = () => {
           as: NavLink,
           anchor: 'Pagos',
           to: '/to',
-          icon: <FiCreditCard size={20} style={{ marginRight: '20px', marginLeft: '7px' }} />,
+          icon: <FiCreditCard size={20} style={{ marginRight: '10px', marginLeft: '7px' }} />,
           items: obtenerItems(pagos, eliminaDuplicados(permisos)),
         })
       }
@@ -132,7 +132,9 @@ const AppSidebar = () => {
         </CSidebarNav>
         <CSidebarToggler
           className="d-none d-lg-flex"
-          onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
+          onClick={() => {
+            dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })
+          }}
         />
       </CSidebar>
     )
