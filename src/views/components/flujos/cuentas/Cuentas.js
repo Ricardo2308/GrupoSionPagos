@@ -4,9 +4,10 @@ import { useHistory } from 'react-router-dom'
 import { getCuentas } from '../../../../services/getCuentas'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
+import { postCrudCuentas } from '../../../../services/postCrudCuentas'
 import { useIdleTimer } from 'react-idle-timer'
 import { useSession } from 'react-use-session'
-import { FaPen } from 'react-icons/fa'
+import { FaPen, FaTrash } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import {
   CButton,
@@ -26,6 +27,8 @@ const Cuentas = () => {
   const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
   const [mensaje, setMensaje] = useState('')
+  const [idCuenta, setIdCuenta] = useState(0)
+  const [opcion, setOpcion] = useState(0)
 
   useEffect(() => {
     let mounted = true
@@ -57,6 +60,7 @@ const Cuentas = () => {
     }
     return result
   }
+
   async function Cancelar(opcion) {
     if (opcion == 1) {
       setShow(false)
@@ -92,6 +96,7 @@ const Cuentas = () => {
 
   const handleOnIdle = (event) => {
     setShow(true)
+    setOpcion(2)
     setMensaje(
       'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
         ' Si desea continuar presione Aceptar',
@@ -114,6 +119,27 @@ const Cuentas = () => {
     debounce: 500,
   })
 
+  function mostrarModal(id_cuenta, opcion, nombre) {
+    setIdCuenta(id_cuenta)
+    setOpcion(opcion)
+    setMensaje('Está seguro de eliminar la cuenta número ' + nombre + '?')
+    setShow(true)
+  }
+
+  async function eliminarCuenta(id_cuenta, opcion) {
+    if (opcion == 1) {
+      const respuesta = await postCrudCuentas(id_cuenta, '', '', '', '', '', '', '2')
+      if (respuesta === 'OK') {
+        await getCuentas(null, null).then((items) => {
+          setList(items.cuentas)
+        })
+      }
+    } else if (opcion == 2) {
+      setShow(false)
+      detener()
+    }
+  }
+
   if (session) {
     let deshabilitar = false
     if (ExistePermiso('Modulo Cuentas') == 0) {
@@ -121,16 +147,19 @@ const Cuentas = () => {
     }
     return (
       <>
-        <Modal responsive variant="primary" show={show} onHide={() => Cancelar(2)} centered>
+        <Modal responsive variant="primary" show={show} onHide={() => Cancelar(opcion)} centered>
           <Modal.Header closeButton>
             <Modal.Title>Confirmación</Modal.Title>
           </Modal.Header>
           <Modal.Body>{mensaje}</Modal.Body>
           <Modal.Footer>
-            <CButton color="secondary" onClick={() => Cancelar(2)}>
+            <CButton color="secondary" onClick={() => Cancelar(opcion)}>
               Cancelar
             </CButton>
-            <CButton color="primary" onClick={() => Cancelar(1)}>
+            <CButton
+              color="primary"
+              onClick={() => eliminarCuenta(idCuenta, opcion).then(() => Cancelar(1))}
+            >
               Aceptar
             </CButton>
           </Modal.Footer>
@@ -191,6 +220,15 @@ const Cuentas = () => {
                       }
                     >
                       <FaPen />
+                    </CButton>{' '}
+                    <CButton
+                      color="danger"
+                      size="sm"
+                      title="Eliminar Cuenta"
+                      disabled={deshabilitar}
+                      onClick={() => mostrarModal(item.id_cuenta, 1, item.numero_cuenta)}
+                    >
+                      <FaTrash />
                     </CButton>
                   </CTableDataCell>
                 </CTableRow>

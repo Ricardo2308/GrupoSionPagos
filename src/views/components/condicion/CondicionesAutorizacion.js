@@ -194,7 +194,7 @@ const Cards = () => {
                   estado = 'Activo'
                 }
                 return (
-                  <CTableRow key={item.id_rol}>
+                  <CTableRow key={item.id_condicionautorizacion}>
                     <CTableDataCell className="text-center">{item.descripcion}</CTableDataCell>
                     <CTableDataCell className="text-center">{item.parametro}</CTableDataCell>
                     <CTableDataCell className="text-center">{estado}</CTableDataCell>

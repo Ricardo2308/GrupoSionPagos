@@ -193,7 +193,7 @@ const ConsultarPR = () => {
                     estado = 'Activo'
                   }
                   return (
-                    <CTableRow key={item.id_condicion}>
+                    <CTableRow key={item.id_condiciongrupo}>
                       <CTableDataCell className="text-center">{item.identificador}</CTableDataCell>
                       <CTableDataCell className="text-center">{estado}</CTableDataCell>
                       <CTableDataCell className="text-center">

@@ -30,16 +30,13 @@ const EditarUsuarioGrupo = (props) => {
   const [results, setList] = useState([])
   const [detalle, setDetalle] = useState([])
   const [show, setShow] = useState(false)
-  const [showModal, setShowModal] = useState(false)
   const [showM, setShowM] = useState(false)
   const [mensaje, setMensaje] = useState('')
   const [titulo, setTitulo] = useState('Error!')
   const [color, setColor] = useState('danger')
 
-  const handleClose = () => setShowModal(false)
-
   const [form, setValues] = useState({
-    grupo_autorizacion: location.id_grupo,
+    grupo: location.id_grupo,
     estado: location.estado,
     nivel: location.nivel,
   })
@@ -59,10 +56,10 @@ const EditarUsuarioGrupo = (props) => {
     return () => (mounted = false)
   }, [])
 
-  function Repetido(dato) {
+  function Repetido(grupo, nivel) {
     let result = 0
     for (let item of detalle) {
-      if (dato === item.id_grupoautorizacion) {
+      if (grupo === item.id_grupoautorizacion && nivel === item.nivel) {
         result = 1
       }
     }
@@ -85,47 +82,25 @@ const EditarUsuarioGrupo = (props) => {
   }
 
   const handleSubmit = async (event) => {
-    if (Repetido(form.grupo_autorizacion)) {
-      setShowModal(true)
-      setTitulo('Grupo Repetido!')
-      setColor('warning')
-      setMensaje('Este grupo ya está asignado al usuario. Desea cambiar el nivel?')
-    } else {
-      if (form.grupo_autorizacion !== '') {
+    if (form.grupo !== '' && form.nivel !== '') {
+      if (Repetido(form.grupo, form.nivel)) {
+        setShow(true)
+        setTitulo('Grupo y nivel repetidos!')
+        setColor('warning')
+        setMensaje('Este grupo y nivel ya fueron asignados al usuario. Intente de nuevo.')
+      } else {
         event.preventDefault()
         const respuesta = await postUsuarioGrupo(
           location.id_usuariogrupo,
           location.id_usuario,
           '2',
-          form.grupo_autorizacion,
+          form.grupo,
           form.nivel,
           '',
         )
         if (respuesta === 'OK') {
           history.push('/usuarios')
         }
-      } else {
-        setShow(true)
-        setTitulo('Error!')
-        setColor('danger')
-        setMensaje('No has llenado todos los campos')
-      }
-    }
-  }
-
-  const CambiarNivel = async (event) => {
-    if (form.nivel !== '') {
-      event.preventDefault()
-      const respuesta = await postUsuarioGrupo(
-        location.id_usuariogrupo,
-        '',
-        '4',
-        '',
-        form.nivel,
-        '',
-      )
-      if (respuesta === 'OK') {
-        history.push('/usuarios')
       }
     } else {
       setShow(true)
@@ -201,44 +176,6 @@ const EditarUsuarioGrupo = (props) => {
               <Alert.Heading>{titulo}</Alert.Heading>
               <p>{mensaje}</p>
             </Alert>
-            <Modal variant="primary" show={showModal} onHide={handleClose} centered>
-              <Modal.Header closeButton>
-                <Modal.Title>{titulo}</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <div>
-                  <div className="modal-message">{mensaje}</div>
-                  <CForm>
-                    <CInputGroup className="mb-3">
-                      <CInputGroupText>Nivel</CInputGroupText>
-                      <CFormSelect name="nivel" onChange={handleInput}>
-                        <option>Seleccione un nivel de autorización. (Opcional)</option>
-                        {results.map((item, i) => {
-                          if (item.id_grupo == form.grupo_autorizacion) {
-                            var niveles = obtenerNiveles(item.numero_niveles)
-                            return niveles.map((nivel) => {
-                              return (
-                                <option key={nivel.toString()} value={nivel}>
-                                  {nivel}
-                                </option>
-                              )
-                            })
-                          }
-                        })}
-                      </CFormSelect>
-                    </CInputGroup>
-                  </CForm>
-                </div>
-              </Modal.Body>
-              <Modal.Footer>
-                <CButton color="secondary" onClick={handleClose}>
-                  Cancelar
-                </CButton>
-                <CButton color="primary" onClick={CambiarNivel}>
-                  Aceptar
-                </CButton>
-              </Modal.Footer>
-            </Modal>
             <Modal responsive variant="primary" show={showM} onHide={() => Cancelar(2)} centered>
               <Modal.Header closeButton>
                 <Modal.Title>Confirmación</Modal.Title>
@@ -287,7 +224,7 @@ const EditarUsuarioGrupo = (props) => {
                     <CInputGroupText>
                       <FaUsers />
                     </CInputGroupText>
-                    <CFormSelect name="grupo_autorizacion" onChange={handleInput}>
+                    <CFormSelect name="grupo" onChange={handleInput}>
                       <option selected={true} value={location.id_grupo}>
                         {location.identificador}
                       </option>
@@ -302,6 +239,26 @@ const EditarUsuarioGrupo = (props) => {
                               {item.identificador}
                             </option>
                           )
+                        }
+                      })}
+                    </CFormSelect>
+                  </CInputGroup>
+                  <CInputGroup className="mb-3">
+                    <CInputGroupText>Nivel</CInputGroupText>
+                    <CFormSelect name="nivel" onChange={handleInput}>
+                      <option value={location.nivel}>{location.nivel}</option>
+                      {results.map((item, i) => {
+                        if (item.id_grupo == form.grupo) {
+                          var niveles = obtenerNiveles(item.numero_niveles)
+                          return niveles.map((nivel) => {
+                            if (nivel != location.nivel) {
+                              return (
+                                <option key={nivel.toString()} value={nivel}>
+                                  {nivel}
+                                </option>
+                              )
+                            }
+                          })
                         }
                       })}
                     </CFormSelect>
