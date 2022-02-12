@@ -15,8 +15,6 @@ const Transferencia = () => {
   const [mensaje, setMensaje] = useState('')
   const [show, setShow] = useState(false)
   const { session, clear } = useSession('PendrogonIT-Session')
-  const comentarios = ['Aprobado', 'Autorización completa']
-  const comentariosR = ['Rechazado']
 
   function iniciar(minutos) {
     let segundos = 60 * minutos
@@ -99,10 +97,10 @@ const Transferencia = () => {
                 <Pendientes tipo={'TRANSFERENCIA'} />
               </Tab>
               <Tab eventKey="autorizados" title="Autorizados">
-                <Autorizados comentarios={comentarios} tipo={'TRANSFERENCIA'} />
+                <Autorizados tipo={'TRANSFERENCIA'} />
               </Tab>
               <Tab eventKey="rechazados" title="Rechazados">
-                <Rechazados comentarios={comentariosR} tipo={'TRANSFERENCIA'} />
+                <Rechazados tipo={'TRANSFERENCIA'} />
               </Tab>
             </Tabs>
           </div>
