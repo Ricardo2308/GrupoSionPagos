@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { Button, FormControl } from 'react-bootstrap'
 import DataTable, { createTheme } from 'react-data-table-component'
-import { getBitacora } from '../../../../services/getBitacora'
+import { getRechazados } from '../../../../services/getRechazados'
 import { postNotificacion } from '../../../../services/postNotificacion'
 import { useSession } from 'react-use-session'
 import { FaList } from 'react-icons/fa'
@@ -71,13 +71,13 @@ const Rechazados = (prop) => {
     let mounted = true
     if (location.comentarios && location.tipo) {
       setRechazados(location.rechazados)
-      getBitacora(null, location.comentarios, session.id, location.tipo).then((items) => {
+      getRechazados(session.id, location.tipo).then((items) => {
         if (mounted) {
           setList(items.bitacora)
         }
       })
     } else {
-      getBitacora(null, prop.comentarios, session.id, prop.tipo).then((items) => {
+      getRechazados(session.id, prop.tipo).then((items) => {
         if (mounted) {
           setList(items.bitacora)
         }

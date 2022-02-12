@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { Button, FormControl } from 'react-bootstrap'
 import DataTable, { createTheme } from 'react-data-table-component'
-import { getBitacora } from '../../../../services/getBitacora'
+import { getCompensados } from '../../../../services/getCompensados'
 import { postNotificacion } from '../../../../services/postNotificacion'
 import { useSession } from 'react-use-session'
 import { FaList } from 'react-icons/fa'
@@ -72,13 +72,13 @@ const Compensados = (prop) => {
     let mounted = true
     if (location.comentarios && location.tipo) {
       setCompensados(location.compensados)
-      getBitacora(null, location.comentarios, session.id, location.tipo).then((items) => {
+      getCompensados(session.id, location.tipo).then((items) => {
         if (mounted) {
           setList(items.bitacora)
         }
       })
     } else {
-      getBitacora(null, prop.comentarios, session.id, prop.tipo).then((items) => {
+      getCompensados(session.id, prop.tipo).then((items) => {
         if (mounted) {
           setList(items.bitacora)
         }

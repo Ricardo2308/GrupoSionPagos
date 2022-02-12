@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
-import { useIdleTimer } from 'react-idle-timer'
 import { Button, FormControl } from 'react-bootstrap'
 import DataTable, { createTheme } from 'react-data-table-component'
-import { getBitacora } from '../../../../services/getBitacora'
+import { getAutorizados } from '../../../../services/getAutorizados'
 import { postNotificacion } from '../../../../services/postNotificacion'
 import { useSession } from 'react-use-session'
 import { FaList } from 'react-icons/fa'
@@ -82,13 +81,13 @@ const Autorizados = (prop) => {
     let mounted = true
     if (location.comentarios && location.tipo) {
       setAutorizados(location.autorizados)
-      getBitacora(null, location.comentarios, session.id, location.tipo).then((items) => {
+      getAutorizados(session.id, location.tipo).then((items) => {
         if (mounted) {
           setList(items.bitacora)
         }
       })
     } else {
-      getBitacora(null, prop.comentarios, session.id, prop.tipo).then((items) => {
+      getAutorizados(session.id, prop.tipo).then((items) => {
         if (mounted) {
           setList(items.bitacora)
         }
