@@ -203,10 +203,10 @@ const Consultar = () => {
               onClick={() =>
                 history.push({
                   pathname: '/usuarios/usuariogrupo',
-                  id_usuario: session.id,
-                  nombre: session.name,
-                  email: session.email,
-                  estado: session.estado,
+                  id_usuario: location.id_usuario,
+                  nombre: location.nombre,
+                  email: location.email,
+                  estado: location.estado,
                 })
               }
             >

@@ -191,7 +191,8 @@ const Usuarios = () => {
           <CTableBody>
             {results.map((item, i) => {
               let estado = 'Inactivo'
-              if (item.eliminado == 0 && item.id !== session.id) {
+              //if (item.eliminado == 0 && item.id !== session.id) {
+              if (item.eliminado == 0) {
                 if (item.activo == 1) {
                   estado = 'Activo'
                 }

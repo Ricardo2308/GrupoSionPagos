@@ -144,65 +144,72 @@ const Login = () => {
   const handleSubmit = (event) => {
     event.preventDefault()
     getUsuarios(null, null, form.usuario, null).then((items) => {
-      if (items.users.length > 0) {
-        for (let item of items.users) {
-          if (md5(form.password, { encoding: 'binary' }) === item.password) {
-            if (item.activo == 1 && item.eliminado == 0) {
-              revisarPolitica(item.id, item.cambia_password).then((respuesta) => {
-                if (respuesta == true) {
-                  estoyConectado(item.id).then((conexion) => {
-                    //if (conexion == true) {
-                    //setShow(true)
-                    //setTitulo('Aviso!')
-                    //setColor('info')
-                    //setMensaje(
-                    //  'Parece que tu usuario tiene una sesión activa, cierra sesión y vuelve a intentarlo.',
-                    //)
-                    //} else {
-                    crearSesion(item.id).then((sesion) => {
-                      if (sesion == true) {
-                        let limiteconexion = obtenerPolitica('_LIMITE_TIEMPO_CONEXION_')
-                        let verde = obtenerPolitica('_SEMAFORO_VERDE')
-                        let amarillo = obtenerPolitica('_SEMAFORO_AMARILLO')
-                        const sign = require('jwt-encode')
-                        const secret = 'secret'
-                        const data = {
-                          email: item.email,
-                          name: item.nombre + ' ' + item.apellido,
-                          user_name: item.nombre_usuario,
-                          id: item.id,
-                          estado: item.activo,
-                          limiteconexion: limiteconexion,
-                          verde: verde,
-                          amarillo: amarillo,
+      if (items) {
+        if (items.users.length > 0) {
+          for (let item of items.users) {
+            if (md5(form.password, { encoding: 'binary' }) === item.password) {
+              if (item.activo == 1 && item.eliminado == 0) {
+                revisarPolitica(item.id, item.cambia_password).then((respuesta) => {
+                  if (respuesta == true) {
+                    estoyConectado(item.id).then((conexion) => {
+                      //if (conexion == true) {
+                      //setShow(true)
+                      //setTitulo('Aviso!')
+                      //setColor('info')
+                      //setMensaje(
+                      //  'Parece que tu usuario tiene una sesión activa, cierra sesión y vuelve a intentarlo.',
+                      //)
+                      //} else {
+                      crearSesion(item.id).then((sesion) => {
+                        if (sesion == true) {
+                          let limiteconexion = obtenerPolitica('_LIMITE_TIEMPO_CONEXION_')
+                          let verde = obtenerPolitica('_SEMAFORO_VERDE')
+                          let amarillo = obtenerPolitica('_SEMAFORO_AMARILLO')
+                          const sign = require('jwt-encode')
+                          const secret = 'secret'
+                          const data = {
+                            email: item.email,
+                            name: item.nombre + ' ' + item.apellido,
+                            user_name: item.nombre_usuario,
+                            id: item.id,
+                            estado: item.activo,
+                            limiteconexion: limiteconexion,
+                            verde: verde,
+                            amarillo: amarillo,
+                          }
+                          const jwt = sign(data, secret)
+                          saveJWT(jwt)
+                          history.push('/home')
                         }
-                        const jwt = sign(data, secret)
-                        saveJWT(jwt)
-                        history.push('/home')
-                      }
+                      })
+                      //}
                     })
-                    //}
-                  })
-                }
-              })
+                  }
+                })
+              } else {
+                setShow(true)
+                setTitulo('Error!')
+                setColor('danger')
+                setMensaje(
+                  'Parece que tu usuario ha sido bloqueado o eliminado. Consulta con el soporte técnico.',
+                )
+              }
             } else {
               setShow(true)
               setTitulo('Error!')
               setColor('danger')
-              setMensaje(
-                'Parece que tu usuario ha sido bloqueado o eliminado. Consulta con el soporte técnico.',
-              )
-            }
-          } else {
-            setShow(true)
-            setTitulo('Error!')
-            setColor('danger')
-            setMensaje('Credenciales incorrectas. Vuelva a intentarlo.')
-            if (item.activo == 1 && item.eliminado == 0) {
-              let valor = obtenerPolitica('_LIMITE_ERROR_LOGIN_')
-              postLogLogin(item.id, valor)
+              setMensaje('Credenciales incorrectas. Vuelva a intentarlo.')
+              if (item.activo == 1 && item.eliminado == 0) {
+                let valor = obtenerPolitica('_LIMITE_ERROR_LOGIN_')
+                postLogLogin(item.id, valor)
+              }
             }
           }
+        } else {
+          setShow(true)
+          setTitulo('Error!')
+          setColor('danger')
+          setMensaje('Credenciales incorrectas. Vuelva a intentarlo.')
         }
       } else {
         setShow(true)
@@ -264,7 +271,13 @@ const Login = () => {
                       </CInputGroup>
                       <CRow>
                         <CCol xs="6">
-                          <CButton color="primary" className="px-4" onClick={handleSubmit}>
+                          <CButton
+                            type="submit"
+                            color="primary"
+                            className="px-4"
+                            onClick={handleSubmit}
+                            onSubmit={handleSubmit}
+                          >
                             Iniciar Sesión
                           </CButton>
                         </CCol>
