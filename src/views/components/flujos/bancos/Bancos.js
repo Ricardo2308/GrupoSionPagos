@@ -56,7 +56,7 @@ const Bancos = () => {
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false)
   const filteredItems = results.filter(
     (item) =>
-      item.codigo_transferencia.toLowerCase().includes(filterText.toLowerCase()) ||
+      item.codigo_transferencia.toString().toLowerCase().includes(filterText.toLowerCase()) ||
       item.nombre.toLowerCase().includes(filterText.toLowerCase()) ||
       item.direccion.toLowerCase().includes(filterText.toLowerCase()) ||
       item.Nombre.toLowerCase().includes(filterText.toLowerCase()),

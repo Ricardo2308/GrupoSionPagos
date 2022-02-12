@@ -37,8 +37,8 @@ const Pendientes = (prop) => {
   const filteredItems = results.filter(
     (item) =>
       item.comments.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.doc_date.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.doc_num.toLowerCase().includes(filterText.toLowerCase()),
+      item.doc_date.toString().toLowerCase().includes(filterText.toLowerCase()) ||
+      item.doc_num.toString().toLowerCase().includes(filterText.toLowerCase()),
   )
 
   useEffect(() => {
