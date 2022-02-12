@@ -40,14 +40,14 @@ const Autorizados = (prop) => {
   const filteredItems = results.filter(
     (item) =>
       item.comments.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.doc_date.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.doc_num.toLowerCase().includes(filterText.toLowerCase()),
+      item.doc_date.toString().toLowerCase().includes(filterText.toLowerCase()) ||
+      item.doc_num.toString().toLowerCase().includes(filterText.toLowerCase()),
   )
   const filteredItemsA = autorizados.filter(
     (item) =>
       item.comments.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.doc_date.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.Pago.toLowerCase().includes(filterText.toLowerCase()),
+      item.doc_date.toString().toLowerCase().includes(filterText.toLowerCase()) ||
+      item.Pago.toString().toLowerCase().includes(filterText.toLowerCase()),
   )
 
   async function leerNotificaciones(IdFlujo, Pago, Estado, Nivel, IdGrupo) {

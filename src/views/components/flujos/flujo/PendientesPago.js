@@ -58,8 +58,8 @@ const PendientesPago = (prop) => {
   const filteredItems = results.filter(
     (item) =>
       item.comments.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.doc_date.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.doc_num.toLowerCase().includes(filterText.toLowerCase()),
+      item.doc_date.toString().toLowerCase().includes(filterText.toLowerCase()) ||
+      item.doc_num.toString().toLowerCase().includes(filterText.toLowerCase()),
   )
   const [form, setValues] = useState({
     pagos: '',
@@ -76,7 +76,6 @@ const PendientesPago = (prop) => {
     }
     getPendientesCompensacion(prop.tipo, idUsuario).then((items) => {
       if (mounted) {
-        console.log(items.flujos)
         setList(items.flujos)
       }
     })
