@@ -52,7 +52,7 @@
     "react": "^17.0.2",
     "react-app-polyfill": "^2.0.0",
     "react-bootstrap": "^1.6.1",
-    "react-data-table-component": "^7.0.0-rc2",
+    "react-data-table-component": "^7.4.7",
     "react-datepicker": "^4.1.1",
     "react-dom": "^17.0.2",
     "react-dropzone-uploader": "^2.11.0",

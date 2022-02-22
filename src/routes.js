@@ -5,6 +5,7 @@ import React from 'react'
 const Usuarios = React.lazy(() => import('./views/components/usuarios/usuarios/Usuarios'))
 const Register = React.lazy(() => import('./views/components/usuarios/register/Register'))
 const EditarUsuarios = React.lazy(() => import('./views/components/usuarios/editar/Editar'))
+const EditarPassword = React.lazy(() => import('./views/components/usuarios/editar/Password'))
 const PerfilUsuario = React.lazy(() => import('./views/components/usuarios/perfil/PerfilUsuarios'))
 const ConsultaPU = React.lazy(() => import('./views/components/usuarios/perfil/ConsultaPU'))
 const EditarPerfilUsuario = React.lazy(() =>
@@ -148,6 +149,7 @@ const routes = [
   { path: '/usuarios', name: 'Usuarios', component: Usuarios, exact: true },
   { path: '/usuarios/registro', name: 'Nuevo', component: Register },
   { path: '/usuarios/editar', name: 'Modificación', component: EditarUsuarios },
+  { path: '/usuarios/password', name: 'Cambiar contraseña', component: EditarPassword },
   { path: '/usuarios/perfilusuario', name: 'Perfil', component: PerfilUsuario },
   { path: '/usuarios/consulta', name: 'Perfil Usuario', component: ConsultaPU },
   { path: '/usuarios/editarPU', name: 'Editar Perfil Usuario', component: EditarPerfilUsuario },

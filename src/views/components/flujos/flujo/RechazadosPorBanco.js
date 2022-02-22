@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { Button, FormControl } from 'react-bootstrap'
 import DataTable, { createTheme } from 'react-data-table-component'
-import { getCompensados } from '../../../../services/getCompensados'
+import { getRechazadosBanco } from '../../../../services/getRechazadosBanco'
 import { postNotificacion } from '../../../../services/postNotificacion'
 import { useSession } from 'react-use-session'
 import { FaList } from 'react-icons/fa'
@@ -29,12 +29,11 @@ const FilterComponent = (prop) => (
   </div>
 )
 
-const Compensados = (prop) => {
+const RechazadosPorBanco = (prop) => {
   const history = useHistory()
   const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
-  const [compensados, setCompensados] = useState([])
   const [filterText, setFilterText] = useState('')
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false)
   const filteredItems = results.filter(
@@ -42,12 +41,6 @@ const Compensados = (prop) => {
       item.comments.toLowerCase().includes(filterText.toLowerCase()) ||
       item.doc_date.toString().toLowerCase().includes(filterText.toLowerCase()) ||
       item.doc_num.toString().toLowerCase().includes(filterText.toLowerCase()),
-  )
-  const filteredItemsA = compensados.filter(
-    (item) =>
-      item.comments.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.doc_date.toString().toLowerCase().includes(filterText.toLowerCase()) ||
-      item.Pago.toString().toLowerCase().includes(filterText.toLowerCase()),
   )
 
   async function leerNotificaciones(IdFlujo, Pago, Estado, Nivel, IdGrupo) {
@@ -69,16 +62,15 @@ const Compensados = (prop) => {
   useEffect(() => {
     let mounted = true
     if (location.comentarios && location.tipo) {
-      setCompensados(location.compensados)
-      getCompensados(session.id, location.tipo).then((items) => {
+      getRechazadosBanco(session.id, location.tipo).then((items) => {
         if (mounted) {
-          setList(items.bitacora)
+          setList(items.flujos)
         }
       })
     } else {
-      getCompensados(session.id, prop.tipo).then((items) => {
+      getRechazadosBanco(session.id, prop.tipo).then((items) => {
         if (mounted) {
-          setList(items.bitacora)
+          setList(items.flujos)
         }
       })
     }
@@ -136,6 +128,17 @@ const Compensados = (prop) => {
       width: '53%',
     },
     {
+      name: 'Estado',
+      center: true,
+      cell: function OrderItems(row) {
+        if (row.activo == 1) {
+          return <div>Activo</div>
+        } else if (row.activo == 0) {
+          return <div>Inactivo</div>
+        }
+      },
+    },
+    {
       name: 'Acciones',
       cell: function OrderItems(row) {
         return (
@@ -148,7 +151,7 @@ const Compensados = (prop) => {
               onClick={() =>
                 history.push({
                   pathname: '/compensacion/tabs',
-                  id_flujo: row.IdFlujo,
+                  id_flujo: row.id_flujo,
                   pago: row.doc_num,
                   estado: row.estado,
                   nivel: row.nivel,
@@ -165,7 +168,7 @@ const Compensados = (prop) => {
     },
   ])
 
-  const columnsA = useMemo(() => [
+  const columnsR = useMemo(() => [
     {
       name: 'Número Documento',
       selector: (row) => row.Pago,
@@ -185,6 +188,17 @@ const Compensados = (prop) => {
       width: '53%',
     },
     {
+      name: 'Estado',
+      center: true,
+      cell: function OrderItems(row) {
+        if (row.activo == 1) {
+          return <div>Activo</div>
+        } else if (row.activo == 0) {
+          return <div>Inactivo</div>
+        }
+      },
+    },
+    {
       name: 'Acciones',
       cell: function OrderItems(row) {
         return (
@@ -195,7 +209,7 @@ const Compensados = (prop) => {
               size="sm"
               title="Consultar Detalle Pago"
               onClick={() =>
-                leerNotificaciones(row.IdFlujo, row.Pago, row.estado, row.nivel, row.IdGrupo)
+                leerNotificaciones(row.IdFlujo, row.Pago, row.IdGrupo, row.estado, row.nivel)
               }
             >
               <FaList />
@@ -232,44 +246,6 @@ const Compensados = (prop) => {
         </div>
       )
     }
-    if (location.tipo) {
-      return (
-        <div>
-          <div>
-            <div className="datatable-title">Pagos Notificados</div>
-            <DataTable
-              columns={columnsA}
-              noDataComponent="No hay pagos que mostrar"
-              data={filteredItemsA}
-              customStyles={customStyles}
-              theme="solarized"
-              pagination
-              paginationPerPage={5}
-              paginationResetDefaultPage={resetPaginationToggle}
-              subHeader
-              subHeaderComponent={subHeaderComponentMemo}
-              responsive={true}
-              persistTableHead
-            />
-          </div>
-          <div>
-            <div className="datatable-aprobados">Pagos Compensados</div>
-            <DataTable
-              columns={columns}
-              noDataComponent="No hay pagos que mostrar"
-              data={filteredItems}
-              customStyles={customStyles}
-              theme="solarized"
-              pagination
-              paginationPerPage={5}
-              paginationResetDefaultPage={resetPaginationToggle}
-              responsive={true}
-              persistTableHead
-            />
-          </div>
-        </div>
-      )
-    }
     return (
       <div>
         <div>
@@ -296,4 +272,4 @@ const Compensados = (prop) => {
   }
 }
 
-export default Compensados
+export default RechazadosPorBanco

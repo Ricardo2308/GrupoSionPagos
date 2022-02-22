@@ -9,7 +9,7 @@ import {
   CDropdownMenu,
   CDropdownToggle,
 } from '@coreui/react'
-import { FiUser, FiPower } from 'react-icons/fi'
+import { FiUser, FiPower, FiLock } from 'react-icons/fi'
 import { FaUserCircle } from 'react-icons/fa'
 
 const AppHeaderDropdown = () => {
@@ -52,6 +52,21 @@ const AppHeaderDropdown = () => {
           >
             <FiUser style={{ marginRight: '5px' }} />
             Perfil
+          </CDropdownItem>
+          <CDropdownItem
+            title="Cambiar contraseña"
+            onClick={() =>
+              history.push({
+                pathname: '/usuarios/password',
+                id_usuario: session.id,
+                nombre: session.name,
+                estado: session.estado,
+                inhabilitar: true,
+              })
+            }
+          >
+            <FiLock style={{ marginRight: '5px' }} />
+            Cambiar contraseña
           </CDropdownItem>
           <CDropdownItem title="Cerrar Sesión" onClick={() => salir()}>
             <FiPower style={{ marginRight: '5px' }} />

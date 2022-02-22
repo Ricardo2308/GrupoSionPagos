@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { CButton } from '@coreui/react'
 import { Tab, Tabs, Modal, Button } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import FlujoSolicitud from './FlujoSolicitud'
@@ -17,6 +18,9 @@ import { getArchivosFlujo } from '../../../../services/getArchivosFlujo'
 import { getFlujoIngreso } from '../../../../services/getFlujoIngreso'
 import { getFlujoOferta } from '../../../../services/getFlujoOferta'
 import { getFlujoOrden } from '../../../../services/getFlujoOrden'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
+import { postFlujos } from '../../../../services/postFlujos'
+import { postFlujoDetalle } from '../../../../services/postFlujoDetalle'
 import '../../../../scss/estilos.scss'
 
 const CompensacionTabs = () => {
@@ -31,9 +35,13 @@ const CompensacionTabs = () => {
   const [orden, setOrden] = useState([])
   const [ingreso, setIngreso] = useState([])
   const [archivos, setArchivos] = useState([])
+  const [permisos, setPermisos] = useState([])
+  const [idFlujo, setIdFlujo] = useState(0)
+  const [opcion, setOpcion] = useState(0)
 
   useEffect(() => {
     let mounted = true
+    let objeto = 'Modulo Autorizacion Pagos'
     getFlujoSolicitud(location.id_flujo, null).then((items) => {
       if (mounted) {
         setSolicitud(items.solicitud)
@@ -59,8 +67,23 @@ const CompensacionTabs = () => {
         setArchivos(items.archivos)
       }
     })
+    getPerfilUsuario(session.id, '4', objeto).then((items) => {
+      if (mounted) {
+        setPermisos(items.detalle)
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  function ExistePermiso(permiso) {
+    let result = false
+    for (let item of permisos) {
+      if (permiso == item.descripcion) {
+        result = true
+      }
+    }
+    return result
+  }
 
   function iniciar(minutos) {
     let segundos = 60 * minutos
@@ -80,8 +103,7 @@ const CompensacionTabs = () => {
   const handleOnIdle = (event) => {
     setShow(true)
     setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
+      `Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos. Si desea continuar presione Aceptar`,
     )
     iniciar(2)
     console.log('last active', getLastActiveTime())
@@ -91,7 +113,9 @@ const CompensacionTabs = () => {
     console.log('time remaining', getRemainingTime())
   }
 
-  const handleOnAction = (event) => {}
+  const handleOnAction = (event) => {
+    return false
+  }
 
   const { getRemainingTime, getLastActiveTime } = useIdleTimer({
     timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
@@ -119,6 +143,47 @@ const CompensacionTabs = () => {
     }
   }
 
+  function mostrarModal(id_flujo, opcion) {
+    if (opcion == 5) {
+      setIdFlujo(id_flujo)
+      setOpcion(opcion)
+      setMensaje('Está seguro de actualizar el pago?')
+      setShow(true)
+    }
+  }
+
+  async function Aprobar_Rechazar(id_flujo, opcion) {
+    let idUsuario = 0
+    if (session) {
+      idUsuario = session.id
+    }
+    let pagos = []
+    pagos.push(id_flujo)
+    if (opcion == 5) {
+      const respuestaActualizado = await postFlujos(id_flujo, '0', '', '5', null)
+      const detalleFlujoActualizado = await postFlujoDetalle(
+        id_flujo,
+        '11',
+        idUsuario,
+        'Actualizado',
+        '0',
+      )
+      if (respuestaActualizado == 'OK' && detalleFlujoActualizado == 'OK') {
+        const respuestaReset = await postFlujos(id_flujo, '0', '', '6', null)
+        const detalleFlujoReset = await postFlujoDetalle(
+          id_flujo,
+          '3',
+          idUsuario,
+          'Reinicio de autorización por actualización',
+          '0',
+        )
+        if (respuestaReset == 'OK' && detalleFlujoReset == 'OK') {
+          history.go(-1)
+        }
+      }
+    }
+  }
+
   if (session) {
     if (location.id_flujo) {
       let MostrarSolicitud = false
@@ -127,6 +192,7 @@ const CompensacionTabs = () => {
       let MostrarIngreso = false
       let MostrarArchivos = false
       let MostrarFacturas = false
+      let MostrarActualizar = ExistePermiso('Actualizar')
       if (solicitud.length > 0) {
         MostrarSolicitud = true
       }
@@ -153,11 +219,27 @@ const CompensacionTabs = () => {
               <Button variant="secondary" onClick={() => Cancelar(2)}>
                 Cancelar
               </Button>
-              <Button variant="primary" onClick={() => Cancelar(1)}>
+              <Button
+                variant="primary"
+                onClick={() => Aprobar_Rechazar(idFlujo, opcion).then(() => Cancelar(1))}
+              >
                 Aceptar
               </Button>
             </Modal.Footer>
           </Modal>
+          <div
+            className={!MostrarActualizar ? 'd-none float-right' : 'float-right'}
+            style={{ marginTop: '15px', marginRight: '15px' }}
+          >
+            <CButton
+              className={!MostrarActualizar ? 'd-none' : ''}
+              color="info"
+              size="sm"
+              onClick={() => mostrarModal(location.id_flujo, 5)}
+            >
+              Actualizar
+            </CButton>
+          </div>
           <div className="div-content">
             <div style={{ width: '100%' }}>
               <Tabs defaultActiveKey="detalle" id="uncontrolled-tab-example" className="mb-3">

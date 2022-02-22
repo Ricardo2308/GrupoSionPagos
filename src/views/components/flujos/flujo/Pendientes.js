@@ -89,19 +89,19 @@ const Pendientes = (prop) => {
   const columns = useMemo(() => [
     {
       name: 'Número Documento',
-      selector: 'doc_num',
+      selector: (row) => row.doc_num,
       center: true,
       width: '15%',
     },
     {
       name: 'Fecha Documento',
-      selector: 'doc_date',
+      selector: (row) => row.doc_date,
       center: true,
       width: '13%',
     },
     {
       name: 'Detalle',
-      selector: 'comments',
+      selector: (row) => row.comments,
       center: true,
       width: '53%',
     },

@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom'
 import { Tab, Tabs, Modal, Button } from 'react-bootstrap'
 import PendientesPago from './PendientesPago'
 import Compensados from './Compensados'
+import RechazadosPorBanco from './RechazadosPorBanco'
 import { useSession } from 'react-use-session'
 import { useIdleTimer } from 'react-idle-timer'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
@@ -34,8 +35,7 @@ const PagoTransferencia = () => {
   const handleOnIdle = (event) => {
     setShow(true)
     setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
+      `Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos. Si desea continuar presione Aceptar`,
     )
     iniciar(2)
     console.log('last active', getLastActiveTime())
@@ -45,7 +45,9 @@ const PagoTransferencia = () => {
     console.log('time remaining', getRemainingTime())
   }
 
-  const handleOnAction = (event) => {}
+  const handleOnAction = (event) => {
+    return false
+  }
 
   const { getRemainingTime, getLastActiveTime } = useIdleTimer({
     timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
@@ -98,6 +100,9 @@ const PagoTransferencia = () => {
               </Tab>
               <Tab eventKey="compensados" title="Compensados">
                 <Compensados comentarios={comentarios} tipo={'TRANSFERENCIA'} />
+              </Tab>
+              <Tab eventKey="rechazadosBanco" title="Rechazados por banco">
+                <RechazadosPorBanco comentarios={comentarios} tipo={'TRANSFERENCIA'} />
               </Tab>
             </Tabs>
           </div>

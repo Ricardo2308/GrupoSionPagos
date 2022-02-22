@@ -18,6 +18,7 @@ import { getArchivosFlujo } from '../../../../services/getArchivosFlujo'
 import { getFlujoIngreso } from '../../../../services/getFlujoIngreso'
 import { getFlujoOferta } from '../../../../services/getFlujoOferta'
 import { getFlujoOrden } from '../../../../services/getFlujoOrden'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { useSession } from 'react-use-session'
 import Chat from './Chat'
 import FlujoFactura from './FlujoFactura'
@@ -44,13 +45,13 @@ const PagoTabs = () => {
   const [orden, setOrden] = useState([])
   const [ingreso, setIngreso] = useState([])
   const [archivos, setArchivos] = useState([])
+  const [permisos, setPermisos] = useState([])
 
   const handleOnIdle = (event) => {
     setShow(true)
     setOpcion(3)
     setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
+      `Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos. Si desea continuar presione Aceptar`,
     )
     iniciar(2)
     console.log('last active', getLastActiveTime())
@@ -60,7 +61,9 @@ const PagoTabs = () => {
     console.log('time remaining', getRemainingTime())
   }
 
-  const handleOnAction = (event) => {}
+  const handleOnAction = (event) => {
+    return false
+  }
 
   const { getRemainingTime, getLastActiveTime } = useIdleTimer({
     timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
@@ -72,6 +75,7 @@ const PagoTabs = () => {
 
   useEffect(() => {
     let mounted = true
+    let objeto = 'Modulo Autorizacion Pagos'
     getFlujoSolicitud(location.id_flujo, null).then((items) => {
       if (mounted) {
         setSolicitud(items.solicitud)
@@ -97,8 +101,23 @@ const PagoTabs = () => {
         setArchivos(items.archivos)
       }
     })
+    getPerfilUsuario(session.id, '4', objeto).then((items) => {
+      if (mounted) {
+        setPermisos(items.detalle)
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  function ExistePermiso(permiso) {
+    let result = false
+    for (let item of permisos) {
+      if (permiso == item.descripcion) {
+        result = true
+      }
+    }
+    return result
+  }
 
   function iniciar(minutos) {
     let segundos = 60 * minutos
@@ -143,6 +162,16 @@ const PagoTabs = () => {
       setIdFlujo(id_flujo)
       setOpcion(opcion)
       setMensaje('Está seguro de rechazar el pago?')
+      setShow(true)
+    } else if (opcion == 4) {
+      setIdFlujo(id_flujo)
+      setOpcion(opcion)
+      setMensaje('Está seguro de pausar el pago?')
+      setShow(true)
+    } else if (opcion == 5) {
+      setIdFlujo(id_flujo)
+      setOpcion(opcion)
+      setMensaje('Está seguro de actualizar el pago?')
       setShow(true)
     }
   }
@@ -201,6 +230,40 @@ const PagoTabs = () => {
       }
     } else if (opcion == 3) {
       setShow(true)
+    } else if (opcion == 4) {
+      const respuestaPausado = await postFlujos(id_flujo, '0', '', '4', null)
+      const detalleFlujoActualizado = await postFlujoDetalle(
+        id_flujo,
+        '10',
+        idUsuario,
+        'Pausado',
+        '0',
+      )
+      if (respuestaPausado == 'OK' && detalleFlujoActualizado == 'OK') {
+        history.go(-1)
+      }
+    } else if (opcion == 5) {
+      const respuestaActualizado = await postFlujos(id_flujo, '0', '', '5', null)
+      const detalleFlujoActualizado = await postFlujoDetalle(
+        id_flujo,
+        '11',
+        idUsuario,
+        'Actualizado',
+        '0',
+      )
+      if (respuestaActualizado == 'OK' && detalleFlujoActualizado == 'OK') {
+        const respuestaReset = await postFlujos(id_flujo, '0', '', '6', null)
+        const detalleFlujoReset = await postFlujoDetalle(
+          id_flujo,
+          '3',
+          idUsuario,
+          'Reinicio de autorización por actualización',
+          '0',
+        )
+        if (respuestaReset == 'OK' && detalleFlujoReset == 'OK') {
+          history.go(-1)
+        }
+      }
     }
   }
 
@@ -213,6 +276,14 @@ const PagoTabs = () => {
       let MostrarIngreso = false
       let MostrarArchivos = false
       let MostrarFacturas = false
+      let MostrarRevision = ExistePermiso('Revisar')
+      let MostrarPausado = true
+      let MostrarActualizar = false
+      let MostrarAprobarRechazar = false
+      if (location.estado == 10) {
+        MostrarActualizar = true
+        MostrarPausado = false
+      }
       if (location.id_grupo) {
         grupo = location.id_grupo
       }
@@ -231,7 +302,12 @@ const PagoTabs = () => {
       if (archivos.length > 0) {
         MostrarArchivos = true
       }
-      if (location.estado > 2 && location.estado < 5) {
+      if (
+        (location.estado > 2 && location.estado < 5) ||
+        location.estado == 10 ||
+        location.estado == 11
+      ) {
+        MostrarAprobarRechazar = true
         return (
           <div className="div-tabs">
             <Modal responsive show={show} onHide={() => Cancelar(opcion)} centered>
@@ -251,12 +327,46 @@ const PagoTabs = () => {
                 </CButton>
               </Modal.Footer>
             </Modal>
-            <div className="float-right" style={{ marginTop: '15px', marginRight: '15px' }}>
-              <CButton color="success" size="sm" onClick={() => mostrarModal(location.id_flujo, 1)}>
+            <div
+              className={MostrarRevision ? 'd-none float-right' : 'float-right'}
+              style={{ marginTop: '15px', marginRight: '15px' }}
+            >
+              <CButton
+                className={!MostrarAprobarRechazar ? 'd-none' : ''}
+                color="success"
+                size="sm"
+                onClick={() => mostrarModal(location.id_flujo, 1)}
+              >
                 Aprobar
               </CButton>{' '}
-              <CButton color="danger" size="sm" onClick={() => mostrarModal(location.id_flujo, 2)}>
+              <CButton
+                className={!MostrarAprobarRechazar ? 'd-none' : ''}
+                color="danger"
+                size="sm"
+                onClick={() => mostrarModal(location.id_flujo, 2)}
+              >
                 Rechazar
+              </CButton>
+            </div>
+            <div
+              className={!MostrarRevision ? 'd-none float-right' : 'float-right'}
+              style={{ marginTop: '15px', marginRight: '15px' }}
+            >
+              <CButton
+                className={!MostrarPausado ? 'd-none' : ''}
+                color="danger"
+                size="sm"
+                onClick={() => mostrarModal(location.id_flujo, 4)}
+              >
+                Pausar
+              </CButton>{' '}
+              <CButton
+                className={!MostrarActualizar ? 'd-none' : ''}
+                color="info"
+                size="sm"
+                onClick={() => mostrarModal(location.id_flujo, 5)}
+              >
+                Actualizar
               </CButton>
             </div>
             <div className="div-content">

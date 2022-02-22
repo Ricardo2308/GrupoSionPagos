@@ -37,6 +37,7 @@ const FlujoBitacora = (prop) => {
               <CTableHeaderCell className="text-center">Estado</CTableHeaderCell>
               <CTableHeaderCell className="text-center">Fecha</CTableHeaderCell>
               <CTableHeaderCell className="text-center">Nivel</CTableHeaderCell>
+              <CTableHeaderCell className="text-center">Comentario</CTableHeaderCell>
             </CTableRow>
           </CTableHead>
           <CTableBody>
@@ -55,6 +56,7 @@ const FlujoBitacora = (prop) => {
                   <CTableDataCell className="text-center">{item.descripcion}</CTableDataCell>
                   <CTableDataCell className="text-center">{item.Fecha}</CTableDataCell>
                   <CTableDataCell className="text-center">{Nivel}</CTableDataCell>
+                  <CTableDataCell className="text-center">{item.Comentario}</CTableDataCell>
                 </CTableRow>
               )
             })}

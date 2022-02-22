@@ -119,8 +119,7 @@ const Bancos = () => {
     setShow(true)
     setOpcion(2)
     setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
+      `Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos. Si desea continuar presione Aceptar`,
     )
     iniciar(2)
     console.log('last active', getLastActiveTime())
@@ -130,7 +129,9 @@ const Bancos = () => {
     console.log('time remaining', getRemainingTime())
   }
 
-  const handleOnAction = (event) => {}
+  const handleOnAction = (event) => {
+    return false
+  }
 
   const { getRemainingTime, getLastActiveTime } = useIdleTimer({
     timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
@@ -174,31 +175,31 @@ const Bancos = () => {
   const columns = useMemo(() => [
     {
       name: 'No.',
-      selector: 'codigo_transferencia',
+      selector: (row) => row.codigo_transferencia,
       center: true,
       width: '65px',
     },
     {
       name: 'Nombre',
-      selector: 'nombre',
+      selector: (row) => row.nombre,
       center: true,
       width: '320px',
     },
     {
       name: 'Dirección',
-      selector: 'direccion',
+      selector: (row) => row.direccion,
       center: true,
       width: '300px',
     },
     {
       name: 'País',
-      selector: 'Nombre',
+      selector: (row) => row.Nombre,
       center: true,
       width: '100px',
     },
     {
       name: 'SAP',
-      selector: 'codigo_SAP',
+      selector: (row) => row.codigo_SAP,
       center: true,
       width: '90px',
     },
