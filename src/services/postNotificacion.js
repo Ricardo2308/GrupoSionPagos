@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}notificacion`
 
-export function postNotificacion(pagos, idUsuario, mensaje, opcion) {
+export function postNotificacion(pagos, idUsuario, mensaje, estado, opcion) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -8,6 +8,7 @@ export function postNotificacion(pagos, idUsuario, mensaje, opcion) {
     pagos: pagos,
     IdUsuario: idUsuario,
     Mensaje: mensaje,
+    Estado: estado,
   }
 
   if (opcion !== '') {
