@@ -20,6 +20,7 @@ const Dashboard = () => {
   const [pagos, setPagos] = useState([])
   const [tipos, setTipos] = useState([])
   const [promedioT, setPromedioT] = useState([])
+  const [estadosLabel, setEstadosLabel] = useState([])
   const [semaforos, setSemaforos] = useState([])
   const [semaforosNom, setSemaforosNom] = useState([])
   const [years, setYears] = useState([])
@@ -36,6 +37,7 @@ const Dashboard = () => {
     let pagos = []
     let labeltipos = []
     let promedioT = []
+    let estadosLabel = []
     let semaforos = []
     let semaforosNom = []
     let years = []
@@ -62,8 +64,10 @@ const Dashboard = () => {
     getReportesFlujos('3', '0', '0').then((items) => {
       for (const pago of items.flujos) {
         promedioT.push(parseInt(pago.promedioPorNivel))
+        estadosLabel.push(pago.nombreEstadoOrigen + '->' + pago.nombreEstadoDestino)
       }
       setPromedioT(promedioT)
+      setEstadosLabel(estadosLabel)
     })
     getReportesFlujos('4', '0', '0').then((items) => {
       for (const pago of items.flujos) {
@@ -341,12 +345,7 @@ const Dashboard = () => {
               <CCardBody>
                 <CChartBar
                   data={{
-                    labels: [
-                      'Pago cargado->Archivo cargado',
-                      'Archivo cargado->Responsable asignado',
-                      'Responsable asignado->Aprobación de nivel',
-                      'Aprobación de nivel->Autorización completa',
-                    ],
+                    labels: estadosLabel,
                     datasets: [
                       {
                         label: 'Horas',
