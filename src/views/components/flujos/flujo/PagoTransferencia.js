@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom'
 import { Tab, Tabs, Modal, Button } from 'react-bootstrap'
 import PendientesPago from './PendientesPago'
 import Compensados from './Compensados'
+import Rechazados from './RechazadoBanco'
 import { useSession } from 'react-use-session'
 import { useIdleTimer } from 'react-idle-timer'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
@@ -14,7 +15,6 @@ const PagoTransferencia = () => {
   const [show, setShow] = useState(false)
   const [mensaje, setMensaje] = useState('')
   const { session, clear } = useSession('PendrogonIT-Session')
-  const comentarios = ['Compensado']
 
   function iniciar(minutos) {
     let segundos = 60 * minutos
@@ -97,7 +97,10 @@ const PagoTransferencia = () => {
                 <PendientesPago tipo={'TRANSFERENCIA'} />
               </Tab>
               <Tab eventKey="compensados" title="Compensados">
-                <Compensados comentarios={comentarios} tipo={'TRANSFERENCIA'} />
+                <Compensados tipo={'TRANSFERENCIA'} />
+              </Tab>
+              <Tab eventKey="rechazados" title="Rechazados Banco">
+                <Rechazados tipo={'TRANSFERENCIA'} />
               </Tab>
             </Tabs>
           </div>

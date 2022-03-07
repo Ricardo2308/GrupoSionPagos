@@ -4,7 +4,7 @@ import { useSession } from 'react-use-session'
 import { useHistory } from 'react-router-dom'
 import '../../../../scss/estilos.scss'
 
-const FlujoIngreso = (prop) => {
+const FlujoFacturaCantidad = (prop) => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
 
@@ -44,59 +44,10 @@ const FlujoIngreso = (prop) => {
       name: 'Número Documento',
       selector: (row) => row.doc_num,
       center: true,
-      width: '140px',
     },
     {
-      name: 'Fecha Impuesto',
-      selector: (row) => row.tax_date,
-      center: true,
-      width: '140px',
-    },
-    {
-      name: 'Fecha Documento',
-      selector: (row) => row.doc_date,
-      center: true,
-      width: '140px',
-    },
-    {
-      name: 'Nombre WHS',
-      selector: (row) => row.whs_name,
-      center: true,
-      width: '400px',
-    },
-    {
-      name: 'Usuario',
-      selector: (row) => row.user,
-      center: true,
-      width: '250px',
-    },
-    {
-      name: 'Código Item',
-      selector: (row) => row.item_code,
-      center: true,
-      width: '100px',
-    },
-    {
-      name: 'Código UOM',
-      selector: (row) => row.uom_code,
-      center: true,
-      width: '100px',
-    },
-    {
-      name: 'Cantidad',
-      selector: (row) => row.quantity,
-      center: true,
-      width: '100px',
-    },
-    {
-      name: 'Descripción',
-      selector: (row) => row.dscription,
-      center: true,
-      width: '610px',
-    },
-    {
-      name: 'Comentarios',
-      selector: (row) => row.comments,
+      name: 'CantidadFacturas',
+      selector: (row) => row.cant_facturas,
       center: true,
     },
   ])
@@ -125,4 +76,4 @@ const FlujoIngreso = (prop) => {
   }
 }
 
-export default FlujoIngreso
+export default FlujoFacturaCantidad

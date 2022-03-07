@@ -68,7 +68,7 @@ const Compensados = (prop) => {
 
   useEffect(() => {
     let mounted = true
-    if (location.comentarios && location.tipo) {
+    if (location.tipo) {
       setCompensados(location.compensados)
       getCompensados(session.id, location.tipo).then((items) => {
         if (mounted) {
@@ -119,19 +119,19 @@ const Compensados = (prop) => {
   const columns = useMemo(() => [
     {
       name: 'Número Documento',
-      selector: 'doc_num',
+      selector: (row) => row.doc_num,
       center: true,
       width: '15%',
     },
     {
       name: 'Fecha Documento',
-      selector: 'doc_date',
+      selector: (row) => row.doc_date,
       center: true,
       width: '13%',
     },
     {
       name: 'Detalle',
-      selector: 'comments',
+      selector: (row) => row.comments,
       center: true,
       width: '53%',
     },
@@ -168,19 +168,19 @@ const Compensados = (prop) => {
   const columnsA = useMemo(() => [
     {
       name: 'Número Documento',
-      selector: 'Pago',
+      selector: (row) => row.Pago,
       center: true,
       width: '15%',
     },
     {
       name: 'Fecha Documento',
-      selector: 'doc_date',
+      selector: (row) => row.doc_date,
       center: true,
       width: '13%',
     },
     {
       name: 'Detalle',
-      selector: 'comments',
+      selector: (row) => row.comments,
       center: true,
       width: '53%',
     },

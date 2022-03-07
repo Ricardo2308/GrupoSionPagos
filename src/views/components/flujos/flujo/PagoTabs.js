@@ -8,6 +8,8 @@ import FlujoOferta from './FlujoOferta'
 import FlujoOrden from './FlujoOrden'
 import FlujoIngreso from './FlujoIngreso'
 import DetalleFlujo from './DetalleFlujo'
+import FlujoFacturaCantidad from './FlujoFacturaCantidad'
+import FlujoFacturaDocumento from './FlujoFacturaDocumento'
 import ArchivosFlujo from './ArchivosFlujoF'
 import { postFlujos } from '../../../../services/postFlujos'
 import { postFlujoDetalle } from '../../../../services/postFlujoDetalle'
@@ -18,17 +20,12 @@ import { getArchivosFlujo } from '../../../../services/getArchivosFlujo'
 import { getFlujoIngreso } from '../../../../services/getFlujoIngreso'
 import { getFlujoOferta } from '../../../../services/getFlujoOferta'
 import { getFlujoOrden } from '../../../../services/getFlujoOrden'
+import { getFlujoFacturaCantidad } from '../../../../services/getFlujoFacturaCantidad'
+import { getFlujoFacturaDocumento } from '../../../../services/getFlujoFacturaDocumento'
 import { useSession } from 'react-use-session'
 import Chat from './Chat'
-import FlujoFactura from './FlujoFactura'
 import FlujoBitacora from './FlujoBitacora'
 import '../../../../scss/estilos.scss'
-
-const Results = (prop) => (
-  <Tab eventKey="solicitud" title="Solicitud">
-    <FlujoSolicitud id_flujo={prop.id_flujo} />
-  </Tab>
-)
 
 const PagoTabs = () => {
   const history = useHistory()
@@ -43,6 +40,8 @@ const PagoTabs = () => {
   const [oferta, setOferta] = useState([])
   const [orden, setOrden] = useState([])
   const [ingreso, setIngreso] = useState([])
+  const [facturaCantidad, setFacturaCantidad] = useState([])
+  const [facturaDocumento, setFacturaDocumento] = useState([])
   const [archivos, setArchivos] = useState([])
 
   const handleOnIdle = (event) => {
@@ -90,6 +89,16 @@ const PagoTabs = () => {
     getFlujoIngreso(location.id_flujo).then((items) => {
       if (mounted) {
         setIngreso(items.ingreso)
+      }
+    })
+    getFlujoFacturaCantidad(location.id_flujo).then((items) => {
+      if (mounted) {
+        setFacturaCantidad(items.facturacantidad)
+      }
+    })
+    getFlujoFacturaDocumento(location.id_flujo).then((items) => {
+      if (mounted) {
+        setFacturaDocumento(items.facturadocumento)
       }
     })
     getArchivosFlujo(location.id_flujo, null).then((items) => {
@@ -211,8 +220,9 @@ const PagoTabs = () => {
       let MostrarOferta = false
       let MostrarOrden = false
       let MostrarIngreso = false
+      let MostrarFacturaCantidad = false
+      let MostrarFacturaDocumento = false
       let MostrarArchivos = false
-      let MostrarFacturas = false
       if (location.id_grupo) {
         grupo = location.id_grupo
       }
@@ -227,6 +237,12 @@ const PagoTabs = () => {
       }
       if (ingreso.length > 0) {
         MostrarIngreso = true
+      }
+      if (facturaCantidad.length > 0) {
+        MostrarFacturaCantidad = true
+      }
+      if (facturaDocumento.length > 0) {
+        MostrarFacturaDocumento = true
       }
       if (archivos.length > 0) {
         MostrarArchivos = true
@@ -262,6 +278,9 @@ const PagoTabs = () => {
             <div className="div-content">
               <div style={{ width: '100%' }}>
                 <Tabs defaultActiveKey="detalle" id="uncontrolled-tab-example" className="mb-3">
+                  <Tab eventKey="detalle" title="Detalle">
+                    <DetalleFlujo id_flujo={location.id_flujo} />
+                  </Tab>
                   <Tab
                     eventKey="solicitud"
                     title="Solicitud"
@@ -291,14 +310,18 @@ const PagoTabs = () => {
                     <FlujoIngreso results={ingreso} />
                   </Tab>
                   <Tab
-                    eventKey="facturas"
-                    title="Facturas"
-                    tabClassName={!MostrarFacturas ? 'd-none' : ''}
+                    eventKey="facturasCantidad"
+                    title="Factura Cantidad"
+                    tabClassName={!MostrarFacturaCantidad ? 'd-none' : ''}
                   >
-                    <FlujoFactura id_flujo={location.id_flujo} />
+                    <FlujoFacturaCantidad results={facturaCantidad} />
                   </Tab>
-                  <Tab eventKey="detalle" title="Detalle">
-                    <DetalleFlujo id_flujo={location.id_flujo} />
+                  <Tab
+                    eventKey="facturasDocumento"
+                    title="Factura Documento"
+                    tabClassName={!MostrarFacturaDocumento ? 'd-none' : ''}
+                  >
+                    <FlujoFacturaDocumento results={facturaDocumento} />
                   </Tab>
                   <Tab
                     eventKey="archivos"
@@ -344,6 +367,9 @@ const PagoTabs = () => {
             <div className="div-content">
               <div style={{ width: '100%' }}>
                 <Tabs defaultActiveKey="detalle" id="uncontrolled-tab-example" className="mb-3">
+                  <Tab eventKey="detalle" title="Detalle">
+                    <DetalleFlujo id_flujo={location.id_flujo} />
+                  </Tab>
                   <Tab
                     eventKey="solicitud"
                     title="Solicitud"
@@ -373,14 +399,18 @@ const PagoTabs = () => {
                     <FlujoIngreso results={ingreso} />
                   </Tab>
                   <Tab
-                    eventKey="facturas"
-                    title="Facturas"
-                    tabClassName={!MostrarFacturas ? 'd-none' : ''}
+                    eventKey="facturasCantidad"
+                    title="Factura Cantidad"
+                    tabClassName={!MostrarFacturaCantidad ? 'd-none' : ''}
                   >
-                    <FlujoFactura id_flujo={location.id_flujo} />
+                    <FlujoFacturaCantidad results={facturaCantidad} />
                   </Tab>
-                  <Tab eventKey="detalle" title="Detalle">
-                    <DetalleFlujo id_flujo={location.id_flujo} />
+                  <Tab
+                    eventKey="facturasDocumento"
+                    title="Factura Documento"
+                    tabClassName={!MostrarFacturaDocumento ? 'd-none' : ''}
+                  >
+                    <FlujoFacturaDocumento results={facturaDocumento} />
                   </Tab>
                   <Tab
                     eventKey="archivos"

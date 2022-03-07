@@ -4,6 +4,7 @@ import { useIdleTimer } from 'react-idle-timer'
 import { Tab, Tabs, Modal, Button } from 'react-bootstrap'
 import PendientesPago from './PendientesPago'
 import Compensados from './Compensados'
+import Rechazados from './RechazadoBanco'
 import { useSession } from 'react-use-session'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import '../../../../scss/estilos.scss'
@@ -97,7 +98,10 @@ const PagoInterna = () => {
                 <PendientesPago tipo={'INTERNA'} />
               </Tab>
               <Tab eventKey="compensados" title="Compensados">
-                <Compensados comentarios={comentarios} tipo={'INTERNA'} />
+                <Compensados tipo={'INTERNA'} />
+              </Tab>
+              <Tab eventKey="rechazados" title="Rechazados Banco">
+                <Rechazados tipo={'INTERNA'} />
               </Tab>
             </Tabs>
           </div>
