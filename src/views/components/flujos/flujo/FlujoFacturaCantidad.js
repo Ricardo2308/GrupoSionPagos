@@ -46,7 +46,7 @@ const FlujoFacturaCantidad = (prop) => {
       center: true,
     },
     {
-      name: 'CantidadFacturas',
+      name: 'Cantidad Facturas',
       selector: (row) => row.cant_facturas,
       center: true,
     },
