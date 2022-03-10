@@ -18,7 +18,7 @@ export function postArchivoFlujo(
     descripcion: descripcion,
     archivos: archivos,
     opcion: opcion,
-    url: 'http://sionpagos.pendrogon.com/archivos/',
+    url: 'http://34.208.193.210/pagos/archivos/',
   }
   const data = JSON.stringify(datos)
 

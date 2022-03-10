@@ -1,8 +1,16 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import { FiCreditCard } from 'react-icons/fi'
+import { FiFile, FiCreditCard } from 'react-icons/fi'
 
 const pagos = [
+  {
+    _component: 'CNavItem',
+    as: NavLink,
+    anchor: 'Archivos Pagos',
+    icon: <FiFile size={16} style={{ marginRight: '4px' }} />,
+    to: '/archivoflujo',
+    objeto: 'Modulo Archivos Pago',
+  },
   {
     _component: 'CNavGroup',
     anchor: 'Autorizar Pagos',

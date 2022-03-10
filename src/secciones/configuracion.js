@@ -5,7 +5,6 @@ import {
   FiUsers,
   FiGrid,
   FiAlertOctagon,
-  FiFile,
   FiThumbsUp,
   FiCreditCard,
 } from 'react-icons/fi'
@@ -52,14 +51,6 @@ const configuracion = [
     icon: <FiGitPullRequest size={16} style={{ marginRight: '4px' }} />,
     to: '/tipoflujo',
     objeto: 'Modulo Tipos Flujo',
-  },
-  {
-    _component: 'CNavItem',
-    as: NavLink,
-    anchor: 'Archivos Pagos',
-    icon: <FiFile size={16} style={{ marginRight: '4px' }} />,
-    to: '/archivoflujo',
-    objeto: 'Modulo Archivos Pago',
   },
   {
     _component: 'CNavItem',
