@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}rechazadobanco`
 
-export function getRechazadosBanco(idUsuario, Tipo) {
+export function getRechazadosBanco(Tipo, idUsuario) {
   let ApiFinal = API
   let ApiWhere = ''
 

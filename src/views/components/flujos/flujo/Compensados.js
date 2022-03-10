@@ -68,7 +68,7 @@ const Compensados = (prop) => {
 
   useEffect(() => {
     let mounted = true
-    if (location.comentarios && location.tipo) {
+    if (location.tipo) {
       setCompensados(location.compensados)
       getCompensados(session.id, location.tipo).then((items) => {
         if (mounted) {

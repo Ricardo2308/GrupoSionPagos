@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { Button, FormControl } from 'react-bootstrap'
 import DataTable, { createTheme } from 'react-data-table-component'
-import { getRechazados } from '../../../../services/getRechazados'
+import { getRechazadosBanco } from '../../../../services/getRechazadosBanco'
 import { postNotificacion } from '../../../../services/postNotificacion'
 import { useSession } from 'react-use-session'
 import { FaList } from 'react-icons/fa'
@@ -29,7 +29,7 @@ const FilterComponent = (prop) => (
   </div>
 )
 
-const Rechazados = (prop) => {
+const RechazadosBanco = (prop) => {
   const history = useHistory()
   const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
@@ -70,16 +70,17 @@ const Rechazados = (prop) => {
   useEffect(() => {
     let mounted = true
     if (location.tipo) {
-      setRechazados(location.rechazados)
-      getRechazados(session.id, location.tipo).then((items) => {
+      setRechazados(location.rechazadosBanco)
+      getRechazadosBanco(location.tipo, session.id).then((items) => {
         if (mounted) {
-          setList(items.bitacora)
+          setList(items.flujos)
         }
       })
     } else {
-      getRechazados(session.id, prop.tipo).then((items) => {
+      getRechazadosBanco(prop.tipo, session.id).then((items) => {
         if (mounted) {
-          setList(items.bitacora)
+          console.log(items.flujos)
+          setList(items.flujos)
         }
       })
     }
@@ -160,7 +161,7 @@ const Rechazados = (prop) => {
               onClick={() =>
                 history.push({
                   pathname: '/pagos/tabs',
-                  id_flujo: row.IdFlujo,
+                  id_flujo: row.id_flujo,
                   pago: row.doc_num,
                   estado: row.estado,
                   nivel: row.nivel,
@@ -319,4 +320,4 @@ const Rechazados = (prop) => {
   }
 }
 
-export default Rechazados
+export default RechazadosBanco

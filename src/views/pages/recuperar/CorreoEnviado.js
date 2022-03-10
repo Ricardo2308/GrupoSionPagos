@@ -27,7 +27,7 @@ const CorreoEnviado = () => {
                     </CForm>
                   </CCardBody>
                 </CCard>
-                <CCard className="text-white py-5" style={{ width: '50%' }}>
+                <CCard className="text-white py-5">
                   <CCardBody className="text-center">
                     <div
                       style={{

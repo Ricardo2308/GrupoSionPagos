@@ -79,7 +79,7 @@ const Autorizados = (prop) => {
 
   useEffect(() => {
     let mounted = true
-    if (location.comentarios && location.tipo) {
+    if (location.tipo) {
       setAutorizados(location.autorizados)
       getAutorizados(session.id, location.tipo).then((items) => {
         if (mounted) {

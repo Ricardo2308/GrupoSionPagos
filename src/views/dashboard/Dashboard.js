@@ -20,6 +20,7 @@ const Dashboard = () => {
   const [pagos, setPagos] = useState([])
   const [tipos, setTipos] = useState([])
   const [promedioT, setPromedioT] = useState([])
+  const [estadosLabel, setEstadosLabel] = useState([])
   const [semaforos, setSemaforos] = useState([])
   const [semaforosNom, setSemaforosNom] = useState([])
   const [years, setYears] = useState([])
@@ -36,6 +37,7 @@ const Dashboard = () => {
     let pagos = []
     let labeltipos = []
     let promedioT = []
+    let estadosLabel = []
     let semaforos = []
     let semaforosNom = []
     let years = []
@@ -62,8 +64,10 @@ const Dashboard = () => {
     getReportesFlujos('3', '0', '0').then((items) => {
       for (const pago of items.flujos) {
         promedioT.push(parseInt(pago.promedioPorNivel))
+        estadosLabel.push(pago.nombreEstadoOrigen + '->' + pago.nombreEstadoDestino)
       }
       setPromedioT(promedioT)
+      setEstadosLabel(estadosLabel)
     })
     getReportesFlujos('4', '0', '0').then((items) => {
       for (const pago of items.flujos) {
@@ -284,19 +288,29 @@ const Dashboard = () => {
                       {
                         backgroundColor: [
                           '#D02F2F',
-                          '#ADBC3C',
+                          '#AF940B',
+                          '#428A49',
                           '#40389D',
                           '#8A5C84',
-                          '#428A49',
                           '#553D26',
+                          '#CD530F',
+                          '#454143',
+                          '#0B4B4E',
+                          '#7D1843',
+                          '#6B9614',
                         ],
                         hoverBackgroundColor: [
                           '#CC5855',
                           '#C7C246',
+                          '#56A05A',
                           '#6F72C5',
                           '#8E6BC2',
-                          '#56A05A',
                           '#825E3D',
+                          '#CF7340',
+                          '#676768',
+                          '#18787D',
+                          '#87405E',
+                          '#9DCA42',
                         ],
                         data: results,
                       },
@@ -316,8 +330,8 @@ const Dashboard = () => {
                     datasets: [
                       {
                         data: pagos,
-                        backgroundColor: ['#D02F2F', '#40389D', '#428A49'],
-                        hoverBackgroundColor: ['#CC5855', '#6F72C5', '#56A05A'],
+                        backgroundColor: ['#D02F2F', '#AF940B', '#428A49'],
+                        hoverBackgroundColor: ['#CC5855', '#C7C246', '#56A05A'],
                       },
                     ],
                   }}
@@ -331,12 +345,7 @@ const Dashboard = () => {
               <CCardBody>
                 <CChartBar
                   data={{
-                    labels: [
-                      'Pago cargado->Archivo cargado',
-                      'Archivo cargado->Responsable asignado',
-                      'Responsable asignado->Aprobación de nivel',
-                      'Aprobación de nivel->Autorización completa',
-                    ],
+                    labels: estadosLabel,
                     datasets: [
                       {
                         label: 'Horas',

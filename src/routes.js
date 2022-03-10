@@ -112,6 +112,7 @@ const CompensacionTabs = React.lazy(() =>
   import('./views/components/flujos/flujo/CompensacionTabs'),
 )
 const Compensados = React.lazy(() => import('./views/components/flujos/flujo/Compensados'))
+const RechazadoBanco = React.lazy(() => import('./views/components/flujos/flujo/RechazadoBanco'))
 const FlujoGrupo = React.lazy(() => import('./views/components/flujos/flujo/FlujoGrupo'))
 
 const Bancos = React.lazy(() => import('./views/components/flujos/bancos/Bancos'))
@@ -231,7 +232,8 @@ const routes = [
   { path: '/pagos/detalle', name: 'Detalle Flujo', component: DetalleFlujo },
   { path: '/pagos/autorizados', name: 'Autorizados', component: Autorizados },
   { path: '/pagos/rechazados', name: 'Rechazados', component: Rechazados },
-  { path: '/pagos/compensados', name: 'Rechazados', component: Compensados },
+  { path: '/pagos/compensados', name: 'Compensados', component: Compensados },
+  { path: '/pagos/rechazadospago', name: 'Rechazados Banco', component: RechazadoBanco },
   {
     path: '/reportependientes',
     exact: true,
