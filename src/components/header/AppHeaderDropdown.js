@@ -40,6 +40,7 @@ const AppHeaderDropdown = () => {
           <CDropdownHeader>{session.user_name}</CDropdownHeader>
           <CDropdownItem
             title="Ir al Perfil"
+            style={{ cursor: 'pointer' }}
             onClick={() =>
               history.push({
                 pathname: '/usuarios/consulta',
@@ -55,6 +56,7 @@ const AppHeaderDropdown = () => {
           </CDropdownItem>
           <CDropdownItem
             title="Cambiar contraseña"
+            style={{ cursor: 'pointer' }}
             onClick={() =>
               history.push({
                 pathname: '/usuarios/password',
@@ -68,7 +70,11 @@ const AppHeaderDropdown = () => {
             <FiLock style={{ marginRight: '5px' }} />
             Cambiar contraseña
           </CDropdownItem>
-          <CDropdownItem title="Cerrar Sesión" onClick={() => salir()}>
+          <CDropdownItem
+            title="Cerrar Sesión"
+            style={{ cursor: 'pointer' }}
+            onClick={() => salir()}
+          >
             <FiPower style={{ marginRight: '5px' }} />
             Salir
           </CDropdownItem>

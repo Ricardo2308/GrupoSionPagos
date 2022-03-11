@@ -1,44 +1,28 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { HiOutlineDocumentReport } from 'react-icons/hi'
 import { FaRegChartBar } from 'react-icons/fa'
+import { MenuItem, SubMenu } from 'react-pro-sidebar'
 
-const reportes = {
-  _component: 'CNavGroup',
-  as: NavLink,
-  anchor: 'Reportes',
-  to: '/to',
-  icon: <FaRegChartBar size={20} style={{ marginRight: '10px', marginLeft: '7px' }} />,
-  items: [
-    {
-      _component: 'CNavItem',
-      as: NavLink,
-      anchor: 'Pagos Pendientes',
-      icon: <HiOutlineDocumentReport size={16} style={{ marginRight: '1px' }} />,
-      to: '/reportependientes',
-    },
-    {
-      _component: 'CNavItem',
-      as: NavLink,
-      anchor: 'Pendientes Validación',
-      icon: <HiOutlineDocumentReport size={16} style={{ marginRight: '1px' }} />,
-      to: '/pendientesvalidacionreporte',
-    },
-    {
-      _component: 'CNavItem',
-      as: NavLink,
-      anchor: 'Cancelados',
-      icon: <HiOutlineDocumentReport size={16} style={{ marginRight: '1px' }} />,
-      to: '/reportecancelados',
-    },
-    {
-      _component: 'CNavItem',
-      as: NavLink,
-      anchor: 'Rechazados',
-      icon: <HiOutlineDocumentReport size={16} style={{ marginRight: '1px' }} />,
-      to: '/reporterechazados',
-    },
-  ],
-}
+const reportes = (
+  <SubMenu key="Reportes" icon={<FaRegChartBar />} title="Reportes">
+    <MenuItem key="Reportes1" icon={<HiOutlineDocumentReport />}>
+      Pagos Pendientes
+      <Link to="/reportependientes" />
+    </MenuItem>
+    <MenuItem key="Reportes2" icon={<HiOutlineDocumentReport />}>
+      Pendientes Validación
+      <Link to="/pendientesvalidacionreporte" />
+    </MenuItem>
+    <MenuItem key="Reportes3" icon={<HiOutlineDocumentReport />}>
+      Cancelados
+      <Link to="/reportecancelados" />
+    </MenuItem>
+    <MenuItem key="Reportes4" icon={<HiOutlineDocumentReport />}>
+      Rechazados
+      <Link to="/reporterechazados" />
+    </MenuItem>
+  </SubMenu>
+)
 
 export default reportes

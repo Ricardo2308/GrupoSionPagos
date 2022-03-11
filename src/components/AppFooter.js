@@ -5,12 +5,12 @@ const AppFooter = () => {
   return (
     <CFooter>
       <div>
-        <h style={{ color: '#0C70AA' }}>Control de Pagos</h>
+        <span style={{ color: '#0C70AA' }}>Control de Pagos</span>
         <span className="ms-1">&copy; 2021 Grupo Sion.</span>
       </div>
       <div className="ms-auto">
         <span className="me-1">Desarrollado por</span>
-        <h style={{ color: '#0C70AA' }}>Pendrogon</h>
+        <span style={{ color: '#0C70AA' }}>Pendrogon</span>
       </div>
     </CFooter>
   )

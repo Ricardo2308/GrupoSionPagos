@@ -31,7 +31,7 @@ const AppBreadcrumb = () => {
 
   return (
     <CBreadcrumb className="m-0 ms-2" style={{ zIndex: '0' }}>
-      <CBreadcrumbItem style={{ color: 'blue' }}>Home</CBreadcrumbItem>
+      <CBreadcrumbItem style={{ color: 'blue' }}>Inicio</CBreadcrumbItem>
       {breadcrumbs.map((breadcrumb, index) => {
         return (
           <CBreadcrumbItem style={{ color: 'blue' }} key={index}>

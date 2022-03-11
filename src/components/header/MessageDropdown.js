@@ -45,6 +45,7 @@ const MessageDropdown = (props) => {
                 <CDropdownItem
                   title="Ir al Pago"
                   key={item.id_mensaje}
+                  style={{ cursor: 'pointer' }}
                   onClick={() => responderMensajes(item.tipo)}
                 >
                   {item.usuarioenvia}

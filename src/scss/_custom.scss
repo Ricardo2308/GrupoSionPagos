@@ -1,1 +1,92 @@
 // Here you can add other styles
+body{
+    font-size: 12px !important;
+}
+.form-select{
+    font-size: 12px !important;
+}
+.pro-sidebar .pro-menu .pro-menu-item {
+    font-size: 12px !important;
+}
+.header-brand{
+    font-size: 12px !important;
+}
+.closemenu {
+    color: rgb(161, 161, 161);
+    position: absolute;
+    right: 0;
+    z-index: 9999;
+    line-height: 30px;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 22px;
+    top: 70px;
+    cursor: pointer;
+}
+#root,
+.App {
+  font-family: sans-serif;
+  height: 100%;
+  display: flex;
+  position: relative;
+}
+
+.App .main {
+  padding: 24px;
+  flex-grow: 1;
+  display: flex;
+}
+.pro-sidebar{
+  background-color: #3d4b63;
+}
+.pro-sidebar-header{
+    background-color: #3d4b63;
+}
+.pro-sidebar-content{
+    background-color: #313c4f;
+}
+.pro-sidebar .pro-menu > ul > .pro-sub-menu > .pro-inner-list-item {
+    background-color: #263040 !important;
+}
+.pro-sidebar.collapsed .pro-menu > ul > .pro-menu-item.pro-sub-menu > .pro-inner-list-item > .popper-inner {
+    background-color: #263040 !important;
+    z-index: 2030 !important;
+}
+.pro-sidebar.collapsed .pro-menu > ul > .pro-menu-item > .pro-inner-list-item {
+  z-index: 2029 !important;
+}
+.header.header-sticky {
+  z-index: 1 !important;
+}
+.sidebar-btn-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 24px;
+  background-color: #3d4b63;
+}
+
+.sidebar-btn {
+  padding: 1px 15px;
+  border-radius: 40px;
+  background-color: #3d4b63;
+  color: #adadad;
+  text-decoration: none;
+  margin: 0 auto;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.sidebar-btn span {
+  margin-left: 10px;
+  font-size: 13px;
+}
+@media only screen and (max-width: 720px) {
+html {
+overflow: hidden;
+}
+}

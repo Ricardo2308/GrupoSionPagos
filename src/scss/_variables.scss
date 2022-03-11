@@ -483,7 +483,7 @@
 // $font-size-root effects the value of `rem`, which is used for as well font sizes, paddings and margins
 // $font-size-base effects the font size of the body text
 // $font-size-root:              null !default;
-// $font-size-base:              1rem !default; // Assumes the browser default, typically `16px`
+// $font-size-base:              0.75rem !default; // Assumes the browser default, typically `16px`
 // $font-size-sm:                $font-size-base * .875 !default;
 // $font-size-lg:                $font-size-base * 1.25 !default;
 

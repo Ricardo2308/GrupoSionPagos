@@ -1,6 +1,7 @@
 body {
   padding: 0px;
   margin: 0px;
+  font-size: 12px !important;
 }
 
 * {
@@ -30,7 +31,7 @@ body {
   background: #fafbfc;
   color: #8da2b5;
   border: 1px solid #dde5ed;
-  font-size: 16px;
+  font-size: 12px;
   padding: 16px 15px 14px;
   margin: 0;
   border-radius: 6px;

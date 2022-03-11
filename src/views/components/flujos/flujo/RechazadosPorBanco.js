@@ -82,7 +82,7 @@ const RechazadosPorBanco = (prop) => {
       style: {
         paddingLeft: '8px', // override the cell padding for head cells
         paddingRight: '8px',
-        fontSize: '14px',
+        fontSize: '12px',
       },
     },
   }

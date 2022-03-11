@@ -13,7 +13,7 @@ const FlujoOrden = (prop) => {
       style: {
         paddingLeft: '8px', // override the cell padding for head cells
         paddingRight: '8px',
-        fontSize: '13px',
+        fontSize: '12px',
       },
     },
   }

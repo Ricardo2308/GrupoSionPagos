@@ -105,7 +105,7 @@ const PagoBancario = () => {
                 <Rechazados tipo={'BANCARIO'} />
               </Tab>
               <Tab eventKey="rechazadosBanco" title="Rechazados por banco">
-                <RechazadosPorBanco comentarios={comentarios} tipo={'BANCARIO'} />
+                <RechazadosPorBanco tipo={'BANCARIO'} />
               </Tab>
             </Tabs>
           </div>

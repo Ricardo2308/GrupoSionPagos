@@ -75,6 +75,7 @@ const NotificationDropdown = (props) => {
                 <CDropdownItem
                   title="Ir al Pago"
                   key={item.IdNotificacion}
+                  style={{ cursor: 'pointer' }}
                   onClick={() => leerNotificacion(item.estado, item.tipo)}
                 >
                   {item.Mensaje}

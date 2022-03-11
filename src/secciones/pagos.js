@@ -1,69 +1,55 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { FiFile, FiCreditCard } from 'react-icons/fi'
+import { MenuItem, SubMenu } from 'react-pro-sidebar'
 
 const pagos = [
   {
-    _component: 'CNavItem',
-    as: NavLink,
-    anchor: 'Archivos Pagos',
-    icon: <FiFile size={16} style={{ marginRight: '4px' }} />,
-    to: '/archivoflujo',
     objeto: 'Modulo Archivos Pago',
+    menu: (
+      <MenuItem key="archivoflujo" icon={<FiFile />}>
+        Archivos Pagos
+        <Link to="/archivoflujo" />
+      </MenuItem>
+    ),
   },
   {
-    _component: 'CNavGroup',
-    anchor: 'Autorizar Pagos',
-    icon: <FiCreditCard size={16} style={{ marginRight: '4px' }} />,
-    as: NavLink,
     objeto: 'Modulo Autorizacion Pagos',
-    items: [
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Bancaria',
-        to: '/pagos/bancario',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Transferencia',
-        to: '/pagos/transferencia',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Interna',
-        to: '/pagos/interna',
-      },
-    ],
+    menu: (
+      <SubMenu key="AutorizarPagos" icon={<FiCreditCard />} title="Autorizar Pagos">
+        <MenuItem key="AutorizarPagos1">
+          Bancaria
+          <Link to="/pagos/bancario" />
+        </MenuItem>
+        <MenuItem key="AutorizarPagos2">
+          Transferencia
+          <Link to="/pagos/transferencia" />
+        </MenuItem>
+        <MenuItem key="AutorizarPagos3">
+          Interna
+          <Link to="/pagos/interna" />
+        </MenuItem>
+      </SubMenu>
+    ),
   },
   {
-    _component: 'CNavGroup',
-    anchor: 'Compensar Pagos',
-    icon: <FiCreditCard size={17} />,
-    as: NavLink,
     objeto: 'Modulo Compensacion Pagos',
-    items: [
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Bancaria',
-        to: '/compensacion/bancario',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Transferencia',
-        to: '/compensacion/transferencia',
-      },
-      {
-        _component: 'CNavItem',
-        as: NavLink,
-        anchor: 'Interna',
-        to: '/compensacion/interna',
-      },
-    ],
+    menu: (
+      <SubMenu key="CompensarPagos" icon={<FiCreditCard />} title="Compensar Pagos">
+        <MenuItem key="CompensarPagos1">
+          Bancaria
+          <Link to="/compensacion/bancario" />
+        </MenuItem>
+        <MenuItem key="CompensarPagos2">
+          Transferencia
+          <Link to="/compensacion/transferencia" />
+        </MenuItem>
+        <MenuItem key="CompensarPagos3">
+          Interna
+          <Link to="/compensacion/interna" />
+        </MenuItem>
+      </SubMenu>
+    ),
   },
 ]
 

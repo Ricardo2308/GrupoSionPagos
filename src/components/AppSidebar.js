@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useSession } from 'react-use-session'
-import { NavLink } from 'react-router-dom'
-import { FiLock, FiSettings, FiCreditCard } from 'react-icons/fi'
+import { Link, NavLink } from 'react-router-dom'
+import {
+  FiLock,
+  FiSettings,
+  FiCreditCard,
+  FiArrowLeftCircle,
+  FiArrowRightCircle,
+} from 'react-icons/fi'
+import { GiAbstract050 } from 'react-icons/gi'
 import SimpleBar from 'simplebar-react'
 import 'simplebar/dist/simplebar.min.css'
 import logo from '../assets/icons/GrupoSion.png'
@@ -18,6 +25,17 @@ import {
   CNavLink,
 } from '@coreui/react'
 
+import {
+  ProSidebar,
+  Menu,
+  MenuItem,
+  SubMenu,
+  SidebarHeader,
+  SidebarFooter,
+  SidebarContent,
+} from 'react-pro-sidebar'
+import 'react-pro-sidebar/dist/css/styles.css'
+
 // sidebar nav config
 //import navigation from '../secciones/_nav'
 import administracion from '../secciones/administracion'
@@ -31,6 +49,7 @@ const AppSidebar = () => {
   const dispatch = useDispatch()
   const unfoldable = useSelector((state) => state.sidebarUnfoldable)
   const sidebarShow = useSelector((state) => state.sidebarShow)
+  const [menuCollapse, setMenuCollapse] = useState(true)
 
   useEffect(() => {
     let mounted = true
@@ -45,34 +64,28 @@ const AppSidebar = () => {
         permisos.push(item.objeto)
       }
       if (obtenerItems(administracion, permisos).length > 0) {
-        menu.push({
-          _component: 'CNavGroup',
-          as: NavLink,
-          anchor: 'Administración',
-          to: '/to',
-          icon: <FiLock size={20} style={{ marginRight: '10px', marginLeft: '7px' }} />,
-          items: obtenerItems(administracion, eliminaDuplicados(permisos)),
-        })
+        let items = obtenerItems(administracion, eliminaDuplicados(permisos))
+        menu.push(
+          <SubMenu key="Administración" icon={<FiLock />} title="Administración">
+            {items}
+          </SubMenu>,
+        )
       }
       if (obtenerItems(configuracion, permisos).length > 0) {
-        menu.push({
-          _component: 'CNavGroup',
-          as: NavLink,
-          anchor: 'Configuración',
-          to: '/to',
-          icon: <FiSettings size={20} style={{ marginRight: '10px', marginLeft: '7px' }} />,
-          items: obtenerItems(configuracion, eliminaDuplicados(permisos)),
-        })
+        let items = obtenerItems(configuracion, eliminaDuplicados(permisos))
+        menu.push(
+          <SubMenu key="Configuración" icon={<FiSettings />} title="Configuración">
+            {items}
+          </SubMenu>,
+        )
       }
       if (obtenerItems(pagos, permisos).length > 0) {
-        menu.push({
-          _component: 'CNavGroup',
-          as: NavLink,
-          anchor: 'Pagos',
-          to: '/to',
-          icon: <FiCreditCard size={20} style={{ marginRight: '10px', marginLeft: '7px' }} />,
-          items: obtenerItems(pagos, eliminaDuplicados(permisos)),
-        })
+        let items = obtenerItems(pagos, eliminaDuplicados(permisos))
+        menu.push(
+          <SubMenu key="Pagos" icon={<FiCreditCard />} title="Pagos">
+            {items}
+          </SubMenu>,
+        )
       }
       for (let permiso of eliminaDuplicados(permisos)) {
         if (permiso == 'Seccion Reportes') {
@@ -88,12 +101,16 @@ const AppSidebar = () => {
     return [...new Set(arr)]
   }
 
+  const menuIconClick = () => {
+    menuCollapse ? setMenuCollapse(false) : setMenuCollapse(true)
+  }
+
   function obtenerItems(items, objetos) {
     const array = []
     for (let objeto of objetos) {
       for (let item of items) {
         if (item.objeto == objeto) {
-          array.push(item)
+          array.push(item.menu)
         }
       }
     }
@@ -102,40 +119,47 @@ const AppSidebar = () => {
 
   if (session) {
     return (
-      <CSidebar
-        position="fixed"
-        selfHiding="md"
-        unfoldable={unfoldable}
-        show={sidebarShow}
-        onShow={() => console.log('show')}
-        onHide={() => {
-          dispatch({ type: 'set', sidebarShow: false })
-        }}
-      >
-        <CSidebarHeader style={{ fontWeight: 'bold', textAlign: 'center' }} to="/">
-          CONTROL DE PAGOS
-          <br />
-          {session.user_name}
-        </CSidebarHeader>
-        <CSidebarNav>
-          <SimpleBar>
-            <CNavItem>
-              <CNavLink href="#/dashboard">
-                <img src={logo} style={{ width: '15%', marginRight: '15px', marginLeft: '30px' }} />
-                Dashboard
-              </CNavLink>
-            </CNavItem>
-            <CNavTitle>Módulos</CNavTitle>
-            <CCreateNavItem items={menu} />
-          </SimpleBar>
-        </CSidebarNav>
-        <CSidebarToggler
-          className="d-none d-lg-flex"
-          onClick={() => {
-            dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })
+      <ProSidebar collapsed={menuCollapse}>
+        <SidebarHeader
+          style={{
+            fontWeight: 'bold',
+            textAlign: 'center',
+            fontSize: '14px',
           }}
-        />
-      </CSidebar>
+          to="/"
+        >
+          {menuCollapse ? (
+            <>
+              <span>CP</span>
+              <br />
+              <GiAbstract050 />
+            </>
+          ) : (
+            <>
+              <br />
+              <h6>CONTROL DE PAGOS</h6>
+              {session.user_name}
+              <br />
+              <br />
+            </>
+          )}
+        </SidebarHeader>
+        <SidebarContent>
+          <Menu>
+            <MenuItem>
+              <img src={logo} style={{ width: '15px', marginRight: '18px', marginLeft: '10px' }} />
+              Dashboard
+              <Link to="/dashboard" />
+            </MenuItem>
+            {menu}
+          </Menu>
+        </SidebarContent>
+        <SidebarFooter>
+          <div className="closemenu" onClick={menuIconClick}>
+            {menuCollapse ? <FiArrowRightCircle /> : <FiArrowLeftCircle />}
+          </div>
+        </SidebarFooter>
+      </ProSidebar>
     )
   } else {
     return (
