@@ -3,6 +3,7 @@ import { Redirect, Route, Switch } from 'react-router-dom'
 import { CContainer, CSpinner } from '@coreui/react'
 // routes config
 import routes from '../routes'
+import PagoTabs from 'src/views/components/flujos/flujo/PagoTabs'
 
 const AppContent = () => {
   return (

@@ -1,38 +1,20 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import DataTable, { createTheme } from 'react-data-table-component'
+import DataTable, { createTheme, defaultThemes } from 'react-data-table-component'
 import { Modal, Button, FormControl } from 'react-bootstrap'
 import { PDFReader } from 'reactjs-pdf-view'
 import { useIdleTimer } from 'react-idle-timer'
 import { getArchivosFlujo } from '../../../../services/getArchivosFlujo'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { useSession } from 'react-use-session'
-import { useHistory } from 'react-router-dom'
-import { FaRegFilePdf } from 'react-icons/fa'
+import { useHistory, useLocation } from 'react-router-dom'
+import { FaRegFilePdf, FaArrowLeft } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
-
-const FilterComponent = (prop) => (
-  <div className="div-search">
-    <FormControl
-      id="search"
-      type="text"
-      placeholder="Buscar Archivo"
-      aria-label="Search Input"
-      value={prop.filterText}
-      onChange={prop.onFilter}
-    />
-    <Button
-      color="primary"
-      className="clear-search"
-      onClick={prop.onClear}
-      title="Limpiar Campo Búsqueda"
-    >
-      X
-    </Button>
-  </div>
-)
+import DataTableExtensions from 'react-data-table-component-extensions'
+import 'react-data-table-component-extensions/dist/index.css'
 
 const ArchivosFlujo = () => {
   const history = useHistory()
+  const location = useLocation()
   const [time, setTime] = useState(null)
   const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
@@ -41,18 +23,12 @@ const ArchivosFlujo = () => {
   const [urlArchivo, setUrlArchivo] = useState('')
   const [mensaje, setMensaje] = useState('')
   const [titulo, setTitulo] = useState('')
-  const [filterText, setFilterText] = useState('')
-  const [resetPaginationToggle, setResetPaginationToggle] = useState(false)
-  const filteredItems = results.filter(
-    (item) =>
-      item.nombre_usuario.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.descripcion.toLowerCase().includes(filterText.toLowerCase()),
-  )
+  const filteredItems = results
   const cerrarPDF = () => setMostrar(false)
 
   useEffect(() => {
     let mounted = true
-    getArchivosFlujo(null, session.id).then((items) => {
+    getArchivosFlujo(location.id_flujo, null).then((items) => {
       if (mounted) {
         setList(items.archivos)
       }
@@ -119,35 +95,35 @@ const ArchivosFlujo = () => {
   })
 
   const customStyles = {
+    headRow: {
+      style: {
+        borderTopStyle: 'solid',
+        borderTopWidth: '1px',
+        borderTopColor: defaultThemes.default.divider.default,
+      },
+    },
     headCells: {
       style: {
         paddingLeft: '8px', // override the cell padding for head cells
         paddingRight: '8px',
         fontSize: '12px',
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
+    cells: {
+      style: {
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
       },
     },
   }
-
-  createTheme('solarized', {
-    text: {
-      primary: 'black',
-    },
-    background: {
-      default: 'white',
-    },
-    context: {
-      background: '#cb4b16',
-      text: '#FFFFFF',
-    },
-    divider: {
-      default: '#073642',
-    },
-    action: {
-      button: 'rgba(0,0,0,.54)',
-      hover: 'rgba(0,0,0,.08)',
-      disabled: 'rgba(0,0,0,.12)',
-    },
-  })
 
   const columns = useMemo(() => [
     {
@@ -155,12 +131,16 @@ const ArchivosFlujo = () => {
       selector: (row) => row.nombre_usuario,
       center: true,
       width: '30%',
+      sortable: true,
+      wrap: true,
     },
     {
       name: 'Nombre Archvo',
       selector: (row) => row.descripcion,
       center: true,
       width: '30%',
+      sortable: true,
+      wrap: true,
     },
     {
       name: 'Estado',
@@ -194,22 +174,13 @@ const ArchivosFlujo = () => {
       center: true,
     },
   ])
-
-  const subHeaderComponentMemo = useMemo(() => {
-    const handleClear = () => {
-      if (filterText) {
-        setResetPaginationToggle(!resetPaginationToggle)
-        setFilterText('')
-      }
-    }
-    return (
-      <FilterComponent
-        onFilter={(e) => setFilterText(e.target.value)}
-        onClear={handleClear}
-        filterText={filterText}
-      />
-    )
-  }, [filterText, resetPaginationToggle])
+  const tableData = {
+    columns: columns,
+    data: filteredItems,
+    filterPlaceholder: 'Filtrar datos',
+    export: false,
+    print: false,
+  }
 
   function mostrarModal(url_archivo, usuario) {
     setUrlArchivo(url_archivo)
@@ -251,20 +222,26 @@ const ArchivosFlujo = () => {
             </Button>
           </Modal.Footer>
         </Modal>
-        <DataTable
-          columns={columns}
-          noDataComponent="No hay archivos que mostrar"
-          data={filteredItems}
-          customStyles={customStyles}
-          theme="solarized"
-          pagination
-          paginationPerPage={6}
-          paginationResetDefaultPage={resetPaginationToggle}
-          subHeader
-          subHeaderComponent={subHeaderComponentMemo}
-          responsive={true}
-          persistTableHead
-        />
+        <div className="float-left" style={{ marginBottom: '10px' }}>
+          <Button variant="primary" size="sm" onClick={() => history.goBack()}>
+            <FaArrowLeft />
+            &nbsp;&nbsp;Regresar
+          </Button>
+        </div>
+        <DataTableExtensions {...tableData}>
+          <DataTable
+            columns={columns}
+            noDataComponent="No hay archivos que mostrar"
+            data={filteredItems}
+            customStyles={customStyles}
+            pagination
+            paginationPerPage={25}
+            responsive={true}
+            persistTableHead
+            striped={true}
+            dense
+          />
+        </DataTableExtensions>
       </>
     )
   } else {

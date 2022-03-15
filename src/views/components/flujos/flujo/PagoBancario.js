@@ -5,7 +5,6 @@ import { Tab, Tabs, Modal, Button } from 'react-bootstrap'
 import PendientesPago from './PendientesPago'
 import Compensados from './Compensados'
 import RechazadosPorBanco from './RechazadosPorBanco'
-import Rechazados from './RechazadoBanco'
 import { useSession } from 'react-use-session'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import '../../../../scss/estilos.scss'
@@ -100,9 +99,6 @@ const PagoBancario = () => {
               </Tab>
               <Tab eventKey="compensados" title="Compensados">
                 <Compensados tipo={'BANCARIO'} />
-              </Tab>
-              <Tab eventKey="rechazados" title="Rechazados Banco">
-                <Rechazados tipo={'BANCARIO'} />
               </Tab>
               <Tab eventKey="rechazadosBanco" title="Rechazados por banco">
                 <RechazadosPorBanco tipo={'BANCARIO'} />

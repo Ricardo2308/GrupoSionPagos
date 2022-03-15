@@ -98,6 +98,9 @@ const DetalleFlujo = React.lazy(() => import('./views/components/flujos/flujo/De
 const ArchivosFlujoU = React.lazy(() =>
   import('./views/components/flujos/archivoflujo/ArchivosFlujoU'),
 )
+const FlujoConArchivos = React.lazy(() =>
+  import('./views/components/flujos/archivoflujo/FlujoArchivos'),
+)
 const NuevoArchivoFlujo = React.lazy(() =>
   import('./views/components/flujos/archivoflujo/NuevoArchivoFlujo'),
 )
@@ -273,6 +276,12 @@ const routes = [
   { path: '/compensacion/interna', name: 'Interna', component: CompensacionInterna },
   { path: '/compensacion/tabs', name: 'Detalle Pagos', component: CompensacionTabs },
   { path: '/archivoflujo', exact: true, name: 'Archivos Pagos', component: ArchivosFlujoU },
+  {
+    path: '/flujosconarchivo',
+    exact: true,
+    name: 'Flujos con archivos',
+    component: FlujoConArchivos,
+  },
   { path: '/archivoflujo/nuevo', name: 'Nuevo', component: NuevoArchivoFlujo },
   // { path: '/login', name: 'Login', component: Login },
   // { path: '/register', name: 'Register', component: Register },

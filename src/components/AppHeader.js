@@ -90,9 +90,7 @@ const AppHeader = () => {
         <CHeaderToggler
           className="ms-md-3 d-lg-none"
           onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
-        >
-          <FiMenu size={20} />
-        </CHeaderToggler>
+        ></CHeaderToggler>
         <CHeaderBrand>
           <AppBreadcrumb />
         </CHeaderBrand>

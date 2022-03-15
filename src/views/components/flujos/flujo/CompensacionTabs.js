@@ -25,6 +25,7 @@ import { postFlujoDetalle } from '../../../../services/postFlujoDetalle'
 import { getFlujoFacturaCantidad } from '../../../../services/getFlujoFacturaCantidad'
 import { getFlujoFacturaDocumento } from '../../../../services/getFlujoFacturaDocumento'
 import '../../../../scss/estilos.scss'
+import { FaArrowLeft } from 'react-icons/fa'
 
 const CompensacionTabs = () => {
   const history = useHistory()
@@ -155,6 +156,9 @@ const CompensacionTabs = () => {
         history.push('/')
       }
       detener()
+    } else {
+      setShow(false)
+      detener()
     }
   }
 
@@ -231,20 +235,23 @@ const CompensacionTabs = () => {
       if (archivos.length > 0) {
         MostrarArchivos = true
       }
+      if (location.estado == '7') {
+        MostrarActualizar = false
+      }
       return (
         <div className="div-tabs">
-          <Modal responsive variant="primary" show={show} onHide={() => Cancelar(2)} centered>
+          <Modal responsive variant="primary" show={show} onHide={() => Cancelar(opcion)} centered>
             <Modal.Header closeButton>
               <Modal.Title>Confirmación</Modal.Title>
             </Modal.Header>
             <Modal.Body>{mensaje}</Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={() => Cancelar(2)}>
+              <Button variant="secondary" onClick={() => Cancelar(opcion)}>
                 Cancelar
               </Button>
               <Button
                 variant="primary"
-                onClick={() => Aprobar_Rechazar(idFlujo, opcion).then(() => Cancelar(1))}
+                onClick={() => Aprobar_Rechazar(idFlujo, opcion).then(() => Cancelar(opcion))}
               >
                 Aceptar
               </Button>
@@ -262,6 +269,12 @@ const CompensacionTabs = () => {
             >
               Actualizar
             </CButton>
+          </div>
+          <div className="float-left" style={{ marginBottom: '10px' }}>
+            <Button variant="primary" size="sm" onClick={() => history.goBack()}>
+              <FaArrowLeft />
+              &nbsp;&nbsp;Regresar
+            </Button>
           </div>
           <div className="div-content">
             <div style={{ width: '100%' }}>

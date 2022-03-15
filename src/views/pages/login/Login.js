@@ -82,19 +82,22 @@ const Login = () => {
     return result
   }
 
-  async function crearSesion(id) {
+  async function crearSesion(id, cantidad) {
     const publicIp = require('public-ip')
     let agente = window.navigator.userAgent
     var navegadores = ['Chrome', 'Firefox', 'Safari', 'Opera', 'Trident', 'MSIE', 'Edge']
     const myip = await publicIp.v4()
-    console.log(agente)
     for (var i in navegadores) {
       if (agente.indexOf(navegadores[i]) != -1) {
-        const respuesta = await postSesionUsuario(id, navegadores[i], myip, '1')
-        if (respuesta === 'OK') {
+        if (cantidad == '0') {
           return true
         } else {
-          return false
+          const respuesta = await postSesionUsuario(id, navegadores[i], myip, '1')
+          if (respuesta === 'OK') {
+            return true
+          } else {
+            return false
+          }
         }
       }
     }
@@ -127,9 +130,7 @@ const Login = () => {
           setTitulo('Aviso!')
           setColor('info')
           setMensaje(
-            'Ya pasaron ' +
-              respuesta +
-              ' días desde la última vez que cambió su contraseña. Debe actualizarla.',
+            `Ya pasaron ${respuesta} días desde la última vez que cambió su contraseña. Debe actualizarla.`,
           )
         } else if (parseInt(respuesta) < parseInt(politica)) {
           result = true
@@ -160,7 +161,7 @@ const Login = () => {
                       //  'Parece que tu usuario tiene una sesión activa, cierra sesión y vuelve a intentarlo.',
                       //)
                       //} else {
-                      crearSesion(item.id).then((sesion) => {
+                      crearSesion(item.id, item.cantidadIngresos).then((sesion) => {
                         if (sesion == true) {
                           let limiteconexion = obtenerPolitica('_LIMITE_TIEMPO_CONEXION_')
                           let verde = obtenerPolitica('_SEMAFORO_VERDE')
@@ -176,10 +177,15 @@ const Login = () => {
                             limiteconexion: limiteconexion,
                             verde: verde,
                             amarillo: amarillo,
+                            cantidadIngresos: item.cantidadIngresos,
                           }
                           const jwt = sign(data, secret)
                           saveJWT(jwt)
-                          history.push('/home')
+                          if (item.cantidadIngresos == '0') {
+                            history.push('/usuarios/password')
+                          } else {
+                            history.push('/home')
+                          }
                         }
                       })
                       //}

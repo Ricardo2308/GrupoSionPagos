@@ -1,55 +1,92 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
-import { Button, FormControl } from 'react-bootstrap'
-import DataTable, { createTheme, defaultThemes } from 'react-data-table-component'
-import { getRechazadosBanco } from '../../../../services/getRechazadosBanco'
-import { postNotificacion } from '../../../../services/postNotificacion'
+import DataTable, { defaultThemes } from 'react-data-table-component'
+import { Modal, Button } from 'react-bootstrap'
+import { useIdleTimer } from 'react-idle-timer'
+import { getArchivosFlujo, getFlujosConArchivos } from '../../../../services/getArchivosFlujo'
+import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { useSession } from 'react-use-session'
-import { FaList } from 'react-icons/fa'
+import { useHistory } from 'react-router-dom'
+import { FaRegFilePdf } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
 
-const RechazadosPorBanco = (prop) => {
+const FlujoArchivos = () => {
   const history = useHistory()
-  const location = useLocation()
-  const { session } = useSession('PendrogonIT-Session')
+  const [time, setTime] = useState(null)
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [show, setShow] = useState(false)
+  const [mensaje, setMensaje] = useState('')
   const filteredItems = results
-
-  async function leerNotificaciones(IdFlujo, Pago, Estado, Nivel, IdGrupo) {
-    let pagos = []
-    pagos.push(IdFlujo)
-    const respuesta = await postNotificacion(pagos, session.id, '', '1')
-    if (respuesta == 'OK') {
-      history.push({
-        pathname: '/compensacion/tabs',
-        id_flujo: IdFlujo,
-        pago: Pago,
-        estado: Estado,
-        nivel: Nivel,
-        id_grupo: IdGrupo,
-      })
-    }
-  }
 
   useEffect(() => {
     let mounted = true
-    if (location.comentarios && location.tipo) {
-      getRechazadosBanco(session.id, location.tipo).then((items) => {
-        if (mounted) {
-          setList(items.flujos)
-        }
-      })
-    } else {
-      getRechazadosBanco(session.id, prop.tipo).then((items) => {
-        if (mounted) {
-          setList(items.flujos)
-        }
-      })
-    }
+    getFlujosConArchivos(session.id).then((items) => {
+      if (mounted) {
+        setList(items.flujos)
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  async function Cancelar(opcion) {
+    if (opcion == 1) {
+      setShow(false)
+      detener()
+    } else if (opcion == 2) {
+      let idUsuario = 0
+      if (session) {
+        idUsuario = session.id
+      }
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      if (respuesta === 'OK') {
+        clear()
+        history.push('/')
+      }
+      detener()
+    }
+  }
+
+  function iniciar(minutos) {
+    let segundos = 60 * minutos
+    const intervalo = setInterval(() => {
+      segundos--
+      if (segundos == 0) {
+        Cancelar(2)
+      }
+    }, 1000)
+    setTime(intervalo)
+  }
+
+  function detener() {
+    clearInterval(time)
+  }
+
+  const handleOnIdle = (event) => {
+    setShow(true)
+    setMensaje(
+      `Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos. Si desea continuar presione Aceptar`,
+    )
+    iniciar(2)
+    console.log('last active', getLastActiveTime())
+  }
+
+  const handleOnActive = (event) => {
+    console.log('time remaining', getRemainingTime())
+  }
+
+  const handleOnAction = (event) => {
+    return false
+  }
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  })
 
   const customStyles = {
     headRow: {
@@ -163,24 +200,19 @@ const RechazadosPorBanco = (prop) => {
       name: 'Acciones',
       cell: function OrderItems(row) {
         return (
-          <div>
+          <div style={{ alignItems: 'center' }}>
             <Button
-              data-tag="allowRowEvents"
-              variant="success"
+              variant="outline-danger"
               size="sm"
-              title="Consultar Detalle Pago"
+              title="Ver archivos"
               onClick={() =>
                 history.push({
-                  pathname: '/compensacion/tabs',
+                  pathname: '/archivoflujo',
                   id_flujo: row.id_flujo,
-                  pago: row.doc_num,
-                  estado: row.estado,
-                  nivel: row.nivel,
-                  id_grupo: row.id_grupoautorizacion,
                 })
               }
             >
-              <FaList />
+              <FaRegFilePdf />
             </Button>
           </div>
         )
@@ -198,33 +230,37 @@ const RechazadosPorBanco = (prop) => {
   }
 
   if (session) {
-    if (!location.tipo && !prop.tipo) {
-      history.push('/dashboard')
-      return (
-        <div className="sin-sesion">
-          NO SE CARGÓ EL NÚMERO DE PAGO. REGRESE A LA PANTALLA DE PAGOS.
-        </div>
-      )
-    }
     return (
-      <div>
-        <div>
-          <DataTableExtensions {...tableData}>
-            <DataTable
-              columns={columns}
-              noDataComponent="No hay pagos que mostrar"
-              data={filteredItems}
-              customStyles={customStyles}
-              pagination
-              paginationPerPage={25}
-              responsive={true}
-              persistTableHead
-              striped={true}
-              dense
-            />
-          </DataTableExtensions>
-        </div>
-      </div>
+      <>
+        <Modal responsive variant="primary" show={show} onHide={() => Cancelar(2)} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmación</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>{mensaje}</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => Cancelar(2)}>
+              Cancelar
+            </Button>
+            <Button variant="primary" onClick={() => Cancelar(1)}>
+              Aceptar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <DataTableExtensions {...tableData}>
+          <DataTable
+            columns={columns}
+            noDataComponent="No hay archivos que mostrar"
+            data={filteredItems}
+            customStyles={customStyles}
+            pagination
+            paginationPerPage={25}
+            responsive={true}
+            persistTableHead
+            striped={true}
+            dense
+          />
+        </DataTableExtensions>
+      </>
     )
   } else {
     history.push('/')
@@ -232,4 +268,4 @@ const RechazadosPorBanco = (prop) => {
   }
 }
 
-export default RechazadosPorBanco
+export default FlujoArchivos

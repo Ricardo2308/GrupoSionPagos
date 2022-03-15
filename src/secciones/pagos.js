@@ -7,9 +7,9 @@ const pagos = [
   {
     objeto: 'Modulo Archivos Pago',
     menu: (
-      <MenuItem key="archivoflujo" icon={<FiFile />}>
+      <MenuItem key="flujosconarchivo" icon={<FiFile />}>
         Archivos Pagos
-        <Link to="/archivoflujo" />
+        <Link to="/flujosconarchivo" />
       </MenuItem>
     ),
   },

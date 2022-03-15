@@ -1,45 +1,18 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Button, FormControl } from 'react-bootstrap'
-import DataTable, { createTheme } from 'react-data-table-component'
+import DataTable, { defaultThemes } from 'react-data-table-component'
 import { getPendientesAutorizacion } from '../../../../services/getPendientesAutorizacion'
 import { useSession } from 'react-use-session'
 import { FaList, FaFileUpload, FaUsersCog } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
-
-const FilterComponent = (prop) => (
-  <div className="div-search">
-    <FormControl
-      id="search"
-      type="text"
-      placeholder="Buscar Pago"
-      aria-label="Search Input"
-      value={prop.filterText}
-      onChange={prop.onFilter}
-    />
-    <Button
-      color="primary"
-      className="clear-search"
-      onClick={prop.onClear}
-      title="Limpiar Campo Búsqueda"
-    >
-      X
-    </Button>
-  </div>
-)
+import DataTableExtensions from 'react-data-table-component-extensions'
+import 'react-data-table-component-extensions/dist/index.css'
 
 const Pendientes = (prop) => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
-  const [results, setList] = useState([])
-  const [filterText, setFilterText] = useState('')
-  const [resetPaginationToggle, setResetPaginationToggle] = useState(false)
-  const filteredItems = results.filter(
-    (item) =>
-      item.comments.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.doc_date.toString().toLowerCase().includes(filterText.toLowerCase()) ||
-      item.doc_num.toString().toLowerCase().includes(filterText.toLowerCase()),
-  )
+  const [data, setListdata] = useState([])
 
   useEffect(() => {
     let mounted = true
@@ -49,72 +22,119 @@ const Pendientes = (prop) => {
     }
     getPendientesAutorizacion(prop.tipo, idUsuario).then((items) => {
       if (mounted) {
-        setList(items.flujos)
+        setListdata(items.flujos)
       }
     })
     return () => (mounted = false)
   }, [])
 
   const customStyles = {
+    headRow: {
+      style: {
+        borderTopStyle: 'solid',
+        borderTopWidth: '1px',
+        borderTopColor: defaultThemes.default.divider.default,
+      },
+    },
     headCells: {
       style: {
         paddingLeft: '8px', // override the cell padding for head cells
         paddingRight: '8px',
         fontSize: '12px',
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
+    cells: {
+      style: {
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
       },
     },
   }
 
-  createTheme('solarized', {
-    text: {
-      primary: 'black',
-    },
-    background: {
-      default: 'white',
-    },
-    context: {
-      background: '#cb4b16',
-      text: '#FFFFFF',
-    },
-    divider: {
-      default: '#073642',
-    },
-    action: {
-      button: 'rgba(0,0,0,.54)',
-      hover: 'rgba(0,0,0,.08)',
-      disabled: 'rgba(0,0,0,.12)',
-    },
+  const formatear = (valor, moneda) => {
+    if (moneda === 'QTZ') {
+      return formatter.format(valor)
+    } else {
+      return formatterDolar.format(valor)
+    }
+  }
+
+  let formatter = new Intl.NumberFormat('es-GT', {
+    style: 'currency',
+    currency: 'GTQ',
+  })
+  let formatterDolar = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
   })
 
   const columns = useMemo(() => [
     {
-      name: 'Número Documento',
+      name: 'Empresa',
+      selector: (row) => row.empresa_nombre,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+      wrap: true,
+      width: '15%',
+    },
+    {
+      name: 'No.',
       selector: (row) => row.doc_num,
       center: true,
-      width: '15%',
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+      width: '8%',
     },
     {
       name: 'Fecha Documento',
       selector: (row) => row.doc_date,
       center: true,
-      width: '13%',
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+      width: '10%',
     },
     {
-      name: 'Detalle',
+      name: 'Beneficiario',
+      selector: (row) => row.card_name,
+      center: true,
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+      wrap: true,
+    },
+    {
+      name: 'Concepto',
       selector: (row) => row.comments,
       center: true,
-      width: '53%',
+      style: {
+        fontSize: '11px',
+      },
+      wrap: true,
     },
     {
-      name: 'Estado',
+      name: 'Monto',
+      selector: (row) => formatear(row.doc_total, row.doc_curr),
       center: true,
-      cell: function OrderItems(row) {
-        if (row.activo == 1) {
-          return <div>Activo</div>
-        } else if (row.activo == 0) {
-          return <div>Inactivo</div>
-        }
+      style: {
+        fontSize: '11px',
       },
+      width: '12%',
     },
     {
       name: 'Acciones',
@@ -225,41 +245,32 @@ const Pendientes = (prop) => {
         }
       },
       center: true,
+      width: '10%',
     },
   ])
-
-  const subHeaderComponentMemo = useMemo(() => {
-    const handleClear = () => {
-      if (filterText) {
-        setResetPaginationToggle(!resetPaginationToggle)
-        setFilterText('')
-      }
-    }
-    return (
-      <FilterComponent
-        onFilter={(e) => setFilterText(e.target.value)}
-        onClear={handleClear}
-        filterText={filterText}
-      />
-    )
-  }, [filterText, resetPaginationToggle])
-
+  const tableData = {
+    columns,
+    data,
+    filterPlaceholder: 'Filtrar datos',
+    export: false,
+    print: false,
+  }
   if (session) {
     return (
-      <DataTable
-        columns={columns}
-        noDataComponent="No hay pagos que mostrar"
-        data={filteredItems}
-        customStyles={customStyles}
-        theme="solarized"
-        pagination
-        paginationPerPage={5}
-        paginationResetDefaultPage={resetPaginationToggle}
-        subHeader
-        subHeaderComponent={subHeaderComponentMemo}
-        responsive={true}
-        persistTableHead
-      />
+      <DataTableExtensions {...tableData}>
+        <DataTable
+          columns={columns}
+          noDataComponent="No hay pagos que mostrar"
+          data={data}
+          customStyles={customStyles}
+          pagination
+          paginationPerPage={25}
+          responsive={true}
+          persistTableHead
+          striped={true}
+          dense
+        />
+      </DataTableExtensions>
     )
   } else {
     history.push('/')

@@ -24,3 +24,14 @@ export function getPerfiles(idPerfil, Descripcion) {
     })
     .catch((error) => error)
 }
+
+export function getPerfilesParaAsignar(idUsuario) {
+  let ApiFinal = API
+  let ApiWhere = 'paraasignar/' + idUsuario
+  ApiFinal += ApiWhere
+  return fetch(ApiFinal)
+    .then(function (response) {
+      return response.json()
+    })
+    .catch((error) => error)
+}

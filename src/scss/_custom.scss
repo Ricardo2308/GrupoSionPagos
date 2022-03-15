@@ -23,7 +23,12 @@ body{
     top: 70px;
     cursor: pointer;
 }
-#root,
+#root.App {
+  font-family: sans-serif;
+  height: 100%;
+  //display: flex;
+  position: relative;
+}
 .App {
   font-family: sans-serif;
   height: 100%;
@@ -85,6 +90,14 @@ body{
   margin-left: 10px;
   font-size: 13px;
 }
+
+.btn-sm{
+  font-size: 10px !important;
+}
+.data-table-extensions > .data-table-extensions-filter > .filter-text{
+  border-bottom: 1px solid rgb(177, 177, 177) !important;
+}
+
 @media only screen and (max-width: 720px) {
 html {
 overflow: hidden;

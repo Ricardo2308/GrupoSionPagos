@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { CButton } from '@coreui/react'
-import { Modal, Tab, Tabs } from 'react-bootstrap'
+import { Modal, Tab, Tabs, Button } from 'react-bootstrap'
 import { useIdleTimer } from 'react-idle-timer'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory, useLocation, useParams } from 'react-router-dom'
 import FlujoSolicitud from './FlujoSolicitud'
 import FlujoOferta from './FlujoOferta'
 import FlujoOrden from './FlujoOrden'
@@ -27,6 +27,7 @@ import { useSession } from 'react-use-session'
 import Chat from './Chat'
 import FlujoBitacora from './FlujoBitacora'
 import '../../../../scss/estilos.scss'
+import { FaArrowLeft } from 'react-icons/fa'
 
 const PagoTabs = () => {
   const history = useHistory()
@@ -386,6 +387,12 @@ const PagoTabs = () => {
                 Actualizar
               </CButton>
             </div>
+            <div className="float-left" style={{ marginBottom: '10px' }}>
+              <Button variant="primary" size="sm" onClick={() => history.goBack()}>
+                <FaArrowLeft />
+                &nbsp;&nbsp;Regresar
+              </Button>
+            </div>
             <div className="div-content">
               <div style={{ width: '100%' }}>
                 <Tabs defaultActiveKey="detalle" id="uncontrolled-tab-example" className="mb-3">
@@ -475,6 +482,12 @@ const PagoTabs = () => {
                 </CButton>
               </Modal.Footer>
             </Modal>
+            <div className="float-left" style={{ marginBottom: '10px' }}>
+              <Button variant="primary" size="sm" onClick={() => history.goBack()}>
+                <FaArrowLeft />
+                &nbsp;&nbsp;Regresar
+              </Button>
+            </div>
             <div className="div-content">
               <div style={{ width: '100%' }}>
                 <Tabs defaultActiveKey="detalle" id="uncontrolled-tab-example" className="mb-3">
@@ -540,7 +553,7 @@ const PagoTabs = () => {
         )
       }
     } else {
-      history.go(-1)
+      //history.go(-1)
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL NÚMERO DE PAGO. REGRESE A LA PANTALLA DE PAGOS.

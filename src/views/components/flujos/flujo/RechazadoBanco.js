@@ -79,7 +79,6 @@ const RechazadosBanco = (prop) => {
     } else {
       getRechazadosBanco(prop.tipo, session.id).then((items) => {
         if (mounted) {
-          console.log(items.flujos)
           setList(items.flujos)
         }
       })

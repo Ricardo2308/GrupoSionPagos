@@ -10466,6 +10466,13 @@
     "lodash" "^4.16.6"
     "object-unfreeze" "^1.1.0"
 
+"react-data-table-component-extensions@^1.5.2":
+  "integrity" "sha512-u7GpZf9V5PRXAfkgvYHM22Zoaz7mMakLcHgO5zlK0Urw27CGkprBHFpBylizKytTj1U6ABuIWDXuJr4/IXhSHg=="
+  "resolved" "https://registry.npmjs.org/react-data-table-component-extensions/-/react-data-table-component-extensions-1.5.2.tgz"
+  "version" "1.5.2"
+  dependencies:
+    "react" "^16.9.0"
+
 "react-data-table-component@^7.4.7":
   "integrity" "sha512-S4iaArrcYvJcIdOBsdUeBgEDfLFghI/G5Oykr5ZbfrUA282JTeQAQtGwutsIs6TKfXQAwMVUs2R+bu3S8oZfWA=="
   "resolved" "https://registry.npmjs.org/react-data-table-component/-/react-data-table-component-7.4.7.tgz"
@@ -10782,6 +10789,15 @@
   dependencies:
     "loose-envify" "^1.1.0"
     "object-assign" "^4.1.1"
+
+"react@^16.9.0":
+  "integrity" "sha512-0X2CImDkJGApiAlcf0ODKIneSwBPhqJawOa5wCtKbu7ZECrmS26NvtSILynQ66cgkT/RJ4LidJOc3bUESwmU8g=="
+  "resolved" "https://registry.npmjs.org/react/-/react-16.14.0.tgz"
+  "version" "16.14.0"
+  dependencies:
+    "loose-envify" "^1.1.0"
+    "object-assign" "^4.1.1"
+    "prop-types" "^15.6.2"
 
 "reactjs-pdf-view@^1.0.8":
   "integrity" "sha512-9I18aL9hidumj7DIjUzcNFlZ0UIyWnOXlxVnEEl4W8dAROrOVblXgp3Bxci4LNEnNkWMbpocs7GemWWAPSiJQw=="

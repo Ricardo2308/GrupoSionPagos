@@ -5,7 +5,7 @@ import { useIdleTimer } from 'react-idle-timer'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postPerfilUsuario } from '../../../../services/postPerfilUsuario'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
-import { getPerfiles } from '../../../../services/getPerfiles'
+import { getPerfilesParaAsignar } from '../../../../services/getPerfiles'
 import '../../../../scss/estilos.scss'
 import {
   CButton,
@@ -37,7 +37,11 @@ const PerfilUsuario = () => {
 
   useEffect(() => {
     let mounted = true
-    getPerfiles(null, null).then((items) => {
+    let idUsuario = 0
+    if (session) {
+      idUsuario = session.id
+    }
+    getPerfilesParaAsignar(idUsuario).then((items) => {
       if (mounted) {
         setList(items.perfiles)
       }
@@ -103,8 +107,7 @@ const PerfilUsuario = () => {
   const handleOnIdle = (event) => {
     setShowM(true)
     setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
+      `Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos. Si desea continuar presione Aceptar`,
     )
     iniciar(2)
     console.log('last active', getLastActiveTime())
@@ -114,7 +117,9 @@ const PerfilUsuario = () => {
     console.log('time remaining', getRemainingTime())
   }
 
-  const handleOnAction = (event) => {}
+  const handleOnAction = (event) => {
+    return false
+  }
 
   const { getRemainingTime, getLastActiveTime } = useIdleTimer({
     timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),

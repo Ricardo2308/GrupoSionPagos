@@ -33,6 +33,7 @@ const EditarPassword = (props) => {
   const [mensaje, setMensaje] = useState('')
   const [color, setColor] = useState('danger')
   const [titulo, setTitulo] = useState('Error!')
+  const { saveJWT } = useSession('PendrogonIT-Session')
 
   const [form, setValues] = useState({
     password_actual: '',
@@ -45,6 +46,23 @@ const EditarPassword = (props) => {
       ...form,
       [event.target.name]: event.target.value,
     })
+  }
+
+  async function crearSesion(id) {
+    const publicIp = require('public-ip')
+    let agente = window.navigator.userAgent
+    var navegadores = ['Chrome', 'Firefox', 'Safari', 'Opera', 'Trident', 'MSIE', 'Edge']
+    const myip = await publicIp.v4()
+    for (var i in navegadores) {
+      if (agente.indexOf(navegadores[i]) != -1) {
+        const respuesta = await postSesionUsuario(id, navegadores[i], myip, '1')
+        if (respuesta === 'OK') {
+          return true
+        } else {
+          return false
+        }
+      }
+    }
   }
 
   const handleSubmit = async (event) => {
@@ -102,13 +120,34 @@ const EditarPassword = (props) => {
           md5(form.password_repetida, { encoding: 'binary' }),
         )
         if (respuestaCambio === 'ok') {
-          setShow(true)
-          setTitulo('Exito!')
-          setMensaje('La contraseña fue modificada.')
-          setColor('success')
-          setTimeout(() => {
+          if (session.cantidadIngresos == '0') {
+            const sign = require('jwt-encode')
+            const secret = 'secret'
+            const data = {
+              email: session.email,
+              name: session.name,
+              user_name: session.user_name,
+              id: session.id,
+              estado: session.estado,
+              limiteconexion: session.limiteconexion,
+              verde: session.verde,
+              amarillo: session.amarillo,
+              cantidadIngresos: '1',
+            }
+            clear()
+            const jwt = sign(data, secret)
+            saveJWT(jwt)
+            crearSesion(session.id)
             history.push('/home')
-          }, 1500)
+          } else {
+            setShow(true)
+            setTitulo('Exito!')
+            setMensaje('La contraseña fue modificada.')
+            setColor('success')
+            setTimeout(() => {
+              history.push('/home')
+            }, 1500)
+          }
         } else {
           setShow(true)
           setTitulo('Error!')
@@ -186,6 +225,10 @@ const EditarPassword = (props) => {
     if (location.cambia_password == 1) {
       selected = true
     }
+    let mostrarMensaje = false
+    if (session.cantidadIngresos == '0') {
+      mostrarMensaje = true
+    }
     return (
       <div style={{ flexDirection: 'row' }}>
         <CContainer>
@@ -210,6 +253,15 @@ const EditarPassword = (props) => {
           <CCard style={{ display: 'flex', alignItems: 'center' }}>
             <CCardBody style={{ width: '80%' }}>
               <CForm>
+                <div
+                  className={!mostrarMensaje ? 'd-none ' : ''}
+                  style={{ marginTop: '15px', marginRight: '15px' }}
+                >
+                  <h5>
+                    Ha ingresado por primera vez a la aplicación, por favor cambie su contraseña
+                    para continuar.
+                  </h5>
+                </div>
                 <p className="text-medium-emphasis">Ingrese contraseña actual</p>
                 <CInputGroup className="mb-3">
                   <CInputGroupText>

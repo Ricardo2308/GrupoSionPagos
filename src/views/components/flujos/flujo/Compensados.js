@@ -1,33 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { Button, FormControl } from 'react-bootstrap'
-import DataTable, { createTheme } from 'react-data-table-component'
+import DataTable, { createTheme, defaultThemes } from 'react-data-table-component'
 import { getCompensados } from '../../../../services/getCompensados'
 import { postNotificacion } from '../../../../services/postNotificacion'
 import { useSession } from 'react-use-session'
 import { FaList } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
-
-const FilterComponent = (prop) => (
-  <div className="div-search">
-    <FormControl
-      id="search"
-      type="text"
-      placeholder="Buscar Pago"
-      aria-label="Search Input"
-      value={prop.filterText}
-      onChange={prop.onFilter}
-    />
-    <Button
-      color="primary"
-      className="clear-search"
-      onClick={prop.onClear}
-      title="Limpiar Campo Búsqueda"
-    >
-      X
-    </Button>
-  </div>
-)
+import DataTableExtensions from 'react-data-table-component-extensions'
+import 'react-data-table-component-extensions/dist/index.css'
 
 const Compensados = (prop) => {
   const history = useHistory()
@@ -35,20 +16,8 @@ const Compensados = (prop) => {
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [compensados, setCompensados] = useState([])
-  const [filterText, setFilterText] = useState('')
-  const [resetPaginationToggle, setResetPaginationToggle] = useState(false)
-  const filteredItems = results.filter(
-    (item) =>
-      item.comments.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.doc_date.toString().toLowerCase().includes(filterText.toLowerCase()) ||
-      item.doc_num.toString().toLowerCase().includes(filterText.toLowerCase()),
-  )
-  const filteredItemsA = compensados.filter(
-    (item) =>
-      item.comments.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.doc_date.toString().toLowerCase().includes(filterText.toLowerCase()) ||
-      item.Pago.toString().toLowerCase().includes(filterText.toLowerCase()),
-  )
+  const filteredItems = results
+  const filteredItemsA = compensados
 
   async function leerNotificaciones(IdFlujo, Pago, Estado, Nivel, IdGrupo) {
     let pagos = []
@@ -86,54 +55,112 @@ const Compensados = (prop) => {
   }, [])
 
   const customStyles = {
+    headRow: {
+      style: {
+        borderTopStyle: 'solid',
+        borderTopWidth: '1px',
+        borderTopColor: defaultThemes.default.divider.default,
+      },
+    },
     headCells: {
       style: {
         paddingLeft: '8px', // override the cell padding for head cells
         paddingRight: '8px',
         fontSize: '12px',
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
+    cells: {
+      style: {
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
       },
     },
   }
 
-  createTheme('solarized', {
-    text: {
-      primary: 'black',
-    },
-    background: {
-      default: 'white',
-    },
-    context: {
-      background: '#cb4b16',
-      text: '#FFFFFF',
-    },
-    divider: {
-      default: '#073642',
-    },
-    action: {
-      button: 'rgba(0,0,0,.54)',
-      hover: 'rgba(0,0,0,.08)',
-      disabled: 'rgba(0,0,0,.12)',
-    },
+  const formatear = (valor, moneda) => {
+    if (moneda === 'QTZ') {
+      return formatter.format(valor)
+    } else {
+      return formatterDolar.format(valor)
+    }
+  }
+
+  let formatter = new Intl.NumberFormat('es-GT', {
+    style: 'currency',
+    currency: 'GTQ',
+  })
+  let formatterDolar = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
   })
 
   const columns = useMemo(() => [
     {
-      name: 'Número Documento',
+      name: 'Empresa',
+      selector: (row) => row.empresa_nombre,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+      wrap: true,
+      width: '15%',
+    },
+    {
+      name: 'No.',
       selector: (row) => row.doc_num,
       center: true,
-      width: '15%',
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+      width: '8%',
     },
     {
       name: 'Fecha Documento',
       selector: (row) => row.doc_date,
       center: true,
-      width: '13%',
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+      width: '10%',
     },
     {
-      name: 'Detalle',
+      name: 'Beneficiario',
+      selector: (row) => row.card_name,
+      center: true,
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+      wrap: true,
+    },
+    {
+      name: 'Concepto',
       selector: (row) => row.comments,
       center: true,
-      width: '53%',
+      style: {
+        fontSize: '11px',
+      },
+      wrap: true,
+    },
+    {
+      name: 'Monto',
+      selector: (row) => formatter.format(row.doc_total),
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      width: '12%',
     },
     {
       name: 'Acciones',
@@ -162,27 +189,69 @@ const Compensados = (prop) => {
         )
       },
       center: true,
+      width: '8%',
     },
   ])
 
   const columnsA = useMemo(() => [
     {
-      name: 'Número Documento',
+      name: 'Empresa',
+      selector: (row) => row.empresa_nombre,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+      wrap: true,
+      width: '15%',
+    },
+    {
+      name: 'No.',
       selector: (row) => row.Pago,
       center: true,
-      width: '15%',
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+      width: '8%',
     },
     {
       name: 'Fecha Documento',
       selector: (row) => row.doc_date,
       center: true,
-      width: '13%',
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+      width: '10%',
     },
     {
-      name: 'Detalle',
+      name: 'Beneficiario',
+      selector: (row) => row.card_name,
+      center: true,
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+      wrap: true,
+    },
+    {
+      name: 'Concepto',
       selector: (row) => row.comments,
       center: true,
-      width: '53%',
+      style: {
+        fontSize: '11px',
+      },
+      wrap: true,
+    },
+    {
+      name: 'Monto',
+      selector: (row) => formatear(row.doc_total, row.doc_curr),
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      width: '12%',
     },
     {
       name: 'Acciones',
@@ -204,24 +273,24 @@ const Compensados = (prop) => {
         )
       },
       center: true,
+      width: '8%',
     },
   ])
 
-  const subHeaderComponentMemo = useMemo(() => {
-    const handleClear = () => {
-      if (filterText) {
-        setResetPaginationToggle(!resetPaginationToggle)
-        setFilterText('')
-      }
-    }
-    return (
-      <FilterComponent
-        onFilter={(e) => setFilterText(e.target.value)}
-        onClear={handleClear}
-        filterText={filterText}
-      />
-    )
-  }, [filterText, resetPaginationToggle])
+  const tableData = {
+    columns: columns,
+    data: filteredItems,
+    filterPlaceholder: 'Filtrar datos',
+    export: false,
+    print: false,
+  }
+  const tableDataA = {
+    columns: columnsA,
+    data: filteredItemsA,
+    filterPlaceholder: 'Filtrar datos',
+    export: false,
+    print: false,
+  }
 
   if (session) {
     if (!location.tipo && !prop.tipo) {
@@ -237,35 +306,20 @@ const Compensados = (prop) => {
         <div>
           <div>
             <div className="datatable-title">Pagos Notificados</div>
-            <DataTable
-              columns={columnsA}
-              noDataComponent="No hay pagos que mostrar"
-              data={filteredItemsA}
-              customStyles={customStyles}
-              theme="solarized"
-              pagination
-              paginationPerPage={5}
-              paginationResetDefaultPage={resetPaginationToggle}
-              subHeader
-              subHeaderComponent={subHeaderComponentMemo}
-              responsive={true}
-              persistTableHead
-            />
-          </div>
-          <div>
-            <div className="datatable-aprobados">Pagos Compensados</div>
-            <DataTable
-              columns={columns}
-              noDataComponent="No hay pagos que mostrar"
-              data={filteredItems}
-              customStyles={customStyles}
-              theme="solarized"
-              pagination
-              paginationPerPage={5}
-              paginationResetDefaultPage={resetPaginationToggle}
-              responsive={true}
-              persistTableHead
-            />
+            <DataTableExtensions {...tableDataA}>
+              <DataTable
+                columns={columnsA}
+                noDataComponent="No hay pagos que mostrar"
+                data={filteredItemsA}
+                customStyles={customStyles}
+                pagination
+                paginationPerPage={5}
+                responsive={true}
+                persistTableHead
+                striped={true}
+                dense
+              />
+            </DataTableExtensions>
           </div>
         </div>
       )
@@ -273,20 +327,20 @@ const Compensados = (prop) => {
     return (
       <div>
         <div>
-          <DataTable
-            columns={columns}
-            noDataComponent="No hay pagos que mostrar"
-            data={filteredItems}
-            customStyles={customStyles}
-            theme="solarized"
-            pagination
-            paginationPerPage={5}
-            paginationResetDefaultPage={resetPaginationToggle}
-            subHeader
-            subHeaderComponent={subHeaderComponentMemo}
-            responsive={true}
-            persistTableHead
-          />
+          <DataTableExtensions {...tableData}>
+            <DataTable
+              columns={columns}
+              noDataComponent="No hay pagos que mostrar"
+              data={filteredItems}
+              customStyles={customStyles}
+              pagination
+              paginationPerPage={25}
+              responsive={true}
+              persistTableHead
+              striped={true}
+              dense
+            />
+          </DataTableExtensions>
         </div>
       </div>
     )

@@ -16,3 +16,17 @@ export function getArchivosFlujo(idFlujo, idUsuario) {
     })
     .catch((error) => error)
 }
+
+export function getFlujosConArchivos(idUsuario) {
+  let ApiFinal = `${process.env.REACT_APP_API_URL}flujosconarchivos`
+  let ApiWhere = ''
+  if (idUsuario !== null) {
+    ApiWhere += '/' + idUsuario
+  }
+  ApiFinal += ApiWhere
+  return fetch(ApiFinal)
+    .then(function (response) {
+      return response.json()
+    })
+    .catch((error) => error)
+}

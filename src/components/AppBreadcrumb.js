@@ -9,21 +9,32 @@ const AppBreadcrumb = () => {
   const currentLocation = useLocation().pathname
 
   const getRouteName = (pathname, routes) => {
-    const currentRoute = routes.find((route) => route.path === pathname)
+    let currentRoute = routes.find((route) => route.path === pathname)
+    if (currentRoute === undefined) {
+      currentRoute = routes.find((route) => pathname.includes(route.path))
+    }
     return currentRoute.name
   }
 
   const getBreadcrumbs = (location) => {
     const breadcrumbs = []
-    location.split('/').reduce((prev, curr, index, array) => {
-      const currentPathname = `${prev}/${curr}`
+    if (location.includes('pagos/tabs-notificacion')) {
       breadcrumbs.push({
-        pathname: currentPathname,
-        name: getRouteName(currentPathname, routes),
-        active: index + 1 === array.length ? true : false,
+        pathname: 'pagos/tabs-notificacion',
+        name: 'Detalle de pago',
+        active: true,
       })
-      return currentPathname
-    })
+    } else {
+      location.split('/').reduce((prev, curr, index, array) => {
+        const currentPathname = `${prev}/${curr}`
+        breadcrumbs.push({
+          pathname: currentPathname,
+          name: getRouteName(currentPathname, routes),
+          active: index + 1 === array.length ? true : false,
+        })
+        return currentPathname
+      })
+    }
     return breadcrumbs
   }
 
