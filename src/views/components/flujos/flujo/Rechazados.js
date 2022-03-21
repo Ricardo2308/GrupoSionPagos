@@ -112,7 +112,7 @@ const Rechazados = (prop) => {
       },
       sortable: true,
       wrap: true,
-      width: '15%',
+      width: '150px',
     },
     {
       name: 'No.',
@@ -122,17 +122,17 @@ const Rechazados = (prop) => {
         fontSize: '11px',
       },
       sortable: true,
-      width: '8%',
+      width: '90px',
     },
     {
-      name: 'Fecha Documento',
+      name: 'Fecha Doc.',
       selector: (row) => row.doc_date,
       center: true,
       sortable: true,
       style: {
         fontSize: '11px',
       },
-      width: '10%',
+      width: '100px',
     },
     {
       name: 'Beneficiario',
@@ -143,6 +143,7 @@ const Rechazados = (prop) => {
         fontSize: '11px',
       },
       wrap: true,
+      width: '250px',
     },
     {
       name: 'Concepto',
@@ -152,6 +153,7 @@ const Rechazados = (prop) => {
         fontSize: '11px',
       },
       wrap: true,
+      width: '285px',
     },
     {
       name: 'Monto',
@@ -160,7 +162,7 @@ const Rechazados = (prop) => {
       style: {
         fontSize: '11px',
       },
-      width: '12%',
+      width: '120px',
     },
     {
       name: 'Acciones',
@@ -189,7 +191,7 @@ const Rechazados = (prop) => {
         )
       },
       center: true,
-      width: '8%',
+      width: '70px',
     },
   ])
 
@@ -203,7 +205,7 @@ const Rechazados = (prop) => {
       },
       sortable: true,
       wrap: true,
-      width: '15%',
+      width: '150px',
     },
     {
       name: 'No.',
@@ -213,17 +215,17 @@ const Rechazados = (prop) => {
         fontSize: '11px',
       },
       sortable: true,
-      width: '8%',
+      width: '90px',
     },
     {
-      name: 'Fecha Documento',
+      name: 'Fecha Doc.',
       selector: (row) => row.doc_date,
       center: true,
       sortable: true,
       style: {
         fontSize: '11px',
       },
-      width: '10%',
+      width: '100px',
     },
     {
       name: 'Beneficiario',
@@ -234,6 +236,7 @@ const Rechazados = (prop) => {
         fontSize: '11px',
       },
       wrap: true,
+      width: '250px',
     },
     {
       name: 'Concepto',
@@ -243,6 +246,7 @@ const Rechazados = (prop) => {
         fontSize: '11px',
       },
       wrap: true,
+      width: '285px',
     },
     {
       name: 'Monto',
@@ -251,7 +255,7 @@ const Rechazados = (prop) => {
       style: {
         fontSize: '11px',
       },
-      width: '12%',
+      width: '120px',
     },
     {
       name: 'Acciones',
@@ -273,7 +277,7 @@ const Rechazados = (prop) => {
         )
       },
       center: true,
-      width: '8%',
+      width: '70px',
     },
   ])
 

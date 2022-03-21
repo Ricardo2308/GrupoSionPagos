@@ -4,7 +4,6 @@ import { useSession } from 'react-use-session'
 
 const DefaultLayout = () => {
   const { session, clear } = useSession('PendrogonIT-Session')
-  console.log(session)
   if (session.cantidadIngresos == '0') {
     return (
       <div style={{ display: 'flex', width: '100%' }}>

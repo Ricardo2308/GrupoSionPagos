@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Modal } from 'react-bootstrap'
+import ReactDOM from 'react-dom'
+import { Modal, Button } from 'react-bootstrap'
 import { PDFReader } from 'reactjs-pdf-view'
 import { useSession } from 'react-use-session'
 import { useHistory } from 'react-router-dom'
@@ -23,6 +24,34 @@ const ArchivosFlujo = (prop) => {
   const [titulo, setTitulo] = useState('')
   const cerrarPDF = () => setMostrar(false)
 
+  const modalBody = () => (
+    <div
+      style={{
+        background: 'rgba(0,0,0,0.7)',
+        left: 0,
+        position: 'fixed',
+        top: 0,
+        height: '100%',
+        width: '100%',
+        zIndex: 9999,
+        display: 'flex',
+        flexDirection: 'column',
+        overflowY: 'scroll',
+      }}
+    >
+      <div className="float-left" style={{ margin: '10px' }}>
+        <Button variant="primary" size="sm" onClick={() => setMostrar(false)}>
+          Cerrar
+        </Button>
+      </div>
+      <object data={urlArchivo} type="application/pdf" width="100%" height="100%">
+        <p>
+          Alternative text - include a link <a href={urlArchivo}>to the PDF!</a>
+        </p>
+      </object>
+    </div>
+  )
+
   function mostrarModal(id_archivoflujo, url_archivo, usuario) {
     if (id_archivoflujo === '' && url_archivo !== '' && usuario !== '') {
       setUrlArchivo(url_archivo)
@@ -34,7 +63,8 @@ const ArchivosFlujo = (prop) => {
   if (session) {
     return (
       <>
-        <Modal show={mostrar} onHide={cerrarPDF} centered dialogClassName="my-modal">
+        {mostrar && ReactDOM.createPortal(modalBody(), document.body)}
+        {/*  <Modal show={mostrar} onHide={cerrarPDF} centered dialogClassName="my-modal">
           <Modal.Header className="modal-bg" closeButton>
             <Modal.Title>{titulo}</Modal.Title>
           </Modal.Header>
@@ -50,7 +80,7 @@ const ArchivosFlujo = (prop) => {
               </a>
             </CButton>
           </Modal.Footer>
-        </Modal>
+        </Modal> */}
         <CTable hover responsive align="middle" className="mb-0 border">
           <CTableHead color="light">
             <CTableRow>
@@ -83,18 +113,7 @@ const ArchivosFlujo = (prop) => {
                           onClick={() => mostrarModal('', item.archivo, item.nombre_usuario)}
                         >
                           <FaRegFilePdf />
-                        </CButton>{' '}
-                        {/*
-                        <CButton
-                          color="danger"
-                          size="sm"
-                          title="Eliminar PDF"
-                          disabled={prop.deshabilitar}
-                          onClick={() => mostrarModal(item.id_archivoflujo, '', '')}
-                        >
-                          <FaTrash />
                         </CButton>
-                        */}
                       </CTableDataCell>
                     </CTableRow>
                   )

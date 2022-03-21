@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import DataTable, { createTheme, defaultThemes } from 'react-data-table-component'
-import { Modal, Button, FormControl } from 'react-bootstrap'
-import { PDFReader } from 'reactjs-pdf-view'
+import ReactDOM from 'react-dom'
+import DataTable, { defaultThemes } from 'react-data-table-component'
+import { Modal, Button } from 'react-bootstrap'
 import { useIdleTimer } from 'react-idle-timer'
 import { getArchivosFlujo } from '../../../../services/getArchivosFlujo'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
@@ -11,6 +11,8 @@ import { FaRegFilePdf, FaArrowLeft } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
+import 'bulma/css/bulma.css'
+import 'material-design-icons/iconfont/material-icons.css'
 
 const ArchivosFlujo = () => {
   const history = useHistory()
@@ -20,11 +22,39 @@ const ArchivosFlujo = () => {
   const [results, setList] = useState([])
   const [show, setShow] = useState(false)
   const [mostrar, setMostrar] = useState(false)
-  const [urlArchivo, setUrlArchivo] = useState('')
+  const [urlArchivo, setUrlArchivo] = useState('https://arxiv.org/pdf/quant-ph/0410100.pdf')
   const [mensaje, setMensaje] = useState('')
   const [titulo, setTitulo] = useState('')
   const filteredItems = results
   const cerrarPDF = () => setMostrar(false)
+
+  const modalBody = () => (
+    <div
+      style={{
+        background: 'rgba(0,0,0,0.7)',
+        left: 0,
+        position: 'fixed',
+        top: 0,
+        height: '100%',
+        width: '100%',
+        zIndex: 9999,
+        display: 'flex',
+        flexDirection: 'column',
+        overflowY: 'scroll',
+      }}
+    >
+      <div className="float-left" style={{ margin: '10px' }}>
+        <Button variant="primary" size="sm" onClick={() => setMostrar(false)}>
+          Cerrar
+        </Button>
+      </div>
+      <object data={urlArchivo} type="application/pdf" width="100%" height="100%">
+        <p>
+          Alternative text - include a link <a href={urlArchivo}>to the PDF!</a>
+        </p>
+      </object>
+    </div>
+  )
 
   useEffect(() => {
     let mounted = true
@@ -130,7 +160,6 @@ const ArchivosFlujo = () => {
       name: 'Usuario',
       selector: (row) => row.nombre_usuario,
       center: true,
-      width: '30%',
       sortable: true,
       wrap: true,
     },
@@ -138,21 +167,8 @@ const ArchivosFlujo = () => {
       name: 'Nombre Archvo',
       selector: (row) => row.descripcion,
       center: true,
-      width: '30%',
       sortable: true,
       wrap: true,
-    },
-    {
-      name: 'Estado',
-      center: true,
-      width: '30%',
-      cell: function OrderItems(row) {
-        if (row.activo == 1) {
-          return <div>Activo</div>
-        } else if (row.activo == 0) {
-          return <div>Inactivo</div>
-        }
-      },
     },
     {
       name: 'Acciones',
@@ -189,61 +205,54 @@ const ArchivosFlujo = () => {
   }
 
   if (session) {
-    return (
-      <>
-        <Modal show={mostrar} onHide={cerrarPDF} centered dialogClassName="my-modal">
-          <Modal.Header className="modal-bg" closeButton>
-            <Modal.Title>{titulo}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div style={{ overflow: 'scroll', height: 430 }}>
-              <PDFReader url={urlArchivo} showAllPage={true} getPageNumber={1} />
-            </div>
-          </Modal.Body>
-          <Modal.Footer className="modal-bg">
-            <Button variant="success">
-              <a style={{ textDecoration: 'none', color: 'white' }} href={urlArchivo} download>
-                Descargar
-              </a>
+    if (location.id_flujo) {
+      return (
+        <>
+          {mostrar && ReactDOM.createPortal(modalBody(), document.body)}
+          <Modal responsive variant="primary" show={show} onHide={() => Cancelar(2)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Confirmación</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>{mensaje}</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => Cancelar(2)}>
+                Cancelar
+              </Button>
+              <Button variant="primary" onClick={() => Cancelar(1)}>
+                Aceptar
+              </Button>
+            </Modal.Footer>
+          </Modal>
+          <div className="float-left" style={{ marginBottom: '10px' }}>
+            <Button variant="primary" size="sm" onClick={() => history.goBack()}>
+              <FaArrowLeft />
+              &nbsp;&nbsp;Regresar
             </Button>
-          </Modal.Footer>
-        </Modal>
-        <Modal responsive variant="primary" show={show} onHide={() => Cancelar(2)} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirmación</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>{mensaje}</Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => Cancelar(2)}>
-              Cancelar
-            </Button>
-            <Button variant="primary" onClick={() => Cancelar(1)}>
-              Aceptar
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <div className="float-left" style={{ marginBottom: '10px' }}>
-          <Button variant="primary" size="sm" onClick={() => history.goBack()}>
-            <FaArrowLeft />
-            &nbsp;&nbsp;Regresar
-          </Button>
+          </div>
+          <DataTableExtensions {...tableData}>
+            <DataTable
+              columns={columns}
+              noDataComponent="No hay archivos que mostrar"
+              data={filteredItems}
+              customStyles={customStyles}
+              pagination
+              paginationPerPage={25}
+              responsive={true}
+              persistTableHead
+              striped={true}
+              dense
+            />
+          </DataTableExtensions>
+        </>
+      )
+    } else {
+      history.go(-1)
+      return (
+        <div className="sin-sesion">
+          NO SE CARGÓ EL NÚMERO DE PAGO. REGRESE A LA PANTALLA DE PAGOS.
         </div>
-        <DataTableExtensions {...tableData}>
-          <DataTable
-            columns={columns}
-            noDataComponent="No hay archivos que mostrar"
-            data={filteredItems}
-            customStyles={customStyles}
-            pagination
-            paginationPerPage={25}
-            responsive={true}
-            persistTableHead
-            striped={true}
-            dense
-          />
-        </DataTableExtensions>
-      </>
-    )
+      )
+    }
   } else {
     history.push('/')
     return <div className="sin-sesion">SIN SESIÓN ACTIVA.</div>

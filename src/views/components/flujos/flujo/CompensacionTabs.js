@@ -278,9 +278,9 @@ const CompensacionTabs = () => {
           </div>
           <div className="div-content">
             <div style={{ width: '100%' }}>
-              <Tabs defaultActiveKey="detalle" id="uncontrolled-tab-example" className="mb-3">
-                <Tab eventKey="detalle" title="Detalle">
-                  <DetalleFlujo id_flujo={location.id_flujo} />
+              <Tabs defaultActiveKey="bitacora" id="uncontrolled-tab-example" className="mb-3">
+                <Tab eventKey="bitacora" title="Bitácora">
+                  <FlujoBitacora id_flujo={location.id_flujo} />
                 </Tab>
                 <Tab
                   eventKey="solicitud"
@@ -331,8 +331,8 @@ const CompensacionTabs = () => {
                 >
                   <ArchivosFlujo results={archivos} />
                 </Tab>
-                <Tab eventKey="bitacora" title="Bitácora">
-                  <FlujoBitacora id_flujo={location.id_flujo} />
+                <Tab eventKey="detalle" title="Detalle">
+                  <DetalleFlujo id_flujo={location.id_flujo} />
                 </Tab>
               </Tabs>
             </div>

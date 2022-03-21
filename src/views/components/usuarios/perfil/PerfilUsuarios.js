@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
-import { Alert, Modal } from 'react-bootstrap'
+import { Alert, Modal, Button } from 'react-bootstrap'
 import { useIdleTimer } from 'react-idle-timer'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postPerfilUsuario } from '../../../../services/postPerfilUsuario'
@@ -19,6 +19,7 @@ import {
   CFormCheck,
 } from '@coreui/react'
 import { FiUser, FiAtSign } from 'react-icons/fi'
+import { FaArrowLeft } from 'react-icons/fa'
 
 const PerfilUsuario = () => {
   const history = useHistory()
@@ -41,7 +42,7 @@ const PerfilUsuario = () => {
     if (session) {
       idUsuario = session.id
     }
-    getPerfilesParaAsignar(idUsuario).then((items) => {
+    getPerfilesParaAsignar(location.id).then((items) => {
       if (mounted) {
         setList(items.perfiles)
       }
@@ -170,6 +171,14 @@ const PerfilUsuario = () => {
               <Alert.Heading>{titulo}</Alert.Heading>
               <p>{mensaje}</p>
             </Alert>
+            <div className="float-left" style={{ marginBottom: '10px' }}>
+              <Button variant="primary" size="sm" onClick={() => history.goBack()}>
+                <FaArrowLeft />
+                &nbsp;&nbsp;Regresar
+              </Button>
+            </div>
+            <br />
+            <br />
             <CCard style={{ display: 'flex', alignItems: 'center' }}>
               <CCardBody style={{ width: '80%' }}>
                 <CForm style={{ width: '100%' }}>

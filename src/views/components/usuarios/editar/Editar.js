@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useSession } from 'react-use-session'
-import { Alert, Modal } from 'react-bootstrap'
+import { Alert, Modal, Button } from 'react-bootstrap'
 import { useIdleTimer } from 'react-idle-timer'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postEditarUsuario } from '../../../../services/postEditarUsuario'
@@ -19,6 +19,7 @@ import {
   CFormSelect,
   CFormCheck,
 } from '@coreui/react'
+import { FaArrowLeft } from 'react-icons/fa'
 
 const EditarUsuarios = (props) => {
   const history = useHistory()
@@ -94,8 +95,7 @@ const EditarUsuarios = (props) => {
   const handleOnIdle = (event) => {
     setShowM(true)
     setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
+      `Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos. Si desea continuar presione Aceptar`,
     )
     iniciar(2)
     console.log('last active', getLastActiveTime())
@@ -105,7 +105,9 @@ const EditarUsuarios = (props) => {
     console.log('time remaining', getRemainingTime())
   }
 
-  const handleOnAction = (event) => {}
+  const handleOnAction = (event) => {
+    return false
+  }
 
   const { getRemainingTime, getLastActiveTime } = useIdleTimer({
     timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
@@ -160,6 +162,14 @@ const EditarUsuarios = (props) => {
               <Alert.Heading>Error!</Alert.Heading>
               <p>{mensaje}</p>
             </Alert>
+            <div className="float-left" style={{ marginBottom: '10px' }}>
+              <Button variant="primary" size="sm" onClick={() => history.goBack()}>
+                <FaArrowLeft />
+                &nbsp;&nbsp;Regresar
+              </Button>
+            </div>
+            <br />
+            <br />
             <CCard style={{ display: 'flex', alignItems: 'center' }}>
               <CCardBody style={{ width: '80%' }}>
                 <CForm style={{ width: '100%' }}>

@@ -38,22 +38,26 @@ const AppHeader = () => {
       idUsuario = session.id
     }
     getMensajesRecibidos(idUsuario).then((items) => {
-      for (let item of items.mensajes) {
-        if (item.leido == 0) {
-          contM++
+      if (items.mensajes !== undefined) {
+        for (let item of items.mensajes) {
+          if (item.leido == 0) {
+            contM++
+          }
         }
+        ContarM(contM)
+        setMensajes(items.mensajes)
       }
-      ContarM(contM)
-      setMensajes(items.mensajes)
     })
     getNotificaciones(null, idUsuario).then((items) => {
-      for (let item of items.notificaciones) {
-        if (item.Leido == 0) {
-          contN++
+      if (items.notificaciones !== undefined) {
+        for (let item of items.notificaciones) {
+          if (item.Leido == 0) {
+            contN++
+          }
         }
+        ContarN(contN)
+        setNotificaciones(items.notificaciones)
       }
-      ContarN(contN)
-      setNotificaciones(items.notificaciones)
     })
     const interval = setInterval(() => {
       let contM = 0
@@ -63,22 +67,26 @@ const AppHeader = () => {
         idUsuario = session.id
       }
       getMensajesRecibidos(idUsuario).then((items) => {
-        for (let item of items.mensajes) {
-          if (item.leido == 0) {
-            contM++
+        if (items.mensajes !== undefined) {
+          for (let item of items.mensajes) {
+            if (item.leido == 0) {
+              contM++
+            }
           }
+          ContarM(contM)
+          setMensajes(items.mensajes)
         }
-        ContarM(contM)
-        setMensajes(items.mensajes)
       })
       getNotificaciones(null, idUsuario).then((items) => {
-        for (let item of items.notificaciones) {
-          if (item.Leido == 0) {
-            contN++
+        if (items.notificaciones !== undefined) {
+          for (let item of items.notificaciones) {
+            if (item.Leido == 0) {
+              contN++
+            }
           }
+          ContarN(contN)
+          setNotificaciones(items.notificaciones)
         }
-        ContarN(contN)
-        setNotificaciones(items.notificaciones)
       })
     }, 300000)
     return () => clearInterval(interval)

@@ -181,7 +181,12 @@ const PagoTabs = () => {
     } else if (opcion == 5) {
       setIdFlujo(id_flujo)
       setOpcion(opcion)
-      setMensaje('Está seguro de actualizar el pago?')
+      setMensaje('Está seguro de actualizar y reiniciar el proceso de autorización del pago?')
+      setShow(true)
+    } else if (opcion == 55) {
+      setIdFlujo(id_flujo)
+      setOpcion(opcion)
+      setMensaje('Está seguro de actualizar y continuar con el proceso de autorización del pago?')
       setShow(true)
     }
   }
@@ -271,6 +276,20 @@ const PagoTabs = () => {
           '0',
         )
         if (respuestaReset == 'OK' && detalleFlujoReset == 'OK') {
+          history.go(-1)
+        }
+      }
+    } else if (opcion == 55) {
+      const detalleFlujoActualizado = await postFlujoDetalle(
+        id_flujo,
+        '11',
+        idUsuario,
+        'Actualizado',
+        '0',
+      )
+      if (detalleFlujoActualizado == 'OK') {
+        const respuestaReset = await postFlujos(id_flujo, '0', '', '7', null)
+        if (respuestaReset == 'OK') {
           history.go(-1)
         }
       }
@@ -380,11 +399,19 @@ const PagoTabs = () => {
               </CButton>{' '}
               <CButton
                 className={!MostrarActualizar ? 'd-none' : ''}
-                color="info"
+                color="primary"
                 size="sm"
                 onClick={() => mostrarModal(location.id_flujo, 5)}
               >
-                Actualizar
+                Actualizar y reiniciar
+              </CButton>{' '}
+              <CButton
+                className={!MostrarActualizar ? 'd-none' : ''}
+                color="info"
+                size="sm"
+                onClick={() => mostrarModal(location.id_flujo, 55)}
+              >
+                Actualizar y continuar
               </CButton>
             </div>
             <div className="float-left" style={{ marginBottom: '10px' }}>
@@ -395,9 +422,9 @@ const PagoTabs = () => {
             </div>
             <div className="div-content">
               <div style={{ width: '100%' }}>
-                <Tabs defaultActiveKey="detalle" id="uncontrolled-tab-example" className="mb-3">
-                  <Tab eventKey="detalle" title="Detalle">
-                    <DetalleFlujo id_flujo={location.id_flujo} />
+                <Tabs defaultActiveKey="bitacora" id="uncontrolled-tab-example" className="mb-3">
+                  <Tab eventKey="bitacora" title="Bitácora">
+                    <FlujoBitacora id_flujo={location.id_flujo} />
                   </Tab>
                   <Tab
                     eventKey="solicitud"
@@ -448,8 +475,8 @@ const PagoTabs = () => {
                   >
                     <ArchivosFlujo results={archivos} estado={location.estado} />
                   </Tab>
-                  <Tab eventKey="bitacora" title="Bitácora">
-                    <FlujoBitacora id_flujo={location.id_flujo} />
+                  <Tab eventKey="detalle" title="Detalle">
+                    <DetalleFlujo id_flujo={location.id_flujo} />
                   </Tab>
                 </Tabs>
               </div>
@@ -490,9 +517,9 @@ const PagoTabs = () => {
             </div>
             <div className="div-content">
               <div style={{ width: '100%' }}>
-                <Tabs defaultActiveKey="detalle" id="uncontrolled-tab-example" className="mb-3">
-                  <Tab eventKey="detalle" title="Detalle">
-                    <DetalleFlujo id_flujo={location.id_flujo} />
+                <Tabs defaultActiveKey="bitacora" id="uncontrolled-tab-example" className="mb-3">
+                  <Tab eventKey="bitacora" title="Bitácora">
+                    <FlujoBitacora id_flujo={location.id_flujo} />
                   </Tab>
                   <Tab
                     eventKey="solicitud"
@@ -543,12 +570,18 @@ const PagoTabs = () => {
                   >
                     <ArchivosFlujo results={archivos} estado={location.estado} />
                   </Tab>
-                  <Tab eventKey="bitacora" title="Bitácora">
-                    <FlujoBitacora id_flujo={location.id_flujo} />
+                  <Tab eventKey="detalle" title="Detalle">
+                    <DetalleFlujo id_flujo={location.id_flujo} />
                   </Tab>
                 </Tabs>
               </div>
             </div>
+            <Chat
+              id_usuario={session.id}
+              id_flujo={location.id_flujo}
+              pago={location.pago}
+              id_grupo={grupo}
+            />
           </div>
         )
       }

@@ -19,8 +19,11 @@ const FileUploader = (prop) => {
   function generarPDF(url) {
     var imagen = new Image()
     imagen.src = url
-    const doc = new jsPDF('landscape', 'px', 'a4', 'false')
-    doc.addImage(imagen, 'PNG', 45, 80, 520, 320)
+    const doc = new jsPDF()
+    const imgProps = doc.getImageProperties(imagen)
+    const pdfWidth = doc.internal.pageSize.getWidth()
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
+    doc.addImage(imagen, 'PNG', 0, 0, pdfWidth, pdfHeight)
     return doc.output('blob')
   }
 
@@ -35,7 +38,6 @@ const FileUploader = (prop) => {
   }
 
   const handleChangeStatus = ({ meta, file }, status) => {
-    console.log(status, meta, file)
     let pago = prop.nombre
     let nombre
     if (status === 'preparing') {
@@ -55,8 +57,8 @@ const FileUploader = (prop) => {
   }
 
   const handleSubmit = (files, allFiles) => {
-    prop.senDataRemoveAll()
     allFiles.forEach((f) => f.remove())
+    prop.senDataRemoveAll()
   }
 
   return (

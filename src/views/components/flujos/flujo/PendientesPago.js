@@ -20,7 +20,7 @@ const FilterComponent = (prop) => (
       size="sm"
       className="btn-compensacion"
       onClick={prop.enviar}
-      title="Limpiar Campo Búsqueda"
+      title="Compensar pagos"
       disabled={prop.deshabilitar}
     >
       Compensar Pagos
@@ -42,9 +42,6 @@ const PendientesPago = (prop) => {
   const [titulo, setTitulo] = useState('Error!')
   const [color, setColor] = useState('danger')
   const filteredItems = results
-  const [form, setValues] = useState({
-    pagos: '',
-  })
 
   const handleClose = () => setShow(false)
 
@@ -79,10 +76,15 @@ const PendientesPago = (prop) => {
   }
 
   const handleInput = (event) => {
-    setValues({
-      ...form,
-      [event.target.name]: event.target.value,
-    })
+    if (event.target.checked) {
+      sessionStorage.setItem(event.target.value, 'true')
+    } else {
+      sessionStorage.setItem(event.target.value, 'false')
+    }
+  }
+
+  function estaChequeado(item) {
+    return sessionStorage.getItem(item) === 'true'
   }
 
   async function Compensar() {
@@ -90,6 +92,7 @@ const PendientesPago = (prop) => {
     const respuesta = await postFlujos('0', '', '', '2', pagos)
     if (respuesta === 'OK') {
       for (let pago of pagos) {
+        sessionStorage.removeItem(pago)
         const pagado = await postFlujoDetalle(pago, '7', session.id, 'Compensado', '0')
         if (pagado === 'OK') {
           bandera *= 1
@@ -175,6 +178,7 @@ const PendientesPago = (prop) => {
               value={row.id_flujo}
               onChange={handleInput}
               style={{ width: '18px', height: '18px' }}
+              defaultChecked={estaChequeado(row.id_flujo)}
             />
           </div>
         )
@@ -191,7 +195,7 @@ const PendientesPago = (prop) => {
       },
       sortable: true,
       wrap: true,
-      width: '12%',
+      width: '150px',
     },
     {
       name: 'No.',
@@ -201,17 +205,27 @@ const PendientesPago = (prop) => {
         fontSize: '11px',
       },
       sortable: true,
-      width: '8%',
+      width: '90px',
     },
     {
-      name: 'Fecha Documento',
+      name: 'Fecha Doc.',
       selector: (row) => row.doc_date,
       center: true,
       sortable: true,
       style: {
         fontSize: '11px',
       },
-      width: '10%',
+      width: '100px',
+    },
+    {
+      name: 'Fecha auto.',
+      selector: (row) => row.aut_date,
+      center: true,
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+      width: '100px',
     },
     {
       name: 'Beneficiario',
@@ -222,6 +236,7 @@ const PendientesPago = (prop) => {
         fontSize: '11px',
       },
       wrap: true,
+      width: '250px',
     },
     {
       name: 'Concepto',
@@ -231,6 +246,7 @@ const PendientesPago = (prop) => {
         fontSize: '11px',
       },
       wrap: true,
+      width: '285px',
     },
     {
       name: 'Monto',
@@ -239,7 +255,7 @@ const PendientesPago = (prop) => {
       style: {
         fontSize: '11px',
       },
-      width: '12%',
+      width: '120px',
     },
     {
       name: 'Acciones',
@@ -266,7 +282,7 @@ const PendientesPago = (prop) => {
         )
       },
       center: true,
-      width: '8%',
+      width: '70px',
     },
   ])
 

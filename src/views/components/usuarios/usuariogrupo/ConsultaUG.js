@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
-import { Modal } from 'react-bootstrap'
+import { Modal, Button } from 'react-bootstrap'
 import { useIdleTimer } from 'react-idle-timer'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { getUsuarioGrupo } from '../../../../services/getUsuarioGrupo'
@@ -19,6 +19,7 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
+import { FaArrowLeft } from 'react-icons/fa'
 
 const Consultar = () => {
   const history = useHistory()
@@ -86,8 +87,7 @@ const Consultar = () => {
     setShow(true)
     setOpcion(3)
     setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
+      `Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos. Si desea continuar presione Aceptar`,
     )
     iniciar(2)
     console.log('last active', getLastActiveTime())
@@ -97,7 +97,9 @@ const Consultar = () => {
     console.log('time remaining', getRemainingTime())
   }
 
-  const handleOnAction = (event) => {}
+  const handleOnAction = (event) => {
+    return false
+  }
 
   const { getRemainingTime, getLastActiveTime } = useIdleTimer({
     timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
@@ -194,6 +196,12 @@ const Consultar = () => {
               </CButton>
             </Modal.Footer>
           </Modal>
+          <div className="float-left" style={{ marginBottom: '10px' }}>
+            <Button variant="primary" size="sm" onClick={() => history.goBack()}>
+              <FaArrowLeft />
+              &nbsp;&nbsp;Regresar
+            </Button>
+          </div>
           <div className="float-right">
             <CButton
               color="primary"

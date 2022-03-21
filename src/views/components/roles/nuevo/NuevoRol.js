@@ -16,6 +16,7 @@ import {
   CFormControl,
   CInputGroup,
   CInputGroupText,
+  CFormSelect,
 } from '@coreui/react'
 
 const NuevoRol = () => {
@@ -73,8 +74,7 @@ const NuevoRol = () => {
   const handleOnIdle = (event) => {
     setShowM(true)
     setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
+      `Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos. Si desea continuar presione Aceptar`,
     )
     iniciar(2)
     console.log('last active', getLastActiveTime())
@@ -84,7 +84,9 @@ const NuevoRol = () => {
     console.log('time remaining', getRemainingTime())
   }
 
-  const handleOnAction = (event) => {}
+  const handleOnAction = (event) => {
+    return false
+  }
 
   const { getRemainingTime, getLastActiveTime } = useIdleTimer({
     timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
@@ -155,12 +157,26 @@ const NuevoRol = () => {
                   <CInputGroupText>
                     <FiLayout />
                   </CInputGroupText>
-                  <CFormControl
-                    type="text"
-                    placeholder="Objeto"
-                    name="objeto"
-                    onChange={handleInput}
-                  />
+                  <CFormSelect placeholder="Objeto" name="objeto" onChange={handleInput}>
+                    <option value="Modulo Perfiles">Modulo Perfiles</option>
+                    <option value="Modulo Roles">Modulo Roles</option>
+                    <option value="Modulo Permisos">Modulo Permisos</option>
+                    <option value="Modulo Politicas">Modulo Politicas</option>
+                    <option value="Modulo Condiciones">Modulo Condiciones</option>
+                    <option value="Modulo Grupos Autorizacion">Modulo Grupos Autorizacion</option>
+                    <option value="Modulo Estados Pago">Modulo Estados Pago</option>
+                    <option value="Modulo Tipos Flujo">Modulo Tipos Flujo</option>
+                    <option value="Modulo Archivos Pago">Modulo Archivos Pago</option>
+                    <option value="Modulo Bancos">Modulo Bancos</option>
+                    <option value="Modulo Monedas">Modulo Monedas</option>
+                    <option value="Modulo Cuentas">Modulo Cuentas</option>
+                    <option value="Modulo Autorizacion Pagos">Modulo Autorizacion Pagos</option>
+                    <option value="Modulo Compensacion Pagos">Modulo Compensacion Pagos</option>
+                    <option value="Modulo Autorizacion">Modulo Autorizacion</option>
+                    <option value="Modulo Conectados">Modulo Conectados</option>
+                    <option value="Modulo Usuarios">Modulo Usuarios</option>
+                    <option value="Seccion Reportes">Seccion Reportes</option>
+                  </CFormSelect>
                 </CInputGroup>
                 <CButton color="primary" onClick={handleSubmit}>
                   Crear Rol
