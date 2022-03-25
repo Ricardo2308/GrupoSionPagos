@@ -8,14 +8,17 @@ import { FaList, FaFileUpload, FaUsersCog } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 
 const Pendientes = (prop) => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [data, setListdata] = useState([])
+  const [permisos, setPermisos] = useState([])
 
   useEffect(() => {
     let mounted = true
+    let objeto = 'Modulo Autorizacion Pagos'
     let idUsuario = 0
     if (session) {
       idUsuario = session.id
@@ -25,8 +28,23 @@ const Pendientes = (prop) => {
         setListdata(items.flujos)
       }
     })
+    getPerfilUsuario(session.id, '4', objeto).then((items) => {
+      if (mounted) {
+        setPermisos(items.detalle)
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  function ExistePermiso(permiso) {
+    let result = false
+    for (let item of permisos) {
+      if (permiso == item.descripcion) {
+        result = true
+      }
+    }
+    return result
+  }
 
   const customStyles = {
     headRow: {
@@ -142,6 +160,7 @@ const Pendientes = (prop) => {
     {
       name: 'Acciones',
       cell: function OrderItems(row) {
+        let MostrarCargar = ExistePermiso('Cargar')
         if (row.estado == 1) {
           return (
             <div>
@@ -150,12 +169,14 @@ const Pendientes = (prop) => {
                 size="sm"
                 variant="primary"
                 title="Cargar Archivo"
+                className={!MostrarCargar ? 'd-none' : ''}
                 onClick={() =>
                   history.push({
                     pathname: '/archivoflujo/nuevo',
                     id_flujo: row.id_flujo,
                     pago: row.doc_num,
                     grupo: row.id_grupoautorizacion,
+                    estado: row.estado,
                   })
                 }
               >
@@ -185,6 +206,24 @@ const Pendientes = (prop) => {
         } else if (row.estado == 2) {
           return (
             <div>
+              <Button
+                data-tag="allowRowEvents"
+                size="sm"
+                variant="primary"
+                title="Cargar Archivo"
+                className={!MostrarCargar ? 'd-none' : ''}
+                onClick={() =>
+                  history.push({
+                    pathname: '/archivoflujo/nuevo',
+                    id_flujo: row.id_flujo,
+                    pago: row.doc_num,
+                    grupo: row.id_grupoautorizacion,
+                    estado: row.estado,
+                  })
+                }
+              >
+                <FaFileUpload />
+              </Button>{' '}
               <Button
                 data-tag="allowRowEvents"
                 size="sm"
@@ -226,6 +265,24 @@ const Pendientes = (prop) => {
             <div>
               <Button
                 data-tag="allowRowEvents"
+                size="sm"
+                variant="primary"
+                title="Cargar Archivo"
+                className={!MostrarCargar ? 'd-none' : ''}
+                onClick={() =>
+                  history.push({
+                    pathname: '/archivoflujo/nuevo',
+                    id_flujo: row.id_flujo,
+                    pago: row.doc_num,
+                    grupo: row.id_grupoautorizacion,
+                    estado: row.estado,
+                  })
+                }
+              >
+                <FaFileUpload />
+              </Button>{' '}
+              <Button
+                data-tag="allowRowEvents"
                 variant="success"
                 size="sm"
                 title="Consultar Detalle Pago"
@@ -248,7 +305,7 @@ const Pendientes = (prop) => {
         }
       },
       center: true,
-      width: '95px',
+      width: '125px',
     },
   ])
   const tableData = {

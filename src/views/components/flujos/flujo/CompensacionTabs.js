@@ -179,7 +179,7 @@ const CompensacionTabs = () => {
     let pagos = []
     pagos.push(id_flujo)
     if (opcion == 5) {
-      const respuestaActualizado = await postFlujos(id_flujo, '0', '', '5', null)
+      const respuestaActualizado = await postFlujos(id_flujo, '0', '', '66', null)
       const detalleFlujoActualizado = await postFlujoDetalle(
         id_flujo,
         '11',
@@ -188,17 +188,7 @@ const CompensacionTabs = () => {
         '0',
       )
       if (respuestaActualizado == 'OK' && detalleFlujoActualizado == 'OK') {
-        const respuestaReset = await postFlujos(id_flujo, '0', '', '6', null)
-        const detalleFlujoReset = await postFlujoDetalle(
-          id_flujo,
-          '3',
-          idUsuario,
-          'Reinicio de autorización por actualización',
-          '0',
-        )
-        if (respuestaReset == 'OK' && detalleFlujoReset == 'OK') {
-          history.go(-1)
-        }
+        history.go(-1)
       }
     }
   }

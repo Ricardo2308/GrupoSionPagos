@@ -144,7 +144,13 @@ const AppSidebar = () => {
             </>
           )}
         </SidebarHeader>
-        <SidebarContent>
+        <SidebarContent
+          style={{
+            position: 'sticky',
+            top: 0,
+            left: 0,
+          }}
+        >
           <Menu>
             <MenuItem>
               <img src={logo} style={{ width: '15px', marginRight: '18px', marginLeft: '10px' }} />

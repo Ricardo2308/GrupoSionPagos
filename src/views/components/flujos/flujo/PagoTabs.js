@@ -23,6 +23,7 @@ import { getFlujoOrden } from '../../../../services/getFlujoOrden'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { getFlujoFacturaCantidad } from '../../../../services/getFlujoFacturaCantidad'
 import { getFlujoFacturaDocumento } from '../../../../services/getFlujoFacturaDocumento'
+import { getBitacora } from '../../../../services/getBitacora'
 import { useSession } from 'react-use-session'
 import Chat from './Chat'
 import FlujoBitacora from './FlujoBitacora'
@@ -46,6 +47,12 @@ const PagoTabs = () => {
   const [facturaDocumento, setFacturaDocumento] = useState([])
   const [archivos, setArchivos] = useState([])
   const [permisos, setPermisos] = useState([])
+  const [bitacora, setListBitacora] = useState([])
+  const [MostrarPausado, setMostrarPausado] = useState(true)
+  const [MostrarRevision, setMostrarRevision] = useState(false)
+  const [MostrarActualizar, setMostrarActualizar] = useState(false)
+  const [llaveBitacora, setllaveBitacora] = useState(0)
+  const [ocultarBotones, setOcultarBotones] = useState(false)
 
   const handleOnIdle = (event) => {
     setShow(true)
@@ -76,6 +83,10 @@ const PagoTabs = () => {
   useEffect(() => {
     let mounted = true
     let objeto = 'Modulo Autorizacion Pagos'
+    if (location.estado == 10) {
+      setMostrarPausado(false)
+      setMostrarActualizar(true)
+    }
     getFlujoSolicitud(location.id_flujo, null).then((items) => {
       if (mounted) {
         setSolicitud(items.solicitud)
@@ -114,15 +125,28 @@ const PagoTabs = () => {
     getPerfilUsuario(session.id, '4', objeto).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
+        for (let item of items.detalle) {
+          if ('Revisar' == item.descripcion) {
+            setMostrarRevision(true)
+          }
+          if ('Cargar' == item.descripcion) {
+            setOcultarBotones(true)
+          }
+        }
+      }
+    })
+    getBitacora(location.id_flujo).then((items) => {
+      if (mounted) {
+        setListBitacora(items.bitacora)
       }
     })
     return () => (mounted = false)
   }, [])
 
-  function ExistePermiso(permiso) {
+  function ExisteEnBitacora(usuario) {
     let result = false
-    for (let item of permisos) {
-      if (permiso == item.descripcion) {
+    for (let item of bitacora) {
+      if (usuario == item.id_usuario && item.IdEstadoFlujo == 4) {
         result = true
       }
     }
@@ -246,6 +270,7 @@ const PagoTabs = () => {
     } else if (opcion == 3) {
       setShow(true)
     } else if (opcion == 4) {
+      setMostrarPausado(false)
       const respuestaPausado = await postFlujos(id_flujo, '0', '', '4', null)
       const detalleFlujoActualizado = await postFlujoDetalle(
         id_flujo,
@@ -255,7 +280,10 @@ const PagoTabs = () => {
         '0',
       )
       if (respuestaPausado == 'OK' && detalleFlujoActualizado == 'OK') {
-        history.go(-1)
+        setMostrarActualizar(true)
+        setllaveBitacora(llaveBitacora + 1)
+      } else {
+        setMostrarPausado(true)
       }
     } else if (opcion == 5) {
       const respuestaActualizado = await postFlujos(id_flujo, '0', '', '5', null)
@@ -307,14 +335,8 @@ const PagoTabs = () => {
       let MostrarFacturaDocumento = false
       let MostrarArchivos = false
       let MostrarFacturas = false
-      let MostrarRevision = ExistePermiso('Revisar')
-      let MostrarPausado = true
-      let MostrarActualizar = false
+      let yaAutorizo = ExisteEnBitacora(session.id)
       let MostrarAprobarRechazar = false
-      if (location.estado == 10) {
-        MostrarActualizar = true
-        MostrarPausado = false
-      }
       if (location.id_grupo) {
         grupo = location.id_grupo
       }
@@ -344,7 +366,9 @@ const PagoTabs = () => {
         location.estado == 10 ||
         location.estado == 11
       ) {
-        MostrarAprobarRechazar = true
+        if (!yaAutorizo) {
+          MostrarAprobarRechazar = true
+        }
         return (
           <div className="div-tabs">
             <Modal responsive show={show} onHide={() => Cancelar(opcion)} centered>
@@ -364,55 +388,57 @@ const PagoTabs = () => {
                 </CButton>
               </Modal.Footer>
             </Modal>
-            <div
-              className={MostrarRevision ? 'd-none float-right' : 'float-right'}
-              style={{ marginTop: '15px', marginRight: '15px' }}
-            >
-              <CButton
-                className={!MostrarAprobarRechazar ? 'd-none' : ''}
-                color="success"
-                size="sm"
-                onClick={() => mostrarModal(location.id_flujo, 1)}
+            <div className={ocultarBotones ? 'd-none float-right' : 'float-right'}>
+              <div
+                className={MostrarRevision && !yaAutorizo ? 'd-none float-right' : 'float-right'}
+                style={{ marginTop: '15px', marginRight: '15px' }}
               >
-                Aprobar
-              </CButton>{' '}
-              <CButton
-                className={!MostrarAprobarRechazar ? 'd-none' : ''}
-                color="danger"
-                size="sm"
-                onClick={() => mostrarModal(location.id_flujo, 2)}
+                <CButton
+                  className={!MostrarAprobarRechazar ? 'd-none' : ''}
+                  color="success"
+                  size="sm"
+                  onClick={() => mostrarModal(location.id_flujo, 1)}
+                >
+                  Aprobar
+                </CButton>{' '}
+                <CButton
+                  className={!MostrarAprobarRechazar ? 'd-none' : ''}
+                  color="danger"
+                  size="sm"
+                  onClick={() => mostrarModal(location.id_flujo, 2)}
+                >
+                  Rechazar
+                </CButton>
+              </div>
+              <div
+                className={!MostrarRevision ? 'd-none float-right' : 'float-right'}
+                style={{ marginTop: '15px', marginRight: '15px' }}
               >
-                Rechazar
-              </CButton>
-            </div>
-            <div
-              className={!MostrarRevision ? 'd-none float-right' : 'float-right'}
-              style={{ marginTop: '15px', marginRight: '15px' }}
-            >
-              <CButton
-                className={!MostrarPausado ? 'd-none' : ''}
-                color="danger"
-                size="sm"
-                onClick={() => mostrarModal(location.id_flujo, 4)}
-              >
-                Pausar
-              </CButton>{' '}
-              <CButton
-                className={!MostrarActualizar ? 'd-none' : ''}
-                color="primary"
-                size="sm"
-                onClick={() => mostrarModal(location.id_flujo, 5)}
-              >
-                Actualizar y reiniciar
-              </CButton>{' '}
-              <CButton
-                className={!MostrarActualizar ? 'd-none' : ''}
-                color="info"
-                size="sm"
-                onClick={() => mostrarModal(location.id_flujo, 55)}
-              >
-                Actualizar y continuar
-              </CButton>
+                <CButton
+                  className={!MostrarPausado ? 'd-none' : ''}
+                  color="danger"
+                  size="sm"
+                  onClick={() => mostrarModal(location.id_flujo, 4)}
+                >
+                  Pausar
+                </CButton>{' '}
+                <CButton
+                  className={!MostrarActualizar ? 'd-none' : ''}
+                  color="primary"
+                  size="sm"
+                  onClick={() => mostrarModal(location.id_flujo, 5)}
+                >
+                  Actualizar y reiniciar
+                </CButton>{' '}
+                <CButton
+                  className={!MostrarActualizar ? 'd-none' : ''}
+                  color="info"
+                  size="sm"
+                  onClick={() => mostrarModal(location.id_flujo, 55)}
+                >
+                  Actualizar y continuar
+                </CButton>
+              </div>
             </div>
             <div className="float-left" style={{ marginBottom: '10px' }}>
               <Button variant="primary" size="sm" onClick={() => history.goBack()}>
@@ -424,7 +450,7 @@ const PagoTabs = () => {
               <div style={{ width: '100%' }}>
                 <Tabs defaultActiveKey="bitacora" id="uncontrolled-tab-example" className="mb-3">
                   <Tab eventKey="bitacora" title="Bitácora">
-                    <FlujoBitacora id_flujo={location.id_flujo} />
+                    <FlujoBitacora key={llaveBitacora} id_flujo={location.id_flujo} />
                   </Tab>
                   <Tab
                     eventKey="solicitud"

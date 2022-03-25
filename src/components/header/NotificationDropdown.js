@@ -23,8 +23,13 @@ const NotificationDropdown = (props) => {
     let compensados = []
     if (estado == 5) {
       for (let item of props.notificaciones) {
-        if (item.Leido == 0 && item.estado == estado && item.tipo == tipo) {
-          autorizados.push(item)
+        if (item.Leido == 0 && item.estado == estado) {
+          let yaExiste = autorizados.find((obj) => {
+            return obj.Pago === item.Pago
+          })
+          if (yaExiste === undefined) {
+            autorizados.push(item)
+          }
         }
       }
       history.push({
@@ -36,8 +41,13 @@ const NotificationDropdown = (props) => {
       })
     } else if (estado == 6) {
       for (let item of props.notificaciones) {
-        if (item.Leido == 0 && item.estado == estado && item.tipo == tipo) {
-          rechazados.push(item)
+        if (item.Leido == 0 && item.estado == estado) {
+          let yaExiste = rechazados.find((obj) => {
+            return obj.Pago === item.Pago
+          })
+          if (yaExiste === undefined) {
+            rechazados.push(item)
+          }
         }
       }
       history.push({
@@ -48,8 +58,13 @@ const NotificationDropdown = (props) => {
       })
     } else if (estado == 7) {
       for (let item of props.notificaciones) {
-        if (item.Leido == 0 && item.estado == estado && item.tipo == tipo) {
-          compensados.push(item)
+        if (item.Leido == 0 && item.estado == estado) {
+          let yaExiste = compensados.find((obj) => {
+            return obj.Pago === item.Pago
+          })
+          if (yaExiste === undefined) {
+            compensados.push(item)
+          }
         }
       }
       history.push({

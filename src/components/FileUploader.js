@@ -21,9 +21,24 @@ const FileUploader = (prop) => {
     imagen.src = url
     const doc = new jsPDF()
     const imgProps = doc.getImageProperties(imagen)
-    const pdfWidth = doc.internal.pageSize.getWidth()
+    /* const pdfWidth = doc.internal.pageSize.getWidth()
     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
-    doc.addImage(imagen, 'PNG', 0, 0, pdfWidth, pdfHeight)
+    doc.addImage(imagen, 'PNG', 0, 0, pdfWidth, pdfHeight) */
+    let imgWidth = doc.internal.pageSize.getWidth()
+    let pageHeight = doc.internal.pageSize.getHeight()
+    let imgHeight = (imgProps.height * imgWidth) / imgProps.width
+    let heightLeft = imgHeight
+    let position = 15
+    doc.addImage(imagen, 'PNG', 0, position, imgWidth, imgHeight)
+    heightLeft -= pageHeight
+
+    while (heightLeft >= 0) {
+      position += heightLeft - imgHeight
+      doc.addPage()
+      doc.addImage(imagen, 'PNG', 0, position, imgWidth, imgHeight)
+      heightLeft -= pageHeight
+    }
+
     return doc.output('blob')
   }
 

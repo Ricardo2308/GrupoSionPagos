@@ -247,7 +247,7 @@ const Consultar = () => {
                       </CTableDataCell>
                       <CTableDataCell className="text-center">{estado}</CTableDataCell>
                       <CTableDataCell className="text-center">
-                        <CButton
+                        {/* <CButton
                           color="primary"
                           size="sm"
                           title="Cambiar Perfil"
@@ -265,7 +265,7 @@ const Consultar = () => {
                           }
                         >
                           <FaPen />
-                        </CButton>{' '}
+                        </CButton>{' '} */}
                         <CButton
                           color="danger"
                           size="sm"

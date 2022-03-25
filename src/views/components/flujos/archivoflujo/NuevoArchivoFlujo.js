@@ -48,7 +48,9 @@ const NuevoArchivoFlujo = (props) => {
   const [cargaArchivo, setCargaArchivo] = useState(false)
   const [llaveArchivos, setLlaveArchivos] = useState(0)
   const [showME, setShowME] = useState(false)
+  const [showMF, setShowMF] = useState(false)
   const [mensajeE, setMensajeE] = useState('')
+  const [mensajeF, setMensajeF] = useState('')
   const [archivoEliminar, setArchivoEliminar] = useState(0)
   const [MostrarFinalizarCarga, setMostrarFinalizarCarga] = useState(false)
 
@@ -57,7 +59,11 @@ const NuevoArchivoFlujo = (props) => {
     getArchivosFlujo(location.id_flujo, null).then((items) => {
       if (mounted) {
         if (items.archivos.length > 0) {
-          setMostrarFinalizarCarga(true)
+          if (location.estado > 1) {
+            setMostrarFinalizarCarga(false)
+          } else {
+            setMostrarFinalizarCarga(true)
+          }
         } else {
           setMostrarFinalizarCarga(false)
         }
@@ -82,8 +88,8 @@ const NuevoArchivoFlujo = (props) => {
         overflowY: 'scroll',
       }}
     >
-      <div className="float-right" style={{ margin: '10px' }}>
-        <Button variant="primary" size="sm" onClick={() => setMostrar(false)}>
+      <div className="float-right" style={{ margin: '10px', textAlign: 'right' }}>
+        <Button variant="danger" size="sm" onClick={() => setMostrar(false)}>
           Cerrar
         </Button>
       </div>
@@ -346,6 +352,11 @@ const NuevoArchivoFlujo = (props) => {
     setShowME(true)
   }
 
+  function mostrarFinalizarCarga() {
+    setMensajeF('¿Está seguro de finalizar la carga y pasar al siguiente paso?')
+    setShowMF(true)
+  }
+
   async function Accion(opcion) {
     if (opcion == 1) {
       const respuesta = await postArchivoFlujo(archivoEliminar, '', '', '', '', '1')
@@ -355,6 +366,11 @@ const NuevoArchivoFlujo = (props) => {
       setShowME(false)
     } else if (opcion == 2) {
       setShowME(false)
+    } else if (opcion == 3) {
+      setShowMF(false)
+      finalizarCarga()
+    } else if (opcion == 4) {
+      setShowMF(false)
     }
   }
 
@@ -374,7 +390,7 @@ const NuevoArchivoFlujo = (props) => {
               className={!MostrarFinalizarCarga ? 'd-none' : ''}
               variant="success"
               size="sm"
-              onClick={() => finalizarCarga()}
+              onClick={() => mostrarFinalizarCarga()}
             >
               Finalizar carga de archivos
             </Button>
@@ -383,7 +399,14 @@ const NuevoArchivoFlujo = (props) => {
           <br />
           <div style={{ flexDirection: 'row' }}>
             <CContainer>
-              <Modal responsive variant="primary" show={showM} onHide={() => Cancelar(2)} centered>
+              <Modal
+                key="showM"
+                responsive
+                variant="primary"
+                show={showM}
+                onHide={() => Cancelar(2)}
+                centered
+              >
                 <Modal.Header closeButton>
                   <Modal.Title>Confirmación</Modal.Title>
                 </Modal.Header>
@@ -397,7 +420,14 @@ const NuevoArchivoFlujo = (props) => {
                   </CButton>
                 </Modal.Footer>
               </Modal>
-              <Modal responsive variant="primary" show={showME} onHide={() => Accion(2)} centered>
+              <Modal
+                key="showME"
+                responsive
+                variant="primary"
+                show={showME}
+                onHide={() => Accion(2)}
+                centered
+              >
                 <Modal.Header closeButton>
                   <Modal.Title>Confirmación</Modal.Title>
                 </Modal.Header>
@@ -407,6 +437,27 @@ const NuevoArchivoFlujo = (props) => {
                     Cancelar
                   </CButton>
                   <CButton color="primary" onClick={() => Accion(1)}>
+                    Aceptar
+                  </CButton>
+                </Modal.Footer>
+              </Modal>
+              <Modal
+                key="showMF"
+                responsive
+                variant="primary"
+                show={showMF}
+                onHide={() => Accion(4)}
+                centered
+              >
+                <Modal.Header closeButton>
+                  <Modal.Title>Confirmación</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>{mensajeF}</Modal.Body>
+                <Modal.Footer>
+                  <CButton color="secondary" onClick={() => Accion(4)}>
+                    Cancelar
+                  </CButton>
+                  <CButton color="primary" onClick={() => Accion(3)}>
                     Aceptar
                   </CButton>
                 </Modal.Footer>

@@ -18,8 +18,13 @@ const MessageDropdown = (props) => {
   async function responderMensajes(tipo) {
     let mensajes = []
     for (let item of props.mensajes) {
-      if (item.tipo == tipo && item.leido == 0) {
-        mensajes.push(item)
+      if (item.leido == 0) {
+        let yaExiste = mensajes.find((obj) => {
+          return obj.Pago === item.Pago
+        })
+        if (yaExiste === undefined) {
+          mensajes.push(item)
+        }
       }
     }
     history.push({
@@ -41,6 +46,22 @@ const MessageDropdown = (props) => {
           <CDropdownHeader className="bg-light fw-semibold py-2">Mensajes</CDropdownHeader>
           {props.mensajes.map((item, i) => {
             if (item.leido == 0) {
+              return (
+                <CDropdownItem
+                  title="Ir al Pago"
+                  key={item.id_mensaje}
+                  style={{ cursor: 'pointer', fontWeight: 'bold' }}
+                  onClick={() => responderMensajes(item.tipo)}
+                >
+                  {item.usuarioenvia}
+                  {'->'}
+                  {item.Pago}
+                  {'->"'}
+                  {item.mensaje}
+                  {'"'}
+                </CDropdownItem>
+              )
+            } else {
               return (
                 <CDropdownItem
                   title="Ir al Pago"

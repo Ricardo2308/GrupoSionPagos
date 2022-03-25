@@ -248,6 +248,16 @@ const Compensados = (prop) => {
       width: '100px',
     },
     {
+      name: 'Tipo',
+      selector: (row) => row.tipo,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+      width: '123px',
+    },
+    {
       name: 'Beneficiario',
       selector: (row) => row.card_name,
       center: true,

@@ -63,34 +63,7 @@ body{
 .header.header-sticky {
   z-index: 1 !important;
 }
-.sidebar-btn-wrapper {
-  display: flex;
-  position: relative;
-  align-items: center;
-  justify-content: center;
-  padding: 20px 24px;
-  background-color: #3d4b63;
-}
 
-.sidebar-btn {
-  padding: 1px 15px;
-  border-radius: 40px;
-  background-color: #3d4b63;
-  color: #adadad;
-  text-decoration: none;
-  margin: 0 auto;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-.sidebar-btn span {
-  margin-left: 10px;
-  font-size: 13px;
-}
 
 .btn-sm{
   font-size: 10px !important;

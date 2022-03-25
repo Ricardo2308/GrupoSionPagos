@@ -39,8 +39,8 @@ const ArchivosFlujo = (prop) => {
         overflowY: 'scroll',
       }}
     >
-      <div className="float-left" style={{ margin: '10px' }}>
-        <Button variant="primary" size="sm" onClick={() => setMostrar(false)}>
+      <div className="float-right" style={{ margin: '10px', textAlign: 'right' }}>
+        <Button variant="danger" size="sm" onClick={() => setMostrar(false)}>
           Cerrar
         </Button>
       </div>
@@ -64,23 +64,6 @@ const ArchivosFlujo = (prop) => {
     return (
       <>
         {mostrar && ReactDOM.createPortal(modalBody(), document.body)}
-        {/*  <Modal show={mostrar} onHide={cerrarPDF} centered dialogClassName="my-modal">
-          <Modal.Header className="modal-bg" closeButton>
-            <Modal.Title>{titulo}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div style={{ overflow: 'scroll', height: 430 }}>
-              <PDFReader url={urlArchivo} showAllPage={true} getPageNumber={1} />
-            </div>
-          </Modal.Body>
-          <Modal.Footer className="modal-bg">
-            <CButton color="success">
-              <a style={{ textDecoration: 'none', color: 'white' }} href={urlArchivo} download>
-                Descargar
-              </a>
-            </CButton>
-          </Modal.Footer>
-        </Modal> */}
         <CTable hover responsive align="middle" className="mb-0 border">
           <CTableHead color="light">
             <CTableRow>

@@ -43,8 +43,8 @@ const ArchivosFlujo = () => {
         overflowY: 'scroll',
       }}
     >
-      <div className="float-left" style={{ margin: '10px' }}>
-        <Button variant="primary" size="sm" onClick={() => setMostrar(false)}>
+      <div className="float-right" style={{ margin: '10px', textAlign: 'right' }}>
+        <Button variant="danger" size="sm" onClick={() => setMostrar(false)}>
           Cerrar
         </Button>
       </div>

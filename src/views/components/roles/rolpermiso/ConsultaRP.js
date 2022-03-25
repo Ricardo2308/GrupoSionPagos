@@ -60,8 +60,7 @@ const ConsultarRP = () => {
     setShow(true)
     setOpcion(3)
     setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
+      `Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos. Si desea continuar presione Aceptar`,
     )
     iniciar(2)
     console.log('last active', getLastActiveTime())
@@ -71,7 +70,9 @@ const ConsultarRP = () => {
     console.log('time remaining', getRemainingTime())
   }
 
-  const handleOnAction = (event) => {}
+  const handleOnAction = (event) => {
+    return false
+  }
 
   const { getRemainingTime, getLastActiveTime } = useIdleTimer({
     timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
@@ -194,7 +195,7 @@ const ConsultarRP = () => {
                       <CTableDataCell className="text-center">{item.descripcion}</CTableDataCell>
                       <CTableDataCell className="text-center">{estado}</CTableDataCell>
                       <CTableDataCell className="text-center">
-                        <CButton
+                        {/* <CButton
                           color="primary"
                           size="sm"
                           title="Cambiar Permiso"
@@ -211,7 +212,7 @@ const ConsultarRP = () => {
                           }
                         >
                           <FaPen />
-                        </CButton>{' '}
+                        </CButton>{' '} */}
                         <CButton
                           color="danger"
                           size="sm"
