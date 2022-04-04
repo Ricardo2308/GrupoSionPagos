@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
 import { useIdleTimer } from 'react-idle-timer'
@@ -18,6 +18,9 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
+import DataTable, { defaultThemes } from 'react-data-table-component'
+import DataTableExtensions from 'react-data-table-component-extensions'
+import 'react-data-table-component-extensions/dist/index.css'
 
 const Politicas = () => {
   const history = useHistory()
@@ -69,21 +72,19 @@ const Politicas = () => {
 
   async function eliminarPolitica(idPolitica, opcion) {
     if (opcion == 1) {
-      const respuesta = await postCrudPoliticas(idPolitica, '', '', '', '', '2')
+      const respuesta = await postCrudPoliticas(idPolitica, '', '', '', '', '2', session.id)
       if (respuesta === 'OK') {
         await getPoliticas(null, null).then((items) => {
           setList(items.politicas)
         })
       } else if (opcion == 2) {
         setShow(false)
-        detener()
       }
     }
   }
   async function Cancelar(opcion) {
     if (opcion == 1) {
       setShow(false)
-      detener()
     } else if (opcion == 2) {
       let idUsuario = 0
       if (session) {
@@ -94,49 +95,132 @@ const Politicas = () => {
         clear()
         history.push('/')
       }
-      detener()
     }
   }
 
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Cancelar(2)
-      }
-    }, 1000)
-    setTime(intervalo)
+  const customStyles = {
+    headRow: {
+      style: {
+        borderTopStyle: 'solid',
+        borderTopWidth: '1px',
+        borderTopColor: defaultThemes.default.divider.default,
+      },
+    },
+    headCells: {
+      style: {
+        paddingLeft: '8px', // override the cell padding for head cells
+        paddingRight: '8px',
+        fontSize: '12px',
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
+    cells: {
+      style: {
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
   }
-
-  function detener() {
-    clearInterval(time)
+  const columns = useMemo(() => [
+    {
+      name: 'Descripción',
+      selector: (row) => row.descripcion,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+      wrap: true,
+    },
+    {
+      name: 'Identificador',
+      selector: (row) => row.identificador,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+    },
+    {
+      name: 'Valor',
+      selector: (row) => row.valor,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+    },
+    {
+      name: 'Estado',
+      cell: function OrderItems(row) {
+        let estado = 'Inactivo'
+        if (row.activo == 1) {
+          estado = 'Activo'
+        }
+        return estado
+      },
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      wrap: true,
+      width: '100px',
+    },
+    {
+      name: 'Acciones',
+      cell: function OrderItems(row) {
+        let deshabilitar = false
+        if (ExistePermiso('Modulo Politicas') == 0) {
+          deshabilitar = true
+        }
+        return (
+          <div>
+            <CButton
+              color="primary"
+              size="sm"
+              title="Editar Política"
+              disabled={deshabilitar}
+              onClick={() =>
+                history.push({
+                  pathname: '/politicas/editar',
+                  id_politica: row.id_politica,
+                  descripcion: row.descripcion,
+                  identificador: row.identificador,
+                  valor: row.valor,
+                  estado: row.activo,
+                })
+              }
+            >
+              <FaPen />
+            </CButton>{' '}
+            <CButton
+              color="danger"
+              size="sm"
+              title="Eliminar Política"
+              disabled={deshabilitar}
+              onClick={() => mostrarModal(row.id_politica, 1, row.identificador)}
+            >
+              <FaTrash />
+            </CButton>
+          </div>
+        )
+      },
+      center: true,
+      width: '200px',
+    },
+  ])
+  const tableData = {
+    columns,
+    data: results,
+    filterPlaceholder: 'Filtrar datos',
+    export: false,
+    print: false,
   }
-
-  const handleOnIdle = (event) => {
-    setShow(true)
-    setOpcion(2)
-    setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {}
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
 
   if (session) {
     let deshabilitar = false
@@ -172,64 +256,20 @@ const Politicas = () => {
             Crear Nueva
           </CButton>
         </div>
-        <CTable hover responsive align="middle" className="mb-0 border">
-          <CTableHead color="light">
-            <CTableRow>
-              <CTableHeaderCell className="text-center">Descripción</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Identificador</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Valor</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Estado</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Acciones</CTableHeaderCell>
-            </CTableRow>
-          </CTableHead>
-          <CTableBody>
-            {results.map((item, i) => {
-              let estado = 'Inactivo'
-              if (item.eliminado == 0) {
-                if (item.activo == 1) {
-                  estado = 'Activo'
-                }
-                return (
-                  <CTableRow key={item.id_politica}>
-                    <CTableDataCell className="text-center">{item.descripcion}</CTableDataCell>
-                    <CTableDataCell className="text-center">{item.identificador}</CTableDataCell>
-                    <CTableDataCell className="text-center">{item.valor}</CTableDataCell>
-                    <CTableDataCell className="text-center">{estado}</CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CButton
-                        color="primary"
-                        size="sm"
-                        title="Editar Política"
-                        disabled={deshabilitar}
-                        onClick={() =>
-                          history.push({
-                            pathname: '/politicas/editar',
-                            id_politica: item.id_politica,
-                            descripcion: item.descripcion,
-                            identificador: item.identificador,
-                            valor: item.valor,
-                            estado: item.activo,
-                          })
-                        }
-                      >
-                        <FaPen />
-                      </CButton>{' '}
-                      <CButton
-                        color="danger"
-                        size="sm"
-                        title="Eliminar Política"
-                        disabled={deshabilitar}
-                        onClick={() => mostrarModal(item.id_politica, 1, item.identificador)}
-                      >
-                        <FaTrash />
-                      </CButton>
-                    </CTableDataCell>
-                  </CTableRow>
-                )
-              }
-            })}
-          </CTableBody>
-        </CTable>
+        <DataTableExtensions {...tableData}>
+          <DataTable
+            columns={columns}
+            noDataComponent="No hay registros que mostrar"
+            data={results}
+            customStyles={customStyles}
+            pagination
+            paginationPerPage={25}
+            responsive={true}
+            persistTableHead
+            striped={true}
+            dense
+          />
+        </DataTableExtensions>
       </>
     )
   } else {

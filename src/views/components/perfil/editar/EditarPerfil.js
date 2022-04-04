@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useSession } from 'react-use-session'
-import { Alert, Modal } from 'react-bootstrap'
+import { Alert, Modal, Button } from 'react-bootstrap'
 import { useIdleTimer } from 'react-idle-timer'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postCrudPerfil } from '../../../../services/postCrudPerfil'
@@ -18,6 +18,7 @@ import {
   CInputGroup,
   CFormSelect,
 } from '@coreui/react'
+import { FaArrowLeft } from 'react-icons/fa'
 
 const EditarPerfil = () => {
   const history = useHistory()
@@ -42,7 +43,13 @@ const EditarPerfil = () => {
   const handleSubmit = async (event) => {
     if (form.descripcion !== '' && form.estado !== '') {
       event.preventDefault()
-      const respuesta = await postCrudPerfil(location.id_perfil, form.descripcion, form.estado, '1')
+      const respuesta = await postCrudPerfil(
+        location.id_perfil,
+        form.descripcion,
+        form.estado,
+        '1',
+        session.id,
+      )
       if (respuesta === 'OK') {
         history.push('/perfiles')
       }
@@ -68,28 +75,6 @@ const EditarPerfil = () => {
     }
   }
 
-  const handleOnIdle = (event) => {
-    setShowM(true)
-    setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar.',
-    )
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {}
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
-
   if (session) {
     if (location.id_perfil) {
       return (
@@ -109,6 +94,14 @@ const EditarPerfil = () => {
                 </CButton>
               </Modal.Footer>
             </Modal>
+            <div className="float-left" style={{ marginBottom: '10px' }}>
+              <Button variant="primary" size="sm" onClick={() => history.goBack()}>
+                <FaArrowLeft />
+                &nbsp;&nbsp;Regresar
+              </Button>
+            </div>
+            <br />
+            <br />
             <Alert show={show} variant="danger" onClose={() => setShow(false)} dismissible>
               <Alert.Heading>Error!</Alert.Heading>
               <p>{mensaje}</p>

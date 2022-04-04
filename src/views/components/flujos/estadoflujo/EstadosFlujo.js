@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
-import { useIdleTimer } from 'react-idle-timer'
 import { getEstadosFlujo } from '../../../../services/getEstadosFlujo'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { postEstadoFlujo } from '../../../../services/postEstadoFlujo'
@@ -9,15 +8,10 @@ import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { useSession } from 'react-use-session'
 import { FaPen, FaTrash } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
-import {
-  CButton,
-  CTable,
-  CTableBody,
-  CTableDataCell,
-  CTableHead,
-  CTableHeaderCell,
-  CTableRow,
-} from '@coreui/react'
+import { CButton } from '@coreui/react'
+import DataTable, { defaultThemes } from 'react-data-table-component'
+import DataTableExtensions from 'react-data-table-component-extensions'
+import 'react-data-table-component-extensions/dist/index.css'
 
 const EstadosFlujo = () => {
   const history = useHistory()
@@ -63,7 +57,6 @@ const EstadosFlujo = () => {
   async function Cancelar(opcion) {
     if (opcion == 1) {
       setShow(false)
-      detener()
     } else if (opcion == 2) {
       let idUsuario = 0
       if (session) {
@@ -74,49 +67,8 @@ const EstadosFlujo = () => {
         clear()
         history.push('/')
       }
-      detener()
     }
   }
-
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Cancelar(2)
-      }
-    }, 1000)
-    setTime(intervalo)
-  }
-
-  function detener() {
-    clearInterval(time)
-  }
-
-  const handleOnIdle = (event) => {
-    setShow(true)
-    setOpcion(2)
-    setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {}
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
 
   function mostrarModal(id_estado, nombre, opcion) {
     setIdEstado(id_estado)
@@ -127,7 +79,7 @@ const EstadosFlujo = () => {
 
   async function eliminarEstado(id_estado, opcion) {
     if (opcion == 1) {
-      const respuesta = await postEstadoFlujo(id_estado, '', '', '', '2')
+      const respuesta = await postEstadoFlujo(id_estado, '', '', '', '2', session.id)
       if (respuesta === 'OK') {
         await getEstadosFlujo(null, null).then((items) => {
           setList(items.estados)
@@ -135,8 +87,131 @@ const EstadosFlujo = () => {
       }
     } else if (opcion == 2) {
       setShow(false)
-      detener()
     }
+  }
+
+  const customStyles = {
+    headRow: {
+      style: {
+        borderTopStyle: 'solid',
+        borderTopWidth: '1px',
+        borderTopColor: defaultThemes.default.divider.default,
+      },
+    },
+    headCells: {
+      style: {
+        paddingLeft: '8px', // override the cell padding for head cells
+        paddingRight: '8px',
+        fontSize: '12px',
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
+    cells: {
+      style: {
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
+  }
+  const columns = useMemo(() => [
+    {
+      name: 'Estado Pago Destino',
+      selector: (row) => row.descripcion,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+      wrap: true,
+    },
+    {
+      name: 'Estado Flujo Origen',
+      cell: function OrderItems(row) {
+        let asignacion = ''
+        if (row.id_estadoflujopadre === '' || row.id_estadoflujopadre === '0') {
+          asignacion = 'No asignado'
+        } else {
+          asignacion = row.estadopadre
+        }
+        return asignacion
+      },
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+    },
+    {
+      name: 'Estado',
+      cell: function OrderItems(row) {
+        let estado = 'Inactivo'
+        if (row.activo == 1) {
+          estado = 'Activo'
+        }
+        return estado
+      },
+      center: true,
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+      wrap: true,
+    },
+    {
+      name: 'Acciones',
+      cell: function OrderItems(row) {
+        let deshabilitar = false
+        if (ExistePermiso('Modulo Estados Pago') == 0) {
+          deshabilitar = true
+        }
+        return (
+          <div>
+            <CButton
+              color="primary"
+              size="sm"
+              title="Editar Estado Flujo"
+              disabled={deshabilitar}
+              onClick={() =>
+                history.push({
+                  pathname: '/estadosflujo/editar',
+                  id_estado: row.id_estadoflujo,
+                  id_estadopadre: row.id_estadoflujopadre,
+                  descripcion: row.descripcion,
+                  estado: row.activo,
+                })
+              }
+            >
+              <FaPen />
+            </CButton>{' '}
+            <CButton
+              color="danger"
+              size="sm"
+              title="Eliminar Estado Flujo"
+              disabled={deshabilitar}
+              onClick={() => mostrarModal(row.id_estadoflujo, row.descripcion, 1)}
+            >
+              <FaTrash />
+            </CButton>
+          </div>
+        )
+      },
+      center: true,
+      width: '200px',
+    },
+  ])
+  const tableData = {
+    columns,
+    data: results,
+    filterPlaceholder: 'Filtrar datos',
+    export: false,
+    print: false,
   }
 
   if (session) {
@@ -173,69 +248,20 @@ const EstadosFlujo = () => {
             Crear Nuevo
           </CButton>
         </div>
-        <CTable hover responsive align="middle" className="mb-0 border">
-          <CTableHead color="light">
-            <CTableRow>
-              <CTableHeaderCell className="text-center">Estado Pago Destino</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Estado Flujo Origen</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Estado</CTableHeaderCell>
-              <CTableHeaderCell style={{ textAlign: 'center', width: '20%' }}>
-                Acciones
-              </CTableHeaderCell>
-            </CTableRow>
-          </CTableHead>
-          <CTableBody>
-            {results.map((item, i) => {
-              let asignacion = ''
-              let estado = 'Inactivo'
-              if (item.eliminado == 0) {
-                if (item.activo == 1) {
-                  estado = 'Activo'
-                }
-                if (item.id_estadoflujopadre === '' || item.id_estadoflujopadre === '0') {
-                  asignacion = 'No asignado'
-                } else {
-                  asignacion = item.estadopadre
-                }
-                return (
-                  <CTableRow key={item.id_estadoflujo}>
-                    <CTableDataCell className="text-center">{item.descripcion}</CTableDataCell>
-                    <CTableDataCell className="text-center">{asignacion}</CTableDataCell>
-                    <CTableDataCell className="text-center">{estado}</CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CButton
-                        color="primary"
-                        size="sm"
-                        title="Editar Estado Flujo"
-                        disabled={deshabilitar}
-                        onClick={() =>
-                          history.push({
-                            pathname: '/estadosflujo/editar',
-                            id_estado: item.id_estadoflujo,
-                            id_estadopadre: item.id_estadoflujopadre,
-                            descripcion: item.descripcion,
-                            estado: item.activo,
-                          })
-                        }
-                      >
-                        <FaPen />
-                      </CButton>{' '}
-                      <CButton
-                        color="danger"
-                        size="sm"
-                        title="Eliminar Estado Flujo"
-                        disabled={deshabilitar}
-                        onClick={() => mostrarModal(item.id_estadoflujo, item.descripcion, 1)}
-                      >
-                        <FaTrash />
-                      </CButton>
-                    </CTableDataCell>
-                  </CTableRow>
-                )
-              }
-            })}
-          </CTableBody>
-        </CTable>
+        <DataTableExtensions {...tableData}>
+          <DataTable
+            columns={columns}
+            noDataComponent="No hay usuarios que mostrar"
+            data={results}
+            customStyles={customStyles}
+            pagination
+            paginationPerPage={25}
+            responsive={true}
+            persistTableHead
+            striped={true}
+            dense
+          />
+        </DataTableExtensions>
       </>
     )
   } else {

@@ -1,6 +1,14 @@
 const API = `${process.env.REACT_APP_API_URL}usuarios`
 
-export function postCrearUsuario(nombre, apellido, usuario, correo, password, cambiaPassword) {
+export function postCrearUsuario(
+  nombre,
+  apellido,
+  usuario,
+  correo,
+  password,
+  cambiaPassword,
+  id_usuario,
+) {
   var datos = {
     nombre: nombre,
     apellido: apellido,
@@ -8,6 +16,7 @@ export function postCrearUsuario(nombre, apellido, usuario, correo, password, ca
     correo: correo,
     password: password,
     cambia_password: cambiaPassword,
+    id_usuario: id_usuario,
   }
   const data = JSON.stringify(datos)
   return fetch(API, {

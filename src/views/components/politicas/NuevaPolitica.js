@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useSession } from 'react-use-session'
-import { Alert, Modal } from 'react-bootstrap'
+import { Alert, Modal, Button } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
 import { useIdleTimer } from 'react-idle-timer'
 import { FiBook, FiGrid, FiHash } from 'react-icons/fi'
@@ -16,7 +16,9 @@ import {
   CFormControl,
   CInputGroup,
   CInputGroupText,
+  CFormSelect,
 } from '@coreui/react'
+import { FaArrowLeft } from 'react-icons/fa'
 
 const NuevoPermiso = () => {
   const history = useHistory()
@@ -51,6 +53,7 @@ const NuevoPermiso = () => {
         form.valor,
         '',
         '',
+        session.id,
       )
       if (respuesta === 'OK') {
         history.push('/politicas')
@@ -63,49 +66,9 @@ const NuevoPermiso = () => {
     }
   }
 
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Cancelar(2)
-      }
-    }, 1000)
-    setTime(intervalo)
-  }
-
-  function detener() {
-    clearInterval(time)
-  }
-
-  const handleOnIdle = (event) => {
-    setShowM(true)
-    setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {}
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
-
   async function Cancelar(opcion) {
     if (opcion == 1) {
       setShowM(false)
-      detener()
     } else if (opcion == 2) {
       let idUsuario = 0
       if (session) {
@@ -116,7 +79,6 @@ const NuevoPermiso = () => {
         clear()
         history.push('/')
       }
-      detener()
     }
   }
 
@@ -138,6 +100,14 @@ const NuevoPermiso = () => {
               </CButton>
             </Modal.Footer>
           </Modal>
+          <div className="float-left" style={{ marginBottom: '10px' }}>
+            <Button variant="primary" size="sm" onClick={() => history.goBack()}>
+              <FaArrowLeft />
+              &nbsp;&nbsp;Regresar
+            </Button>
+          </div>
+          <br />
+          <br />
           <Alert show={show} variant={color} onClose={() => setShow(false)} dismissible>
             <Alert.Heading>{titulo}</Alert.Heading>
             <p>{mensaje}</p>
@@ -163,12 +133,19 @@ const NuevoPermiso = () => {
                   <CInputGroupText>
                     <FiGrid />
                   </CInputGroupText>
-                  <CFormControl
-                    type="text"
+                  <CFormSelect
                     placeholder="Identificador"
                     name="identificador"
                     onChange={handleInput}
-                  />
+                  >
+                    <option value="_SEMAFORO_VERDE">_SEMAFORO_VERDE</option>
+                    <option value="_SEMAFORO_AMARILLO">_SEMAFORO_AMARILLO</option>
+                    <option value="_LIMITE_TIEMPO_CONEXION_">_LIMITE_TIEMPO_CONEXION_</option>
+                    <option value="_LIMITE_ERROR_LOGIN_">_LIMITE_ERROR_LOGIN_</option>
+                    <option value="_LIMITE_CAMBIO_PASSWORD_">_LIMITE_CAMBIO_PASSWORD_</option>
+                    <option value="_CORREO">_CORREO</option>
+                    <option value="_CORREO_LOTES_PAGO_">_CORREO_LOTES_PAGO_</option>
+                  </CFormSelect>
                 </CInputGroup>
                 <CInputGroup className="mb-3">
                   <CInputGroupText>

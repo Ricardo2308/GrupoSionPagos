@@ -55,7 +55,7 @@ class Chat extends Component {
           newMessagesCount: cont,
         })
       })
-    }, 150000)
+    }, 3000)
     return () => clearInterval(interval)
   }
 

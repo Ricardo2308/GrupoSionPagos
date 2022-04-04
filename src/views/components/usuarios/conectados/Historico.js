@@ -1,20 +1,15 @@
-import React, { useState, useEffect } from 'react'
-import { Modal } from 'react-bootstrap'
+import React, { useState, useEffect, useMemo } from 'react'
+import { Modal, Button } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { getSesionUsuario } from '../../../../services/getSesionUsuario'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { useSession } from 'react-use-session'
-import { useIdleTimer } from 'react-idle-timer'
 import '../../../../scss/estilos.scss'
-import {
-  CTable,
-  CTableBody,
-  CTableDataCell,
-  CTableHead,
-  CTableHeaderCell,
-  CTableRow,
-  CButton,
-} from '@coreui/react'
+import { CButton } from '@coreui/react'
+import { FaArrowLeft } from 'react-icons/fa'
+import DataTable, { defaultThemes } from 'react-data-table-component'
+import DataTableExtensions from 'react-data-table-component-extensions'
+import 'react-data-table-component-extensions/dist/index.css'
 
 const Historico = () => {
   const history = useHistory()
@@ -45,7 +40,6 @@ const Historico = () => {
   async function Cancelar(opcion) {
     if (opcion == 1) {
       setShow(false)
-      detener()
     } else if (opcion == 2) {
       let idUsuario = 0
       if (session) {
@@ -56,48 +50,87 @@ const Historico = () => {
         clear()
         history.push('/')
       }
-      detener()
     }
   }
 
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Cancelar(2)
-      }
-    }, 1000)
-    setTime(intervalo)
+  const customStyles = {
+    headRow: {
+      style: {
+        borderTopStyle: 'solid',
+        borderTopWidth: '1px',
+        borderTopColor: defaultThemes.default.divider.default,
+      },
+    },
+    headCells: {
+      style: {
+        paddingLeft: '8px', // override the cell padding for head cells
+        paddingRight: '8px',
+        fontSize: '12px',
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
+    cells: {
+      style: {
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
   }
+  const columns = useMemo(() => [
+    {
+      name: 'Navegador',
+      selector: (row) => row.Navegador,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+      wrap: true,
+    },
+    {
+      name: 'IP Usuario',
+      selector: (row) => row.IPAddress,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+    },
+    {
+      name: 'Inicio Sesión',
+      selector: (row) => row.FechaHoraInicio,
+      center: true,
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+    },
+    {
+      name: 'Fin Sesión',
+      selector: (row) => row.FechaHoraFinal,
+      center: true,
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+      wrap: true,
+    },
+  ])
 
-  function detener() {
-    clearInterval(time)
+  const tableData = {
+    columns,
+    data: results,
+    filterPlaceholder: 'Filtrar datos',
+    export: false,
+    print: false,
   }
-
-  const handleOnIdle = (event) => {
-    setShow(true)
-    setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {}
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
 
   if (session) {
     if (location.IdUsuario) {
@@ -117,29 +150,29 @@ const Historico = () => {
               </CButton>
             </Modal.Footer>
           </Modal>
+          <div className="float-left" style={{ marginBottom: '10px' }}>
+            <Button variant="primary" size="sm" onClick={() => history.goBack()}>
+              <FaArrowLeft />
+              &nbsp;&nbsp;Regresar
+            </Button>
+          </div>
+          <br />
+          <br />
           <div className="user-name-profile">{location.NombreUsuario}</div>
-          <CTable hover responsive align="middle" className="mb-0 border">
-            <CTableHead color="light">
-              <CTableRow>
-                <CTableHeaderCell className="text-center">Navegador</CTableHeaderCell>
-                <CTableHeaderCell className="text-center">IP Usuario</CTableHeaderCell>
-                <CTableHeaderCell className="text-center">Inicio Sesión</CTableHeaderCell>
-                <CTableHeaderCell className="text-center">Fin Sesión</CTableHeaderCell>
-              </CTableRow>
-            </CTableHead>
-            <CTableBody>
-              {results.map((item, i) => {
-                return (
-                  <CTableRow key={item.IdSesion}>
-                    <CTableDataCell className="text-center">{item.Navegador}</CTableDataCell>
-                    <CTableDataCell className="text-center">{item.IPAddress}</CTableDataCell>
-                    <CTableDataCell className="text-center">{item.FechaHoraInicio}</CTableDataCell>
-                    <CTableDataCell className="text-center">{item.FechaHoraFinal}</CTableDataCell>
-                  </CTableRow>
-                )
-              })}
-            </CTableBody>
-          </CTable>
+          <DataTableExtensions {...tableData}>
+            <DataTable
+              columns={columns}
+              noDataComponent="No hay registros que mostrar"
+              data={results}
+              customStyles={customStyles}
+              pagination
+              paginationPerPage={25}
+              responsive={true}
+              persistTableHead
+              striped={true}
+              dense
+            />
+          </DataTableExtensions>
         </>
       )
     } else {

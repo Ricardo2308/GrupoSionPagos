@@ -146,7 +146,7 @@ const Compensados = (prop) => {
     },
     {
       name: 'Beneficiario',
-      selector: (row) => row.card_name,
+      selector: (row) => row.en_favor_de,
       center: true,
       sortable: true,
       style: {
@@ -259,7 +259,7 @@ const Compensados = (prop) => {
     },
     {
       name: 'Beneficiario',
-      selector: (row) => row.card_name,
+      selector: (row) => row.en_favor_de,
       center: true,
       sortable: true,
       style: {

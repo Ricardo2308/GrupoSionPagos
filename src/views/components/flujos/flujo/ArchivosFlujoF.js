@@ -67,6 +67,7 @@ const ArchivosFlujo = (prop) => {
         <CTable hover responsive align="middle" className="mb-0 border">
           <CTableHead color="light">
             <CTableRow>
+              <CTableHeaderCell className="text-center">#</CTableHeaderCell>
               <CTableHeaderCell className="text-center">Usuario</CTableHeaderCell>
               <CTableHeaderCell className="text-center">Descripcion Archvo</CTableHeaderCell>
               <CTableHeaderCell className="text-center">Estado</CTableHeaderCell>
@@ -83,6 +84,7 @@ const ArchivosFlujo = (prop) => {
                 if (prop.estado < 2) {
                   return (
                     <CTableRow key={item.id_archivoflujo}>
+                      <CTableDataCell className="text-center">{i + 1}</CTableDataCell>
                       <CTableDataCell className="text-center">{item.nombre_usuario}</CTableDataCell>
                       <CTableDataCell className="text-center">{item.descripcion}</CTableDataCell>
                       <CTableDataCell className="text-center">{estado}</CTableDataCell>
@@ -103,6 +105,7 @@ const ArchivosFlujo = (prop) => {
                 } else {
                   return (
                     <CTableRow key={item.id_archivoflujo}>
+                      <CTableDataCell className="text-center">{i + 1}</CTableDataCell>
                       <CTableDataCell className="text-center">{item.nombre_usuario}</CTableDataCell>
                       <CTableDataCell className="text-center">{item.descripcion}</CTableDataCell>
                       <CTableDataCell className="text-center">{estado}</CTableDataCell>

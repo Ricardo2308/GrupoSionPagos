@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
-import { Button, FormControl } from 'react-bootstrap'
-import DataTable, { createTheme, defaultThemes } from 'react-data-table-component'
+import { Button } from 'react-bootstrap'
+import DataTable, { defaultThemes } from 'react-data-table-component'
 import { getRechazadosBanco } from '../../../../services/getRechazadosBanco'
-import { postNotificacion } from '../../../../services/postNotificacion'
 import { useSession } from 'react-use-session'
 import { FaList } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
@@ -17,32 +16,16 @@ const RechazadosPorBanco = (prop) => {
   const [results, setList] = useState([])
   const filteredItems = results
 
-  async function leerNotificaciones(IdFlujo, Pago, Estado, Nivel, IdGrupo) {
-    let pagos = []
-    pagos.push(IdFlujo)
-    const respuesta = await postNotificacion(pagos, session.id, '', '1')
-    if (respuesta == 'OK') {
-      history.push({
-        pathname: '/compensacion/tabs',
-        id_flujo: IdFlujo,
-        pago: Pago,
-        estado: Estado,
-        nivel: Nivel,
-        id_grupo: IdGrupo,
-      })
-    }
-  }
-
   useEffect(() => {
     let mounted = true
     if (location.comentarios && location.tipo) {
-      getRechazadosBanco(session.id, location.tipo).then((items) => {
+      getRechazadosBanco(location.tipo, session.id).then((items) => {
         if (mounted) {
           setList(items.flujos)
         }
       })
     } else {
-      getRechazadosBanco(session.id, prop.tipo).then((items) => {
+      getRechazadosBanco(prop.tipo, session.id).then((items) => {
         if (mounted) {
           setList(items.flujos)
         }
@@ -143,7 +126,7 @@ const RechazadosPorBanco = (prop) => {
     },
     {
       name: 'Beneficiario',
-      selector: (row) => row.card_name,
+      selector: (row) => row.en_favor_de,
       center: true,
       sortable: true,
       style: {

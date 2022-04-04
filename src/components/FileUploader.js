@@ -28,7 +28,7 @@ const FileUploader = (prop) => {
     let pageHeight = doc.internal.pageSize.getHeight()
     let imgHeight = (imgProps.height * imgWidth) / imgProps.width
     let heightLeft = imgHeight
-    let position = 15
+    let position = 5
     doc.addImage(imagen, 'PNG', 0, position, imgWidth, imgHeight)
     heightLeft -= pageHeight
 

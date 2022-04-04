@@ -1,6 +1,14 @@
 const API = `${process.env.REACT_APP_API_URL}politicas`
 
-export function postCrudPoliticas(idPolitica, descripcion, identificador, valor, estado, opcion) {
+export function postCrudPoliticas(
+  idPolitica,
+  descripcion,
+  identificador,
+  valor,
+  estado,
+  opcion,
+  id_usuario,
+) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -11,6 +19,7 @@ export function postCrudPoliticas(idPolitica, descripcion, identificador, valor,
     valor: valor,
     activo: estado,
     opcion: opcion,
+    id_usuario: id_usuario,
   }
 
   if (idPolitica !== '' && opcion !== '') {

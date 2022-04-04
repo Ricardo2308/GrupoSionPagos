@@ -49,6 +49,7 @@ const NuevaCondicion = () => {
         form.parametros,
         '',
         '3',
+        session.id,
       )
       if (respuesta === 'OK') {
         history.push('/condiciones')
@@ -60,28 +61,6 @@ const NuevaCondicion = () => {
       setMensaje('No has llenado todos los campos.')
     }
   }
-
-  const handleOnIdle = (event) => {
-    setShowM(true)
-    setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar.',
-    )
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {}
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
 
   async function Cancelar(opcion) {
     if (opcion == 1) {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
 import { useIdleTimer } from 'react-idle-timer'
@@ -18,6 +18,9 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
+import DataTable, { defaultThemes } from 'react-data-table-component'
+import DataTableExtensions from 'react-data-table-component-extensions'
+import 'react-data-table-component-extensions/dist/index.css'
 
 const Monedas = () => {
   const history = useHistory()
@@ -63,7 +66,6 @@ const Monedas = () => {
   async function Cancelar(opcion) {
     if (opcion == 1) {
       setShow(false)
-      detener()
     } else if (opcion == 2) {
       let idUsuario = 0
       if (session) {
@@ -74,49 +76,8 @@ const Monedas = () => {
         clear()
         history.push('/')
       }
-      detener()
     }
   }
-
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Cancelar(2)
-      }
-    }, 1000)
-    setTime(intervalo)
-  }
-
-  function detener() {
-    clearInterval(time)
-  }
-
-  const handleOnIdle = (event) => {
-    setShow(true)
-    setOpcion(2)
-    setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {}
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
 
   function mostrarModal(id_moneda, nombre, opcion) {
     setIdMoneda(id_moneda)
@@ -127,7 +88,7 @@ const Monedas = () => {
 
   async function eliminarMoneda(id_moneda, opcion) {
     if (opcion == 1) {
-      const respuesta = await postCrudMonedas(id_moneda, '', '', '', '2')
+      const respuesta = await postCrudMonedas(id_moneda, '', '', '', '2', session.id)
       if (respuesta === 'OK') {
         await getMonedas(null, null).then((items) => {
           setList(items.monedas)
@@ -135,8 +96,123 @@ const Monedas = () => {
       }
     } else if (opcion == 2) {
       setShow(false)
-      detener()
     }
+  }
+
+  const customStyles = {
+    headRow: {
+      style: {
+        borderTopStyle: 'solid',
+        borderTopWidth: '1px',
+        borderTopColor: defaultThemes.default.divider.default,
+      },
+    },
+    headCells: {
+      style: {
+        paddingLeft: '8px', // override the cell padding for head cells
+        paddingRight: '8px',
+        fontSize: '12px',
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
+    cells: {
+      style: {
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
+  }
+  const columns = useMemo(() => [
+    {
+      name: 'Nombre',
+      selector: (row) => row.nombre,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+      wrap: true,
+    },
+    {
+      name: 'Símbolo',
+      selector: (row) => row.simbolo,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+    },
+    {
+      name: 'Estado',
+      cell: function OrderItems(row) {
+        let estado = 'Inactivo'
+        if (row.activo == 1) {
+          estado = 'Activo'
+        }
+        return estado
+      },
+      center: true,
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+      wrap: true,
+    },
+    {
+      name: 'Acciones',
+      cell: function OrderItems(row) {
+        let deshabilitar = false
+        if (ExistePermiso('Modulo Monedas') == 0) {
+          deshabilitar = true
+        }
+        return (
+          <div>
+            <CButton
+              color="primary"
+              size="sm"
+              title="Editar Moneda"
+              disabled={deshabilitar}
+              onClick={() =>
+                history.push({
+                  pathname: '/monedas/editar',
+                  id_moneda: row.id_moneda,
+                  nombre: row.nombre,
+                  simbolo: row.simbolo,
+                  estado: row.activo,
+                })
+              }
+            >
+              <FaPen />
+            </CButton>{' '}
+            <CButton
+              color="danger"
+              size="sm"
+              title="Eliminar Banco"
+              disabled={deshabilitar}
+              onClick={() => mostrarModal(row.id_moneda, row.nombre, 1)}
+            >
+              <FaTrash />
+            </CButton>
+          </div>
+        )
+      },
+      center: true,
+      width: '200px',
+    },
+  ])
+  const tableData = {
+    columns,
+    data: results,
+    filterPlaceholder: 'Filtrar datos',
+    export: false,
+    print: false,
   }
 
   if (session) {
@@ -173,61 +249,20 @@ const Monedas = () => {
             Crear Nueva
           </CButton>
         </div>
-        <CTable hover responsive align="middle" className="mb-0 border">
-          <CTableHead color="light">
-            <CTableRow>
-              <CTableHeaderCell className="text-center">Nombre</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Símbolo</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Estado</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Acciones</CTableHeaderCell>
-            </CTableRow>
-          </CTableHead>
-          <CTableBody>
-            {results.map((item, i) => {
-              let estado = 'Inactivo'
-              if (item.eliminado == 0) {
-                if (item.activo == 1) {
-                  estado = 'Activo'
-                }
-                return (
-                  <CTableRow key={item.id_moneda}>
-                    <CTableDataCell className="text-center">{item.nombre}</CTableDataCell>
-                    <CTableDataCell className="text-center">{item.simbolo}</CTableDataCell>
-                    <CTableDataCell className="text-center">{estado}</CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CButton
-                        color="primary"
-                        size="sm"
-                        title="Editar Moneda"
-                        disabled={deshabilitar}
-                        onClick={() =>
-                          history.push({
-                            pathname: '/monedas/editar',
-                            id_moneda: item.id_moneda,
-                            nombre: item.nombre,
-                            simbolo: item.simbolo,
-                            estado: item.activo,
-                          })
-                        }
-                      >
-                        <FaPen />
-                      </CButton>{' '}
-                      <CButton
-                        color="danger"
-                        size="sm"
-                        title="Eliminar Banco"
-                        disabled={deshabilitar}
-                        onClick={() => mostrarModal(item.id_moneda, item.nombre, 1)}
-                      >
-                        <FaTrash />
-                      </CButton>
-                    </CTableDataCell>
-                  </CTableRow>
-                )
-              }
-            })}
-          </CTableBody>
-        </CTable>
+        <DataTableExtensions {...tableData}>
+          <DataTable
+            columns={columns}
+            noDataComponent="No hay usuarios que mostrar"
+            data={results}
+            customStyles={customStyles}
+            pagination
+            paginationPerPage={25}
+            responsive={true}
+            persistTableHead
+            striped={true}
+            dense
+          />
+        </DataTableExtensions>
       </>
     )
   } else {

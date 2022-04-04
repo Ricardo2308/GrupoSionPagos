@@ -7,6 +7,7 @@ export function postGruposAutorizacion(
   numeroNiveles,
   estado,
   opcion,
+  id_usuario,
 ) {
   let ApiFinal = API
   let ApiWhere = ''
@@ -18,6 +19,7 @@ export function postGruposAutorizacion(
     numero_niveles: numeroNiveles,
     activo: estado,
     opcion: opcion,
+    id_usuario: id_usuario,
   }
 
   if (idGrupo !== '' && opcion !== '') {

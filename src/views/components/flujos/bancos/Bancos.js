@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal, FormControl } from 'react-bootstrap'
 import { useIdleTimer } from 'react-idle-timer'
-import DataTable, { createTheme } from 'react-data-table-component'
 import { getBancos } from '../../../../services/getBancos'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { postCrudBancos } from '../../../../services/postCrudBancos'
@@ -11,36 +10,9 @@ import { useSession } from 'react-use-session'
 import { FaPen, FaTrash } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import { CButton } from '@coreui/react'
-
-const FilterComponent = (prop) => (
-  <div className="div-search">
-    <CButton
-      color="primary"
-      size="sm"
-      className="btn-compensacion"
-      disabled={prop.deshabilitar}
-      onClick={prop.crearNuevo}
-    >
-      Crear Nuevo
-    </CButton>
-    <FormControl
-      id="search"
-      type="text"
-      placeholder="Buscar Banco"
-      aria-label="Search Input"
-      value={prop.filterText}
-      onChange={prop.onFilter}
-    />
-    <CButton
-      color="primary"
-      className="clear-search"
-      onClick={prop.onClear}
-      title="Limpiar Campo Búsqueda"
-    >
-      X
-    </CButton>
-  </div>
-)
+import DataTable, { defaultThemes } from 'react-data-table-component'
+import DataTableExtensions from 'react-data-table-component-extensions'
+import 'react-data-table-component-extensions/dist/index.css'
 
 const Bancos = () => {
   const history = useHistory()
@@ -85,7 +57,6 @@ const Bancos = () => {
   async function Cancelar(opcion) {
     if (opcion == 1) {
       setShow(false)
-      detener()
     } else if (opcion == 2) {
       let idUsuario = 0
       if (session) {
@@ -96,81 +67,39 @@ const Bancos = () => {
         clear()
         history.push('/')
       }
-      detener()
     }
   }
 
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Cancelar(2)
-      }
-    }, 1000)
-    setTime(intervalo)
-  }
-
-  function detener() {
-    clearInterval(time)
-  }
-
-  const handleOnIdle = (event) => {
-    setShow(true)
-    setOpcion(2)
-    setMensaje(
-      `Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos. Si desea continuar presione Aceptar`,
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {
-    return false
-  }
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
-
   const customStyles = {
+    headRow: {
+      style: {
+        borderTopStyle: 'solid',
+        borderTopWidth: '1px',
+        borderTopColor: defaultThemes.default.divider.default,
+      },
+    },
     headCells: {
       style: {
         paddingLeft: '8px', // override the cell padding for head cells
         paddingRight: '8px',
         fontSize: '12px',
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
+    cells: {
+      style: {
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
       },
     },
   }
-
-  createTheme('solarized', {
-    text: {
-      primary: 'black',
-    },
-    background: {
-      default: 'white',
-    },
-    context: {
-      background: '#cb4b16',
-      text: '#FFFFFF',
-    },
-    divider: {
-      default: '#073642',
-    },
-    action: {
-      button: 'rgba(0,0,0,.54)',
-      hover: 'rgba(0,0,0,.08)',
-      disabled: 'rgba(0,0,0,.12)',
-    },
-  })
 
   const columns = useMemo(() => [
     {
@@ -178,30 +107,40 @@ const Bancos = () => {
       selector: (row) => row.codigo_transferencia,
       center: true,
       width: '65px',
+      sortable: true,
+      wrap: true,
     },
     {
       name: 'Nombre',
       selector: (row) => row.nombre,
       center: true,
       width: '320px',
+      sortable: true,
+      wrap: true,
     },
     {
       name: 'Dirección',
       selector: (row) => row.direccion,
       center: true,
       width: '300px',
+      sortable: true,
+      wrap: true,
     },
     {
       name: 'País',
       selector: (row) => row.Nombre,
       center: true,
       width: '100px',
+      sortable: true,
+      wrap: true,
     },
     {
       name: 'SAP',
       selector: (row) => row.codigo_SAP,
       center: true,
       width: '90px',
+      sortable: true,
+      wrap: true,
     },
     {
       name: 'Estado',
@@ -214,10 +153,14 @@ const Bancos = () => {
           return <div>Inactivo</div>
         }
       },
+      sortable: true,
+      wrap: true,
     },
     {
       name: 'Acciones',
       width: '10%',
+      sortable: true,
+      wrap: true,
       cell: function OrderItems(row) {
         let deshabilitar = false
         if (ExistePermiso('Modulo Bancos') == 0) {
@@ -261,6 +204,14 @@ const Bancos = () => {
     },
   ])
 
+  const tableData = {
+    columns,
+    data: results,
+    filterPlaceholder: 'Filtrar datos',
+    export: false,
+    print: false,
+  }
+
   function ExistePermiso(objeto) {
     let result = 0
     for (let item of permisos) {
@@ -280,7 +231,7 @@ const Bancos = () => {
 
   async function eliminarBanco(id_banco, opcion) {
     if (opcion == 1) {
-      const respuesta = await postCrudBancos(id_banco, '', '', '', '', '', '', '2')
+      const respuesta = await postCrudBancos(id_banco, '', '', '', '', '', '', '2', session.id)
       if (respuesta === 'OK') {
         await getBancos(null, null).then((items) => {
           setList(items.bancos)
@@ -288,7 +239,6 @@ const Bancos = () => {
       }
     } else if (opcion == 2) {
       setShow(false)
-      detener()
     }
   }
 
@@ -328,26 +278,29 @@ const Bancos = () => {
           </Modal.Footer>
         </Modal>
         <div className="float-right" style={{ marginBottom: '10px' }}>
-          <FilterComponent
-            onFilter={(e) => setFilterText(e.target.value)}
-            onClear={handleClear}
-            crearNuevo={crearNuevo}
-            filterText={filterText}
-            deshabilitar={deshabilitar}
-          />
+          <CButton
+            color="primary"
+            size="sm"
+            disabled={deshabilitar}
+            onClick={() => history.push('/bancos/nuevo')}
+          >
+            Crear Nuevo
+          </CButton>
         </div>
-        <DataTable
-          columns={columns}
-          noDataComponent="No hay pagos que mostrar"
-          data={filteredItems}
-          customStyles={customStyles}
-          theme="solarized"
-          pagination
-          paginationPerPage={6}
-          paginationResetDefaultPage={resetPaginationToggle}
-          responsive={true}
-          persistTableHead
-        />
+        <DataTableExtensions {...tableData}>
+          <DataTable
+            columns={columns}
+            noDataComponent="No hay registros que mostrar"
+            data={results}
+            customStyles={customStyles}
+            pagination
+            paginationPerPage={25}
+            responsive={true}
+            persistTableHead
+            striped={true}
+            dense
+          />
+        </DataTableExtensions>
       </>
     )
   } else {

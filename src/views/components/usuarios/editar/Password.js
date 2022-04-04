@@ -3,7 +3,6 @@ import { useSession } from 'react-use-session'
 import { Alert, Modal } from 'react-bootstrap'
 import { useIdleTimer } from 'react-idle-timer'
 import { useHistory, useLocation } from 'react-router-dom'
-import { postEditarUsuario } from '../../../../services/postEditarUsuario'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { FiUser, FiSettings, FiAtSign, FiLock } from 'react-icons/fi'
 import { getUsuarios } from '../../../../services/getUsuarios'
@@ -163,49 +162,9 @@ const EditarPassword = (props) => {
     }
   }
 
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Cancelar(2)
-      }
-    }, 1000)
-    setTime(intervalo)
-  }
-
-  function detener() {
-    clearInterval(time)
-  }
-
-  const handleOnIdle = (event) => {
-    setShowM(true)
-    setMensaje(
-      ` Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.  Si desea continuar presione Aceptar`,
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  function handleOnAction(event) {
-    return false
-  }
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
-
   async function Cancelar(opcion) {
     if (opcion == 1) {
       setShowM(false)
-      detener()
     } else if (opcion == 2) {
       let idUsuario = 0
       if (session) {
@@ -216,7 +175,6 @@ const EditarPassword = (props) => {
         clear()
         history.push('/')
       }
-      detener()
     }
   }
 

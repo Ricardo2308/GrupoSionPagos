@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
 import { useIdleTimer } from 'react-idle-timer'
@@ -18,6 +18,9 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
+import DataTable, { defaultThemes } from 'react-data-table-component'
+import DataTableExtensions from 'react-data-table-component-extensions'
+import 'react-data-table-component-extensions/dist/index.css'
 
 const GruposAutorizacion = () => {
   const history = useHistory()
@@ -63,7 +66,6 @@ const GruposAutorizacion = () => {
   async function Cancelar(opcion) {
     if (opcion == 1) {
       setShow(false)
-      detener()
     } else if (opcion == 2) {
       let idUsuario = 0
       if (session) {
@@ -74,49 +76,8 @@ const GruposAutorizacion = () => {
         clear()
         history.push('/')
       }
-      detener()
     }
   }
-
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Cancelar(2)
-      }
-    }, 1000)
-    setTime(intervalo)
-  }
-
-  function detener() {
-    clearInterval(time)
-  }
-
-  const handleOnIdle = (event) => {
-    setShow(true)
-    setOpcion(2)
-    setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {}
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
 
   function mostrarModal(id_grupo, nombre, opcion) {
     setIdGrupo(id_grupo)
@@ -127,7 +88,7 @@ const GruposAutorizacion = () => {
 
   async function eliminarGrupo(id_grupo, opcion) {
     if (opcion == 1) {
-      const respuesta = await postGruposAutorizacion(id_grupo, '', '', '', '', '2')
+      const respuesta = await postGruposAutorizacion(id_grupo, '', '', '', '', '2', session.id)
       if (respuesta === 'OK') {
         await getGruposAutorizacion(null, null).then((items) => {
           setList(items.grupos)
@@ -135,8 +96,135 @@ const GruposAutorizacion = () => {
       }
     } else if (opcion == 2) {
       setShow(false)
-      detener()
     }
+  }
+
+  const customStyles = {
+    headRow: {
+      style: {
+        borderTopStyle: 'solid',
+        borderTopWidth: '1px',
+        borderTopColor: defaultThemes.default.divider.default,
+      },
+    },
+    headCells: {
+      style: {
+        paddingLeft: '8px', // override the cell padding for head cells
+        paddingRight: '8px',
+        fontSize: '12px',
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
+    cells: {
+      style: {
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
+  }
+  const columns = useMemo(() => [
+    {
+      name: 'Grupo Autorización',
+      selector: (row) => row.identificador,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+      wrap: true,
+      width: '200px',
+    },
+    {
+      name: 'Niveles',
+      selector: (row) => row.numero_niveles,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+      width: '100px',
+    },
+    {
+      name: 'Descripción',
+      selector: (row) => row.descripcion,
+      center: true,
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+    },
+    {
+      name: 'Estado',
+      cell: function OrderItems(row) {
+        let estado = 'Inactivo'
+        if (row.activo == 1) {
+          estado = 'Activo'
+        }
+        return estado
+      },
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      wrap: true,
+      width: '100px',
+    },
+    {
+      name: 'Acciones',
+      cell: function OrderItems(row) {
+        let deshabilitar = false
+        if (ExistePermiso('Modulo Grupos Autorizacion') == 0) {
+          deshabilitar = true
+        }
+        return (
+          <div>
+            <CButton
+              color="primary"
+              size="sm"
+              title="Editar Grupo Autorización"
+              disabled={deshabilitar}
+              onClick={() =>
+                history.push({
+                  pathname: '/grupos/editar',
+                  id_grupo: row.id_grupo,
+                  numero_niveles: row.numero_niveles,
+                  identificador: row.identificador,
+                  descripcion: row.descripcion,
+                  estado: row.activo,
+                })
+              }
+            >
+              <FaPen />
+            </CButton>{' '}
+            <CButton
+              color="danger"
+              size="sm"
+              title="Eliminar Grupo Autorización"
+              disabled={deshabilitar}
+              onClick={() => mostrarModal(row.id_grupo, row.identificador, 1)}
+            >
+              <FaTrash />
+            </CButton>
+          </div>
+        )
+      },
+      center: true,
+      width: '200px',
+    },
+  ])
+  const tableData = {
+    columns,
+    data: results,
+    filterPlaceholder: 'Filtrar datos',
+    export: false,
+    print: false,
   }
 
   if (session) {
@@ -173,66 +261,20 @@ const GruposAutorizacion = () => {
             Crear Nuevo
           </CButton>
         </div>
-        <CTable hover responsive align="middle" className="mb-0 border">
-          <CTableHead color="light">
-            <CTableRow>
-              <CTableHeaderCell className="text-center">Grupo Autorización</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Niveles</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Descripcion</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Estado</CTableHeaderCell>
-              <CTableHeaderCell style={{ textAlign: 'center', width: '15%' }}>
-                Acciones
-              </CTableHeaderCell>
-            </CTableRow>
-          </CTableHead>
-          <CTableBody>
-            {results.map((item, i) => {
-              let estado = 'Inactivo'
-              if (item.eliminado == 0) {
-                if (item.activo == 1) {
-                  estado = 'Activo'
-                }
-                return (
-                  <CTableRow key={item.id_grupo}>
-                    <CTableDataCell className="text-center">{item.identificador}</CTableDataCell>
-                    <CTableDataCell className="text-center">{item.numero_niveles}</CTableDataCell>
-                    <CTableDataCell className="text-center">{item.descripcion}</CTableDataCell>
-                    <CTableDataCell className="text-center">{estado}</CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CButton
-                        color="primary"
-                        size="sm"
-                        title="Editar Grupo Autorización"
-                        disabled={deshabilitar}
-                        onClick={() =>
-                          history.push({
-                            pathname: '/grupos/editar',
-                            id_grupo: item.id_grupo,
-                            numero_niveles: item.numero_niveles,
-                            identificador: item.identificador,
-                            descripcion: item.descripcion,
-                            estado: item.activo,
-                          })
-                        }
-                      >
-                        <FaPen />
-                      </CButton>{' '}
-                      <CButton
-                        color="danger"
-                        size="sm"
-                        title="Eliminar Grupo Autorización"
-                        disabled={deshabilitar}
-                        onClick={() => mostrarModal(item.id_grupo, item.identificador, 1)}
-                      >
-                        <FaTrash />
-                      </CButton>
-                    </CTableDataCell>
-                  </CTableRow>
-                )
-              }
-            })}
-          </CTableBody>
-        </CTable>
+        <DataTableExtensions {...tableData}>
+          <DataTable
+            columns={columns}
+            noDataComponent="No hay registros que mostrar"
+            data={results}
+            customStyles={customStyles}
+            pagination
+            paginationPerPage={25}
+            responsive={true}
+            persistTableHead
+            striped={true}
+            dense
+          />
+        </DataTableExtensions>
       </>
     )
   } else {

@@ -135,6 +135,7 @@ const Rechazados = React.lazy(() => import('./views/components/flujos/flujo/Rech
 
 const PendientesReporte = React.lazy(() => import('./views/components/reportes/Pendientes'))
 const CanceladosReporte = React.lazy(() => import('./views/components/reportes/Cancelados'))
+const CompensadosReporte = React.lazy(() => import('./views/components/reportes/Compensados'))
 const RechazadosReporte = React.lazy(() => import('./views/components/reportes/Rechazados'))
 const PendientesValidacion = React.lazy(() =>
   import('./views/components/reportes/PendientesValidacion'),
@@ -248,6 +249,12 @@ const routes = [
     exact: true,
     name: 'Pagos Cancelados',
     component: CanceladosReporte,
+  },
+  {
+    path: '/reportecompensados',
+    exact: true,
+    name: 'Pagos Compensados',
+    component: CompensadosReporte,
   },
   {
     path: '/reporterechazados',

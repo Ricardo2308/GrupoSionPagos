@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Modal } from 'react-bootstrap'
 import { useIdleTimer } from 'react-idle-timer'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
@@ -18,6 +18,9 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
+import DataTable, { defaultThemes } from 'react-data-table-component'
+import DataTableExtensions from 'react-data-table-component-extensions'
+import 'react-data-table-component-extensions/dist/index.css'
 
 const ListaAutorizaciones = () => {
   const history = useHistory()
@@ -61,50 +64,9 @@ const ListaAutorizaciones = () => {
     return result
   }
 
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Cancelar(2)
-      }
-    }, 1000)
-    setTime(intervalo)
-  }
-
-  function detener() {
-    clearInterval(time)
-  }
-
-  const handleOnIdle = (event) => {
-    setShow(true)
-    setOpcion(2)
-    setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {}
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
-
   async function Cancelar(opcion) {
     if (opcion == 1) {
       setShow(false)
-      detener()
     } else if (opcion == 2) {
       let idUsuario = 0
       if (session) {
@@ -115,7 +77,6 @@ const ListaAutorizaciones = () => {
         clear()
         history.push('/')
       }
-      detener()
     }
   }
 
@@ -143,6 +104,7 @@ const ListaAutorizaciones = () => {
         '',
         opcion,
         result,
+        session.id,
       )
       if (respuesta === 'OK') {
         await getUsuarioAutorizacion(session.id, null).then((items) => {
@@ -151,8 +113,115 @@ const ListaAutorizaciones = () => {
       }
     } else if (opcion == 2) {
       setShow(false)
-      detener()
     }
+  }
+
+  const customStyles = {
+    headRow: {
+      style: {
+        borderTopStyle: 'solid',
+        borderTopWidth: '1px',
+        borderTopColor: defaultThemes.default.divider.default,
+      },
+    },
+    headCells: {
+      style: {
+        paddingLeft: '8px', // override the cell padding for head cells
+        paddingRight: '8px',
+        fontSize: '12px',
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
+    cells: {
+      style: {
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
+  }
+  const columns = useMemo(() => [
+    {
+      name: 'Usuario Temporal',
+      selector: (row) => row.usuariotemporal,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+      wrap: true,
+    },
+    {
+      name: 'Fecha inico',
+      selector: (row) => row.fecha_inicio,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+    },
+    {
+      name: 'Fecha final',
+      selector: (row) => row.fecha_final,
+      center: true,
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+    },
+    {
+      name: 'Estado',
+      cell: function OrderItems(row) {
+        let estado = 'Inactivo'
+        if (row.activo == 1) {
+          estado = 'Activo'
+        }
+        return estado
+      },
+      center: true,
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+      wrap: true,
+    },
+    {
+      name: 'Acciones',
+      cell: function OrderItems(row) {
+        let deshabilitar = false
+        if (!ExistePermiso('Modulo Usuarios')) {
+          deshabilitar = true
+        }
+        return (
+          <div>
+            <CButton
+              color="info"
+              size="sm"
+              title="Cambiar Estado"
+              //disabled={deshabilitar}
+              onClick={() => mostrarModal(row.id_usuarioautorizacion, 1, row.activo)}
+            >
+              <BsToggles />
+            </CButton>
+          </div>
+        )
+      },
+      center: true,
+      width: '200px',
+    },
+  ])
+  const tableData = {
+    columns,
+    data: results,
+    filterPlaceholder: 'Filtrar datos',
+    export: false,
+    print: false,
   }
 
   if (session) {
@@ -194,46 +263,20 @@ const ListaAutorizaciones = () => {
             Crear Nueva
           </CButton>
         </div>
-        <CTable hover responsive align="middle" className="mb-0 border">
-          <CTableHead color="light">
-            <CTableRow>
-              <CTableHeaderCell className="text-center">Usuario Temporal</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Fecha Inicio</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Fecha Final</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Estado</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Acciones</CTableHeaderCell>
-            </CTableRow>
-          </CTableHead>
-          <CTableBody>
-            {results.map((item, i) => {
-              let estado = 'Inactivo'
-              if (item.eliminado == 0) {
-                if (item.activo == 1) {
-                  estado = 'Activo'
-                }
-                return (
-                  <CTableRow key={item.id_usuarioautorizacion}>
-                    <CTableDataCell className="text-center">{item.usuariotemporal}</CTableDataCell>
-                    <CTableDataCell className="text-center">{item.fecha_inicio}</CTableDataCell>
-                    <CTableDataCell className="text-center">{item.fecha_final}</CTableDataCell>
-                    <CTableDataCell className="text-center">{estado}</CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CButton
-                        color="info"
-                        size="sm"
-                        title="Cambiar Estado"
-                        //disabled={deshabilitar}
-                        onClick={() => mostrarModal(item.id_usuarioautorizacion, 1, item.activo)}
-                      >
-                        <BsToggles />
-                      </CButton>
-                    </CTableDataCell>
-                  </CTableRow>
-                )
-              }
-            })}
-          </CTableBody>
-        </CTable>
+        <DataTableExtensions {...tableData}>
+          <DataTable
+            columns={columns}
+            noDataComponent="No hay usuarios que mostrar"
+            data={results}
+            customStyles={customStyles}
+            pagination
+            paginationPerPage={25}
+            responsive={true}
+            persistTableHead
+            striped={true}
+            dense
+          />
+        </DataTableExtensions>
       </>
     )
   } else {

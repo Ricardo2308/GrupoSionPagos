@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Modal } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
 import { getCuentas } from '../../../../services/getCuentas'
@@ -9,15 +9,10 @@ import { useIdleTimer } from 'react-idle-timer'
 import { useSession } from 'react-use-session'
 import { FaPen, FaTrash } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
-import {
-  CButton,
-  CTable,
-  CTableBody,
-  CTableDataCell,
-  CTableHead,
-  CTableHeaderCell,
-  CTableRow,
-} from '@coreui/react'
+import { CButton } from '@coreui/react'
+import DataTable, { defaultThemes } from 'react-data-table-component'
+import DataTableExtensions from 'react-data-table-component-extensions'
+import 'react-data-table-component-extensions/dist/index.css'
 
 const Cuentas = () => {
   const history = useHistory()
@@ -64,7 +59,6 @@ const Cuentas = () => {
   async function Cancelar(opcion) {
     if (opcion == 1) {
       setShow(false)
-      detener()
     } else if (opcion == 2) {
       let idUsuario = 0
       if (session) {
@@ -75,49 +69,8 @@ const Cuentas = () => {
         clear()
         history.push('/')
       }
-      detener()
     }
   }
-
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Cancelar(2)
-      }
-    }, 1000)
-    setTime(intervalo)
-  }
-
-  function detener() {
-    clearInterval(time)
-  }
-
-  const handleOnIdle = (event) => {
-    setShow(true)
-    setOpcion(2)
-    setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {}
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
 
   function mostrarModal(id_cuenta, opcion, nombre) {
     setIdCuenta(id_cuenta)
@@ -128,7 +81,7 @@ const Cuentas = () => {
 
   async function eliminarCuenta(id_cuenta, opcion) {
     if (opcion == 1) {
-      const respuesta = await postCrudCuentas(id_cuenta, '', '', '', '', '', '', '2')
+      const respuesta = await postCrudCuentas(id_cuenta, '', '', '', '', '', '', '2', session.id)
       if (respuesta === 'OK') {
         await getCuentas(null, null).then((items) => {
           setList(items.cuentas)
@@ -136,8 +89,149 @@ const Cuentas = () => {
       }
     } else if (opcion == 2) {
       setShow(false)
-      detener()
     }
+  }
+
+  const customStyles = {
+    headRow: {
+      style: {
+        borderTopStyle: 'solid',
+        borderTopWidth: '1px',
+        borderTopColor: defaultThemes.default.divider.default,
+      },
+    },
+    headCells: {
+      style: {
+        paddingLeft: '8px', // override the cell padding for head cells
+        paddingRight: '8px',
+        fontSize: '12px',
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
+    cells: {
+      style: {
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
+  }
+  const columns = useMemo(() => [
+    {
+      name: 'Número Cuenta',
+      selector: (row) => row.numero_cuenta,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+      wrap: true,
+    },
+    {
+      name: 'Nombre',
+      selector: (row) => row.nombre,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+    },
+    {
+      name: 'Empresa',
+      selector: (row) => row.empresa,
+      center: true,
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+    },
+    {
+      name: 'Banco',
+      selector: (row) => row.banco,
+      center: true,
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+      wrap: true,
+    },
+    {
+      name: 'Moneda',
+      selector: (row) => row.moneda,
+      center: true,
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+      wrap: true,
+    },
+    {
+      name: 'Código ACH',
+      selector: (row) => row.codigo_ach,
+      center: true,
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+      wrap: true,
+    },
+    {
+      name: 'Acciones',
+      cell: function OrderItems(row) {
+        let deshabilitar = false
+        if (ExistePermiso('Modulo Cuentas') == 0) {
+          deshabilitar = true
+        }
+        return (
+          <div>
+            <CButton
+              color="primary"
+              size="sm"
+              title="Editar Cuenta"
+              disabled={deshabilitar}
+              onClick={() =>
+                history.push({
+                  pathname: '/cuentas/editar',
+                  id_cuenta: row.id_cuenta,
+                  numero_cuenta: row.numero_cuenta,
+                  nombre: row.nombre,
+                  id_empresa: row.id_empresa,
+                  id_banco: row.id_banco,
+                  id_moneda: row.id_moneda,
+                  codigo_ach: row.codigo_ach,
+                })
+              }
+            >
+              <FaPen />
+            </CButton>{' '}
+            <CButton
+              color="danger"
+              size="sm"
+              title="Eliminar Cuenta"
+              disabled={deshabilitar}
+              onClick={() => mostrarModal(row.id_cuenta, 1, row.numero_cuenta)}
+            >
+              <FaTrash />
+            </CButton>
+          </div>
+        )
+      },
+      center: true,
+      width: '200px',
+    },
+  ])
+  const tableData = {
+    columns,
+    data: results,
+    filterPlaceholder: 'Filtrar datos',
+    export: false,
+    print: false,
   }
 
   if (session) {
@@ -174,68 +268,20 @@ const Cuentas = () => {
             Crear Nueva
           </CButton>
         </div>
-        <CTable hover responsive align="middle" className="mb-0 border">
-          <CTableHead color="light">
-            <CTableRow>
-              <CTableHeaderCell className="account-row">Número Cuenta</CTableHeaderCell>
-              <CTableHeaderCell className="account-row">Nombre</CTableHeaderCell>
-              <CTableHeaderCell className="account-row">Empresa</CTableHeaderCell>
-              <CTableHeaderCell className="account-row">Banco</CTableHeaderCell>
-              <CTableHeaderCell className="account-row">Moneda</CTableHeaderCell>
-              <CTableHeaderCell className="account-row" style={{ width: '10%' }}>
-                Código ACH
-              </CTableHeaderCell>
-              <CTableHeaderCell className="account-row" style={{ width: '14%' }}>
-                Acciones
-              </CTableHeaderCell>
-            </CTableRow>
-          </CTableHead>
-          <CTableBody>
-            {results.map((item, i) => {
-              return (
-                <CTableRow key={item.id_cuenta}>
-                  <CTableDataCell className="account-row">{item.numero_cuenta}</CTableDataCell>
-                  <CTableDataCell className="account-row">{item.nombre}</CTableDataCell>
-                  <CTableDataCell className="account-row">{item.empresa}</CTableDataCell>
-                  <CTableDataCell className="account-row">{item.banco}</CTableDataCell>
-                  <CTableDataCell className="account-row">{item.moneda}</CTableDataCell>
-                  <CTableDataCell className="account-row">{item.codigo_ach}</CTableDataCell>
-                  <CTableDataCell className="account-row">
-                    <CButton
-                      color="primary"
-                      size="sm"
-                      title="Editar Cuenta"
-                      disabled={deshabilitar}
-                      onClick={() =>
-                        history.push({
-                          pathname: '/cuentas/editar',
-                          id_cuenta: item.id_cuenta,
-                          numero_cuenta: item.numero_cuenta,
-                          nombre: item.nombre,
-                          id_empresa: item.id_empresa,
-                          id_banco: item.id_banco,
-                          id_moneda: item.id_moneda,
-                          codigo_ach: item.codigo_ach,
-                        })
-                      }
-                    >
-                      <FaPen />
-                    </CButton>{' '}
-                    <CButton
-                      color="danger"
-                      size="sm"
-                      title="Eliminar Cuenta"
-                      disabled={deshabilitar}
-                      onClick={() => mostrarModal(item.id_cuenta, 1, item.numero_cuenta)}
-                    >
-                      <FaTrash />
-                    </CButton>
-                  </CTableDataCell>
-                </CTableRow>
-              )
-            })}
-          </CTableBody>
-        </CTable>
+        <DataTableExtensions {...tableData}>
+          <DataTable
+            columns={columns}
+            noDataComponent="No hay usuarios que mostrar"
+            data={results}
+            customStyles={customStyles}
+            pagination
+            paginationPerPage={25}
+            responsive={true}
+            persistTableHead
+            striped={true}
+            dense
+          />
+        </DataTableExtensions>
       </>
     )
   } else {

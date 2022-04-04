@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}perfilrol`
 
-export function postPerfilRol(idPerfilRol, idPerfil, roles, opcion, idRol, estado) {
+export function postPerfilRol(idPerfilRol, idPerfil, roles, opcion, idRol, estado, id_usuario) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -11,6 +11,7 @@ export function postPerfilRol(idPerfilRol, idPerfil, roles, opcion, idRol, estad
     opcion: opcion,
     id_rol: idRol,
     activo: estado,
+    id_usuario: id_usuario,
   }
 
   if (roles !== '') {

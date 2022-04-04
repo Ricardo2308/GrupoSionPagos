@@ -1,6 +1,14 @@
 const API = `${process.env.REACT_APP_API_URL}usuarioperfil`
 
-export function postPerfilUsuario(idUsuarioPerfil, idUsuario, perfiles, opcion, idPerfil, estado) {
+export function postPerfilUsuario(
+  idUsuarioPerfil,
+  idUsuario,
+  perfiles,
+  opcion,
+  idPerfil,
+  estado,
+  id_usuario,
+) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -11,6 +19,7 @@ export function postPerfilUsuario(idUsuarioPerfil, idUsuario, perfiles, opcion, 
     perfiles: perfiles,
     opcion: opcion,
     activo: estado,
+    id_usuario: id_usuario,
   }
 
   if (perfiles !== '') {

@@ -9,6 +9,7 @@ export function postCrudBancos(
   idPais,
   estado,
   opcion,
+  id_usuario,
 ) {
   let ApiFinal = API
   let ApiWhere = ''
@@ -22,6 +23,7 @@ export function postCrudBancos(
     id_pais: idPais,
     activo: estado,
     opcion: opcion,
+    id_usuario: id_usuario,
   }
 
   if (idBanco !== '' && opcion !== '') {

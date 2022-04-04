@@ -9,6 +9,7 @@ export function postEditarUsuario(
   estado,
   cambiaPassword,
   opcion,
+  id_usuario,
 ) {
   let ApiFinal = API
   let ApiWhere = ''
@@ -22,6 +23,7 @@ export function postEditarUsuario(
     activo: estado,
     cambia_password: cambiaPassword,
     opcion: opcion,
+    id_usuario: id_usuario,
   }
 
   if (id !== '' && opcion !== '') {

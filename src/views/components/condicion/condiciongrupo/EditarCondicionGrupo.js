@@ -87,6 +87,7 @@ const EditarCondicionGrupo = () => {
           '2',
           form.grupo,
           form.estado,
+          session.id,
         )
         if (respuesta === 'OK') {
           history.push('/condiciones')
@@ -115,28 +116,6 @@ const EditarCondicionGrupo = () => {
       }
     }
   }
-
-  const handleOnIdle = (event) => {
-    setShowM(true)
-    setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Si desea continuar presione aceptar.',
-    )
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {}
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
 
   if (session) {
     if (location.id_condiciongrupo) {

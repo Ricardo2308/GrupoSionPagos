@@ -59,7 +59,7 @@ const ConsultarPR = () => {
   async function crudCondicionGrupo(id_condicion, id_condiciongrupo, opcion, estado) {
     let result
     if (opcion == 1) {
-      const respuesta = await postCondicionGrupo(id_condiciongrupo, '', '', '1', '', '')
+      const respuesta = await postCondicionGrupo(id_condiciongrupo, '', '', '1', '', '', session.id)
       if (respuesta === 'OK') {
         await getCondicionGrupo(id_condicion, null).then((items) => {
           setList(items.detalle)
@@ -71,7 +71,15 @@ const ConsultarPR = () => {
       } else {
         result = '0'
       }
-      const respuesta = await postCondicionGrupo(id_condiciongrupo, '', '', '3', '', result)
+      const respuesta = await postCondicionGrupo(
+        id_condiciongrupo,
+        '',
+        '',
+        '3',
+        '',
+        result,
+        session.id,
+      )
       if (respuesta === 'OK') {
         await getCondicionGrupo(id_condicion, null).then((items) => {
           setList(items.detalle)
@@ -79,48 +87,8 @@ const ConsultarPR = () => {
       }
     } else if (opcion == 3) {
       setShow(false)
-      detener()
     }
   }
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Cancelar(3)
-      }
-    }, 1000)
-    setTime(intervalo)
-  }
-
-  function detener() {
-    clearInterval(time)
-  }
-
-  const handleOnIdle = (event) => {
-    setShow(true)
-    setOpcion(3)
-    setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {}
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
 
   async function Cancelar(opcion) {
     if (opcion == 3) {
@@ -133,10 +101,8 @@ const ConsultarPR = () => {
         clear()
         history.push('/')
       }
-      detener()
     } else {
       setShow(false)
-      detener()
     }
   }
 

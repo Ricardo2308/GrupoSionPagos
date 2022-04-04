@@ -1,13 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useIdleTimer } from 'react-idle-timer'
 import { Tab, Tabs, Modal, Button } from 'react-bootstrap'
 import PendientesPago from './PendientesPago'
 import Compensados from './Compensados'
 import RechazadosPorBanco from './RechazadosPorBanco'
+import SolicitudRetorno from './SolicitudRetorno'
 import { useSession } from 'react-use-session'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import '../../../../scss/estilos.scss'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
+import LotesPago from './LotesPago'
 
 const PagoInterna = () => {
   const history = useHistory()
@@ -16,51 +19,32 @@ const PagoInterna = () => {
   const [mensaje, setMensaje] = useState('')
   const { session, clear } = useSession('PendrogonIT-Session')
   const comentarios = ['Compensado']
+  const [permisos, setPermisos] = useState([])
 
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Cancelar(2)
+  useEffect(() => {
+    let mounted = true
+    let objeto = 'Modulo Compensacion Pagos'
+    getPerfilUsuario(session.id, '4', objeto).then((items) => {
+      if (mounted) {
+        setPermisos(items.detalle)
       }
-    }, 1000)
-    setTime(intervalo)
-  }
+    })
+    return () => (mounted = false)
+  }, [])
 
-  function detener() {
-    clearInterval(time)
+  function ExistePermiso(permiso) {
+    let result = false
+    for (let item of permisos) {
+      if (permiso == item.descripcion) {
+        result = true
+      }
+    }
+    return result
   }
-
-  const handleOnIdle = (event) => {
-    setShow(true)
-    setMensaje(
-      `Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos. Si desea continuar presione Aceptar`,
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {
-    return false
-  }
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
 
   async function Cancelar(opcion) {
     if (opcion == 1) {
       setShow(false)
-      detener()
     } else if (opcion == 2) {
       let idUsuario = 0
       if (session) {
@@ -71,11 +55,19 @@ const PagoInterna = () => {
         clear()
         history.push('/')
       }
-      detener()
     }
   }
 
   if (session) {
+    let MostrarReprocesar = ExistePermiso('Reprocesar')
+    let tabSolicitudes
+    if (MostrarReprocesar) {
+      tabSolicitudes = (
+        <Tab eventKey="solicitudretorno" title="Solicitudes a bandeja">
+          <SolicitudRetorno tipo={'INTERNA'} />
+        </Tab>
+      )
+    }
     return (
       <div className="div-tabs">
         <Modal responsive variant="primary" show={show} onHide={() => Cancelar(2)} centered>
@@ -104,6 +96,10 @@ const PagoInterna = () => {
               <Tab eventKey="rechazadosBanco" title="Rechazados por banco">
                 <RechazadosPorBanco comentarios={comentarios} tipo={'INTERNA'} />
               </Tab>
+              <Tab eventKey="lotespago" title="Lotes de pago">
+                <LotesPago tipo={'INTERNA'} />
+              </Tab>
+              {tabSolicitudes}
             </Tabs>
           </div>
         </div>

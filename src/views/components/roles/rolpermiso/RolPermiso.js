@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
-import { Alert, Modal } from 'react-bootstrap'
+import { Alert, Modal, Button } from 'react-bootstrap'
 import { useIdleTimer } from 'react-idle-timer'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postRolPermiso } from '../../../../services/postRolPermiso'
@@ -19,6 +19,7 @@ import {
   CInputGroupText,
   CFormCheck,
 } from '@coreui/react'
+import { FaArrowLeft } from 'react-icons/fa'
 
 const RolPermiso = () => {
   const history = useHistory()
@@ -62,7 +63,7 @@ const RolPermiso = () => {
       }
     }
     if (result !== '') {
-      const respuesta = await postRolPermiso('', location.id_rol, result, '', '', '')
+      const respuesta = await postRolPermiso('', location.id_rol, result, '', '', '', session.id)
       if (respuesta === 'OK') {
         history.push('/roles')
       } else if (respuesta === 'Error') {
@@ -85,49 +86,9 @@ const RolPermiso = () => {
     }
   }
 
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Cancelar(2)
-      }
-    }, 1000)
-    setTime(intervalo)
-  }
-
-  function detener() {
-    clearInterval(time)
-  }
-
-  const handleOnIdle = (event) => {
-    setShowM(true)
-    setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {}
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
-
   async function Cancelar(opcion) {
     if (opcion == 1) {
       setShowM(false)
-      detener()
     } else if (opcion == 2) {
       let idUsuario = 0
       if (session) {
@@ -138,7 +99,6 @@ const RolPermiso = () => {
         clear()
         history.push('/')
       }
-      detener()
     }
   }
 
@@ -161,6 +121,14 @@ const RolPermiso = () => {
                 </CButton>
               </Modal.Footer>
             </Modal>
+            <div className="float-left" style={{ marginBottom: '10px' }}>
+              <Button variant="primary" size="sm" onClick={() => history.goBack()}>
+                <FaArrowLeft />
+                &nbsp;&nbsp;Regresar
+              </Button>
+            </div>
+            <br />
+            <br />
             <Alert show={show} variant={color} onClose={() => setShow(false)} dismissible>
               <Alert.Heading>{titulo}</Alert.Heading>
               <p>{mensaje}</p>

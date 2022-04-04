@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}postflujos`
 
-export function postFlujos(idFlujo, nivel, id_grupo, opcion, pagos) {
+export function postFlujos(idFlujo, nivel, id_grupo, opcion, pagos, IdUsuario) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -10,6 +10,7 @@ export function postFlujos(idFlujo, nivel, id_grupo, opcion, pagos) {
     id_grupoautorizacion: id_grupo,
     opcion: opcion,
     pagos: pagos,
+    id_usuario: IdUsuario,
   }
 
   if (idFlujo !== '' && nivel === '' && id_grupo === '') {

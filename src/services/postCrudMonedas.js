@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}monedas`
 
-export function postCrudMonedas(idMoneda, nombre, simbolo, estado, opcion) {
+export function postCrudMonedas(idMoneda, nombre, simbolo, estado, opcion, id_usuario) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -10,6 +10,7 @@ export function postCrudMonedas(idMoneda, nombre, simbolo, estado, opcion) {
     simbolo: simbolo,
     activo: estado,
     opcion: opcion,
+    id_usuario: id_usuario,
   }
 
   if (idMoneda !== '' && opcion !== '') {

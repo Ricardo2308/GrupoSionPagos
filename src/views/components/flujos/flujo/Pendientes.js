@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { CButton } from '@coreui/react'
 import { useHistory } from 'react-router-dom'
-import { Button, FormControl } from 'react-bootstrap'
+import { Button, FormControl, ModalTitle, Modal } from 'react-bootstrap'
 import DataTable, { defaultThemes } from 'react-data-table-component'
 import { getPendientesAutorizacion } from '../../../../services/getPendientesAutorizacion'
 import { useSession } from 'react-use-session'
@@ -9,12 +10,16 @@ import '../../../../scss/estilos.scss'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
+import { getCargaDatos } from '../../../../services/getCargaDatos'
 
 const Pendientes = (prop) => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [data, setListdata] = useState([])
   const [permisos, setPermisos] = useState([])
+  const [ocultarBotones, setOcultarBotones] = useState(true)
+  const [showCargarNuevos, setShowCargarNuevos] = useState(false)
+  const [actualizarTabla, setActualizarTabla] = useState(0)
 
   useEffect(() => {
     let mounted = true
@@ -31,10 +36,15 @@ const Pendientes = (prop) => {
     getPerfilUsuario(session.id, '4', objeto).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
+        for (let item of items.detalle) {
+          if ('Recargar' == item.descripcion) {
+            setOcultarBotones(false)
+          }
+        }
       }
     })
     return () => (mounted = false)
-  }, [])
+  }, [actualizarTabla])
 
   function ExistePermiso(permiso) {
     let result = false
@@ -128,7 +138,7 @@ const Pendientes = (prop) => {
     },
     {
       name: 'Beneficiario',
-      selector: (row) => row.card_name,
+      selector: (row) => row.en_favor_de,
       center: true,
       sortable: true,
       style: {
@@ -161,84 +171,10 @@ const Pendientes = (prop) => {
       name: 'Acciones',
       cell: function OrderItems(row) {
         let MostrarCargar = ExistePermiso('Cargar')
-        if (row.estado == 1) {
+        let SoloVer = ExistePermiso('Visualizar_completo')
+        if (SoloVer) {
           return (
             <div>
-              <Button
-                data-tag="allowRowEvents"
-                size="sm"
-                variant="primary"
-                title="Cargar Archivo"
-                className={!MostrarCargar ? 'd-none' : ''}
-                onClick={() =>
-                  history.push({
-                    pathname: '/archivoflujo/nuevo',
-                    id_flujo: row.id_flujo,
-                    pago: row.doc_num,
-                    grupo: row.id_grupoautorizacion,
-                    estado: row.estado,
-                  })
-                }
-              >
-                <FaFileUpload />
-              </Button>{' '}
-              <Button
-                data-tag="allowRowEvents"
-                variant="success"
-                size="sm"
-                title="Consultar Detalle Pago"
-                onClick={() =>
-                  history.push({
-                    pathname: '/pagos/tabs',
-                    id_flujo: row.id_flujo,
-                    pago: row.doc_num,
-                    estado: row.estado,
-                    nivel: row.nivel,
-                    id_grupo: row.id_grupoautorizacion,
-                    pagina: 'transferencia',
-                  })
-                }
-              >
-                <FaList />
-              </Button>
-            </div>
-          )
-        } else if (row.estado == 2) {
-          return (
-            <div>
-              <Button
-                data-tag="allowRowEvents"
-                size="sm"
-                variant="primary"
-                title="Cargar Archivo"
-                className={!MostrarCargar ? 'd-none' : ''}
-                onClick={() =>
-                  history.push({
-                    pathname: '/archivoflujo/nuevo',
-                    id_flujo: row.id_flujo,
-                    pago: row.doc_num,
-                    grupo: row.id_grupoautorizacion,
-                    estado: row.estado,
-                  })
-                }
-              >
-                <FaFileUpload />
-              </Button>{' '}
-              <Button
-                data-tag="allowRowEvents"
-                size="sm"
-                variant="primary"
-                title="Asignar Grupo"
-                onClick={() =>
-                  history.push({
-                    pathname: '/pagos/flujogrupo',
-                    id_flujo: row.id_flujo,
-                    pago: row.doc_num,
-                  })
-                }
-              >
-                <FaUsersCog />
-              </Button>{' '}
               <Button
                 data-tag="allowRowEvents"
                 variant="success"
@@ -261,47 +197,148 @@ const Pendientes = (prop) => {
             </div>
           )
         } else {
-          return (
-            <div>
-              <Button
-                data-tag="allowRowEvents"
-                size="sm"
-                variant="primary"
-                title="Cargar Archivo"
-                className={!MostrarCargar ? 'd-none' : ''}
-                onClick={() =>
-                  history.push({
-                    pathname: '/archivoflujo/nuevo',
-                    id_flujo: row.id_flujo,
-                    pago: row.doc_num,
-                    grupo: row.id_grupoautorizacion,
-                    estado: row.estado,
-                  })
-                }
-              >
-                <FaFileUpload />
-              </Button>{' '}
-              <Button
-                data-tag="allowRowEvents"
-                variant="success"
-                size="sm"
-                title="Consultar Detalle Pago"
-                onClick={() =>
-                  history.push({
-                    pathname: '/pagos/tabs',
-                    id_flujo: row.id_flujo,
-                    pago: row.doc_num,
-                    estado: row.estado,
-                    nivel: row.nivel,
-                    id_grupo: row.id_grupoautorizacion,
-                    pagina: 'transferencia',
-                  })
-                }
-              >
-                <FaList />
-              </Button>
-            </div>
-          )
+          if (row.estado == 1) {
+            return (
+              <div>
+                <Button
+                  data-tag="allowRowEvents"
+                  size="sm"
+                  variant="primary"
+                  title="Cargar Archivo"
+                  className={!MostrarCargar ? 'd-none' : ''}
+                  onClick={() =>
+                    history.push({
+                      pathname: '/archivoflujo/nuevo',
+                      id_flujo: row.id_flujo,
+                      pago: row.doc_num,
+                      grupo: row.id_grupoautorizacion,
+                      estado: row.estado,
+                    })
+                  }
+                >
+                  <FaFileUpload />
+                </Button>{' '}
+                <Button
+                  data-tag="allowRowEvents"
+                  variant="success"
+                  size="sm"
+                  title="Consultar Detalle Pago"
+                  onClick={() =>
+                    history.push({
+                      pathname: '/pagos/tabs',
+                      id_flujo: row.id_flujo,
+                      pago: row.doc_num,
+                      estado: row.estado,
+                      nivel: row.nivel,
+                      id_grupo: row.id_grupoautorizacion,
+                      pagina: 'transferencia',
+                    })
+                  }
+                >
+                  <FaList />
+                </Button>
+              </div>
+            )
+          } else if (row.estado == 2) {
+            return (
+              <div>
+                <Button
+                  data-tag="allowRowEvents"
+                  size="sm"
+                  variant="primary"
+                  title="Cargar Archivo"
+                  className={!MostrarCargar ? 'd-none' : ''}
+                  onClick={() =>
+                    history.push({
+                      pathname: '/archivoflujo/nuevo',
+                      id_flujo: row.id_flujo,
+                      pago: row.doc_num,
+                      grupo: row.id_grupoautorizacion,
+                      estado: row.estado,
+                    })
+                  }
+                >
+                  <FaFileUpload />
+                </Button>{' '}
+                <Button
+                  data-tag="allowRowEvents"
+                  size="sm"
+                  variant="primary"
+                  title="Asignar Grupo"
+                  onClick={() =>
+                    history.push({
+                      pathname: '/pagos/flujogrupo',
+                      id_flujo: row.id_flujo,
+                      pago: row.doc_num,
+                    })
+                  }
+                >
+                  <FaUsersCog />
+                </Button>{' '}
+                <Button
+                  data-tag="allowRowEvents"
+                  variant="success"
+                  size="sm"
+                  title="Consultar Detalle Pago"
+                  onClick={() =>
+                    history.push({
+                      pathname: '/pagos/tabs',
+                      id_flujo: row.id_flujo,
+                      pago: row.doc_num,
+                      estado: row.estado,
+                      nivel: row.nivel,
+                      id_grupo: row.id_grupoautorizacion,
+                      pagina: 'transferencia',
+                    })
+                  }
+                >
+                  <FaList />
+                </Button>
+              </div>
+            )
+          } else {
+            return (
+              <div>
+                <Button
+                  data-tag="allowRowEvents"
+                  size="sm"
+                  variant="primary"
+                  title="Cargar Archivo"
+                  className={!MostrarCargar ? 'd-none' : ''}
+                  onClick={() =>
+                    history.push({
+                      pathname: '/archivoflujo/nuevo',
+                      id_flujo: row.id_flujo,
+                      pago: row.doc_num,
+                      grupo: row.id_grupoautorizacion,
+                      estado: row.estado,
+                    })
+                  }
+                >
+                  <FaFileUpload />
+                </Button>{' '}
+                <Button
+                  data-tag="allowRowEvents"
+                  variant="success"
+                  size="sm"
+                  title="Consultar Detalle Pago"
+                  onClick={() =>
+                    history.push({
+                      pathname: '/pagos/tabs',
+                      id_flujo: row.id_flujo,
+                      pago: row.doc_num,
+                      estado: row.estado,
+                      nivel: row.nivel,
+                      id_grupo: row.id_grupoautorizacion,
+                      pagina: 'transferencia',
+                    })
+                  }
+                >
+                  <FaList />
+                </Button>
+              </div>
+            )
+          }
         }
       },
       center: true,
@@ -315,22 +352,61 @@ const Pendientes = (prop) => {
     export: false,
     print: false,
   }
+
+  function mostrarModalCargarNuevos() {
+    setShowCargarNuevos(true)
+  }
+
+  function AccionModalCargarNuevos(opcion) {
+    if (opcion == 1) {
+      getCargaDatos().then(() => {
+        setActualizarTabla(actualizarTabla + 1)
+      })
+
+      setShowCargarNuevos(false)
+    } else if (opcion == 2) {
+      setShowCargarNuevos(false)
+    }
+  }
   if (session) {
     return (
-      <DataTableExtensions {...tableData}>
-        <DataTable
-          columns={columns}
-          noDataComponent="No hay pagos que mostrar"
-          data={data}
-          customStyles={customStyles}
-          pagination
-          paginationPerPage={25}
-          responsive={true}
-          persistTableHead
-          striped={true}
-          dense
-        />
-      </DataTableExtensions>
+      <>
+        <Modal responsive variant="primary" show={showCargarNuevos} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmación</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>¿Está seguro de cargar nuevos pagos?</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => AccionModalCargarNuevos(2)}>
+              Cancelar
+            </Button>
+            <Button variant="primary" onClick={() => AccionModalCargarNuevos(1)}>
+              Aceptar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <div className={ocultarBotones ? 'd-none float-right' : 'float-right'}>
+          <CButton color="success" size="sm" onClick={() => mostrarModalCargarNuevos()}>
+            Cargar nuevos pagos
+          </CButton>
+          <br />
+          <br />
+        </div>
+        <DataTableExtensions {...tableData}>
+          <DataTable
+            columns={columns}
+            noDataComponent="No hay pagos que mostrar"
+            data={data}
+            customStyles={customStyles}
+            pagination
+            paginationPerPage={25}
+            responsive={true}
+            persistTableHead
+            striped={true}
+            dense
+          />
+        </DataTableExtensions>
+      </>
     )
   } else {
     history.push('/')

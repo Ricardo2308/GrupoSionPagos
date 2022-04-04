@@ -32,6 +32,7 @@ const PendientesPago = (prop) => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [permisosRol, setPermisosRol] = useState([])
   const [permisos, setPermisos] = useState([])
   const [pagos, setPagos] = useState([])
   const [show, setShow] = useState(false)
@@ -41,6 +42,7 @@ const PendientesPago = (prop) => {
   const [filterText, setFilterText] = useState('')
   const [titulo, setTitulo] = useState('Error!')
   const [color, setColor] = useState('danger')
+  const [MostrarReprocesar, setMostrarReprocesar] = useState(false)
   const filteredItems = results
 
   const handleClose = () => setShow(false)
@@ -59,16 +61,36 @@ const PendientesPago = (prop) => {
     })
     getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
       if (mounted) {
+        setPermisosRol(items.detalle)
+      }
+    })
+    getPerfilUsuario(idUsuario, '4', objeto).then((items) => {
+      if (mounted) {
         setPermisos(items.detalle)
+        for (let item of items.detalle) {
+          if ('Reprocesar' == item.descripcion) {
+            setMostrarReprocesar(true)
+          }
+        }
       }
     })
     return () => (mounted = false)
   }, [])
 
-  function ExistePermiso(objeto) {
+  function ExistePermisoObjeto(objeto) {
+    let result = false
+    for (let item of permisosRol) {
+      if (objeto == item.objeto) {
+        result = true
+      }
+    }
+    return result
+  }
+
+  function ExistePermiso(permiso) {
     let result = false
     for (let item of permisos) {
-      if (objeto == item.objeto) {
+      if (permiso == item.descripcion) {
         result = true
       }
     }
@@ -89,7 +111,7 @@ const PendientesPago = (prop) => {
 
   async function Compensar() {
     let bandera = 1
-    const respuesta = await postFlujos('0', '', '', '2', pagos)
+    const respuesta = await postFlujos('0', '', '', '2', pagos, session.id)
     if (respuesta === 'OK') {
       for (let pago of pagos) {
         sessionStorage.removeItem(pago)
@@ -166,125 +188,248 @@ const PendientesPago = (prop) => {
     currency: 'USD',
   })
 
-  const columns = useMemo(() => [
-    {
-      cell: function OrderItems(row) {
-        return (
-          <div style={{ alignItems: 'center' }}>
-            <input
-              type="checkbox"
-              name="pagos"
-              key={row.id_flujo}
-              value={row.id_flujo}
-              onChange={handleInput}
-              style={{ width: '18px', height: '18px' }}
-              defaultChecked={estaChequeado(row.id_flujo)}
-            />
-          </div>
-        )
-      },
-      center: true,
-      width: '6%',
-    },
-    {
-      name: 'Empresa',
-      selector: (row) => row.empresa_nombre,
-      center: true,
-      style: {
-        fontSize: '11px',
-      },
-      sortable: true,
-      wrap: true,
-      width: '150px',
-    },
-    {
-      name: 'No.',
-      selector: (row) => row.doc_num,
-      center: true,
-      style: {
-        fontSize: '11px',
-      },
-      sortable: true,
-      width: '90px',
-    },
-    {
-      name: 'Fecha Doc.',
-      selector: (row) => row.doc_date,
-      center: true,
-      sortable: true,
-      style: {
-        fontSize: '11px',
-      },
-      width: '100px',
-    },
-    {
-      name: 'Fecha auto.',
-      selector: (row) => row.aut_date,
-      center: true,
-      sortable: true,
-      style: {
-        fontSize: '11px',
-      },
-      width: '100px',
-    },
-    {
-      name: 'Beneficiario',
-      selector: (row) => row.card_name,
-      center: true,
-      sortable: true,
-      style: {
-        fontSize: '11px',
-      },
-      wrap: true,
-      width: '250px',
-    },
-    {
-      name: 'Concepto',
-      selector: (row) => row.comments,
-      center: true,
-      style: {
-        fontSize: '11px',
-      },
-      wrap: true,
-      width: '285px',
-    },
-    {
-      name: 'Monto',
-      selector: (row) => formatear(row.doc_total, row.doc_curr),
-      center: true,
-      style: {
-        fontSize: '11px',
-      },
-      width: '120px',
-    },
-    {
-      name: 'Acciones',
-      cell: function OrderItems(row) {
-        return (
-          <div style={{ alignItems: 'center' }}>
-            <Button
-              data-tag="allowRowEvents"
-              variant="success"
-              size="sm"
-              title="Consultar Detalle Pago"
-              onClick={() =>
-                history.push({
-                  pathname: '/compensacion/tabs',
-                  id_flujo: row.id_flujo,
-                  pago: row.doc_num,
-                  deshabilitar: true,
-                })
-              }
-            >
-              <FaList />
-            </Button>
-          </div>
-        )
-      },
-      center: true,
-      width: '70px',
-    },
-  ])
+  const columns = useMemo(() => {
+    if (MostrarReprocesar) {
+      return [
+        {
+          name: 'Empresa',
+          selector: (row) => row.empresa_nombre,
+          center: true,
+          style: {
+            fontSize: '11px',
+          },
+          sortable: true,
+          wrap: true,
+          width: '150px',
+        },
+        {
+          name: 'No.',
+          selector: (row) => row.doc_num,
+          center: true,
+          style: {
+            fontSize: '11px',
+          },
+          sortable: true,
+          width: '90px',
+        },
+        {
+          name: 'Fecha Doc.',
+          selector: (row) => row.doc_date,
+          center: true,
+          sortable: true,
+          style: {
+            fontSize: '11px',
+          },
+          width: '100px',
+        },
+        {
+          name: 'Fecha auto.',
+          selector: (row) => row.aut_date,
+          center: true,
+          sortable: true,
+          style: {
+            fontSize: '11px',
+          },
+          width: '100px',
+        },
+        {
+          name: 'Beneficiario',
+          selector: (row) => row.en_favor_de,
+          center: true,
+          sortable: true,
+          style: {
+            fontSize: '11px',
+          },
+          wrap: true,
+          width: '250px',
+        },
+        {
+          name: 'Concepto',
+          selector: (row) => row.comments,
+          center: true,
+          style: {
+            fontSize: '11px',
+          },
+          wrap: true,
+          width: '285px',
+        },
+        {
+          name: 'Monto',
+          selector: (row) => formatear(row.doc_total, row.doc_curr),
+          center: true,
+          style: {
+            fontSize: '11px',
+          },
+          width: '120px',
+        },
+        {
+          name: 'Acciones',
+          cell: function OrderItems(row) {
+            return (
+              <div style={{ alignItems: 'center' }}>
+                <Button
+                  data-tag="allowRowEvents"
+                  variant="success"
+                  size="sm"
+                  title="Consultar Detalle Pago"
+                  onClick={() =>
+                    history.push({
+                      pathname: '/compensacion/tabs',
+                      id_flujo: row.id_flujo,
+                      pago: row.doc_num,
+                      deshabilitar: true,
+                    })
+                  }
+                >
+                  <FaList />
+                </Button>
+              </div>
+            )
+          },
+          center: true,
+          width: '70px',
+        },
+      ]
+    } else {
+      return [
+        {
+          cell: function OrderItems(row) {
+            if (row.TieneCheque > 0) {
+              return (
+                <div style={{ alignItems: 'center' }}>
+                  <input
+                    type="checkbox"
+                    name="pagos"
+                    key={row.id_flujo}
+                    value={row.id_flujo}
+                    onChange={handleInput}
+                    style={{ width: '18px', height: '18px' }}
+                    defaultChecked={estaChequeado(row.id_flujo)}
+                  />
+                </div>
+              )
+            } else {
+              return (
+                <div className="sm">
+                  <input
+                    className="d-none"
+                    type="checkbox"
+                    name="pagos"
+                    key={row.id_flujo}
+                    value={row.id_flujo}
+                    onChange={handleInput}
+                    style={{ width: '18px', height: '18px' }}
+                    defaultChecked={estaChequeado(row.id_flujo)}
+                  />
+                  sin cheque
+                </div>
+              )
+            }
+          },
+          center: true,
+          width: '7%',
+        },
+        {
+          name: 'Empresa',
+          selector: (row) => row.empresa_nombre,
+          center: true,
+          style: {
+            fontSize: '11px',
+          },
+          sortable: true,
+          wrap: true,
+          width: '150px',
+        },
+        {
+          name: 'No.',
+          selector: (row) => row.doc_num,
+          center: true,
+          style: {
+            fontSize: '11px',
+          },
+          sortable: true,
+          width: '90px',
+        },
+        {
+          name: 'Fecha Doc.',
+          selector: (row) => row.doc_date,
+          center: true,
+          sortable: true,
+          style: {
+            fontSize: '11px',
+          },
+          width: '100px',
+        },
+        {
+          name: 'Fecha auto.',
+          selector: (row) => row.aut_date,
+          center: true,
+          sortable: true,
+          style: {
+            fontSize: '11px',
+          },
+          width: '100px',
+        },
+        {
+          name: 'Beneficiario',
+          selector: (row) => row.en_favor_de,
+          center: true,
+          sortable: true,
+          style: {
+            fontSize: '11px',
+          },
+          wrap: true,
+          width: '245px',
+        },
+        {
+          name: 'Concepto',
+          selector: (row) => row.comments,
+          center: true,
+          style: {
+            fontSize: '11px',
+          },
+          wrap: true,
+          width: '270px',
+        },
+        {
+          name: 'Monto',
+          selector: (row) => formatear(row.doc_total, row.doc_curr),
+          center: true,
+          style: {
+            fontSize: '11px',
+          },
+          width: '120px',
+        },
+        {
+          name: 'Acciones',
+          cell: function OrderItems(row) {
+            return (
+              <div style={{ alignItems: 'center' }}>
+                <Button
+                  data-tag="allowRowEvents"
+                  variant="success"
+                  size="sm"
+                  title="Consultar Detalle Pago"
+                  onClick={() =>
+                    history.push({
+                      pathname: '/compensacion/tabs',
+                      id_flujo: row.id_flujo,
+                      pago: row.doc_num,
+                      deshabilitar: true,
+                    })
+                  }
+                >
+                  <FaList />
+                </Button>
+              </div>
+            )
+          },
+          center: true,
+          width: '80px',
+        },
+      ]
+    }
+  })
 
   const handleClear = () => {
     if (filterText) {
@@ -322,7 +467,8 @@ const PendientesPago = (prop) => {
 
   if (session) {
     let deshabilitar = false
-    if (!ExistePermiso('Modulo Compensacion Pagos')) {
+
+    if (!ExistePermisoObjeto('Modulo Compensacion Pagos')) {
       deshabilitar = true
     }
     return (
@@ -345,7 +491,10 @@ const PendientesPago = (prop) => {
             </Button>
           </Modal.Footer>
         </Modal>
-        <div className="float-right" style={{ marginBottom: '10px' }}>
+        <div
+          className={MostrarReprocesar ? 'd-none float-right' : 'float-right'}
+          style={{ marginBottom: '10px' }}
+        >
           <FilterComponent
             onFilter={(e) => setFilterText(e.target.value)}
             onClear={handleClear}

@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
-import { useIdleTimer } from 'react-idle-timer'
 import { postEditarUsuario } from '../../../../services/postEditarUsuario'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
@@ -9,15 +8,10 @@ import { getUsuarios } from '../../../../services/getUsuarios'
 import { useSession } from 'react-use-session'
 import { FaUserEdit, FaTrash, FaUserCog, FaUserCircle, FaUsersCog } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
-import {
-  CButton,
-  CTable,
-  CTableBody,
-  CTableDataCell,
-  CTableHead,
-  CTableHeaderCell,
-  CTableRow,
-} from '@coreui/react'
+import { CButton } from '@coreui/react'
+import DataTable, { defaultThemes } from 'react-data-table-component'
+import DataTableExtensions from 'react-data-table-component-extensions'
+import 'react-data-table-component-extensions/dist/index.css'
 
 const Usuarios = () => {
   const history = useHistory()
@@ -47,11 +41,6 @@ const Usuarios = () => {
         setPermisos(items.detalle)
       }
     })
-    //window.addEventListener('beforeunload', function (ev) {
-    //windowpostSesionUsuario(idUsuario, null, null, '2')
-    //clear()
-    //return (ev.returnValue = 'Esta seguro de cerrar sesión?')
-    //})
     return () => (mounted = false)
   }, [])
 
@@ -74,7 +63,7 @@ const Usuarios = () => {
 
   async function eliminarUsuario(id, opcion) {
     if (opcion == 1) {
-      const respuesta = await postEditarUsuario(id, '', '', '', '', '', '', '2')
+      const respuesta = await postEditarUsuario(id, '', '', '', '', '', '', '2', session.id)
       if (respuesta === 'OK') {
         await getUsuarios(null, null, null, null).then((items) => {
           setList(items.users)
@@ -82,14 +71,12 @@ const Usuarios = () => {
       }
     } else if (opcion == 2) {
       setShow(false)
-      detener()
     }
   }
 
   async function Cancelar(opcion) {
     if (opcion == 1) {
       setShow(false)
-      detener()
     } else if (opcion == 2) {
       let idUsuario = 0
       if (session) {
@@ -100,49 +87,189 @@ const Usuarios = () => {
         clear()
         history.push('/')
       }
-      detener()
     }
   }
 
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Cancelar(2)
-      }
-    }, 1000)
-    setTime(intervalo)
+  const customStyles = {
+    headRow: {
+      style: {
+        borderTopStyle: 'solid',
+        borderTopWidth: '1px',
+        borderTopColor: defaultThemes.default.divider.default,
+      },
+    },
+    headCells: {
+      style: {
+        paddingLeft: '8px', // override the cell padding for head cells
+        paddingRight: '8px',
+        fontSize: '12px',
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
+    cells: {
+      style: {
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
   }
-
-  function detener() {
-    clearInterval(time)
+  const columns = useMemo(() => [
+    {
+      name: 'Nombre',
+      selector: (row) => row.nombre + ' ' + row.apellido,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+      wrap: true,
+    },
+    {
+      name: 'Correo',
+      selector: (row) => row.email,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+    },
+    {
+      name: 'Usuario',
+      selector: (row) => row.nombre_usuario,
+      center: true,
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+    },
+    {
+      name: 'Estado',
+      cell: function OrderItems(row) {
+        let estado = 'Inactivo'
+        if (row.activo == 1) {
+          estado = 'Activo'
+        }
+        return estado
+      },
+      center: true,
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+      wrap: true,
+    },
+    {
+      name: 'Acciones',
+      cell: function OrderItems(row) {
+        let deshabilitar = false
+        if (!ExistePermiso('Modulo Usuarios')) {
+          deshabilitar = true
+        }
+        return (
+          <div>
+            <CButton
+              color="info"
+              size="sm"
+              title="Consultar Usuario Perfil"
+              disabled={deshabilitar}
+              onClick={() =>
+                history.push({
+                  pathname: '/usuarios/consulta',
+                  id_usuario: row.id,
+                  email: row.email,
+                  nombre: row.nombre + ' ' + row.apellido,
+                  estado: row.activo,
+                })
+              }
+            >
+              <FaUserCircle />
+            </CButton>{' '}
+            <CButton
+              color="success"
+              size="sm"
+              title="Asignar Perfiles"
+              disabled={deshabilitar}
+              onClick={() =>
+                history.push({
+                  pathname: '/usuarios/perfilusuario',
+                  id: row.id,
+                  nombre: row.nombre + ' ' + row.apellido,
+                  email: row.email,
+                  estado: row.activo,
+                })
+              }
+            >
+              <FaUserCog />
+            </CButton>{' '}
+            <CButton
+              color="warning"
+              size="sm"
+              title="Asignar Grupo Autorización"
+              disabled={deshabilitar}
+              onClick={() =>
+                history.push({
+                  pathname: '/usuarios/usuariogrupo',
+                  id_usuario: row.id,
+                  nombre: row.nombre + ' ' + row.apellido,
+                  email: row.email,
+                  estado: row.activo,
+                  inhabilitar: true,
+                })
+              }
+            >
+              <FaUsersCog />
+            </CButton>{' '}
+            <CButton
+              color="primary"
+              size="sm"
+              title="Editar Usuario"
+              disabled={deshabilitar}
+              onClick={() =>
+                history.push({
+                  pathname: '/usuarios/editar',
+                  id: row.id,
+                  nombre: row.nombre,
+                  apellido: row.apellido,
+                  usuario: row.nombre_usuario,
+                  email: row.email,
+                  password: row.password,
+                  estado: row.activo,
+                  cambia_password: row.cambia_password,
+                })
+              }
+            >
+              <FaUserEdit />
+            </CButton>{' '}
+            <CButton
+              color="danger"
+              size="sm"
+              title="Eliminar Usuario"
+              disabled={deshabilitar}
+              onClick={() => mostrarModal(row.id, row.nombre + ' ' + row.apellido, 1)}
+            >
+              <FaTrash />
+            </CButton>
+          </div>
+        )
+      },
+      center: true,
+      width: '200px',
+    },
+  ])
+  const tableData = {
+    columns,
+    data: results,
+    filterPlaceholder: 'Filtrar datos',
+    export: false,
+    print: false,
   }
-
-  const handleOnIdle = (event) => {
-    setShow(true)
-    setOpcion(2)
-    setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {}
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
 
   if (session) {
     let deshabilitar = false
@@ -178,122 +305,20 @@ const Usuarios = () => {
             Crear Nuevo
           </CButton>
         </div>
-        <CTable hover responsive align="middle" className="mb-0 border">
-          <CTableHead color="light">
-            <CTableRow>
-              <CTableHeaderCell className="text-center">Nombre</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Correo</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Usuario</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Estado</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Acciones</CTableHeaderCell>
-            </CTableRow>
-          </CTableHead>
-          <CTableBody>
-            {results.map((item, i) => {
-              let estado = 'Inactivo'
-              //if (item.eliminado == 0 && item.id !== session.id) {
-              if (item.eliminado == 0) {
-                if (item.activo == 1) {
-                  estado = 'Activo'
-                }
-                return (
-                  <CTableRow key={item.id}>
-                    <CTableDataCell className="text-center">
-                      {item.nombre} {item.apellido}
-                    </CTableDataCell>
-                    <CTableDataCell className="text-center">{item.email}</CTableDataCell>
-                    <CTableDataCell className="text-center">{item.nombre_usuario}</CTableDataCell>
-                    <CTableDataCell className="text-center">{estado}</CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CButton
-                        color="info"
-                        size="sm"
-                        title="Consultar Usuario Perfil"
-                        disabled={deshabilitar}
-                        onClick={() =>
-                          history.push({
-                            pathname: '/usuarios/consulta',
-                            id_usuario: item.id,
-                            email: item.email,
-                            nombre: item.nombre + ' ' + item.apellido,
-                            estado: item.activo,
-                          })
-                        }
-                      >
-                        <FaUserCircle />
-                      </CButton>{' '}
-                      <CButton
-                        color="success"
-                        size="sm"
-                        title="Asignar Perfiles"
-                        disabled={deshabilitar}
-                        onClick={() =>
-                          history.push({
-                            pathname: '/usuarios/perfilusuario',
-                            id: item.id,
-                            nombre: item.nombre + ' ' + item.apellido,
-                            email: item.email,
-                            estado: item.activo,
-                          })
-                        }
-                      >
-                        <FaUserCog />
-                      </CButton>{' '}
-                      <CButton
-                        color="warning"
-                        size="sm"
-                        title="Asignar Grupo Autorización"
-                        disabled={deshabilitar}
-                        onClick={() =>
-                          history.push({
-                            pathname: '/usuarios/usuariogrupo',
-                            id_usuario: item.id,
-                            nombre: item.nombre + ' ' + item.apellido,
-                            email: item.email,
-                            estado: item.activo,
-                            inhabilitar: true,
-                          })
-                        }
-                      >
-                        <FaUsersCog />
-                      </CButton>{' '}
-                      <CButton
-                        color="primary"
-                        size="sm"
-                        title="Editar Usuario"
-                        disabled={deshabilitar}
-                        onClick={() =>
-                          history.push({
-                            pathname: '/usuarios/editar',
-                            id: item.id,
-                            nombre: item.nombre,
-                            apellido: item.apellido,
-                            usuario: item.nombre_usuario,
-                            email: item.email,
-                            password: item.password,
-                            estado: item.activo,
-                            cambia_password: item.cambia_password,
-                          })
-                        }
-                      >
-                        <FaUserEdit />
-                      </CButton>{' '}
-                      <CButton
-                        color="danger"
-                        size="sm"
-                        title="Eliminar Usuario"
-                        disabled={deshabilitar}
-                        onClick={() => mostrarModal(item.id, item.nombre + ' ' + item.apellido, 1)}
-                      >
-                        <FaTrash />
-                      </CButton>
-                    </CTableDataCell>
-                  </CTableRow>
-                )
-              }
-            })}
-          </CTableBody>
-        </CTable>
+        <DataTableExtensions {...tableData}>
+          <DataTable
+            columns={columns}
+            noDataComponent="No hay usuarios que mostrar"
+            data={results}
+            customStyles={customStyles}
+            pagination
+            paginationPerPage={25}
+            responsive={true}
+            persistTableHead
+            striped={true}
+            dense
+          />
+        </DataTableExtensions>
       </>
     )
   } else {

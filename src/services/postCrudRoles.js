@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}roles`
 
-export function postCrudRoles(idRol, descripcion, objeto, estado, opcion) {
+export function postCrudRoles(idRol, descripcion, objeto, estado, opcion, id_usuario) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -10,6 +10,7 @@ export function postCrudRoles(idRol, descripcion, objeto, estado, opcion) {
     objeto: objeto,
     activo: estado,
     opcion: opcion,
+    id_usuario: id_usuario,
   }
 
   if (idRol !== '' && opcion !== '') {

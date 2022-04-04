@@ -1,6 +1,13 @@
 const API = `${process.env.REACT_APP_API_URL}condicionautorizacion`
 
-export function postCondicionAutorizacion(idCondicion, descripcion, parametro, estado, opcion) {
+export function postCondicionAutorizacion(
+  idCondicion,
+  descripcion,
+  parametro,
+  estado,
+  opcion,
+  id_usuario,
+) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -10,6 +17,7 @@ export function postCondicionAutorizacion(idCondicion, descripcion, parametro, e
     parametro: parametro,
     activo: estado,
     opcion: opcion,
+    id_usuario: id_usuario,
   }
 
   if (idCondicion !== '' && opcion !== '') {

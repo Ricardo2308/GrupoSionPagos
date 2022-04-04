@@ -133,50 +133,11 @@ const Pendientes = (prop) => {
   function customizeToolbar(toolbar) {
     var tabs = toolbar.getTabs()
     toolbar.getTabs = function () {
-        delete tabs[0]
-        delete tabs[1]
-        return tabs
+      delete tabs[0]
+      delete tabs[1]
+      return tabs
     }
   }
-
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Salir()
-      }
-    }, 1000)
-    setTime(intervalo)
-  }
-
-  function detener() {
-    clearInterval(time)
-  }
-
-  const handleOnIdle = (event) => {
-    setShow(true)
-    setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {}
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
 
   async function Salir() {
     let idUsuario = 0
@@ -188,7 +149,6 @@ const Pendientes = (prop) => {
       clear()
       history.push('/')
     }
-    detener()
   }
 
   if (session) {

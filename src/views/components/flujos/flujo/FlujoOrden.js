@@ -66,7 +66,7 @@ const FlujoOrden = (prop) => {
     },
     {
       name: 'Nombre Tarjeta',
-      selector: (row) => row.card_name,
+      selector: (row) => row.en_favor_de,
       center: true,
       width: '500px',
     },

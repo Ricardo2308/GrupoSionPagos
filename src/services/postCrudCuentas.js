@@ -9,6 +9,7 @@ export function postCrudCuentas(
   idMoneda,
   codigoACH,
   opcion,
+  id_usuario,
 ) {
   let ApiFinal = API
   let ApiWhere = ''
@@ -22,6 +23,7 @@ export function postCrudCuentas(
     id_moneda: idMoneda,
     codigo_ach: codigoACH,
     opcion: opcion,
+    id_usuario: id_usuario,
   }
 
   if (idCuenta !== '' && opcion !== '') {

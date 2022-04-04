@@ -1,6 +1,14 @@
 const API = `${process.env.REACT_APP_API_URL}condiciongrupo`
 
-export function postCondicionGrupo(idCondicionGrupo, idCondicion, grupos, opcion, idGrupo, estado) {
+export function postCondicionGrupo(
+  idCondicionGrupo,
+  idCondicion,
+  grupos,
+  opcion,
+  idGrupo,
+  estado,
+  id_usuario,
+) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -11,6 +19,7 @@ export function postCondicionGrupo(idCondicionGrupo, idCondicion, grupos, opcion
     opcion: opcion,
     id_grupoautorizacion: idGrupo,
     activo: estado,
+    id_usuario: id_usuario,
   }
 
   if (grupos !== '') {

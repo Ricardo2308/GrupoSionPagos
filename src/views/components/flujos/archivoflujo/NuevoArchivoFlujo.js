@@ -106,7 +106,7 @@ const NuevoArchivoFlujo = (props) => {
   }
 
   const finalizarCarga = async () => {
-    const respuesta = await postFlujos(location.id_flujo, '', location.grupo, '', null)
+    const respuesta = await postFlujos(location.id_flujo, '', location.grupo, '', null, session.id)
     if (location.grupo == null) {
       const answer = await postFlujoDetalle(
         location.id_flujo,
@@ -134,7 +134,14 @@ const NuevoArchivoFlujo = (props) => {
         '0',
       )
       if (cargado === 'OK' && asignado === 'OK') {
-        const respuesta = await postFlujos(location.id_flujo, '', location.grupo, '', null)
+        const respuesta = await postFlujos(
+          location.id_flujo,
+          '',
+          location.grupo,
+          '',
+          null,
+          session.id,
+        )
         if (respuesta === 'OK') {
           history.go(-1)
         }
@@ -166,50 +173,9 @@ const NuevoArchivoFlujo = (props) => {
     }
   }
 
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Cancelar(2)
-      }
-    }, 1000)
-    setTime(intervalo)
-  }
-
-  function detener() {
-    clearInterval(time)
-  }
-
-  const handleOnIdle = (event) => {
-    setShowM(true)
-    setMensaje(
-      `Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos. Si desea continuar presione Aceptar`,
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {
-    return false
-  }
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
-
   async function Cancelar(opcion) {
     if (opcion == 1) {
       setShowM(false)
-      detener()
     } else if (opcion == 2) {
       let idUsuario = 0
       if (session) {
@@ -220,7 +186,6 @@ const NuevoArchivoFlujo = (props) => {
         clear()
         history.push('/')
       }
-      detener()
     }
   }
   const handlerUploadFile = (file) => {
@@ -272,12 +237,18 @@ const NuevoArchivoFlujo = (props) => {
 
   const columns = useMemo(() => [
     {
+      name: '#',
+      selector: (row, index) => index + 1,
+      sortable: true,
+      width: '60px',
+    },
+    {
       name: 'Usuario',
       selector: (row) => row.nombre_usuario,
       center: true,
       sortable: true,
       wrap: true,
-      width: '190px',
+      width: '170px',
     },
     {
       name: 'Nombre Archivo',
@@ -301,7 +272,7 @@ const NuevoArchivoFlujo = (props) => {
         )
       },
       center: true,
-      width: '580px',
+      width: '520px',
     },
     {
       name: 'Acciones',

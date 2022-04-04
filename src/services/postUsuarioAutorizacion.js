@@ -8,6 +8,7 @@ export function postUsuarioAutorizacion(
   fechaFinal,
   opcion,
   estado,
+  id_usuario,
 ) {
   let ApiFinal = API
   let ApiWhere = ''
@@ -20,6 +21,7 @@ export function postUsuarioAutorizacion(
     fecha_final: fechaFinal,
     opcion: opcion,
     activo: estado,
+    id_usuario: id_usuario,
   }
 
   if (idAutorizacion !== '' && opcion !== '') {

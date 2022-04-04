@@ -54,32 +54,6 @@ const PagoTabs = () => {
   const [llaveBitacora, setllaveBitacora] = useState(0)
   const [ocultarBotones, setOcultarBotones] = useState(false)
 
-  const handleOnIdle = (event) => {
-    setShow(true)
-    setOpcion(3)
-    setMensaje(
-      `Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos. Si desea continuar presione Aceptar`,
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {
-    return false
-  }
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
-
   useEffect(() => {
     let mounted = true
     let objeto = 'Modulo Autorizacion Pagos'
@@ -132,6 +106,9 @@ const PagoTabs = () => {
           if ('Cargar' == item.descripcion) {
             setOcultarBotones(true)
           }
+          if ('Visualizar_completo' == item.descripcion) {
+            setOcultarBotones(true)
+          }
         }
       }
     })
@@ -146,26 +123,11 @@ const PagoTabs = () => {
   function ExisteEnBitacora(usuario) {
     let result = false
     for (let item of bitacora) {
-      if (usuario == item.id_usuario && item.IdEstadoFlujo == 4) {
+      if (usuario == item.id_usuario && item.IdEstadoFlujo == 4 && item.FlujoActivo == 1) {
         result = true
       }
     }
     return result
-  }
-
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Cancelar(2)
-      }
-    }, 1000)
-    setTime(intervalo)
-  }
-
-  function detener() {
-    clearInterval(time)
   }
 
   async function Cancelar(opcion) {
@@ -179,10 +141,8 @@ const PagoTabs = () => {
         clear()
         history.push('/')
       }
-      detener()
     } else {
       setShow(false)
-      detener()
     }
   }
 
@@ -224,13 +184,13 @@ const PagoTabs = () => {
     pagos.push(id_flujo)
     if (opcion === 1) {
       if (location.estado == 3) {
-        const respuesta = await postFlujos(id_flujo, '2', '', '', null)
+        const respuesta = await postFlujos(id_flujo, '2', '', '', null, idUsuario)
         const aprobado = await postFlujoDetalle(id_flujo, '4', idUsuario, 'Aprobado', '1')
         if (respuesta == 'OK' && aprobado == 'OK') {
           history.go(-1)
         }
       } else if (location.estado == 4) {
-        const respuesta = await postFlujos(id_flujo, location.nivel, '', '', null)
+        const respuesta = await postFlujos(id_flujo, location.nivel, '', '', null, idUsuario)
         if (respuesta == 'OK') {
           const aprobado = await postFlujoDetalle(
             id_flujo,
@@ -259,7 +219,7 @@ const PagoTabs = () => {
         }
       }
     } else if (opcion == 2) {
-      const respuesta = await postFlujos(id_flujo, '', '', '1', null)
+      const respuesta = await postFlujos(id_flujo, '', '', '1', null, idUsuario)
       const rechazado = await postFlujoDetalle(id_flujo, '6', idUsuario, 'Rechazado', '0')
       if (respuesta == 'OK' && rechazado == 'OK') {
         const enviada = await postNotificacion(pagos, idUsuario, 'rechazado.', '')
@@ -271,7 +231,7 @@ const PagoTabs = () => {
       setShow(true)
     } else if (opcion == 4) {
       setMostrarPausado(false)
-      const respuestaPausado = await postFlujos(id_flujo, '0', '', '4', null)
+      const respuestaPausado = await postFlujos(id_flujo, '0', '', '4', null, idUsuario)
       const detalleFlujoActualizado = await postFlujoDetalle(
         id_flujo,
         '10',
@@ -286,7 +246,7 @@ const PagoTabs = () => {
         setMostrarPausado(true)
       }
     } else if (opcion == 5) {
-      const respuestaActualizado = await postFlujos(id_flujo, '0', '', '5', null)
+      const respuestaActualizado = await postFlujos(id_flujo, '0', '', '5', null, idUsuario)
       const detalleFlujoActualizado = await postFlujoDetalle(
         id_flujo,
         '11',
@@ -295,7 +255,7 @@ const PagoTabs = () => {
         '0',
       )
       if (respuestaActualizado == 'OK' && detalleFlujoActualizado == 'OK') {
-        const respuestaReset = await postFlujos(id_flujo, '0', '', '6', null)
+        const respuestaReset = await postFlujos(id_flujo, '0', '', '6', null, idUsuario)
         const detalleFlujoReset = await postFlujoDetalle(
           id_flujo,
           '3',
@@ -316,7 +276,7 @@ const PagoTabs = () => {
         '0',
       )
       if (detalleFlujoActualizado == 'OK') {
-        const respuestaReset = await postFlujos(id_flujo, '0', '', '7', null)
+        const respuestaReset = await postFlujos(id_flujo, '0', '', '7', null, idUsuario)
         if (respuestaReset == 'OK') {
           history.go(-1)
         }
@@ -448,9 +408,9 @@ const PagoTabs = () => {
             </div>
             <div className="div-content">
               <div style={{ width: '100%' }}>
-                <Tabs defaultActiveKey="bitacora" id="uncontrolled-tab-example" className="mb-3">
-                  <Tab eventKey="bitacora" title="Bitácora">
-                    <FlujoBitacora key={llaveBitacora} id_flujo={location.id_flujo} />
+                <Tabs defaultActiveKey="archivos" id="uncontrolled-tab-example" className="mb-3">
+                  <Tab eventKey="archivos" title="Soporte">
+                    <ArchivosFlujo results={archivos} estado={location.estado} />
                   </Tab>
                   <Tab
                     eventKey="solicitud"
@@ -494,12 +454,8 @@ const PagoTabs = () => {
                   >
                     <FlujoFacturaDocumento results={facturaDocumento} />
                   </Tab>
-                  <Tab
-                    eventKey="archivos"
-                    title="Archivos"
-                    tabClassName={!MostrarArchivos ? 'd-none' : ''}
-                  >
-                    <ArchivosFlujo results={archivos} estado={location.estado} />
+                  <Tab eventKey="bitacora" title="Bitácora">
+                    <FlujoBitacora key={llaveBitacora} id_flujo={location.id_flujo} />
                   </Tab>
                   <Tab eventKey="detalle" title="Detalle">
                     <DetalleFlujo id_flujo={location.id_flujo} />
@@ -543,9 +499,9 @@ const PagoTabs = () => {
             </div>
             <div className="div-content">
               <div style={{ width: '100%' }}>
-                <Tabs defaultActiveKey="bitacora" id="uncontrolled-tab-example" className="mb-3">
-                  <Tab eventKey="bitacora" title="Bitácora">
-                    <FlujoBitacora id_flujo={location.id_flujo} />
+                <Tabs defaultActiveKey="archivos" id="uncontrolled-tab-example" className="mb-3">
+                  <Tab eventKey="archivos" title="Soporte">
+                    <ArchivosFlujo results={archivos} estado={location.estado} />
                   </Tab>
                   <Tab
                     eventKey="solicitud"
@@ -589,12 +545,8 @@ const PagoTabs = () => {
                   >
                     <FlujoFacturaDocumento results={facturaDocumento} />
                   </Tab>
-                  <Tab
-                    eventKey="archivos"
-                    title="Archivos"
-                    tabClassName={!MostrarArchivos ? 'd-none' : ''}
-                  >
-                    <ArchivosFlujo results={archivos} estado={location.estado} />
+                  <Tab eventKey="bitacora" title="Bitácora">
+                    <FlujoBitacora id_flujo={location.id_flujo} />
                   </Tab>
                   <Tab eventKey="detalle" title="Detalle">
                     <DetalleFlujo id_flujo={location.id_flujo} />

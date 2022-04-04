@@ -32,7 +32,9 @@ const CompensacionTabs = () => {
   const location = useLocation()
   const [time, setTime] = useState(null)
   const [show, setShow] = useState(false)
+  const [showOperacion, setShowOperacion] = useState(false)
   const [mensaje, setMensaje] = useState('')
+  const [mensajeOperacion, setMensajeOperacion] = useState('')
   const { session, clear } = useSession('PendrogonIT-Session')
   const [solicitud, setSolicitud] = useState([])
   const [oferta, setOferta] = useState([])
@@ -44,10 +46,11 @@ const CompensacionTabs = () => {
   const [permisos, setPermisos] = useState([])
   const [idFlujo, setIdFlujo] = useState(0)
   const [opcion, setOpcion] = useState(0)
+  const [opcionOperacion, setOpcionOperacion] = useState(0)
 
   useEffect(() => {
     let mounted = true
-    let objeto = 'Modulo Autorizacion Pagos'
+    let objeto = 'Modulo Compensacion Pagos'
     getFlujoSolicitud(location.id_flujo, null).then((items) => {
       if (mounted) {
         setSolicitud(items.solicitud)
@@ -101,50 +104,9 @@ const CompensacionTabs = () => {
     return result
   }
 
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Cancelar(2)
-      }
-    }, 1000)
-    setTime(intervalo)
-  }
-
-  function detener() {
-    clearInterval(time)
-  }
-
-  const handleOnIdle = (event) => {
-    setShow(true)
-    setMensaje(
-      `Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos. Si desea continuar presione Aceptar`,
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {
-    return false
-  }
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
-
   async function Cancelar(opcion) {
     if (opcion == 1) {
       setShow(false)
-      detener()
     } else if (opcion == 2) {
       let idUsuario = 0
       if (session) {
@@ -155,19 +117,41 @@ const CompensacionTabs = () => {
         clear()
         history.push('/')
       }
-      detener()
     } else {
       setShow(false)
-      detener()
     }
   }
 
   function mostrarModal(id_flujo, opcion) {
     if (opcion == 5) {
       setIdFlujo(id_flujo)
-      setOpcion(opcion)
-      setMensaje('Está seguro de actualizar el pago?')
-      setShow(true)
+      setOpcionOperacion(opcion)
+      setMensajeOperacion('¿Está seguro de actualizar el pago?')
+      setShowOperacion(true)
+    }
+    if (opcion == 6) {
+      setIdFlujo(id_flujo)
+      setOpcionOperacion(opcion)
+      setMensajeOperacion(
+        '¿Está seguro que desea regresar el pago a pendientes de compenzar para que sea reprocesado?',
+      )
+      setShowOperacion(true)
+    }
+    if (opcion == 7) {
+      setIdFlujo(id_flujo)
+      setOpcionOperacion(opcion)
+      setMensajeOperacion(
+        '¿Está seguro que desea solicitar el retorno del pago a bandeja de pendientes?',
+      )
+      setShowOperacion(true)
+    }
+    if (opcion == 8) {
+      setIdFlujo(id_flujo)
+      setOpcionOperacion(opcion)
+      setMensajeOperacion(
+        '¿Está seguro que desea rechazar la solicitar de retorno del pago a bandeja de pendientes?',
+      )
+      setShowOperacion(true)
     }
   }
 
@@ -179,12 +163,54 @@ const CompensacionTabs = () => {
     let pagos = []
     pagos.push(id_flujo)
     if (opcion == 5) {
-      const respuestaActualizado = await postFlujos(id_flujo, '0', '', '66', null)
       const detalleFlujoActualizado = await postFlujoDetalle(
         id_flujo,
         '11',
         idUsuario,
         'Actualizado',
+        '0',
+      )
+      if (detalleFlujoActualizado == 'OK') {
+        const respuestaActualizado = await postFlujos(id_flujo, '0', '', '66', null, idUsuario)
+
+        if (respuestaActualizado == 'OK') {
+          history.go(-1)
+        }
+      }
+    }
+    if (opcion == 6) {
+      const respuestaActualizado = await postFlujos(id_flujo, '0', '', '67', null, idUsuario)
+      const detalleFlujoActualizado = await postFlujoDetalle(
+        id_flujo,
+        '5',
+        idUsuario,
+        'Restituido a pendientes de compensar para su reprocesamiento',
+        '0',
+      )
+      if (respuestaActualizado == 'OK' && detalleFlujoActualizado == 'OK') {
+        history.go(-1)
+      }
+    }
+    if (opcion == 7) {
+      const respuestaActualizado = await postFlujos(id_flujo, '0', '', '68', null, idUsuario)
+      const detalleFlujoActualizado = await postFlujoDetalle(
+        id_flujo,
+        '12',
+        idUsuario,
+        'Generada solicitud para retorno a bandeja de pendientes',
+        '0',
+      )
+      if (respuestaActualizado == 'OK' && detalleFlujoActualizado == 'OK') {
+        history.go(-1)
+      }
+    }
+    if (opcion == 8) {
+      const respuestaActualizado = await postFlujos(id_flujo, '0', '', '69', null, idUsuario)
+      const detalleFlujoActualizado = await postFlujoDetalle(
+        id_flujo,
+        '13',
+        idUsuario,
+        'Rechazada solicitud para retorno a bandeja de pendientes',
         '0',
       )
       if (respuestaActualizado == 'OK' && detalleFlujoActualizado == 'OK') {
@@ -202,8 +228,10 @@ const CompensacionTabs = () => {
       let MostrarArchivos = false
       let MostrarFacturas = false
       let MostrarActualizar = ExistePermiso('Actualizar')
+      let MostrarReprocesar = ExistePermiso('Reprocesar')
       let MostrarFacturaCantidad = false
       let MostrarFacturaDocumento = false
+      let MostrarSolicitudRetorno = false
       if (solicitud.length > 0) {
         MostrarSolicitud = true
       }
@@ -225,8 +253,19 @@ const CompensacionTabs = () => {
       if (archivos.length > 0) {
         MostrarArchivos = true
       }
-      if (location.estado == '7') {
+      if (
+        location.estado == '7' ||
+        location.estado == '9' ||
+        location.estado == '12' ||
+        location.estado == '13'
+      ) {
         MostrarActualizar = false
+      }
+      if (location.estado != '12') {
+        MostrarReprocesar = false
+      }
+      if (location.estado == '9') {
+        MostrarSolicitudRetorno = true
       }
       return (
         <div className="div-tabs">
@@ -239,9 +278,31 @@ const CompensacionTabs = () => {
               <Button variant="secondary" onClick={() => Cancelar(opcion)}>
                 Cancelar
               </Button>
+              <Button variant="primary" onClick={() => Cancelar(opcion)}>
+                Aceptar
+              </Button>
+            </Modal.Footer>
+          </Modal>
+          <Modal
+            responsive
+            variant="primary"
+            show={showOperacion}
+            onHide={() => Cancelar(opcionOperacion)}
+            centered
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Confirmación</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>{mensajeOperacion}</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => Cancelar(opcionOperacion)}>
+                Cancelar
+              </Button>
               <Button
                 variant="primary"
-                onClick={() => Aprobar_Rechazar(idFlujo, opcion).then(() => Cancelar(opcion))}
+                onClick={() =>
+                  Aprobar_Rechazar(idFlujo, opcionOperacion).then(() => Cancelar(opcionOperacion))
+                }
               >
                 Aceptar
               </Button>
@@ -260,6 +321,40 @@ const CompensacionTabs = () => {
               Actualizar
             </CButton>
           </div>
+          <div
+            className={!MostrarReprocesar ? 'd-none float-right' : 'float-right'}
+            style={{ marginTop: '15px', marginRight: '15px' }}
+          >
+            <CButton
+              className={!MostrarReprocesar ? 'd-none' : ''}
+              color="info"
+              size="sm"
+              onClick={() => mostrarModal(location.id_flujo, 6)}
+            >
+              Aprobar solicitud
+            </CButton>{' '}
+            <CButton
+              className={!MostrarReprocesar ? 'd-none' : ''}
+              color="danger"
+              size="sm"
+              onClick={() => mostrarModal(location.id_flujo, 8)}
+            >
+              Rechazar solicitud
+            </CButton>
+          </div>
+          <div
+            className={!MostrarSolicitudRetorno ? 'd-none float-right' : 'float-right'}
+            style={{ marginTop: '15px', marginRight: '15px' }}
+          >
+            <CButton
+              className={!MostrarSolicitudRetorno ? 'd-none' : ''}
+              color="info"
+              size="sm"
+              onClick={() => mostrarModal(location.id_flujo, 7)}
+            >
+              Solicitar retorno a bandeja
+            </CButton>
+          </div>
           <div className="float-left" style={{ marginBottom: '10px' }}>
             <Button variant="primary" size="sm" onClick={() => history.goBack()}>
               <FaArrowLeft />
@@ -268,9 +363,13 @@ const CompensacionTabs = () => {
           </div>
           <div className="div-content">
             <div style={{ width: '100%' }}>
-              <Tabs defaultActiveKey="bitacora" id="uncontrolled-tab-example" className="mb-3">
-                <Tab eventKey="bitacora" title="Bitácora">
-                  <FlujoBitacora id_flujo={location.id_flujo} />
+              <Tabs defaultActiveKey="archivos" id="uncontrolled-tab-example" className="mb-3">
+                <Tab
+                  eventKey="archivos"
+                  title="Soporte"
+                  tabClassName={!MostrarArchivos ? 'd-none' : ''}
+                >
+                  <ArchivosFlujo results={archivos} />
                 </Tab>
                 <Tab
                   eventKey="solicitud"
@@ -314,12 +413,8 @@ const CompensacionTabs = () => {
                 >
                   <FlujoFacturaDocumento results={facturaDocumento} />
                 </Tab>
-                <Tab
-                  eventKey="archivos"
-                  title="Archivos"
-                  tabClassName={!MostrarArchivos ? 'd-none' : ''}
-                >
-                  <ArchivosFlujo results={archivos} />
+                <Tab eventKey="bitacora" title="Bitácora">
+                  <FlujoBitacora id_flujo={location.id_flujo} />
                 </Tab>
                 <Tab eventKey="detalle" title="Detalle">
                   <DetalleFlujo id_flujo={location.id_flujo} />

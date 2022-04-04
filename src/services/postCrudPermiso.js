@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}permisos`
 
-export function postCrudPermiso(idPermiso, descripcion, estado, opcion) {
+export function postCrudPermiso(idPermiso, descripcion, estado, opcion, id_usuario) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -9,6 +9,7 @@ export function postCrudPermiso(idPermiso, descripcion, estado, opcion) {
     descripcion: descripcion,
     activo: estado,
     opcion: opcion,
+    id_usuario: id_usuario,
   }
 
   if (idPermiso !== '' && opcion !== '') {

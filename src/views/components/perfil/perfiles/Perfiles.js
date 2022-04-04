@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { postCrudPerfil } from '../../../../services/postCrudPerfil'
@@ -18,6 +18,9 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
+import DataTable, { defaultThemes } from 'react-data-table-component'
+import DataTableExtensions from 'react-data-table-component-extensions'
+import 'react-data-table-component-extensions/dist/index.css'
 
 const Perfiles = () => {
   const history = useHistory()
@@ -63,7 +66,6 @@ const Perfiles = () => {
   async function Cancelar(opcion) {
     if (opcion == 1) {
       setShow(false)
-      detener()
     } else if (opcion == 2) {
       let idUsuario = 0
       if (session) {
@@ -74,49 +76,8 @@ const Perfiles = () => {
         clear()
         history.push('/')
       }
-      detener()
     }
   }
-
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Cancelar(2)
-      }
-    }, 1000)
-    setTime(intervalo)
-  }
-
-  function detener() {
-    clearInterval(time)
-  }
-
-  const handleOnIdle = (event) => {
-    setShow(true)
-    setOpcion(2)
-    setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {}
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
 
   function mostrarModal(id_perfil, nombre, opcion) {
     setIdPerfil(id_perfil)
@@ -127,7 +88,7 @@ const Perfiles = () => {
 
   async function eliminarPerfil(id_perfil, opcion) {
     if (opcion == 1) {
-      const respuesta = await postCrudPerfil(id_perfil, '', '', '2')
+      const respuesta = await postCrudPerfil(id_perfil, '', '', '2', session.id)
       if (respuesta === 'OK') {
         await getPerfiles(null, null).then((items) => {
           setList(items.perfiles)
@@ -135,8 +96,150 @@ const Perfiles = () => {
       }
     } else if (opcion == 2) {
       setShow(false)
-      detener()
     }
+  }
+
+  const customStyles = {
+    headRow: {
+      style: {
+        borderTopStyle: 'solid',
+        borderTopWidth: '1px',
+        borderTopColor: defaultThemes.default.divider.default,
+      },
+    },
+    headCells: {
+      style: {
+        paddingLeft: '8px', // override the cell padding for head cells
+        paddingRight: '8px',
+        fontSize: '12px',
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
+    cells: {
+      style: {
+        '&:not(:last-of-type)': {
+          borderRightStyle: 'solid',
+          borderRightWidth: '1px',
+          borderRightColor: defaultThemes.default.divider.default,
+        },
+      },
+    },
+  }
+
+  const columns = useMemo(() => [
+    {
+      name: 'Descripcion',
+      selector: (row) => row.descripcion,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+      sortable: true,
+      wrap: true,
+    },
+    {
+      name: 'Estado',
+      cell: function OrderItems(row) {
+        let estado = 'Inactivo'
+        if (row.activo == 1) {
+          estado = 'Activo'
+        }
+        return estado
+      },
+      center: true,
+      sortable: true,
+      style: {
+        fontSize: '11px',
+      },
+      wrap: true,
+    },
+    {
+      name: 'Acciones',
+      cell: function OrderItems(row) {
+        let deshabilitar = false
+        if (ExistePermiso('Modulo Perfiles') == 0) {
+          deshabilitar = true
+        }
+        let estado = 'Inactivo'
+        if (row.activo == 1) {
+          estado = 'Activo'
+        }
+        return (
+          <div>
+            <CButton
+              color="info"
+              size="sm"
+              title="Consultar Perfil Rol"
+              disabled={deshabilitar}
+              onClick={() =>
+                history.push({
+                  pathname: '/perfiles/consulta',
+                  id_perfil: row.id_perfil,
+                  descripcion: row.descripcion,
+                  estado: estado,
+                })
+              }
+            >
+              <FaClipboardList />
+            </CButton>{' '}
+            <CButton
+              color="success"
+              size="sm"
+              title="Asignar Rol"
+              disabled={deshabilitar}
+              onClick={() =>
+                history.push({
+                  pathname: '/perfiles/perfilrol',
+                  id_perfil: row.id_perfil,
+                  descripcion: row.descripcion,
+                  estado: row.activo,
+                })
+              }
+            >
+              <FaUserCog />
+            </CButton>{' '}
+            <CButton
+              color="primary"
+              size="sm"
+              title="Editar Perfil"
+              disabled={deshabilitar}
+              onClick={() =>
+                history.push({
+                  pathname: '/perfiles/editar',
+                  id_perfil: row.id_perfil,
+                  descripcion: row.descripcion,
+                  estado: row.activo,
+                })
+              }
+            >
+              <FaUserEdit />
+            </CButton>{' '}
+            <CButton
+              color="danger"
+              size="sm"
+              title="Eliminar Perfil"
+              disabled={deshabilitar}
+              onClick={() => mostrarModal(row.id_perfil, row.descripcion, 1)}
+            >
+              <FaTrash />
+            </CButton>
+          </div>
+        )
+      },
+      center: true,
+      width: '200px',
+    },
+  ])
+  const tableData = {
+    columns,
+    data: results,
+    filterPlaceholder: 'Filtrar datos',
+    export: false,
+    print: false,
   }
 
   if (session) {
@@ -173,92 +276,20 @@ const Perfiles = () => {
             Crear Nuevo
           </CButton>
         </div>
-        <CTable hover responsive align="middle" className="mb-0 border">
-          <CTableHead color="light">
-            <CTableRow>
-              <CTableHeaderCell className="text-center">Descripcion</CTableHeaderCell>
-              <CTableHeaderCell className="text-center">Estado</CTableHeaderCell>
-              <CTableHeaderCell style={{ textAlign: 'center', width: '38%' }}>
-                Acciones
-              </CTableHeaderCell>
-            </CTableRow>
-          </CTableHead>
-          <CTableBody>
-            {results.map((item, i) => {
-              let estado = 'Inactivo'
-              if (item.eliminado == 0) {
-                if (item.activo == 1) {
-                  estado = 'Activo'
-                }
-                return (
-                  <CTableRow key={item.id_perfil}>
-                    <CTableDataCell className="text-center">{item.descripcion}</CTableDataCell>
-                    <CTableDataCell className="text-center">{estado}</CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <CButton
-                        color="info"
-                        size="sm"
-                        title="Consultar Perfil Rol"
-                        disabled={deshabilitar}
-                        onClick={() =>
-                          history.push({
-                            pathname: '/perfiles/consulta',
-                            id_perfil: item.id_perfil,
-                            descripcion: item.descripcion,
-                            estado: estado,
-                          })
-                        }
-                      >
-                        <FaClipboardList />
-                      </CButton>{' '}
-                      <CButton
-                        color="success"
-                        size="sm"
-                        title="Asignar Rol"
-                        disabled={deshabilitar}
-                        onClick={() =>
-                          history.push({
-                            pathname: '/perfiles/perfilrol',
-                            id_perfil: item.id_perfil,
-                            descripcion: item.descripcion,
-                            estado: item.activo,
-                          })
-                        }
-                      >
-                        <FaUserCog />
-                      </CButton>{' '}
-                      <CButton
-                        color="primary"
-                        size="sm"
-                        title="Editar Perfil"
-                        disabled={deshabilitar}
-                        onClick={() =>
-                          history.push({
-                            pathname: '/perfiles/editar',
-                            id_perfil: item.id_perfil,
-                            descripcion: item.descripcion,
-                            estado: item.activo,
-                          })
-                        }
-                      >
-                        <FaUserEdit />
-                      </CButton>{' '}
-                      <CButton
-                        color="danger"
-                        size="sm"
-                        title="Eliminar Perfil"
-                        disabled={deshabilitar}
-                        onClick={() => mostrarModal(item.id_perfil, item.descripcion, 1)}
-                      >
-                        <FaTrash />
-                      </CButton>
-                    </CTableDataCell>
-                  </CTableRow>
-                )
-              }
-            })}
-          </CTableBody>
-        </CTable>
+        <DataTableExtensions {...tableData}>
+          <DataTable
+            columns={columns}
+            noDataComponent="No hay perfiles que mostrar"
+            data={results}
+            customStyles={customStyles}
+            pagination
+            paginationPerPage={25}
+            responsive={true}
+            persistTableHead
+            striped={true}
+            dense
+          />
+        </DataTableExtensions>
       </>
     )
   } else {

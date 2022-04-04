@@ -69,7 +69,7 @@ const Cards = () => {
 
   async function eliminarCondicion(id_condicion, opcion) {
     if (opcion == 1) {
-      const respuesta = await postCondicionAutorizacion(id_condicion, '', '', '', '2')
+      const respuesta = await postCondicionAutorizacion(id_condicion, '', '', '', '2', session.id)
       if (respuesta === 'OK') {
         await getCondicionesAutorizacion(null, null).then((items) => {
           setList(items.condiciones)
@@ -77,14 +77,12 @@ const Cards = () => {
       }
     } else if (opcion == 2) {
       setShow(false)
-      detener()
     }
   }
 
   async function Cancelar(opcion) {
     if (opcion == 1) {
       setShow(false)
-      detener()
     } else if (opcion == 2) {
       let idUsuario = 0
       if (session) {
@@ -95,49 +93,8 @@ const Cards = () => {
         clear()
         history.push('/')
       }
-      detener()
     }
   }
-
-  function iniciar(minutos) {
-    let segundos = 60 * minutos
-    const intervalo = setInterval(() => {
-      segundos--
-      if (segundos == 0) {
-        Cancelar(2)
-      }
-    }, 1000)
-    setTime(intervalo)
-  }
-
-  function detener() {
-    clearInterval(time)
-  }
-
-  const handleOnIdle = (event) => {
-    setShow(true)
-    setOpcion(2)
-    setMensaje(
-      'Ya estuvo mucho tiempo sin realizar ninguna acción. Se cerrará sesión en unos minutos.' +
-        ' Si desea continuar presione Aceptar',
-    )
-    iniciar(2)
-    console.log('last active', getLastActiveTime())
-  }
-
-  const handleOnActive = (event) => {
-    console.log('time remaining', getRemainingTime())
-  }
-
-  const handleOnAction = (event) => {}
-
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-    timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),
-    onIdle: handleOnIdle,
-    onActive: handleOnActive,
-    onAction: handleOnAction,
-    debounce: 500,
-  })
 
   if (session) {
     let deshabilitar = false

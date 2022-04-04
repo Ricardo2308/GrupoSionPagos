@@ -13,15 +13,15 @@ import { FaCoins } from 'react-icons/fa'
 import { MenuItem, SubMenu } from 'react-pro-sidebar'
 
 const configuracion = [
-  {
-    objeto: 'Modulo Condiciones',
-    menu: (
-      <MenuItem key="condiciones" icon={<FiAlertOctagon />}>
-        Condiciones
-        <Link to="/condiciones" />
-      </MenuItem>
-    ),
-  },
+  /*   {
+      objeto: 'Modulo Condiciones',
+      menu: (
+        <MenuItem key="condiciones" icon={<FiAlertOctagon />}>
+          Condiciones
+          <Link to="/condiciones" />
+        </MenuItem>
+      ),
+    }, */
   {
     objeto: 'Modulo Grupos Autorizacion',
     menu: (
@@ -49,15 +49,15 @@ const configuracion = [
       </MenuItem>
     ),
   },
-  {
-    objeto: 'Modulo Tipos Flujo',
-    menu: (
-      <MenuItem key="tipoflujo" icon={<FiGitPullRequest />}>
-        Tipo Flujo
-        <Link to="/tipoflujo" />
-      </MenuItem>
-    ),
-  },
+  /*   {
+      objeto: 'Modulo Tipos Flujo',
+      menu: (
+        <MenuItem key="tipoflujo" icon={<FiGitPullRequest />}>
+          Tipo Flujo
+          <Link to="/tipoflujo" />
+        </MenuItem>
+      ),
+    }, */
   {
     objeto: 'Modulo Bancos',
     menu: (
