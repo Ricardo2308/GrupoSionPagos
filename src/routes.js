@@ -33,6 +33,12 @@ const EditarPerfilRol = React.lazy(() =>
 const EditarRol = React.lazy(() => import('./views/components/roles/editar/EditarRol'))
 const NuevoRol = React.lazy(() => import('./views/components/roles/nuevo/NuevoRol'))
 const Roles = React.lazy(() => import('./views/components/roles/listado/Roles'))
+const NuevoRestriccionEmpresa = React.lazy(() =>
+  import('./views/components/restriccionempresa/nuevo/NuevoRestriccionEmpresa'),
+)
+const RestriccionEmpresa = React.lazy(() =>
+  import('./views/components/restriccionempresa/listado/RestriccionEmpresa'),
+)
 const RolPermiso = React.lazy(() => import('./views/components/roles/rolpermiso/RolPermiso'))
 const ConsultaRP = React.lazy(() => import('./views/components/roles/rolpermiso/ConsultaRP'))
 const EditarRolPermiso = React.lazy(() =>
@@ -136,6 +142,7 @@ const Rechazados = React.lazy(() => import('./views/components/flujos/flujo/Rech
 const PendientesReporte = React.lazy(() => import('./views/components/reportes/Pendientes'))
 const CanceladosReporte = React.lazy(() => import('./views/components/reportes/Cancelados'))
 const CompensadosReporte = React.lazy(() => import('./views/components/reportes/Compensados'))
+const NoVisadoReporte = React.lazy(() => import('./views/components/reportes/NoVisados'))
 const RechazadosReporte = React.lazy(() => import('./views/components/reportes/Rechazados'))
 const PendientesValidacion = React.lazy(() =>
   import('./views/components/reportes/PendientesValidacion'),
@@ -179,6 +186,17 @@ const routes = [
   { path: '/roles/rolpermiso', name: 'Rol Permiso', component: RolPermiso },
   { path: '/roles/consulta', name: 'Rol Permiso', component: ConsultaRP },
   { path: '/roles/editarRP', name: 'Editar Rol Permiso', component: EditarRolPermiso },
+  {
+    path: '/restriccionempresa/nuevo',
+    name: 'Nuevo Restricción Empresa',
+    component: NuevoRestriccionEmpresa,
+  },
+  {
+    path: '/restriccionempresa',
+    exact: true,
+    name: 'Restriccioón Empresa',
+    component: RestriccionEmpresa,
+  },
   { path: '/permisos', name: 'Permisos', component: Permisos, exact: true },
   { path: '/permisos/nuevo', name: 'Nuevo', component: NuevoPermiso },
   { path: '/permisos/editar', name: 'Modificación', component: EditarPermiso },
@@ -255,6 +273,12 @@ const routes = [
     exact: true,
     name: 'Pagos Compensados',
     component: CompensadosReporte,
+  },
+  {
+    path: '/reportenovisados',
+    exact: true,
+    name: 'Pagos No Visados',
+    component: NoVisadoReporte,
   },
   {
     path: '/reporterechazados',

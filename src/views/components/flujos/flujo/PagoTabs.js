@@ -162,6 +162,11 @@ const PagoTabs = () => {
       setOpcion(opcion)
       setMensaje('Está seguro de pausar el pago?')
       setShow(true)
+    } else if (opcion == 44) {
+      setIdFlujo(id_flujo)
+      setOpcion(opcion)
+      setMensaje('Está seguro de trasladar el pago a no visado?')
+      setShow(true)
     } else if (opcion == 5) {
       setIdFlujo(id_flujo)
       setOpcion(opcion)
@@ -244,6 +249,19 @@ const PagoTabs = () => {
         setllaveBitacora(llaveBitacora + 1)
       } else {
         setMostrarPausado(true)
+      }
+    } else if (opcion == 44) {
+      setMostrarPausado(false)
+      const respuestaPausado = await postFlujos(id_flujo, '0', '', '44', null, idUsuario)
+      const detalleFlujoActualizado = await postFlujoDetalle(
+        id_flujo,
+        '14',
+        idUsuario,
+        'Trasladado a no visado',
+        '0',
+      )
+      if (respuestaPausado == 'OK' && detalleFlujoActualizado == 'OK') {
+        history.go(-1)
       }
     } else if (opcion == 5) {
       const respuestaActualizado = await postFlujos(id_flujo, '0', '', '5', null, idUsuario)
@@ -381,6 +399,14 @@ const PagoTabs = () => {
                   onClick={() => mostrarModal(location.id_flujo, 4)}
                 >
                   Pausar
+                </CButton>{' '}
+                <CButton
+                  className={!MostrarPausado ? 'd-none' : ''}
+                  color="primary"
+                  size="sm"
+                  onClick={() => mostrarModal(location.id_flujo, 44)}
+                >
+                  No visado
                 </CButton>{' '}
                 <CButton
                   className={!MostrarActualizar ? 'd-none' : ''}

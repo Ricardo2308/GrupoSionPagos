@@ -136,8 +136,8 @@ const Autorizados = (prop) => {
       width: '90px',
     },
     {
-      name: 'Fecha Doc.',
-      selector: (row) => row.doc_date,
+      name: 'Fecha Sis.',
+      selector: (row) => row.creation_date,
       center: true,
       sortable: true,
       style: {
@@ -229,8 +229,8 @@ const Autorizados = (prop) => {
       width: '90px',
     },
     {
-      name: 'Fecha Doc.',
-      selector: (row) => row.doc_date,
+      name: 'Fecha Sis.',
+      selector: (row) => row.creation_date,
       center: true,
       sortable: true,
       style: {

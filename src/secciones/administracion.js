@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { FiBook, FiSettings, FiUserCheck, FiUsers } from 'react-icons/fi'
+import { FiBook, FiSettings, FiUserCheck, FiUsers, FiShield } from 'react-icons/fi'
 import { BiUserCircle } from 'react-icons/bi'
 import { MenuItem, SubMenu } from 'react-pro-sidebar'
 
@@ -56,6 +56,15 @@ const administracion = [
       <MenuItem key="politicas" icon={<FiBook />}>
         Políticas
         <Link to="/politicas" />
+      </MenuItem>
+    ),
+  },
+  {
+    objeto: 'Modulo RestriccionEmpresa',
+    menu: (
+      <MenuItem key="restricionempresa" icon={<FiShield />}>
+        Restricción a empresa
+        <Link to="/restriccionempresa" />
       </MenuItem>
     ),
   },

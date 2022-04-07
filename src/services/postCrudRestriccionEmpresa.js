@@ -1,32 +1,25 @@
-const API = `${process.env.REACT_APP_API_URL}usuarioperfil`
+const API = `${process.env.REACT_APP_API_URL}restriccionempresa`
 
-export function postPerfilUsuario(
-  idUsuarioPerfil,
-  idUsuario,
-  perfiles,
+export function postCrudRestriccionEmpresa(
+  idRestriccionEmpresa,
+  empresa_codigo,
+  empresa_nombre,
   opcion,
-  idPerfil,
-  estado,
   id_usuario,
 ) {
   let ApiFinal = API
   let ApiWhere = ''
 
   var datos = {
-    id_usuarioperfil: idUsuarioPerfil,
-    idUsuario: idUsuario,
-    id_perfil: idPerfil,
-    perfiles: perfiles,
+    id_restriccionempresa: idRestriccionEmpresa,
     opcion: opcion,
-    activo: estado,
     id_usuario: id_usuario,
+    empresa_codigo: empresa_codigo,
+    empresa_nombre: empresa_nombre,
   }
 
-  if (perfiles !== '') {
-    ApiWhere += '/' + perfiles
-  }
-  if (idUsuarioPerfil !== '' && opcion !== '') {
-    ApiWhere += '/' + idUsuarioPerfil + '/' + opcion
+  if (idRestriccionEmpresa !== '' && opcion !== '') {
+    ApiWhere += '/' + idRestriccionEmpresa + '/' + opcion
   }
   ApiFinal += ApiWhere
 

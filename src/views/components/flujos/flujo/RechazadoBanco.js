@@ -125,8 +125,8 @@ const RechazadosBanco = (prop) => {
       width: '15%',
     },
     {
-      name: 'Fecha Documento',
-      selector: (row) => row.doc_date,
+      name: 'Fecha Sistema',
+      selector: (row) => row.creation_date,
       center: true,
       width: '13%',
     },
@@ -185,8 +185,8 @@ const RechazadosBanco = (prop) => {
       width: '15%',
     },
     {
-      name: 'Fecha Documento',
-      selector: (row) => row.doc_date,
+      name: 'Fecha Sis.',
+      selector: (row) => row.creation_date,
       center: true,
       width: '13%',
     },
