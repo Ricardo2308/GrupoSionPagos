@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
-import { Alert, Modal } from 'react-bootstrap'
+import { Alert, Modal, Button } from 'react-bootstrap'
 import { useIdleTimer } from 'react-idle-timer'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postUsuarioGrupo } from '../../../../services/postUsuarioGrupo'
@@ -8,7 +8,7 @@ import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
 import { FiUser, FiAtSign } from 'react-icons/fi'
 import { FaUsers } from 'react-icons/fa'
-import { FaNetworkWired } from 'react-icons/fa'
+import { FaNetworkWired, FaArrowLeft } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import {
   CButton,
@@ -133,6 +133,12 @@ const AgregarGrupo = (props) => {
                 </CButton>
               </Modal.Footer>
             </Modal>
+            <div className="float-left" style={{ marginBottom: '10px' }}>
+              <Button variant="primary" size="sm" onClick={() => history.goBack()}>
+                <FaArrowLeft />
+                &nbsp;&nbsp;Regresar
+              </Button>
+            </div>
             <Alert show={show} variant={color} onClose={() => setShow(false)} dismissible>
               <Alert.Heading>{titulo}</Alert.Heading>
               <p>{mensaje}</p>

@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
-import { Alert, Modal } from 'react-bootstrap'
+import { Alert, Modal, Button } from 'react-bootstrap'
 import { useIdleTimer } from 'react-idle-timer'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postFlujos } from '../../../../services/postFlujos'
 import { postFlujoDetalle } from '../../../../services/postFlujoDetalle'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
+import { getSugerenciaAsignacionFlujo } from '../../../../services/getSugerenciaAsignacionFlujo'
 import '../../../../scss/estilos.scss'
 import { FiCreditCard } from 'react-icons/fi'
-import { FaUsers } from 'react-icons/fa'
+import { FaUsers, FaArrowLeft } from 'react-icons/fa'
 import {
   CButton,
   CCard,
@@ -20,6 +21,7 @@ import {
   CInputGroup,
   CInputGroupText,
   CFormSelect,
+  CFormCheck,
 } from '@coreui/react'
 
 const FlujoGrupo = (props) => {
@@ -31,10 +33,15 @@ const FlujoGrupo = (props) => {
   const [showM, setShowM] = useState(false)
   const [results, setList] = useState([])
   const [mensaje, setMensaje] = useState('')
+  const [sugerencias, setSugerencias] = useState([])
+  const [showRadio, setShowRadio] = useState(false)
+  const [haySugerencias, setHaySugerencias] = useState(false)
+  const [inputSeleccion, setInputSeleccion] = useState('')
 
   const [form, setValues] = useState({
     grupo_autorizacion: '',
     estado: '',
+    grupo_autorizacion_radio: '',
   })
 
   useEffect(() => {
@@ -44,10 +51,31 @@ const FlujoGrupo = (props) => {
         setList(items.grupos)
       }
     })
+    getSugerenciaAsignacionFlujo(location.id_flujo).then((items) => {
+      if (mounted) {
+        setSugerencias(items.sugerencias)
+        if (items.sugerencias.length > 0) {
+          setShowRadio(true)
+          setHaySugerencias(true)
+        }
+      }
+    })
     return () => (mounted = false)
   }, [])
 
   const handleInput = (event) => {
+    if (event.target.name == 'grupo_autorizacion') {
+      if (event.target.value == 0 && haySugerencias) {
+        setShowRadio(true)
+        setInputSeleccion('grupo_autorizacion_radio')
+      } else {
+        setShowRadio(false)
+        setInputSeleccion('grupo_autorizacion')
+      }
+    }
+    if (event.target.name == 'grupo_autorizacion_radio') {
+      setInputSeleccion('grupo_autorizacion_radio')
+    }
     setValues({
       ...form,
       [event.target.name]: event.target.value,
@@ -55,12 +83,18 @@ const FlujoGrupo = (props) => {
   }
 
   const handleSubmit = async (event) => {
-    if (form.grupo_autorizacion !== '') {
+    if (form.grupo_autorizacion !== '' || form.grupo_autorizacion_radio !== '') {
       event.preventDefault()
+      let id_grupo_autorizacion = ''
+      if (inputSeleccion == 'grupo_autorizacion') {
+        id_grupo_autorizacion = form.grupo_autorizacion
+      } else {
+        id_grupo_autorizacion = form.grupo_autorizacion_radio
+      }
       const respuesta = await postFlujos(
         location.id_flujo,
         '',
-        form.grupo_autorizacion,
+        id_grupo_autorizacion,
         '',
         null,
         session.id,
@@ -78,6 +112,7 @@ const FlujoGrupo = (props) => {
         }
       }
     } else {
+      event.preventDefault()
       setShow(true)
     }
   }
@@ -121,6 +156,14 @@ const FlujoGrupo = (props) => {
                 </CButton>
               </Modal.Footer>
             </Modal>
+            <div className="float-left" style={{ marginBottom: '10px' }}>
+              <Button variant="primary" size="sm" onClick={() => history.goBack()}>
+                <FaArrowLeft />
+                &nbsp;&nbsp;Regresar
+              </Button>
+            </div>
+            <br />
+            <br />
             <CCard style={{ display: 'flex', alignItems: 'center' }}>
               <CCardBody style={{ width: '80%' }}>
                 <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
@@ -143,7 +186,7 @@ const FlujoGrupo = (props) => {
                       <FaUsers />
                     </CInputGroupText>
                     <CFormSelect name="grupo_autorizacion" onChange={handleInput}>
-                      <option>Seleccione un grupo de autorización. (Obligatorio)</option>
+                      <option value="0">Seleccione un grupo de autorización. (Obligatorio)</option>
                       {results.map((item, i) => {
                         if (item.eliminado == 0 && item.activo == 1) {
                           return (
@@ -154,6 +197,29 @@ const FlujoGrupo = (props) => {
                         }
                       })}
                     </CFormSelect>
+                  </CInputGroup>
+                  <CInputGroup className={!showRadio ? 'd-none mb-3' : 'mb-3'}>
+                    <div>
+                      Sugerencias de grupos para pago
+                      <br />
+                      <br />
+                    </div>
+                    {sugerencias.map((item, i) => {
+                      return (
+                        <>
+                          <CInputGroup key={i}>
+                            <CFormCheck
+                              key={item.id_grupoautorizacion}
+                              value={item.id_grupoautorizacion}
+                              type="radio"
+                              name="grupo_autorizacion_radio"
+                              label={item.identificador}
+                              onChange={handleInput}
+                            />
+                          </CInputGroup>
+                        </>
+                      )
+                    })}
                   </CInputGroup>
                   <CButton color="primary" type="submit" block>
                     Guardar Cambios

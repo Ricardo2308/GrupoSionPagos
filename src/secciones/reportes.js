@@ -26,7 +26,7 @@ const reportes = (
       Compensados
       <Link to="/reportecompensados" />
     </MenuItem>
-    <MenuItem key="Reportes5" icon={<HiOutlineDocumentReport />}>
+    <MenuItem key="Reportes6" icon={<HiOutlineDocumentReport />}>
       No Visados
       <Link to="/reportenovisados" />
     </MenuItem>

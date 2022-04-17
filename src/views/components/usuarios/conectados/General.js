@@ -1,39 +1,45 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
-import { getRestriccionEmpresa } from '../../../../services/getRestriccionEmpresa'
-import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
+import { useHistory } from 'react-router-dom'
+import { useIdleTimer } from 'react-idle-timer'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
-import { postCrudRestriccionEmpresa } from '../../../../services/postCrudRestriccionEmpresa'
+import { getSesionUsuarioGeneral } from '../../../../services/getSesionUsuario'
+import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { useSession } from 'react-use-session'
-import { FaUserEdit, FaTrash, FaUserCog, FaClipboardList } from 'react-icons/fa'
+import { FaList } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
-import { CButton } from '@coreui/react'
+import {
+  CButton,
+  CTable,
+  CTableBody,
+  CTableDataCell,
+  CTableHead,
+  CTableHeaderCell,
+  CTableRow,
+} from '@coreui/react'
 import DataTable, { defaultThemes } from 'react-data-table-component'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
 
-const RestriccionEmpresa = () => {
+const General = () => {
   const history = useHistory()
   const [time, setTime] = useState(null)
   const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
-  const [idRol, setIdRol] = useState(0)
-  const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
 
   useEffect(() => {
     let mounted = true
-    let objeto = 'Modulo RestriccionEmpresa'
+    let objeto = 'Modulo Conectados'
     let idUsuario = 0
     if (session) {
       idUsuario = session.id
     }
-    getRestriccionEmpresa(null, null).then((items) => {
+    getSesionUsuarioGeneral().then((items) => {
       if (mounted) {
-        setList(items.restriccion_empresa)
+        setList(items.sesiones)
       }
     })
     getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
@@ -45,10 +51,10 @@ const RestriccionEmpresa = () => {
   }, [])
 
   function ExistePermiso(objeto) {
-    let result = 0
+    let result = false
     for (let item of permisos) {
       if (objeto === item.objeto) {
-        result = 1
+        result = true
       }
     }
     return result
@@ -69,27 +75,6 @@ const RestriccionEmpresa = () => {
       }
     }
   }
-
-  function mostrarModal(id_restriccionempresa, nombre, opcion) {
-    setIdRol(id_restriccionempresa)
-    setOpcion(opcion)
-    setShow(true)
-    setMensaje('Está seguro de eliminar la empresa ' + nombre + ' del listado de restricción?')
-  }
-
-  async function eliminarRol(id, opcion) {
-    if (opcion == 1) {
-      const respuesta = await postCrudRestriccionEmpresa(id, '', '', '2', session.id)
-      if (respuesta === 'OK') {
-        await getRestriccionEmpresa(null, null).then((items) => {
-          setList(items.restriccion_empresa)
-        })
-      }
-    } else if (opcion == 2) {
-      setShow(false)
-    }
-  }
-
   const customStyles = {
     headRow: {
       style: {
@@ -122,8 +107,8 @@ const RestriccionEmpresa = () => {
   }
   const columns = useMemo(() => [
     {
-      name: 'Empresa',
-      selector: (row) => row.empresa_nombre,
+      name: 'Usuario',
+      selector: (row) => row.NombreUsuario,
       center: true,
       style: {
         fontSize: '11px',
@@ -132,14 +117,8 @@ const RestriccionEmpresa = () => {
       wrap: true,
     },
     {
-      name: 'Estado',
-      cell: function OrderItems(row) {
-        let estado = 'Inactivo'
-        if (row.activo == 1) {
-          estado = 'Activo'
-        }
-        return estado
-      },
+      name: 'Última Inicio',
+      selector: (row) => row.FechaHoraInicio,
       center: true,
       sortable: true,
       style: {
@@ -150,24 +129,26 @@ const RestriccionEmpresa = () => {
     {
       name: 'Acciones',
       cell: function OrderItems(row) {
-        let estado = 'Inactivo'
-        if (row.activo == 1) {
-          estado = 'Activo'
-        }
         let deshabilitar = false
-        if (ExistePermiso('Modulo RestriccionEmpresa') == 0) {
+        if (!ExistePermiso('Modulo Conectados')) {
           deshabilitar = true
         }
         return (
           <div>
             <CButton
-              color="danger"
+              color="primary"
               size="sm"
-              title="Eliminar Rol"
+              title="Histórico Usuario"
               disabled={deshabilitar}
-              onClick={() => mostrarModal(row.id_restriccionempresa, row.empresa_nombre, 1)}
+              onClick={() =>
+                history.push({
+                  pathname: '/conectados/historico',
+                  IdUsuario: row.IdUsuario,
+                  NombreUsuario: row.NombreUsuario,
+                })
+              }
             >
-              <FaTrash />
+              <FaList />
             </CButton>
           </div>
         )
@@ -186,42 +167,29 @@ const RestriccionEmpresa = () => {
 
   if (session) {
     let deshabilitar = false
-    if (ExistePermiso('Modulo RestriccionEmpresa') == 0) {
+    if (!ExistePermiso('Modulo Conectados')) {
       deshabilitar = true
     }
     return (
       <>
-        <Modal responsive variant="primary" show={show} onHide={() => Cancelar(opcion)} centered>
+        <Modal responsive variant="primary" show={show} onHide={() => Cancelar(2)} centered>
           <Modal.Header closeButton>
             <Modal.Title>Confirmación</Modal.Title>
           </Modal.Header>
           <Modal.Body>{mensaje}</Modal.Body>
           <Modal.Footer>
-            <CButton color="secondary" onClick={() => Cancelar(opcion)}>
+            <CButton color="secondary" onClick={() => Cancelar(2)}>
               Cancelar
             </CButton>
-            <CButton
-              color="primary"
-              onClick={() => eliminarRol(idRol, opcion).then(() => Cancelar(1))}
-            >
+            <CButton color="primary" onClick={() => Cancelar(1)}>
               Aceptar
             </CButton>
           </Modal.Footer>
         </Modal>
-        <div className="float-right" style={{ marginBottom: '10px' }}>
-          <CButton
-            color="primary"
-            size="sm"
-            disabled={deshabilitar}
-            onClick={() => history.push('/restriccionempresa/nuevo')}
-          >
-            Agregar Nueva
-          </CButton>
-        </div>
         <DataTableExtensions {...tableData}>
           <DataTable
             columns={columns}
-            noDataComponent="No hay usuarios que mostrar"
+            noDataComponent="No hay registros que mostrar"
             data={results}
             customStyles={customStyles}
             pagination
@@ -240,4 +208,4 @@ const RestriccionEmpresa = () => {
   }
 }
 
-export default RestriccionEmpresa
+export default General

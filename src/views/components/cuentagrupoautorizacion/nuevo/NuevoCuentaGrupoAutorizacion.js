@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
 import { Alert, Modal, Button } from 'react-bootstrap'
 import { useIdleTimer } from 'react-idle-timer'
 import { useHistory } from 'react-router-dom'
-import { FiUserPlus, FiLayout } from 'react-icons/fi'
-import { postCrudRoles } from '../../../../services/postCrudRoles'
+import { FiLayers, FiLayout } from 'react-icons/fi'
+import { postCrudCuentaGrupoAutorizacion } from '../../../../services/postCrudCuentaGrupoAutorizacion'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
+import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
 import '../../../../scss/estilos.scss'
 import {
   CButton,
@@ -24,6 +25,7 @@ const NuevoRol = () => {
   const history = useHistory()
   const [time, setTime] = useState(null)
   const { session, clear } = useSession('PendrogonIT-Session')
+  const [results, setList] = useState([])
   const [show, setShow] = useState(false)
   const [showM, setShowM] = useState(false)
   const [mensaje, setMensaje] = useState('')
@@ -31,9 +33,19 @@ const NuevoRol = () => {
   const [titulo, setTitulo] = useState('Error!')
 
   const [form, setValues] = useState({
-    descripcion: '',
-    objeto: '',
+    id_grupoautorizacion: '',
+    CodigoCuenta: '',
   })
+
+  useEffect(() => {
+    let mounted = true
+    getGruposAutorizacion(null, null).then((items) => {
+      if (mounted) {
+        setList(items.grupos)
+      }
+    })
+    return () => (mounted = false)
+  }, [])
 
   const handleInput = (event) => {
     setValues({
@@ -45,9 +57,15 @@ const NuevoRol = () => {
   const handleSubmit = async (event) => {
     if (form.descripcion !== '') {
       event.preventDefault()
-      const respuesta = await postCrudRoles('', form.descripcion, form.objeto, '', '', session.id)
+      const respuesta = await postCrudCuentaGrupoAutorizacion(
+        '',
+        form.id_grupoautorizacion,
+        form.CodigoCuenta,
+        '',
+        session.id,
+      )
       if (respuesta === 'OK') {
-        history.push('/roles')
+        history.push('/cuentagrupoautorizacion')
       }
     } else {
       setShow(true)
@@ -106,53 +124,41 @@ const NuevoRol = () => {
           <CCard style={{ display: 'flex', alignItems: 'center' }}>
             <CCardBody style={{ width: '80%' }}>
               <CForm style={{ width: '100%' }}>
-                <h1>Creación de Rol</h1>
-                <p className="text-medium-emphasis">Cree un nuevo rol</p>
+                <h1>Nueva cuenta para grupo autorización</h1>
+                <p className="text-medium-emphasis">
+                  Agrega una nueva cuenta para grupo de autorización
+                </p>
                 <CInputGroup className="mb-3">
                   <CInputGroupText>
-                    <FiUserPlus />
+                    <FiLayers />
                   </CInputGroupText>
                   <textarea
-                    placeholder="Descripción"
+                    placeholder="Cuenta"
                     className="form-control"
-                    rows="2"
+                    rows="1"
                     onChange={handleInput}
-                    name="descripcion"
+                    name="CodigoCuenta"
                   ></textarea>
                 </CInputGroup>
                 <CInputGroup className="mb-3">
                   <CInputGroupText>
                     <FiLayout />
                   </CInputGroupText>
-                  <CFormSelect placeholder="Objeto" name="objeto" onChange={handleInput}>
-                    <option value="Modulo Perfiles">Modulo Perfiles</option>
-                    <option value="Modulo Roles">Modulo Roles</option>
-                    <option value="Modulo Permisos">Modulo Permisos</option>
-                    <option value="Modulo Politicas">Modulo Politicas</option>
-                    <option value="Modulo Condiciones">Modulo Condiciones</option>
-                    <option value="Modulo Grupos Autorizacion">Modulo Grupos Autorizacion</option>
-                    <option value="Modulo Estados Pago">Modulo Estados Pago</option>
-                    <option value="Modulo Tipos Flujo">Modulo Tipos Flujo</option>
-                    <option value="Modulo Archivos Pago">Modulo Archivos Pago</option>
-                    <option value="Modulo Bancos">Modulo Bancos</option>
-                    <option value="Modulo Monedas">Modulo Monedas</option>
-                    <option value="Modulo Cuentas">Modulo Cuentas</option>
-                    <option value="Modulo Autorizacion Pagos">Modulo Autorizacion Pagos</option>
-                    <option value="Modulo Compensacion Pagos">Modulo Compensacion Pagos</option>
-                    <option value="Modulo Autorizacion">Modulo Autorizacion</option>
-                    <option value="Modulo Conectados">Modulo Conectados</option>
-                    <option value="Modulo Usuarios">Modulo Usuarios</option>
-                    <option value="Seccion Reportes">Seccion Reportes</option>
-                    <option value="Modulo RestriccionEmpresa">Modulo RestriccionEmpresa</option>
-                    <option value="Modulo CuentaGrupoAutorizacion">
-                      Modulo CuentaGrupoAutorizacion
-                    </option>
-                    <option value="Modulo DescargaArchivos">Modulo DescargaArchivos</option>
-                    <option value="Modulo NotificacionLote">Modulo NotificacionLote</option>
+                  <CFormSelect name="id_grupoautorizacion" onChange={handleInput}>
+                    <option>Seleccione un grupo...</option>
+                    {results.map((item, i) => {
+                      if (item.eliminado == 0 && item.activo == 1) {
+                        return (
+                          <option key={item.id_grupo} value={item.id_grupo}>
+                            {item.identificador}
+                          </option>
+                        )
+                      }
+                    })}
                   </CFormSelect>
                 </CInputGroup>
                 <CButton color="primary" onClick={handleSubmit}>
-                  Crear Rol
+                  Agregar cuenta
                 </CButton>
               </CForm>
             </CCardBody>

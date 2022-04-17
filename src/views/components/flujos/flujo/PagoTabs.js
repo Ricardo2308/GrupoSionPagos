@@ -50,6 +50,7 @@ const PagoTabs = () => {
   const [bitacora, setListBitacora] = useState([])
   const [MostrarPausado, setMostrarPausado] = useState(true)
   const [MostrarRevision, setMostrarRevision] = useState(false)
+  const [MostrarAutorizar, setMostrarAutorizar] = useState(false)
   const [MostrarActualizar, setMostrarActualizar] = useState(false)
   const [llaveBitacora, setllaveBitacora] = useState(0)
   const [ocultarBotones, setOcultarBotones] = useState(false)
@@ -108,6 +109,12 @@ const PagoTabs = () => {
           }
           if ('Visualizar_completo' == item.descripcion) {
             setOcultarBotones(true)
+          }
+          if ('Visualizar_completo' == item.descripcion) {
+            setOcultarBotones(true)
+          }
+          if ('Autorizar' == item.descripcion) {
+            setMostrarAutorizar(true)
           }
         }
       }
@@ -246,12 +253,14 @@ const PagoTabs = () => {
       )
       if (respuestaPausado == 'OK' && detalleFlujoActualizado == 'OK') {
         setMostrarActualizar(true)
+        setMostrarAutorizar(false)
         setllaveBitacora(llaveBitacora + 1)
       } else {
         setMostrarPausado(true)
       }
     } else if (opcion == 44) {
       setMostrarPausado(false)
+      setMostrarAutorizar(false)
       const respuestaPausado = await postFlujos(id_flujo, '0', '', '44', null, idUsuario)
       const detalleFlujoActualizado = await postFlujoDetalle(
         id_flujo,
@@ -344,7 +353,7 @@ const PagoTabs = () => {
         location.estado == 10 ||
         location.estado == 11
       ) {
-        if (!yaAutorizo) {
+        if (!yaAutorizo && location.estado != 10 && location.PuedoAutorizar == '1') {
           MostrarAprobarRechazar = true
         }
         return (
@@ -368,7 +377,7 @@ const PagoTabs = () => {
             </Modal>
             <div className={ocultarBotones ? 'd-none float-right' : 'float-right'}>
               <div
-                className={MostrarRevision && !yaAutorizo ? 'd-none float-right' : 'float-right'}
+                className={!MostrarAutorizar && !yaAutorizo ? 'd-none float-right' : 'float-right'}
                 style={{ marginTop: '15px', marginRight: '15px' }}
               >
                 <CButton

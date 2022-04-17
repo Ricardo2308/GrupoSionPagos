@@ -1,6 +1,14 @@
 import React from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { FiBook, FiSettings, FiUserCheck, FiUsers, FiShield } from 'react-icons/fi'
+import {
+  FiBook,
+  FiSettings,
+  FiUserCheck,
+  FiUsers,
+  FiShield,
+  FiLayers,
+  FiSend,
+} from 'react-icons/fi'
 import { BiUserCircle } from 'react-icons/bi'
 import { MenuItem, SubMenu } from 'react-pro-sidebar'
 
@@ -65,6 +73,24 @@ const administracion = [
       <MenuItem key="restricionempresa" icon={<FiShield />}>
         Restricción a empresa
         <Link to="/restriccionempresa" />
+      </MenuItem>
+    ),
+  },
+  {
+    objeto: 'Modulo CuentaGrupoAutorizacion',
+    menu: (
+      <MenuItem key="cuentagrupoautorizacion" icon={<FiLayers />}>
+        Grupo autorización por cuenta
+        <Link to="/cuentagrupoautorizacion" />
+      </MenuItem>
+    ),
+  },
+  {
+    objeto: 'Modulo NotificacionLote',
+    menu: (
+      <MenuItem key="notificacionloteusuario" icon={<FiSend />}>
+        Notificación de lotes a usuarios
+        <Link to="/notificacionloteusuario" />
       </MenuItem>
     ),
   },

@@ -11,7 +11,7 @@ const ConsultaPU = React.lazy(() => import('./views/components/usuarios/perfil/C
 const EditarPerfilUsuario = React.lazy(() =>
   import('./views/components/usuarios/perfil/EditarPerfilUsuario'),
 )
-const Conectados = React.lazy(() => import('./views/components/usuarios/conectados/Conectados'))
+const Conectados = React.lazy(() => import('./views/components/usuarios/conectados/TabSesiones'))
 const Historico = React.lazy(() => import('./views/components/usuarios/conectados/Historico'))
 const ConsultaUG = React.lazy(() => import('./views/components/usuarios/usuariogrupo/ConsultaUG'))
 const AgregarGrupo = React.lazy(() =>
@@ -39,6 +39,21 @@ const NuevoRestriccionEmpresa = React.lazy(() =>
 const RestriccionEmpresa = React.lazy(() =>
   import('./views/components/restriccionempresa/listado/RestriccionEmpresa'),
 )
+const CuentaGrupoAutorizacion = React.lazy(() =>
+  import('./views/components/cuentagrupoautorizacion/listado/CuentaGrupoAutorizacion'),
+)
+const NuevoCuentaGrupoAutorizacion = React.lazy(() =>
+  import('./views/components/cuentagrupoautorizacion/nuevo/NuevoCuentaGrupoAutorizacion'),
+)
+const NotificacionLoteusuario = React.lazy(() =>
+  import('./views/components/notificacionloteusuario/listado/NotificacionLoteUsuario'),
+)
+const NuevoNotificacionLoteusuario = React.lazy(() =>
+  import('./views/components/notificacionloteusuario/nuevo/NuevoNotificacionLoteUsuario'),
+)
+/* const NuevoCuentaGrupoAutorizacion = React.lazy(() =>
+  import('./views/components/cuentagrupoautorizacion/nuevo/NuevoCuentaGrupoAutorizacion'),
+) */
 const RolPermiso = React.lazy(() => import('./views/components/roles/rolpermiso/RolPermiso'))
 const ConsultaRP = React.lazy(() => import('./views/components/roles/rolpermiso/ConsultaRP'))
 const EditarRolPermiso = React.lazy(() =>
@@ -194,15 +209,38 @@ const routes = [
   {
     path: '/restriccionempresa',
     exact: true,
-    name: 'Restriccioón Empresa',
+    name: 'Restricción Empresa',
     component: RestriccionEmpresa,
+  },
+  {
+    path: '/cuentagrupoautorizacion/nuevo',
+    name: 'Nueva cuenta para grupo de autorización',
+    component: NuevoCuentaGrupoAutorizacion,
+  },
+  {
+    path: '/cuentagrupoautorizacion',
+    exact: true,
+    name: 'Grupo autorización por cuenta',
+    component: CuentaGrupoAutorizacion,
+  },
+  {
+    path: '/notificacionloteusuario/nuevo',
+    exact: true,
+    name: 'Nueva notificación de lotes a usuario',
+    component: NuevoNotificacionLoteusuario,
+  },
+  {
+    path: '/notificacionloteusuario',
+    exact: true,
+    name: 'Notificación de lotes a usuario',
+    component: NotificacionLoteusuario,
   },
   { path: '/permisos', name: 'Permisos', component: Permisos, exact: true },
   { path: '/permisos/nuevo', name: 'Nuevo', component: NuevoPermiso },
   { path: '/permisos/editar', name: 'Modificación', component: EditarPermiso },
-  { path: '/politicas', exact: true, name: 'Roles', component: Politicas },
-  { path: '/politicas/politicas', name: 'Politicas', component: Politicas },
-  { path: '/politicas/nueva', name: 'Nueva Politica', component: NuevaPolitica },
+  { path: '/politicas', exact: true, name: 'Políticas', component: Politicas },
+  { path: '/politicas/politicas', name: 'Políticas', component: Politicas },
+  { path: '/politicas/nueva', name: 'Nueva Política', component: NuevaPolitica },
   { path: '/politicas/editar', name: 'Modificación', component: EditarPolitica },
   {
     path: '/condiciones',

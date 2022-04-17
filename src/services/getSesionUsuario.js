@@ -13,3 +13,12 @@ export function getSesionUsuario(IdUsuario) {
     })
     .catch((error) => error)
 }
+
+export function getSesionUsuarioGeneral() {
+  let ApiFinal = `${process.env.REACT_APP_API_URL}sesionusuariogeneral`
+  return fetch(ApiFinal)
+    .then(function (response) {
+      return response.json()
+    })
+    .catch((error) => error)
+}

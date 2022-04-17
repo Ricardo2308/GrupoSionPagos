@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Modal } from 'react-bootstrap'
-import { getRestriccionEmpresa } from '../../../../services/getRestriccionEmpresa'
+import { getCuentaGrupoAutorizacion } from '../../../../services/getCuentaGrupoAutorizacion'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
-import { postCrudRestriccionEmpresa } from '../../../../services/postCrudRestriccionEmpresa'
+import { postCrudCuentaGrupoAutorizacion } from '../../../../services/postCrudCuentaGrupoAutorizacion'
 import { useSession } from 'react-use-session'
 import { FaUserEdit, FaTrash, FaUserCog, FaClipboardList } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
@@ -13,27 +13,27 @@ import DataTable, { defaultThemes } from 'react-data-table-component'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
 
-const RestriccionEmpresa = () => {
+const CuentaGrupoAutorizacion = () => {
   const history = useHistory()
   const [time, setTime] = useState(null)
   const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [permisos, setPermisos] = useState([])
   const [show, setShow] = useState(false)
-  const [idRol, setIdRol] = useState(0)
+  const [idCuentaGrupo, setidCuentaGrupo] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
 
   useEffect(() => {
     let mounted = true
-    let objeto = 'Modulo RestriccionEmpresa'
+    let objeto = 'Modulo CuentaGrupoAutorizacion'
     let idUsuario = 0
     if (session) {
       idUsuario = session.id
     }
-    getRestriccionEmpresa(null, null).then((items) => {
+    getCuentaGrupoAutorizacion(null, null).then((items) => {
       if (mounted) {
-        setList(items.restriccion_empresa)
+        setList(items.cuenta_grupo_autorizacion)
       }
     })
     getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
@@ -70,19 +70,19 @@ const RestriccionEmpresa = () => {
     }
   }
 
-  function mostrarModal(id_restriccionempresa, nombre, opcion) {
-    setIdRol(id_restriccionempresa)
+  function mostrarModal(id_cuentagrupo, opcion) {
+    setidCuentaGrupo(id_cuentagrupo)
     setOpcion(opcion)
     setShow(true)
-    setMensaje('Está seguro de eliminar la empresa ' + nombre + ' del listado de restricción?')
+    setMensaje('Está seguro de eliminar la(s) cuenta(s) listado?')
   }
 
   async function eliminarRol(id, opcion) {
     if (opcion == 1) {
-      const respuesta = await postCrudRestriccionEmpresa(id, '', '', '2', session.id)
+      const respuesta = await postCrudCuentaGrupoAutorizacion(id, '', '', '2', session.id)
       if (respuesta === 'OK') {
-        await getRestriccionEmpresa(null, null).then((items) => {
-          setList(items.restriccion_empresa)
+        await getCuentaGrupoAutorizacion(null, null).then((items) => {
+          setList(items.cuenta_grupo_autorizacion)
         })
       }
     } else if (opcion == 2) {
@@ -122,8 +122,8 @@ const RestriccionEmpresa = () => {
   }
   const columns = useMemo(() => [
     {
-      name: 'Empresa',
-      selector: (row) => row.empresa_nombre,
+      name: 'Cuenta(s)',
+      selector: (row) => row.CodigoCuenta,
       center: true,
       style: {
         fontSize: '11px',
@@ -132,19 +132,13 @@ const RestriccionEmpresa = () => {
       wrap: true,
     },
     {
-      name: 'Estado',
-      cell: function OrderItems(row) {
-        let estado = 'Inactivo'
-        if (row.activo == 1) {
-          estado = 'Activo'
-        }
-        return estado
-      },
+      name: 'Grupo autorización',
+      selector: (row) => row.identificador,
       center: true,
-      sortable: true,
       style: {
         fontSize: '11px',
       },
+      sortable: true,
       wrap: true,
     },
     {
@@ -155,7 +149,7 @@ const RestriccionEmpresa = () => {
           estado = 'Activo'
         }
         let deshabilitar = false
-        if (ExistePermiso('Modulo RestriccionEmpresa') == 0) {
+        if (ExistePermiso('Modulo CuentaGrupoAutorizacion') == 0) {
           deshabilitar = true
         }
         return (
@@ -163,9 +157,9 @@ const RestriccionEmpresa = () => {
             <CButton
               color="danger"
               size="sm"
-              title="Eliminar Rol"
+              title="Eliminar cuenta"
               disabled={deshabilitar}
-              onClick={() => mostrarModal(row.id_restriccionempresa, row.empresa_nombre, 1)}
+              onClick={() => mostrarModal(row.id_cuentagrupo, 1)}
             >
               <FaTrash />
             </CButton>
@@ -186,7 +180,7 @@ const RestriccionEmpresa = () => {
 
   if (session) {
     let deshabilitar = false
-    if (ExistePermiso('Modulo RestriccionEmpresa') == 0) {
+    if (ExistePermiso('Modulo CuentaGrupoAutorizacion') == 0) {
       deshabilitar = true
     }
     return (
@@ -202,7 +196,7 @@ const RestriccionEmpresa = () => {
             </CButton>
             <CButton
               color="primary"
-              onClick={() => eliminarRol(idRol, opcion).then(() => Cancelar(1))}
+              onClick={() => eliminarRol(idCuentaGrupo, opcion).then(() => Cancelar(1))}
             >
               Aceptar
             </CButton>
@@ -213,7 +207,7 @@ const RestriccionEmpresa = () => {
             color="primary"
             size="sm"
             disabled={deshabilitar}
-            onClick={() => history.push('/restriccionempresa/nuevo')}
+            onClick={() => history.push('/cuentagrupoautorizacion/nuevo')}
           >
             Agregar Nueva
           </CButton>
@@ -240,4 +234,4 @@ const RestriccionEmpresa = () => {
   }
 }
 
-export default RestriccionEmpresa
+export default CuentaGrupoAutorizacion

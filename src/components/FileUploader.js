@@ -31,9 +31,9 @@ const FileUploader = (prop) => {
     let position = 5
     doc.addImage(imagen, 'PNG', 0, position, imgWidth, imgHeight)
     heightLeft -= pageHeight
-
     while (heightLeft >= 0) {
-      position += heightLeft - imgHeight
+      //let diferenciaPosicion = heightLeft - imgHeight
+      position -= 297
       doc.addPage()
       doc.addImage(imagen, 'PNG', 0, position, imgWidth, imgHeight)
       heightLeft -= pageHeight

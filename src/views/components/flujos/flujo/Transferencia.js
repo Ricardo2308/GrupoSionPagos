@@ -63,7 +63,7 @@ const Transferencia = () => {
                 <Rechazados tipo={'TRANSFERENCIA'} />
               </Tab>
               <Tab eventKey="cancelados" title="Cancelados">
-                <Cancelados tipo={'INTERNA'} />
+                <Cancelados tipo={'TRANSFERENCIA'} />
               </Tab>
             </Tabs>
           </div>

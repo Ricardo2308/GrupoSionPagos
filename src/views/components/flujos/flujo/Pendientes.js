@@ -11,14 +11,19 @@ import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { getCargaDatos } from '../../../../services/getCargaDatos'
+import { postFlujos } from '../../../../services/postFlujos'
+import { postFlujoDetalle } from '../../../../services/postFlujoDetalle'
+import { postNotificacion } from '../../../../services/postNotificacion'
 
 const Pendientes = (prop) => {
   const history = useHistory()
   const { session } = useSession('PendrogonIT-Session')
   const [data, setListdata] = useState([])
   const [permisos, setPermisos] = useState([])
-  const [ocultarBotones, setOcultarBotones] = useState(true)
+  const [ocultarBotonCargar, setocultarBotonCargar] = useState(true)
   const [showCargarNuevos, setShowCargarNuevos] = useState(false)
+  const [showModalAutorizar, setShowModalAutorizar] = useState(false)
+  const [showAutorizar, setShowAutorizar] = useState(false)
   const [actualizarTabla, setActualizarTabla] = useState(0)
 
   useEffect(() => {
@@ -38,7 +43,7 @@ const Pendientes = (prop) => {
         setPermisos(items.detalle)
         for (let item of items.detalle) {
           if ('Recargar' == item.descripcion) {
-            setOcultarBotones(false)
+            setocultarBotonCargar(false)
           }
         }
       }
@@ -87,6 +92,18 @@ const Pendientes = (prop) => {
     },
   }
 
+  function estaChequeado(item) {
+    return sessionStorage.getItem(item) === 'true'
+  }
+
+  const handleInput = (event) => {
+    if (event.target.checked) {
+      sessionStorage.setItem(event.target.value, 'true')
+    } else {
+      sessionStorage.setItem(event.target.value, 'false')
+    }
+  }
+
   const formatear = (valor, moneda) => {
     if (moneda === 'QTZ') {
       return formatter.format(valor)
@@ -105,6 +122,29 @@ const Pendientes = (prop) => {
   })
 
   const columns = useMemo(() => [
+    {
+      name: ' ',
+      cell: function OrderItems(row) {
+        if (row.PuedoAutorizar == 1) {
+          setShowAutorizar(true)
+          return (
+            <div>
+              <input
+                type="checkbox"
+                name="autorizarPago"
+                key={row.id_flujo}
+                value={row.id_flujo + '|' + row.estado + '|' + row.nivel}
+                style={{ width: '18px', height: '18px' }}
+                onChange={handleInput}
+                defaultChecked={estaChequeado(row.id_flujo + '|' + row.estado + '|' + row.nivel)}
+              />
+            </div>
+          )
+        }
+      },
+      center: true,
+      width: '35px',
+    },
     {
       name: 'Empresa',
       selector: (row) => row.empresa_nombre,
@@ -188,6 +228,7 @@ const Pendientes = (prop) => {
                     estado: row.estado,
                     nivel: row.nivel,
                     id_grupo: row.id_grupoautorizacion,
+                    PuedoAutorizar: row.PuedoAutorizar,
                     pagina: 'transferencia',
                   })
                 }
@@ -231,6 +272,7 @@ const Pendientes = (prop) => {
                       estado: row.estado,
                       nivel: row.nivel,
                       id_grupo: row.id_grupoautorizacion,
+                      PuedoAutorizar: row.PuedoAutorizar,
                       pagina: 'transferencia',
                     })
                   }
@@ -288,6 +330,7 @@ const Pendientes = (prop) => {
                       estado: row.estado,
                       nivel: row.nivel,
                       id_grupo: row.id_grupoautorizacion,
+                      PuedoAutorizar: row.PuedoAutorizar,
                       pagina: 'transferencia',
                     })
                   }
@@ -330,6 +373,7 @@ const Pendientes = (prop) => {
                       estado: row.estado,
                       nivel: row.nivel,
                       id_grupo: row.id_grupoautorizacion,
+                      PuedoAutorizar: row.PuedoAutorizar,
                       pagina: 'transferencia',
                     })
                   }
@@ -357,6 +401,10 @@ const Pendientes = (prop) => {
     setShowCargarNuevos(true)
   }
 
+  function mostrarModalAutorizar() {
+    setShowModalAutorizar(true)
+  }
+
   function AccionModalCargarNuevos(opcion) {
     if (opcion == 1) {
       getCargaDatos().then(() => {
@@ -366,6 +414,50 @@ const Pendientes = (prop) => {
       setShowCargarNuevos(false)
     } else if (opcion == 2) {
       setShowCargarNuevos(false)
+    }
+  }
+
+  async function AccionModalAutorizar(opcion) {
+    if (opcion == 1) {
+      let pagos = []
+      var markedCheckbox = document.getElementsByName('autorizarPago')
+      for (var checkbox of markedCheckbox) {
+        if (checkbox.checked) {
+          let valorPago = checkbox.value
+          let partes = checkbox.value.split('|')
+          if (partes[1] == 3) {
+            await postFlujos(partes[0], '2', '', '', null, session.id)
+            await postFlujoDetalle(partes[0], '4', session.id, 'Aprobado', '1')
+            sessionStorage.removeItem(valorPago)
+          } else if (partes[1] == 4) {
+            const respuesta = await postFlujos(partes[0], partes[2], '', '', null, session.id)
+            if (respuesta == 'OK') {
+              await postFlujoDetalle(partes[0], '4', session.id, 'Aprobado', partes[2])
+              sessionStorage.removeItem(valorPago)
+            } else if (respuesta == 'Finalizado') {
+              const finalizado = await postFlujoDetalle(
+                partes[0],
+                '5',
+                session.id,
+                'Autorización completa',
+                partes[2],
+              )
+              if (finalizado == 'OK') {
+                pagos.push(partes[0])
+                sessionStorage.removeItem(valorPago)
+              }
+            }
+          }
+        }
+      }
+      if (pagos.length > 0) {
+        await postNotificacion(pagos, session.id, 'autorizado por completo.', '')
+      }
+      console.log(pagos)
+      setActualizarTabla(actualizarTabla + 1)
+      setShowModalAutorizar(false)
+    } else if (opcion == 2) {
+      setShowModalAutorizar(false)
     }
   }
   if (session) {
@@ -385,9 +477,37 @@ const Pendientes = (prop) => {
             </Button>
           </Modal.Footer>
         </Modal>
-        <div className={ocultarBotones ? 'd-none float-right' : 'float-right'}>
-          <CButton color="success" size="sm" onClick={() => mostrarModalCargarNuevos()}>
+        <Modal responsive variant="primary" show={showModalAutorizar} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmación</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>¿Está seguro de autorizar los pagos seleccionados?</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => AccionModalAutorizar(2)}>
+              Cancelar
+            </Button>
+            <Button variant="primary" onClick={() => AccionModalAutorizar(1)}>
+              Aceptar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <div>
+          <CButton
+            className={ocultarBotonCargar ? 'd-none float-right' : 'float-right'}
+            color="success"
+            size="sm"
+            onClick={() => mostrarModalCargarNuevos()}
+          >
             Cargar nuevos pagos
+          </CButton>
+          {'  '}
+          <CButton
+            className={!showAutorizar ? 'd-none float-right' : 'float-right'}
+            color="primary"
+            size="sm"
+            onClick={() => mostrarModalAutorizar()}
+          >
+            Autorizar pagos seleccionados
           </CButton>
           <br />
           <br />

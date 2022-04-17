@@ -8,6 +8,7 @@ import { getCantidadDias } from '../../../services/getCantidadDias'
 import { verificarConexion } from '../../../services/verificarConexion'
 import { postLogPassword } from '../../../services/postLogPassword'
 import { postSesionUsuario } from '../../../services/postSesionUsuario'
+import { getPerfilUsuario } from '../../../services/getPerfilUsuario'
 import { postLogLogin } from '../../../services/postLogLogin'
 import { postDescargarArchivoLote } from '../../../services/postDescargarArchivoLote'
 import { useSession } from 'react-use-session'
@@ -53,6 +54,7 @@ const DescargarArchivos = () => {
     usuario: '',
     password: '',
   })
+  const [mensajeExito, setMensajeExito] = useState(true)
 
   const showPassword = () => {
     setPasswordShown(passwordShown ? false : true)
@@ -75,75 +77,6 @@ const DescargarArchivos = () => {
     return result
   }
 
-  async function estoyConectado(id) {
-    let result = false
-    const respuesta = await verificarConexion(id)
-    if (respuesta == 'Conectado') {
-      result = true
-    }
-    return result
-  }
-
-  async function crearSesion(id, cantidad) {
-    const publicIp = require('public-ip')
-    let agente = window.navigator.userAgent
-    var navegadores = ['Chrome', 'Firefox', 'Safari', 'Opera', 'Trident', 'MSIE', 'Edge']
-    const myip = await publicIp.v4()
-    for (var i in navegadores) {
-      if (agente.indexOf(navegadores[i]) != -1) {
-        if (cantidad == '0') {
-          return true
-        } else {
-          const respuesta = await postSesionUsuario(id, navegadores[i], myip, '1')
-          if (respuesta === 'OK') {
-            return true
-          } else {
-            return false
-          }
-        }
-      }
-    }
-  }
-
-  function clone(obj) {
-    if (obj === null || typeof obj !== 'object') {
-      return obj
-    }
-    var temp = obj.constructor()
-    for (var key in obj) {
-      temp[key] = clone(obj[key])
-    }
-    return temp
-  }
-
-  async function revisarPolitica(idUsuario, cambiaPassword) {
-    let result = false
-    let politica = obtenerPolitica('_LIMITE_CAMBIO_PASSWORD_')
-    const respuesta = await getCantidadDias(idUsuario)
-    if (respuesta == 'Vacio') {
-      const logpassword = await postLogPassword(idUsuario)
-      if (logpassword == 'OK') {
-        result = true
-      }
-    } else {
-      if (cambiaPassword == 1) {
-        if (parseInt(respuesta) >= parseInt(politica)) {
-          setMostrar(true)
-          setTitulo('Aviso!')
-          setColor('info')
-          setMensaje(
-            `Ya pasaron ${respuesta} días desde la última vez que cambió su contraseña. Debe actualizarla.`,
-          )
-        } else if (parseInt(respuesta) < parseInt(politica)) {
-          result = true
-        }
-      } else if (cambiaPassword == 0) {
-        result = true
-      }
-    }
-    return result
-  }
-
   const handleSubmit = (event) => {
     event.preventDefault()
     getUsuarios(null, null, form.usuario, null).then((items) => {
@@ -153,8 +86,21 @@ const DescargarArchivos = () => {
             if (md5(form.password, { encoding: 'binary' }) === item.password) {
               if (item.activo == 1 && item.eliminado == 0) {
                 setmostrarItem(true)
-                postDescargarArchivoLote(idLote, 'PDF')
-                postDescargarArchivoLote(idLote, 'XLSX')
+                getPerfilUsuario(item.id, '4', 'Modulo DescargaArchivos').then((itemsPermisos) => {
+                  let puedeDescartar = false
+                  for (let itemPermisos of itemsPermisos.detalle) {
+                    if ('Descargar' == itemPermisos.descripcion) {
+                      puedeDescartar = true
+                    }
+                  }
+                  if (puedeDescartar) {
+                    postDescargarArchivoLote(idLote, 'PDF')
+                    postDescargarArchivoLote(idLote, 'XLSX')
+                    setMensajeExito(true)
+                  } else {
+                    setMensajeExito(false)
+                  }
+                })
               } else {
                 setShow(true)
                 setTitulo('Error!')
@@ -223,7 +169,9 @@ const DescargarArchivos = () => {
                       >
                         <br />
                         <br />
-                        Espere un momento, se está procesando la descarga.
+                        {mensajeExito
+                          ? 'Espere un momento, se está procesando la descarga.'
+                          : 'No tiene permisos para descargar los archivos'}
                       </div>
                       <CInputGroup className={mostrarItem ? 'd-none mb-3' : 'mb-3'}>
                         <CInputGroupText>
