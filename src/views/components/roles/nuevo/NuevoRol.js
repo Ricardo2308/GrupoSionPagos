@@ -149,6 +149,7 @@ const NuevoRol = () => {
                     </option>
                     <option value="Modulo DescargaArchivos">Modulo DescargaArchivos</option>
                     <option value="Modulo NotificacionLote">Modulo NotificacionLote</option>
+                    <option value="Modulo Bitacora">Modulo Bitacora</option>
                   </CFormSelect>
                 </CInputGroup>
                 <CButton color="primary" onClick={handleSubmit}>

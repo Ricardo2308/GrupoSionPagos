@@ -417,6 +417,120 @@ const Pendientes = (prop) => {
     }
   }
 
+  function Ordenamiento(columna, direccion, e) {
+    if (columna.name == 'Empresa' && direccion == 'asc') {
+      data.sort(function (a, b) {
+        if (a.empresa_nombre > b.empresa_nombre) {
+          return 1
+        }
+        if (a.empresa_nombre < b.empresa_nombre) {
+          return -1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'Empresa' && direccion == 'desc') {
+      data.sort(function (a, b) {
+        if (a.empresa_nombre > b.empresa_nombre) {
+          return -1
+        }
+        if (a.empresa_nombre < b.empresa_nombre) {
+          return 1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'No.' && direccion == 'asc') {
+      data.sort(function (a, b) {
+        if (a.doc_num > b.doc_num) {
+          return 1
+        }
+        if (a.doc_num < b.doc_num) {
+          return -1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'No.' && direccion == 'desc') {
+      data.sort(function (a, b) {
+        if (a.doc_num > b.doc_num) {
+          return -1
+        }
+        if (a.doc_num < b.doc_num) {
+          return 1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'Fecha Sis.' && direccion == 'asc') {
+      data.sort(function (a, b) {
+        if (a.creation_date > b.creation_date) {
+          return 1
+        }
+        if (a.creation_date < b.creation_date) {
+          return -1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'Fecha Sis.' && direccion == 'desc') {
+      data.sort(function (a, b) {
+        if (a.creation_date > b.creation_date) {
+          return -1
+        }
+        if (a.creation_date < b.creation_date) {
+          return 1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'Beneficiario' && direccion == 'asc') {
+      data.sort(function (a, b) {
+        if (a.en_favor_de > b.en_favor_de) {
+          return 1
+        }
+        if (a.en_favor_de < b.en_favor_de) {
+          return -1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'Beneficiario' && direccion == 'desc') {
+      data.sort(function (a, b) {
+        if (a.en_favor_de > b.en_favor_de) {
+          return -1
+        }
+        if (a.en_favor_de < b.en_favor_de) {
+          return 1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'Monto' && direccion == 'asc') {
+      data.sort(function (a, b) {
+        if (formatear(a.doc_total, a.doc_curr) > formatear(b.doc_total, b.doc_curr)) {
+          return 1
+        }
+        if (formatear(a.doc_total, a.doc_curr) < formatear(b.doc_total, b.doc_curr)) {
+          return -1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'Monto' && direccion == 'desc') {
+      data.sort(function (a, b) {
+        if (formatear(a.doc_total, a.doc_curr) > formatear(b.doc_total, b.doc_curr)) {
+          return -1
+        }
+        if (formatear(a.doc_total, a.doc_curr) < formatear(b.doc_total, b.doc_curr)) {
+          return 1
+        }
+        return 0
+      })
+    }
+    return true
+  }
+
   async function AccionModalAutorizar(opcion) {
     if (opcion == 1) {
       let pagos = []
@@ -523,6 +637,7 @@ const Pendientes = (prop) => {
             responsive={true}
             persistTableHead
             striped={true}
+            onSort={Ordenamiento}
             dense
           />
         </DataTableExtensions>

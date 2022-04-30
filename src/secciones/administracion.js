@@ -8,6 +8,7 @@ import {
   FiShield,
   FiLayers,
   FiSend,
+  FiFlag,
 } from 'react-icons/fi'
 import { BiUserCircle } from 'react-icons/bi'
 import { MenuItem, SubMenu } from 'react-pro-sidebar'
@@ -55,6 +56,15 @@ const administracion = [
       <MenuItem key="permisos" icon={<FiUserCheck />}>
         Permisos
         <Link to="/permisos" />
+      </MenuItem>
+    ),
+  },
+  {
+    objeto: 'Modulo Bitacora',
+    menu: (
+      <MenuItem key="bitacora" icon={<FiFlag />}>
+        Bitacora
+        <Link to="/bitacora" />
       </MenuItem>
     ),
   },

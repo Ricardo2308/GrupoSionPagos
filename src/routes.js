@@ -2,6 +2,8 @@ import React from 'react'
 
 // examples
 
+const Bitacora = React.lazy(() => import('./views/components/bitacora/Bitacora'))
+const DetalleBitacora = React.lazy(() => import('./views/components/bitacora/DetalleBitacora'))
 const Usuarios = React.lazy(() => import('./views/components/usuarios/usuarios/Usuarios'))
 const Register = React.lazy(() => import('./views/components/usuarios/register/Register'))
 const EditarUsuarios = React.lazy(() => import('./views/components/usuarios/editar/Editar'))
@@ -173,6 +175,8 @@ const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const routes = [
   { path: '/home', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
+  { path: '/bitacora', name: 'Bitacora', component: Bitacora },
+  { path: '/detallebitacora', name: 'Detalle bitacora', component: DetalleBitacora },
   { path: '/usuarios', name: 'Usuarios', component: Usuarios, exact: true },
   { path: '/usuarios/registro', name: 'Nuevo', component: Register },
   { path: '/usuarios/editar', name: 'Modificación', component: EditarUsuarios },
