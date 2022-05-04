@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { CButton } from '@coreui/react'
-import { Modal, Tab, Tabs, Button } from 'react-bootstrap'
-import { useIdleTimer } from 'react-idle-timer'
+import { Row, Col, Container, Modal, Tab, Tabs, Button } from 'react-bootstrap'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import FlujoSolicitud from './FlujoSolicitud'
 import FlujoOferta from './FlujoOferta'
@@ -24,16 +23,16 @@ import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { getFlujoFacturaCantidad } from '../../../../services/getFlujoFacturaCantidad'
 import { getFlujoFacturaDocumento } from '../../../../services/getFlujoFacturaDocumento'
 import { getBitacora } from '../../../../services/getBitacora'
+import { getDetalle } from '../../../../services/getDetalle'
 import { useSession } from 'react-use-session'
 import Chat from './Chat'
 import FlujoBitacora from './FlujoBitacora'
 import '../../../../scss/estilos.scss'
-import { FaArrowLeft } from 'react-icons/fa'
+import { FaArrowLeft, FaAngleLeft, FaAngleRight, FaDoorClosed } from 'react-icons/fa'
 
 const PagoTabs = () => {
   const history = useHistory()
   const location = useLocation()
-  const [time, setTime] = useState(null)
   const { session, clear } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
   const [mensaje, setMensaje] = useState('')
@@ -54,45 +53,135 @@ const PagoTabs = () => {
   const [MostrarActualizar, setMostrarActualizar] = useState(false)
   const [llaveBitacora, setllaveBitacora] = useState(0)
   const [ocultarBotones, setOcultarBotones] = useState(false)
+  const [pagoAnterior, setPagoAnterior] = useState({})
+  const [hayPagoAnterior, setHayPagoAnterior] = useState(false)
+  const [pagoPosterior, setPagoPosterior] = useState({})
+  const [hayPagoPosterior, setHayPagoPosterior] = useState(false)
+  const [locationPago, setLocationPago] = useState(location.pago)
+  const [locationEstado, setLocationEstado] = useState(location.estado)
+  const [locationIdFlujo, setLocationIdFlujo] = useState(location.id_flujo)
+  const [locationNivel, setLocationNivel] = useState(location.nivel)
+  const [locationIdGrupo, setLocationIdGrupo] = useState(location.id_grupo)
+  const [locationPuedoAutorizar, setLocationPuedoAutorizar] = useState(location.PuedoAutorizar)
+  const [actualizarDatos, setActualizarDatos] = useState(false)
+
+  //Estados validaciones pestañas
+  const [MostrarSolicitud, setMostrarSolicitud] = useState(false)
+  const [grupo, setGrupo] = useState(0)
+  const [MostrarOferta, setMostrarOferta] = useState(false)
+  const [MostrarOrden, setMostrarOrden] = useState(false)
+  const [MostrarIngreso, setMostrarIngreso] = useState(false)
+  const [MostrarFacturaCantidad, setMostrarFacturaCantidad] = useState(false)
+  const [MostrarFacturaDocumento, setMostrarFacturaDocumento] = useState(false)
+  const [MostrarAprobarRechazar, setMostrarAprobarRechazar] = useState(false)
+  const [yaAutorizo, setYaAutorizo] = useState(false)
+  const [keyArchivosFlujo, setKeyArchivosFlujo] = useState(0)
+  const [keyFlujoSolicitud, setKeyFlujoSolicitud] = useState(0)
+  const [keyFlujoOferta, setKeyFlujoOferta] = useState(0)
+  const [keyFlujoOrden, setKeyFlujoOrden] = useState(0)
+  const [keyFlujoIngreso, setKeyFlujoIngreso] = useState(0)
+  const [keyFlujoFacturaCantidad, setKeyFlujoFacturaCantidad] = useState(0)
+  const [keyFlujoFacturaDocumento, setKeyFlujoFacturaDocumento] = useState(0)
+  const [keyDetalleFlujo, setKeyDetalleFlujo] = useState(0)
+  const [desBotonSeleccionar, setDesBotonSeleccionar] = useState(false)
+  const [detalleFlujo, setDetlleFlujo] = useState([])
 
   useEffect(() => {
+    let listaPagos = JSON.parse(sessionStorage.getItem('listaPagos'))
+    let indexActual = listaPagos.findIndex((e) => e.pago == locationPago)
+    let largoPagos = listaPagos.length
+    let yaAutorizoInterno = ExisteEnBitacora(session.id)
+    setYaAutorizo(yaAutorizoInterno)
+
+    let yaEstaMarcado = sessionStorage.getItem(
+      locationIdFlujo + '|' + locationEstado + '|' + locationNivel,
+    )
+    if (yaEstaMarcado === 'true') {
+      setDesBotonSeleccionar(true)
+    }
+
+    if (!yaAutorizoInterno && locationEstado != 10 && locationPuedoAutorizar == '1') {
+      setMostrarAprobarRechazar(true)
+    }
+    if (locationIdGrupo) {
+      setGrupo(locationIdGrupo)
+    }
+    if (indexActual > 0) {
+      setPagoAnterior(listaPagos[indexActual - 1])
+      setHayPagoAnterior(true)
+    } else {
+      setHayPagoAnterior(false)
+    }
+    if (indexActual < largoPagos - 1) {
+      setPagoPosterior(listaPagos[indexActual + 1])
+      setHayPagoPosterior(true)
+    } else {
+      setHayPagoPosterior(false)
+    }
     let mounted = true
     let objeto = 'Modulo Autorizacion Pagos'
-    if (location.estado == 10) {
+    if (locationEstado == 10) {
       setMostrarPausado(false)
       setMostrarActualizar(true)
+    } else {
+      setMostrarPausado(true)
+      setMostrarActualizar(false)
     }
-    getFlujoSolicitud(location.id_flujo, null).then((items) => {
+
+    getDetalle(locationIdFlujo).then((items) => {
+      if (mounted) {
+        setDetlleFlujo(items.flujos[0])
+      }
+    })
+    getFlujoSolicitud(locationIdFlujo, null).then((items) => {
       if (mounted) {
         setSolicitud(items.solicitud)
+        if (items.solicitud.length > 0) {
+          setMostrarSolicitud(true)
+        }
       }
     })
-    getFlujoOferta(location.id_flujo, null).then((items) => {
+    getFlujoOferta(locationIdFlujo, null).then((items) => {
       if (mounted) {
         setOferta(items.oferta)
+        if (items.oferta.length > 0) {
+          setMostrarOferta(true)
+        }
       }
     })
-    getFlujoOrden(location.id_flujo, null).then((items) => {
+    getFlujoOrden(locationIdFlujo, null).then((items) => {
       if (mounted) {
         setOrden(items.orden)
+        if (items.orden.length > 0) {
+          setMostrarOrden(true)
+        }
       }
     })
-    getFlujoIngreso(location.id_flujo).then((items) => {
+    getFlujoIngreso(locationIdFlujo).then((items) => {
       if (mounted) {
         setIngreso(items.ingreso)
+        if (items.ingreso.length > 0) {
+          setMostrarIngreso(true)
+        }
       }
     })
-    getFlujoFacturaCantidad(location.id_flujo).then((items) => {
+    getFlujoFacturaCantidad(locationIdFlujo).then((items) => {
       if (mounted) {
         setFacturaCantidad(items.facturacantidad)
+        if (items.facturacantidad.length > 0) {
+          setMostrarFacturaCantidad(true)
+        }
       }
     })
-    getFlujoFacturaDocumento(location.id_flujo).then((items) => {
+    getFlujoFacturaDocumento(locationIdFlujo).then((items) => {
       if (mounted) {
         setFacturaDocumento(items.facturadocumento)
+        if (items.facturadocumento.length > 0) {
+          setMostrarFacturaDocumento(true)
+        }
       }
     })
-    getArchivosFlujo(location.id_flujo, null).then((items) => {
+    getArchivosFlujo(locationIdFlujo, null).then((items) => {
       if (mounted) {
         setArchivos(items.archivos)
       }
@@ -110,22 +199,19 @@ const PagoTabs = () => {
           if ('Visualizar_completo' == item.descripcion) {
             setOcultarBotones(true)
           }
-          if ('Visualizar_completo' == item.descripcion) {
-            setOcultarBotones(true)
-          }
           if ('Autorizar' == item.descripcion) {
             setMostrarAutorizar(true)
           }
         }
       }
     })
-    getBitacora(location.id_flujo).then((items) => {
+    getBitacora(locationIdFlujo).then((items) => {
       if (mounted) {
         setListBitacora(items.bitacora)
       }
     })
     return () => (mounted = false)
-  }, [])
+  }, [actualizarDatos])
 
   function ExisteEnBitacora(usuario) {
     let result = false
@@ -151,6 +237,56 @@ const PagoTabs = () => {
     } else {
       setShow(false)
     }
+  }
+
+  function SeleccionarParaAutorizar(id_flujo_, estado_, nivel_) {
+    sessionStorage.setItem(id_flujo_ + '|' + estado_ + '|' + nivel_, 'true')
+    setDesBotonSeleccionar(true)
+  }
+
+  const formatear = (valor, moneda) => {
+    if (moneda === 'QTZ') {
+      return formatter.format(valor)
+    } else {
+      return formatterDolar.format(valor)
+    }
+  }
+
+  let formatter = new Intl.NumberFormat('es-GT', {
+    style: 'currency',
+    currency: 'GTQ',
+  })
+  let formatterDolar = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  })
+
+  function pasarOtroPago(AntesDespues) {
+    if (AntesDespues == 'A') {
+      setLocationPago(pagoAnterior.pago)
+      setLocationEstado(pagoAnterior.estado)
+      setLocationIdFlujo(pagoAnterior.id_flujo)
+      setLocationNivel(pagoAnterior.nivel)
+      setLocationIdGrupo(pagoAnterior.id_grupo)
+      setLocationPuedoAutorizar(pagoAnterior.PuedoAutorizar)
+    } else {
+      setLocationPago(pagoPosterior.pago)
+      setLocationEstado(pagoPosterior.estado)
+      setLocationIdFlujo(pagoPosterior.id_flujo)
+      setLocationNivel(pagoPosterior.nivel)
+      setLocationIdGrupo(pagoPosterior.id_grupo)
+      setLocationPuedoAutorizar(pagoPosterior.PuedoAutorizar)
+    }
+    setActualizarDatos(!actualizarDatos)
+    setllaveBitacora(llaveBitacora + 1)
+    setKeyArchivosFlujo(keyArchivosFlujo + 1)
+    setKeyFlujoSolicitud(keyFlujoSolicitud + 1)
+    setKeyFlujoOferta(keyFlujoOferta + 1)
+    setKeyFlujoOrden(keyFlujoOrden + 1)
+    setKeyFlujoIngreso(keyFlujoIngreso + 1)
+    setKeyFlujoFacturaCantidad(keyFlujoFacturaCantidad + 1)
+    setKeyFlujoFacturaDocumento(keyFlujoFacturaDocumento + 1)
+    setKeyDetalleFlujo(keyDetalleFlujo + 1)
   }
 
   function mostrarModal(id_flujo, opcion) {
@@ -195,21 +331,21 @@ const PagoTabs = () => {
     let pagos = []
     pagos.push(id_flujo)
     if (opcion === 1) {
-      if (location.estado == 3) {
+      if (locationEstado == 3) {
         const respuesta = await postFlujos(id_flujo, '2', '', '', null, idUsuario)
         const aprobado = await postFlujoDetalle(id_flujo, '4', idUsuario, 'Aprobado', '1')
         if (respuesta == 'OK' && aprobado == 'OK') {
           history.go(-1)
         }
-      } else if (location.estado == 4) {
-        const respuesta = await postFlujos(id_flujo, location.nivel, '', '', null, idUsuario)
+      } else if (locationEstado == 4) {
+        const respuesta = await postFlujos(id_flujo, locationNivel, '', '', null, idUsuario)
         if (respuesta == 'OK') {
           const aprobado = await postFlujoDetalle(
             id_flujo,
             '4',
             idUsuario,
             'Aprobado',
-            location.nivel,
+            locationNivel,
           )
           if (aprobado == 'OK') {
             history.go(-1)
@@ -220,7 +356,7 @@ const PagoTabs = () => {
             '5',
             idUsuario,
             'Autorización completa',
-            location.nivel,
+            locationNivel,
           )
           if (finalizado == 'OK') {
             const enviada = await postNotificacion(pagos, idUsuario, 'autorizado por completo.', '')
@@ -312,50 +448,12 @@ const PagoTabs = () => {
   }
 
   if (session) {
-    if (location.id_flujo) {
-      let grupo = 0
-      let MostrarSolicitud = false
-      let MostrarOferta = false
-      let MostrarOrden = false
-      let MostrarIngreso = false
-      let MostrarFacturaCantidad = false
-      let MostrarFacturaDocumento = false
-      let MostrarArchivos = false
-      let MostrarFacturas = false
-      let yaAutorizo = ExisteEnBitacora(session.id)
-      let MostrarAprobarRechazar = false
-      if (location.id_grupo) {
-        grupo = location.id_grupo
-      }
-      if (solicitud.length > 0) {
-        MostrarSolicitud = true
-      }
-      if (oferta.length > 0) {
-        MostrarOferta = true
-      }
-      if (orden.length > 0) {
-        MostrarOrden = true
-      }
-      if (ingreso.length > 0) {
-        MostrarIngreso = true
-      }
-      if (facturaCantidad.length > 0) {
-        MostrarFacturaCantidad = true
-      }
-      if (facturaDocumento.length > 0) {
-        MostrarFacturaDocumento = true
-      }
-      if (archivos.length > 0) {
-        MostrarArchivos = true
-      }
+    if (locationIdFlujo) {
       if (
-        (location.estado > 2 && location.estado < 5) ||
-        location.estado == 10 ||
-        location.estado == 11
+        (locationEstado > 2 && locationEstado < 5) ||
+        locationEstado == 10 ||
+        locationEstado == 11
       ) {
-        if (!yaAutorizo && location.estado != 10 && location.PuedoAutorizar == '1') {
-          MostrarAprobarRechazar = true
-        }
         return (
           <div className="div-tabs">
             <Modal responsive show={show} onHide={() => Cancelar(opcion)} centered>
@@ -375,133 +473,231 @@ const PagoTabs = () => {
                 </CButton>
               </Modal.Footer>
             </Modal>
-            <div className={ocultarBotones ? 'd-none float-right' : 'float-right'}>
+            <div
+              style={{
+                display: 'flex',
+                gap: '10px',
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+                paddingTop: '10px',
+                marginRight: '10px',
+              }}
+            >
               <div
-                className={!MostrarAutorizar && !yaAutorizo ? 'd-none float-right' : 'float-right'}
-                style={{ marginTop: '15px', marginRight: '15px' }}
+                style={{ width: '80%', display: 'flex', gap: '10px', justifyContent: 'flex-start' }}
               >
-                <CButton
-                  className={!MostrarAprobarRechazar ? 'd-none' : ''}
-                  color="success"
-                  size="sm"
-                  onClick={() => mostrarModal(location.id_flujo, 1)}
+                <div style={{ width: '25%', marginLeft: '10px' }}>
+                  <Button variant="primary" size="sm" onClick={() => history.goBack()}>
+                    <FaArrowLeft />
+                    &nbsp;&nbsp;Regresar
+                  </Button>
+                </div>
+                <div
+                  style={{ width: '75%', display: 'flex', gap: '10px', justifyContent: 'flex-end' }}
+                  className={ocultarBotones ? 'd-none' : ''}
                 >
-                  Aprobar
-                </CButton>{' '}
-                <CButton
-                  className={!MostrarAprobarRechazar ? 'd-none' : ''}
-                  color="danger"
-                  size="sm"
-                  onClick={() => mostrarModal(location.id_flujo, 2)}
-                >
-                  Rechazar
-                </CButton>
+                  <div
+                    className={
+                      !MostrarAutorizar && !yaAutorizo ? 'd-none float-right' : 'float-right'
+                    }
+                  >
+                    <CButton
+                      className={!MostrarAprobarRechazar ? 'd-none' : ''}
+                      color="success"
+                      size="sm"
+                      onClick={() => mostrarModal(locationIdFlujo, 1)}
+                    >
+                      Aprobar
+                    </CButton>{' '}
+                    <CButton
+                      className={!MostrarAprobarRechazar ? 'd-none' : ''}
+                      color="danger"
+                      size="sm"
+                      onClick={() => mostrarModal(locationIdFlujo, 2)}
+                    >
+                      Rechazar
+                    </CButton>
+                  </div>
+                  <div className={!MostrarRevision ? 'd-none float-right' : 'float-right'}>
+                    <CButton
+                      className={!MostrarPausado ? 'd-none' : ''}
+                      color="danger"
+                      size="sm"
+                      onClick={() => mostrarModal(locationIdFlujo, 4)}
+                    >
+                      Pausar
+                    </CButton>{' '}
+                    <CButton
+                      className={!MostrarPausado ? 'd-none' : ''}
+                      color="primary"
+                      size="sm"
+                      onClick={() => mostrarModal(locationIdFlujo, 44)}
+                    >
+                      No visado
+                    </CButton>{' '}
+                    <CButton
+                      className={!MostrarActualizar ? 'd-none' : ''}
+                      color="primary"
+                      size="sm"
+                      onClick={() => mostrarModal(locationIdFlujo, 5)}
+                    >
+                      Actualizar y reiniciar
+                    </CButton>{' '}
+                    <CButton
+                      className={!MostrarActualizar ? 'd-none' : ''}
+                      color="info"
+                      size="sm"
+                      onClick={() => mostrarModal(locationIdFlujo, 55)}
+                    >
+                      Actualizar y continuar
+                    </CButton>
+                  </div>
+                </div>
               </div>
               <div
-                className={!MostrarRevision ? 'd-none float-right' : 'float-right'}
-                style={{ marginTop: '15px', marginRight: '15px' }}
+                style={{ width: '20%', display: 'flex', gap: '10px', justifyContent: 'flex-end' }}
               >
-                <CButton
-                  className={!MostrarPausado ? 'd-none' : ''}
-                  color="danger"
+                <div className={ocultarBotones ? 'd-none' : ''}>
+                  <div className={!MostrarAutorizar && !yaAutorizo ? 'd-none' : ''}>
+                    <Button
+                      variant="success"
+                      size="sm"
+                      title="Seleccionar"
+                      className={!MostrarAprobarRechazar ? 'd-none' : ''}
+                      onClick={() =>
+                        SeleccionarParaAutorizar(locationIdFlujo, locationEstado, locationNivel)
+                      }
+                      disabled={desBotonSeleccionar}
+                    >
+                      Marcar para autorizar
+                    </Button>
+                  </div>
+                </div>
+                <Button
+                  data-tag="allowRowEvents"
+                  variant="primary"
                   size="sm"
-                  onClick={() => mostrarModal(location.id_flujo, 4)}
+                  title="Consultar pago anterior"
+                  disabled={!hayPagoAnterior}
+                  onClick={() => pasarOtroPago('A')}
                 >
-                  Pausar
-                </CButton>{' '}
-                <CButton
-                  className={!MostrarPausado ? 'd-none' : ''}
-                  color="primary"
+                  <FaAngleLeft />
+                </Button>
+                <Button
+                  data-tag="allowRowEvents"
+                  variant="primary"
                   size="sm"
-                  onClick={() => mostrarModal(location.id_flujo, 44)}
+                  title="Consultar pago posterior"
+                  disabled={!hayPagoPosterior}
+                  onClick={() => pasarOtroPago('D')}
                 >
-                  No visado
-                </CButton>{' '}
-                <CButton
-                  className={!MostrarActualizar ? 'd-none' : ''}
-                  color="primary"
-                  size="sm"
-                  onClick={() => mostrarModal(location.id_flujo, 5)}
-                >
-                  Actualizar y reiniciar
-                </CButton>{' '}
-                <CButton
-                  className={!MostrarActualizar ? 'd-none' : ''}
-                  color="info"
-                  size="sm"
-                  onClick={() => mostrarModal(location.id_flujo, 55)}
-                >
-                  Actualizar y continuar
-                </CButton>
+                  <FaAngleRight />
+                </Button>
               </div>
             </div>
-            <div className="float-left" style={{ marginBottom: '10px' }}>
-              <Button variant="primary" size="sm" onClick={() => history.goBack()}>
-                <FaArrowLeft />
-                &nbsp;&nbsp;Regresar
-              </Button>
+            <br />
+            <br />
+            <div style={{ display: 'flex' }}>
+              <div style={{ width: '15%' }}>&nbsp;</div>
+              <div
+                style={{ marginTop: '10px', width: '70%', display: 'flex', alignItems: 'center' }}
+              >
+                <Container className="mb-0">
+                  <Row className="mb-0">
+                    <Col className="mb-0 border column">Empresa</Col>
+                    <Col className="mb-0 border">{detalleFlujo.empresa_nombre}</Col>
+                  </Row>
+                  <Row className="mb-0">
+                    <Col className="mb-0 border column">Número Documento</Col>
+                    <Col className="mb-0 border">{detalleFlujo.doc_num}</Col>
+                  </Row>
+                  <Row className="mb-0">
+                    <Col className="mb-0 border column">Beneficiario</Col>
+                    <Col className="mb-0 border">{detalleFlujo.en_favor_de}</Col>
+                  </Row>
+                  <Row className="mb-0">
+                    <Col className="mb-0 border column">Concepto</Col>
+                    <Col className="mb-0 border">{detalleFlujo.comments}</Col>
+                  </Row>
+                  <Row className="mb-0">
+                    <Col className="mb-0 border column">Monto</Col>
+                    <Col className="mb-0 border">
+                      {formatear(detalleFlujo.doc_total, detalleFlujo.doc_curr)}
+                    </Col>
+                  </Row>
+                </Container>
+              </div>
             </div>
+            <br />
+            <br />
             <div className="div-content">
               <div style={{ width: '100%' }}>
                 <Tabs defaultActiveKey="archivos" id="uncontrolled-tab-example" className="mb-3">
                   <Tab eventKey="archivos" title="Soporte">
-                    <ArchivosFlujo results={archivos} estado={location.estado} />
+                    <ArchivosFlujo
+                      key={keyArchivosFlujo}
+                      results={archivos}
+                      estado={locationEstado}
+                    />
                   </Tab>
                   <Tab
                     eventKey="solicitud"
                     title="Solicitud"
                     tabClassName={!MostrarSolicitud ? 'd-none' : ''}
                   >
-                    <FlujoSolicitud results={solicitud} />
+                    <FlujoSolicitud key={keyFlujoSolicitud} results={solicitud} />
                   </Tab>
                   <Tab
                     eventKey="oferta"
                     title="Oferta Compra"
                     tabClassName={!MostrarOferta ? 'd-none' : ''}
                   >
-                    <FlujoOferta results={oferta} />
+                    <FlujoOferta key={keyFlujoOferta} results={oferta} />
                   </Tab>
                   <Tab
                     eventKey="orden"
                     title="Orden Compra"
                     tabClassName={!MostrarOrden ? 'd-none' : ''}
                   >
-                    <FlujoOrden results={orden} />
+                    <FlujoOrden key={keyFlujoOrden} results={orden} />
                   </Tab>
                   <Tab
                     eventKey="ingreso"
                     title="Ingreso Bodega"
                     tabClassName={!MostrarIngreso ? 'd-none' : ''}
                   >
-                    <FlujoIngreso results={ingreso} />
+                    <FlujoIngreso key={keyFlujoIngreso} results={ingreso} />
                   </Tab>
                   <Tab
                     eventKey="facturasCantidad"
                     title="Factura Cantidad"
                     tabClassName={!MostrarFacturaCantidad ? 'd-none' : ''}
                   >
-                    <FlujoFacturaCantidad results={facturaCantidad} />
+                    <FlujoFacturaCantidad key={keyFlujoFacturaCantidad} results={facturaCantidad} />
                   </Tab>
                   <Tab
                     eventKey="facturasDocumento"
                     title="Factura Documento"
                     tabClassName={!MostrarFacturaDocumento ? 'd-none' : ''}
                   >
-                    <FlujoFacturaDocumento results={facturaDocumento} />
+                    <FlujoFacturaDocumento
+                      key={keyFlujoFacturaDocumento}
+                      results={facturaDocumento}
+                    />
                   </Tab>
                   <Tab eventKey="bitacora" title="Bitácora">
-                    <FlujoBitacora key={llaveBitacora} id_flujo={location.id_flujo} />
+                    <FlujoBitacora key={llaveBitacora} id_flujo={locationIdFlujo} />
                   </Tab>
                   <Tab eventKey="detalle" title="Detalle">
-                    <DetalleFlujo id_flujo={location.id_flujo} />
+                    <DetalleFlujo key={keyDetalleFlujo} id_flujo={locationIdFlujo} />
                   </Tab>
                 </Tabs>
               </div>
             </div>
             <Chat
               id_usuario={session.id}
-              id_flujo={location.id_flujo}
-              pago={location.pago}
+              id_flujo={locationIdFlujo}
+              pago={locationPago}
               id_grupo={grupo}
             />
           </div>
@@ -526,73 +722,164 @@ const PagoTabs = () => {
                 </CButton>
               </Modal.Footer>
             </Modal>
-            <div className="float-left" style={{ marginBottom: '10px' }}>
-              <Button variant="primary" size="sm" onClick={() => history.goBack()}>
-                <FaArrowLeft />
-                &nbsp;&nbsp;Regresar
-              </Button>
+            <div
+              style={{
+                display: 'flex',
+                gap: '10px',
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <div
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'flex-start',
+                  width: '50%',
+                  paddingTop: '10px',
+                  marginLeft: '10px',
+                }}
+              >
+                <Button variant="primary" size="sm" onClick={() => history.goBack()}>
+                  <FaArrowLeft />
+                  &nbsp;&nbsp;Regresar
+                </Button>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '10px',
+                  flexDirection: 'row',
+                  justifyContent: 'flex-end',
+                  paddingTop: '10px',
+                  marginRight: '10px',
+                  width: '50%',
+                }}
+              >
+                <Button
+                  data-tag="allowRowEvents"
+                  variant="primary"
+                  size="sm"
+                  title="Consultar pago anterior"
+                  disabled={!hayPagoAnterior}
+                  onClick={() => pasarOtroPago('A')}
+                >
+                  <FaAngleLeft />
+                </Button>
+                <Button
+                  data-tag="allowRowEvents"
+                  variant="primary"
+                  size="sm"
+                  title="Consultar pago posterior"
+                  disabled={!hayPagoPosterior}
+                  onClick={() => pasarOtroPago('D')}
+                >
+                  <FaAngleRight />
+                </Button>
+              </div>
             </div>
+            <br />
+            <br />
+            <div style={{ display: 'flex' }}>
+              <div style={{ width: '15%' }}>&nbsp;</div>
+              <div
+                style={{ marginTop: '10px', width: '70%', display: 'flex', alignItems: 'center' }}
+              >
+                <Container className="mb-0">
+                  <Row className="mb-0">
+                    <Col className="mb-0 border column">Empresa</Col>
+                    <Col className="mb-0 border">{detalleFlujo.empresa_nombre}</Col>
+                  </Row>
+                  <Row className="mb-0">
+                    <Col className="mb-0 border column">Número Documento</Col>
+                    <Col className="mb-0 border">{detalleFlujo.doc_num}</Col>
+                  </Row>
+                  <Row className="mb-0">
+                    <Col className="mb-0 border column">Beneficiario</Col>
+                    <Col className="mb-0 border">{detalleFlujo.en_favor_de}</Col>
+                  </Row>
+                  <Row className="mb-0">
+                    <Col className="mb-0 border column">Concepto</Col>
+                    <Col className="mb-0 border">{detalleFlujo.comments}</Col>
+                  </Row>
+                  <Row className="mb-0">
+                    <Col className="mb-0 border column">Monto</Col>
+                    <Col className="mb-0 border">
+                      {formatear(detalleFlujo.doc_total, detalleFlujo.doc_curr)}
+                    </Col>
+                  </Row>
+                </Container>
+              </div>
+            </div>
+            <br />
+            <br />
             <div className="div-content">
               <div style={{ width: '100%' }}>
                 <Tabs defaultActiveKey="archivos" id="uncontrolled-tab-example" className="mb-3">
                   <Tab eventKey="archivos" title="Soporte">
-                    <ArchivosFlujo results={archivos} estado={location.estado} />
+                    <ArchivosFlujo
+                      key={keyArchivosFlujo}
+                      results={archivos}
+                      estado={locationEstado}
+                    />
                   </Tab>
                   <Tab
                     eventKey="solicitud"
                     title="Solicitud"
                     tabClassName={!MostrarSolicitud ? 'd-none' : ''}
                   >
-                    <FlujoSolicitud results={solicitud} />
+                    <FlujoSolicitud key={keyFlujoSolicitud} results={solicitud} />
                   </Tab>
                   <Tab
                     eventKey="oferta"
                     title="Oferta Compra"
                     tabClassName={!MostrarOferta ? 'd-none' : ''}
                   >
-                    <FlujoOferta results={oferta} />
+                    <FlujoOferta key={keyFlujoOferta} results={oferta} />
                   </Tab>
                   <Tab
                     eventKey="orden"
                     title="Orden Compra"
                     tabClassName={!MostrarOrden ? 'd-none' : ''}
                   >
-                    <FlujoOrden results={orden} />
+                    <FlujoOrden key={keyFlujoOrden} results={orden} />
                   </Tab>
                   <Tab
                     eventKey="ingreso"
                     title="Ingreso Bodega"
                     tabClassName={!MostrarIngreso ? 'd-none' : ''}
                   >
-                    <FlujoIngreso results={ingreso} />
+                    <FlujoIngreso key={keyFlujoIngreso} results={ingreso} />
                   </Tab>
                   <Tab
                     eventKey="facturasCantidad"
                     title="Factura Cantidad"
                     tabClassName={!MostrarFacturaCantidad ? 'd-none' : ''}
                   >
-                    <FlujoFacturaCantidad results={facturaCantidad} />
+                    <FlujoFacturaCantidad key={keyFlujoFacturaCantidad} results={facturaCantidad} />
                   </Tab>
                   <Tab
                     eventKey="facturasDocumento"
                     title="Factura Documento"
                     tabClassName={!MostrarFacturaDocumento ? 'd-none' : ''}
                   >
-                    <FlujoFacturaDocumento results={facturaDocumento} />
+                    <FlujoFacturaDocumento
+                      key={keyFlujoFacturaDocumento}
+                      results={facturaDocumento}
+                    />
                   </Tab>
                   <Tab eventKey="bitacora" title="Bitácora">
-                    <FlujoBitacora id_flujo={location.id_flujo} />
+                    <FlujoBitacora key={llaveBitacora} id_flujo={locationIdFlujo} />
                   </Tab>
                   <Tab eventKey="detalle" title="Detalle">
-                    <DetalleFlujo id_flujo={location.id_flujo} />
+                    <DetalleFlujo key={keyDetalleFlujo} id_flujo={locationIdFlujo} />
                   </Tab>
                 </Tabs>
               </div>
             </div>
             <Chat
               id_usuario={session.id}
-              id_flujo={location.id_flujo}
-              pago={location.pago}
+              id_flujo={locationIdFlujo}
+              pago={locationPago}
               id_grupo={grupo}
             />
           </div>

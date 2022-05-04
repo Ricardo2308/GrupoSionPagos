@@ -96,7 +96,7 @@ const EditarUsuarioGrupo = (props) => {
           '2',
           form.grupo,
           form.nivel,
-          '',
+          1,
           session.id,
         )
         if (respuesta === 'OK') {

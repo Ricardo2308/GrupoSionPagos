@@ -36,6 +36,18 @@ const Pendientes = (prop) => {
     getPendientesAutorizacion(prop.tipo, idUsuario).then((items) => {
       if (mounted) {
         setListdata(items.flujos)
+        let datosOrdenados = []
+        items.flujos.forEach((item) => {
+          datosOrdenados.push({
+            id_flujo: item.id_flujo,
+            estado: item.estado,
+            nivel: item.nivel,
+            id_grupo: item.id_grupoautorizacion,
+            PuedoAutorizar: item.PuedoAutorizar,
+            pago: item.doc_num,
+          })
+        })
+        sessionStorage.setItem('listaPagos', JSON.stringify(datosOrdenados))
       }
     })
     getPerfilUsuario(session.id, '4', objeto).then((items) => {
@@ -125,7 +137,8 @@ const Pendientes = (prop) => {
     {
       name: ' ',
       cell: function OrderItems(row) {
-        if (row.PuedoAutorizar == 1) {
+        let tienePermisoAutorizar = ExistePermiso('Autorizar')
+        if (row.PuedoAutorizar == 1 && tienePermisoAutorizar) {
           setShowAutorizar(true)
           return (
             <div>
@@ -528,6 +541,18 @@ const Pendientes = (prop) => {
         return 0
       })
     }
+    let datosOrdenados = []
+    data.forEach((item) => {
+      datosOrdenados.push({
+        id_flujo: item.id_flujo,
+        estado: item.estado,
+        nivel: item.nivel,
+        id_grupo: item.id_grupoautorizacion,
+        PuedoAutorizar: item.PuedoAutorizar,
+        pago: item.doc_num,
+      })
+    })
+    sessionStorage.setItem('listaPagos', JSON.stringify(datosOrdenados))
     return true
   }
 
