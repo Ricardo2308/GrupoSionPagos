@@ -14,6 +14,7 @@ import { getCargaDatos } from '../../../../services/getCargaDatos'
 import { postFlujos } from '../../../../services/postFlujos'
 import { postFlujoDetalle } from '../../../../services/postFlujoDetalle'
 import { postNotificacion } from '../../../../services/postNotificacion'
+import { postRecordatorioUsuario } from '../../../../services/postRecordatorioUsuario'
 
 const Pendientes = (prop) => {
   const history = useHistory()
@@ -25,6 +26,8 @@ const Pendientes = (prop) => {
   const [showModalAutorizar, setShowModalAutorizar] = useState(false)
   const [showAutorizar, setShowAutorizar] = useState(false)
   const [actualizarTabla, setActualizarTabla] = useState(0)
+  //Cambio recordatorio
+  const [showModalRecordar, setShowModalRecordar] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -33,7 +36,7 @@ const Pendientes = (prop) => {
     if (session) {
       idUsuario = session.id
     }
-    getPendientesAutorizacion(prop.tipo, idUsuario).then((items) => {
+    getPendientesAutorizacion(prop.tipo, idUsuario, session.api_token).then((items) => {
       if (mounted) {
         setListdata(items.flujos)
         let datosOrdenados = []
@@ -50,7 +53,7 @@ const Pendientes = (prop) => {
         sessionStorage.setItem('listaPagos', JSON.stringify(datosOrdenados))
       }
     })
-    getPerfilUsuario(session.id, '4', objeto).then((items) => {
+    getPerfilUsuario(session.id, '4', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
         for (let item of items.detalle) {
@@ -418,9 +421,13 @@ const Pendientes = (prop) => {
     setShowModalAutorizar(true)
   }
 
+  function mostrarModalRecordar() {
+    setShowModalRecordar(true)
+  }
+
   function AccionModalCargarNuevos(opcion) {
     if (opcion == 1) {
-      getCargaDatos().then(() => {
+      getCargaDatos(session.api_token).then(() => {
         setActualizarTabla(actualizarTabla + 1)
       })
 
@@ -565,13 +572,28 @@ const Pendientes = (prop) => {
           let valorPago = checkbox.value
           let partes = checkbox.value.split('|')
           if (partes[1] == 3) {
-            await postFlujos(partes[0], '2', '', '', null, session.id)
-            await postFlujoDetalle(partes[0], '4', session.id, 'Aprobado', '1')
+            await postFlujos(partes[0], '2', '', '', null, session.id, session.api_token)
+            await postFlujoDetalle(partes[0], '4', session.id, 'Aprobado', '1', session.api_token)
             sessionStorage.removeItem(valorPago)
           } else if (partes[1] == 4) {
-            const respuesta = await postFlujos(partes[0], partes[2], '', '', null, session.id)
+            const respuesta = await postFlujos(
+              partes[0],
+              partes[2],
+              '',
+              '',
+              null,
+              session.id,
+              session.api_token,
+            )
             if (respuesta == 'OK') {
-              await postFlujoDetalle(partes[0], '4', session.id, 'Aprobado', partes[2])
+              await postFlujoDetalle(
+                partes[0],
+                '4',
+                session.id,
+                'Aprobado',
+                partes[2],
+                session.api_token,
+              )
               sessionStorage.removeItem(valorPago)
             } else if (respuesta == 'Finalizado') {
               const finalizado = await postFlujoDetalle(
@@ -580,6 +602,7 @@ const Pendientes = (prop) => {
                 session.id,
                 'Autorización completa',
                 partes[2],
+                session.api_token,
               )
               if (finalizado == 'OK') {
                 pagos.push(partes[0])
@@ -590,15 +613,33 @@ const Pendientes = (prop) => {
         }
       }
       if (pagos.length > 0) {
-        await postNotificacion(pagos, session.id, 'autorizado por completo.', '')
+        await postNotificacion(pagos, session.id, 'autorizado por completo.', '', session.api_token)
       }
-      console.log(pagos)
       setActualizarTabla(actualizarTabla + 1)
       setShowModalAutorizar(false)
     } else if (opcion == 2) {
       setShowModalAutorizar(false)
     }
   }
+
+  async function AccionModalRecordar(opcion) {
+    if (opcion == 1) {
+      var markedCheckbox = document.getElementsByName('autorizarPago')
+      for (var checkbox of markedCheckbox) {
+        if (checkbox.checked) {
+          let valorPago = checkbox.value
+          let partes = checkbox.value.split('|')
+          await postRecordatorioUsuario('', '', '', session.id, partes[0], session.api_token)
+          sessionStorage.removeItem(valorPago)
+          checkbox.checked = false
+        }
+      }
+      setShowModalRecordar(false)
+    } else if (opcion == 2) {
+      setShowModalRecordar(false)
+    }
+  }
+
   if (session) {
     return (
       <>
@@ -630,7 +671,23 @@ const Pendientes = (prop) => {
             </Button>
           </Modal.Footer>
         </Modal>
-        <div>
+        <Modal responsive variant="primary" show={showModalRecordar} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmación</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            ¿Está seguro de notificar recordatorio de los pagos seleccionados?
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => AccionModalRecordar(2)}>
+              Cancelar
+            </Button>
+            <Button variant="primary" onClick={() => AccionModalRecordar(1)}>
+              Aceptar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
           <CButton
             className={ocultarBotonCargar ? 'd-none float-right' : 'float-right'}
             color="success"
@@ -647,6 +704,16 @@ const Pendientes = (prop) => {
             onClick={() => mostrarModalAutorizar()}
           >
             Autorizar pagos seleccionados
+          </CButton>
+          {'  '}
+          <CButton
+            /* className={!showAutorizar ? 'd-none float-right' : 'float-right'} */
+            className="float-right"
+            color="secondary"
+            size="sm"
+            onClick={() => mostrarModalRecordar()}
+          >
+            Enviar recordatorio pagos seleccionados
           </CButton>
           <br />
           <br />

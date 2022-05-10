@@ -1,6 +1,14 @@
 const API = `${process.env.REACT_APP_API_URL}estadoflujo`
 
-export function postEstadoFlujo(idEstado, idEstadoPadre, descripcion, estado, opcion, id_usuario) {
+export function postEstadoFlujo(
+  idEstado,
+  idEstadoPadre,
+  descripcion,
+  estado,
+  opcion,
+  id_usuario,
+  token,
+) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -23,6 +31,7 @@ export function postEstadoFlujo(idEstado, idEstadoPadre, descripcion, estado, op
     method: 'POST',
     body: data,
     headers: {
+      Authorization: 'Bearer ' + token,
       Accept: 'application/json',
       'Content-type': 'application/json;charset=UTF-8',
     },

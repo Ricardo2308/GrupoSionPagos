@@ -20,7 +20,7 @@ const Rechazados = (prop) => {
     useEffect(() => {
         let mounted = true
         let pagos = []
-        getReporteRechazados().then((items) => {
+        getReporteRechazados(session.api_token).then((items) => {
             if (mounted) {
                 pagos.push(items.flujos)
                 var pivot = new WebDataRocks({
@@ -148,7 +148,7 @@ const Rechazados = (prop) => {
         if (session) {
             idUsuario = session.id
         }
-        const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+        const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
         if (respuesta === 'OK') {
             clear()
             history.push('/')

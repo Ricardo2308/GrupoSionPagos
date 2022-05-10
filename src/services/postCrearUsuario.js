@@ -8,6 +8,7 @@ export function postCrearUsuario(
   password,
   cambiaPassword,
   id_usuario,
+  token,
 ) {
   var datos = {
     nombre: nombre,
@@ -23,6 +24,7 @@ export function postCrearUsuario(
     method: 'POST',
     body: data,
     headers: {
+      Authorization: 'Bearer ' + token,
       Accept: 'application/json',
       'Content-type': 'application/json;charset=UTF-8',
     },

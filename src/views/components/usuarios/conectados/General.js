@@ -37,12 +37,12 @@ const General = () => {
     if (session) {
       idUsuario = session.id
     }
-    getSesionUsuarioGeneral().then((items) => {
+    getSesionUsuarioGeneral(session.api_token).then((items) => {
       if (mounted) {
         setList(items.sesiones)
       }
     })
-    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -68,7 +68,7 @@ const General = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

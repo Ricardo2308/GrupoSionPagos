@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}notificacion`
 
-export function postNotificacion(pagos, idUsuario, mensaje, opcion) {
+export function postNotificacion(pagos, idUsuario, mensaje, opcion, token) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -20,6 +20,7 @@ export function postNotificacion(pagos, idUsuario, mensaje, opcion) {
     method: 'POST',
     body: data,
     headers: {
+      Authorization: 'Bearer ' + token,
       Accept: 'application/json',
       'Content-type': 'application/json;charset=UTF-8',
     },

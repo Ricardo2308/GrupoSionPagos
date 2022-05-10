@@ -31,12 +31,12 @@ const Roles = () => {
     if (session) {
       idUsuario = session.id
     }
-    getRoles(null, null).then((items) => {
+    getRoles(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.roles)
       }
     })
-    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -62,7 +62,7 @@ const Roles = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')
@@ -79,9 +79,9 @@ const Roles = () => {
 
   async function eliminarRol(id, opcion) {
     if (opcion == 1) {
-      const respuesta = await postCrudRoles(id, '', '', '', '2', session.id)
+      const respuesta = await postCrudRoles(id, '', '', '', '2', session.id, session.api_token)
       if (respuesta === 'OK') {
-        await getRoles(null, null).then((items) => {
+        await getRoles(null, null, session.api_token).then((items) => {
           setList(items.roles)
         })
       }

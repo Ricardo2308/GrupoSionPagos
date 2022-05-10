@@ -25,6 +25,7 @@ import {
   CInputGroupText,
   CRow,
 } from '@coreui/react'
+import { postLogIn } from 'src/services/postLogIn'
 
 const Login = () => {
   const history = useHistory()
@@ -73,16 +74,16 @@ const Login = () => {
     return result
   }
 
-  async function estoyConectado(id) {
+  async function estoyConectado(id, token) {
     let result = false
-    const respuesta = await verificarConexion(id)
+    const respuesta = await verificarConexion(id, token)
     if (respuesta == 'Conectado') {
       result = true
     }
     return result
   }
 
-  async function crearSesion(id, cantidad) {
+  async function crearSesion(id, cantidad, token) {
     const publicIp = require('public-ip')
     let agente = window.navigator.userAgent
     var navegadores = ['Chrome', 'Firefox', 'Safari', 'Opera', 'Trident', 'MSIE', 'Edge']
@@ -92,7 +93,7 @@ const Login = () => {
         if (cantidad == '0') {
           return true
         } else {
-          const respuesta = await postSesionUsuario(id, navegadores[i], myip, '1')
+          const respuesta = await postSesionUsuario(id, navegadores[i], myip, '1', token)
           if (respuesta === 'OK') {
             return true
           } else {
@@ -114,12 +115,12 @@ const Login = () => {
     return temp
   }
 
-  async function revisarPolitica(idUsuario, cambiaPassword) {
+  async function revisarPolitica(idUsuario, cambiaPassword, token) {
     let result = false
     let politica = obtenerPolitica('_LIMITE_CAMBIO_PASSWORD_')
-    const respuesta = await getCantidadDias(idUsuario)
+    const respuesta = await getCantidadDias(idUsuario, token)
     if (respuesta == 'Vacio') {
-      const logpassword = await postLogPassword(idUsuario)
+      const logpassword = await postLogPassword(idUsuario, token)
       if (logpassword == 'OK') {
         result = true
       }
@@ -144,79 +145,84 @@ const Login = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    getUsuarios(null, null, form.usuario, null).then((items) => {
-      if (items) {
-        if (items.users.length > 0) {
-          for (let item of items.users) {
-            if (md5(form.password, { encoding: 'binary' }) === item.password) {
-              if (item.activo == 1 && item.eliminado == 0) {
-                revisarPolitica(item.id, item.cambia_password).then((respuesta) => {
-                  if (respuesta == true) {
-                    estoyConectado(item.id).then((conexion) => {
-                      //if (conexion == true) {
-                      //setShow(true)
-                      //setTitulo('Aviso!')
-                      //setColor('info')
-                      //setMensaje(
-                      //  'Parece que tu usuario tiene una sesión activa, cierra sesión y vuelve a intentarlo.',
-                      //)
-                      //} else {
-                      crearSesion(item.id, item.cantidadIngresos).then((sesion) => {
-                        if (sesion == true) {
-                          let limiteconexion = obtenerPolitica('_LIMITE_TIEMPO_CONEXION_')
-                          let verde = obtenerPolitica('_SEMAFORO_VERDE')
-                          let amarillo = obtenerPolitica('_SEMAFORO_AMARILLO')
-                          const sign = require('jwt-encode')
-                          const secret = 'secret'
-                          const data = {
-                            email: item.email,
-                            name: item.nombre + ' ' + item.apellido,
-                            user_name: item.nombre_usuario,
-                            id: item.id,
-                            estado: item.activo,
-                            limiteconexion: limiteconexion,
-                            verde: verde,
-                            amarillo: amarillo,
-                            cantidadIngresos: item.cantidadIngresos,
-                          }
-                          const jwt = sign(data, secret)
-                          saveJWT(jwt)
-                          if (item.cantidadIngresos == '0') {
-                            history.push('/usuarios/password')
-                          } else {
-                            history.push('/home')
-                          }
-                        }
-                      })
-                      //}
+    postLogIn(form.usuario, md5(form.password, { encoding: 'binary' })).then((itemsLogin) => {
+      if (itemsLogin) {
+        getUsuarios(null, null, form.usuario, null, itemsLogin).then((items) => {
+          if (items) {
+            if (items.users.length > 0) {
+              for (let item of items.users) {
+                if (md5(form.password, { encoding: 'binary' }) === item.password) {
+                  if (item.activo == 1 && item.eliminado == 0) {
+                    revisarPolitica(item.id, item.cambia_password, itemsLogin).then((respuesta) => {
+                      if (respuesta == true) {
+                        estoyConectado(item.id, itemsLogin).then((conexion) => {
+                          //if (conexion == true) {
+                          //setShow(true)
+                          //setTitulo('Aviso!')
+                          //setColor('info')
+                          //setMensaje(
+                          //  'Parece que tu usuario tiene una sesión activa, cierra sesión y vuelve a intentarlo.',
+                          //)
+                          //} else {
+                          crearSesion(item.id, item.cantidadIngresos, itemsLogin).then((sesion) => {
+                            if (sesion == true) {
+                              let limiteconexion = obtenerPolitica('_LIMITE_TIEMPO_CONEXION_')
+                              let verde = obtenerPolitica('_SEMAFORO_VERDE')
+                              let amarillo = obtenerPolitica('_SEMAFORO_AMARILLO')
+                              const sign = require('jwt-encode')
+                              const secret = 'secret'
+                              const data = {
+                                email: item.email,
+                                name: item.nombre + ' ' + item.apellido,
+                                user_name: item.nombre_usuario,
+                                id: item.id,
+                                estado: item.activo,
+                                limiteconexion: limiteconexion,
+                                verde: verde,
+                                amarillo: amarillo,
+                                cantidadIngresos: item.cantidadIngresos,
+                                api_token: itemsLogin,
+                              }
+                              const jwt = sign(data, secret)
+                              saveJWT(jwt)
+                              if (item.cantidadIngresos == '0') {
+                                history.push('/usuarios/password')
+                              } else {
+                                history.push('/home')
+                              }
+                            }
+                          })
+                          //}
+                        })
+                      }
                     })
+                  } else {
+                    setShow(true)
+                    setTitulo('Error!')
+                    setColor('danger')
+                    setMensaje(
+                      'Parece que tu usuario ha sido bloqueado o eliminado. Consulta con el soporte técnico.',
+                    )
                   }
-                })
-              } else {
-                setShow(true)
-                setTitulo('Error!')
-                setColor('danger')
-                setMensaje(
-                  'Parece que tu usuario ha sido bloqueado o eliminado. Consulta con el soporte técnico.',
-                )
+                } else {
+                  setShow(true)
+                  setTitulo('Error!')
+                  setColor('danger')
+                  setMensaje('Credenciales incorrectas. Vuelva a intentarlo.')
+                  if (item.activo == 1 && item.eliminado == 0) {
+                    let valor = obtenerPolitica('_LIMITE_ERROR_LOGIN_')
+                    postLogLogin(item.id, valor, itemsLogin)
+                  }
+                }
               }
             } else {
               setShow(true)
               setTitulo('Error!')
               setColor('danger')
               setMensaje('Credenciales incorrectas. Vuelva a intentarlo.')
-              if (item.activo == 1 && item.eliminado == 0) {
-                let valor = obtenerPolitica('_LIMITE_ERROR_LOGIN_')
-                postLogLogin(item.id, valor)
-              }
             }
           }
-        } else {
-          setShow(true)
-          setTitulo('Error!')
-          setColor('danger')
-          setMensaje('Credenciales incorrectas. Vuelva a intentarlo.')
-        }
+        })
       } else {
         setShow(true)
         setTitulo('Error!')

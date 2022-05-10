@@ -33,7 +33,7 @@ const ConsultarPR = () => {
 
   useEffect(() => {
     let mounted = true
-    getPerfilRol(location.id_perfil, null).then((items) => {
+    getPerfilRol(location.id_perfil, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.detalle)
       }
@@ -47,7 +47,7 @@ const ConsultarPR = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')
@@ -75,9 +75,18 @@ const ConsultarPR = () => {
   async function crudPerfilRol(id_perfil, id_perfilrol, opcion, estado) {
     let result
     if (opcion == 1) {
-      const respuesta = await postPerfilRol(id_perfilrol, '', '', '1', '', '', session.id)
+      const respuesta = await postPerfilRol(
+        id_perfilrol,
+        '',
+        '',
+        '1',
+        '',
+        '',
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
-        await getPerfilRol(id_perfil, null).then((items) => {
+        await getPerfilRol(id_perfil, null, session.api_token).then((items) => {
           setList(items.detalle)
         })
       }
@@ -87,9 +96,18 @@ const ConsultarPR = () => {
       } else {
         result = '0'
       }
-      const respuesta = await postPerfilRol(id_perfilrol, '', '', '3', '', result, session.id)
+      const respuesta = await postPerfilRol(
+        id_perfilrol,
+        '',
+        '',
+        '3',
+        '',
+        result,
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
-        await getPerfilRol(id_perfil, null).then((items) => {
+        await getPerfilRol(id_perfil, null, session.api_token).then((items) => {
           setList(items.detalle)
         })
       }

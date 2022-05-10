@@ -9,6 +9,7 @@ import {
   FiLayers,
   FiSend,
   FiFlag,
+  FiMessageCircle,
 } from 'react-icons/fi'
 import { BiUserCircle } from 'react-icons/bi'
 import { MenuItem, SubMenu } from 'react-pro-sidebar'
@@ -101,6 +102,15 @@ const administracion = [
       <MenuItem key="notificacionloteusuario" icon={<FiSend />}>
         Notificación de lotes a usuarios
         <Link to="/notificacionloteusuario" />
+      </MenuItem>
+    ),
+  },
+  {
+    objeto: 'Modulo PrioridadChat',
+    menu: (
+      <MenuItem key="prioridadchat" icon={<FiMessageCircle />}>
+        Prioridad usuario en chat
+        <Link to="/prioridadchat" />
       </MenuItem>
     ),
   },

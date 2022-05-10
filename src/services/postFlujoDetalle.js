@@ -1,6 +1,13 @@
 const API = `${process.env.REACT_APP_API_URL}flujodetalle`
 
-export function postFlujoDetalle(idFlujo, idEstadoFlujo, idUsuario, Comentario, NivelAutorizo) {
+export function postFlujoDetalle(
+  idFlujo,
+  idEstadoFlujo,
+  idUsuario,
+  Comentario,
+  NivelAutorizo,
+  token,
+) {
   var datos = {
     IdFlujo: idFlujo,
     IdEstadoFlujo: idEstadoFlujo,
@@ -14,6 +21,7 @@ export function postFlujoDetalle(idFlujo, idEstadoFlujo, idUsuario, Comentario, 
     method: 'POST',
     body: data,
     headers: {
+      Authorization: 'Bearer ' + token,
       Accept: 'application/json',
       'Content-type': 'application/json;charset=UTF-8',
     },

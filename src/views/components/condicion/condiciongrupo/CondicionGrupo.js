@@ -38,7 +38,7 @@ const CondicionGrupo = () => {
 
   useEffect(() => {
     let mounted = true
-    getGruposAutorizacion(null, null).then((items) => {
+    getGruposAutorizacion(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.grupos)
       }
@@ -70,6 +70,7 @@ const CondicionGrupo = () => {
       '',
       '',
       session.id,
+      session.api_token,
     )
     if (respuesta === 'OK') {
       history.push('/condiciones')
@@ -96,7 +97,7 @@ const CondicionGrupo = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

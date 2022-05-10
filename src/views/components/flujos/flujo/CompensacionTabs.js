@@ -51,42 +51,42 @@ const CompensacionTabs = () => {
   useEffect(() => {
     let mounted = true
     let objeto = 'Modulo Compensacion Pagos'
-    getFlujoSolicitud(location.id_flujo, null).then((items) => {
+    getFlujoSolicitud(location.id_flujo, null, session.api_token).then((items) => {
       if (mounted) {
         setSolicitud(items.solicitud)
       }
     })
-    getFlujoOferta(location.id_flujo, null).then((items) => {
+    getFlujoOferta(location.id_flujo, null, session.api_token).then((items) => {
       if (mounted) {
         setOferta(items.oferta)
       }
     })
-    getFlujoOrden(location.id_flujo, null).then((items) => {
+    getFlujoOrden(location.id_flujo, null, session.api_token).then((items) => {
       if (mounted) {
         setOrden(items.orden)
       }
     })
-    getFlujoIngreso(location.id_flujo).then((items) => {
+    getFlujoIngreso(location.id_flujo, session.api_token).then((items) => {
       if (mounted) {
         setIngreso(items.ingreso)
       }
     })
-    getFlujoFacturaCantidad(location.id_flujo).then((items) => {
+    getFlujoFacturaCantidad(location.id_flujo, session.api_token).then((items) => {
       if (mounted) {
         setFacturaCantidad(items.facturacantidad)
       }
     })
-    getFlujoFacturaDocumento(location.id_flujo).then((items) => {
+    getFlujoFacturaDocumento(location.id_flujo, session.api_token).then((items) => {
       if (mounted) {
         setFacturaDocumento(items.facturadocumento)
       }
     })
-    getArchivosFlujo(location.id_flujo, null).then((items) => {
+    getArchivosFlujo(location.id_flujo, null, session.api_token).then((items) => {
       if (mounted) {
         setArchivos(items.archivos)
       }
     })
-    getPerfilUsuario(session.id, '4', objeto).then((items) => {
+    getPerfilUsuario(session.id, '4', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -112,7 +112,7 @@ const CompensacionTabs = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')
@@ -169,9 +169,18 @@ const CompensacionTabs = () => {
         idUsuario,
         'Actualizado',
         '0',
+        session.api_token,
       )
       if (detalleFlujoActualizado == 'OK') {
-        const respuestaActualizado = await postFlujos(id_flujo, '0', '', '66', null, idUsuario)
+        const respuestaActualizado = await postFlujos(
+          id_flujo,
+          '0',
+          '',
+          '66',
+          null,
+          idUsuario,
+          session.api_token,
+        )
 
         if (respuestaActualizado == 'OK') {
           history.go(-1)
@@ -179,39 +188,66 @@ const CompensacionTabs = () => {
       }
     }
     if (opcion == 6) {
-      const respuestaActualizado = await postFlujos(id_flujo, '0', '', '67', null, idUsuario)
+      const respuestaActualizado = await postFlujos(
+        id_flujo,
+        '0',
+        '',
+        '67',
+        null,
+        idUsuario,
+        session.api_token,
+      )
       const detalleFlujoActualizado = await postFlujoDetalle(
         id_flujo,
         '5',
         idUsuario,
         'Restituido a pendientes de compensar para su reprocesamiento',
         '0',
+        session.api_token,
       )
       if (respuestaActualizado == 'OK' && detalleFlujoActualizado == 'OK') {
         history.go(-1)
       }
     }
     if (opcion == 7) {
-      const respuestaActualizado = await postFlujos(id_flujo, '0', '', '68', null, idUsuario)
+      const respuestaActualizado = await postFlujos(
+        id_flujo,
+        '0',
+        '',
+        '68',
+        null,
+        idUsuario,
+        session.api_token,
+      )
       const detalleFlujoActualizado = await postFlujoDetalle(
         id_flujo,
         '12',
         idUsuario,
         'Generada solicitud para retorno a bandeja de pendientes',
         '0',
+        session.api_token,
       )
       if (respuestaActualizado == 'OK' && detalleFlujoActualizado == 'OK') {
         history.go(-1)
       }
     }
     if (opcion == 8) {
-      const respuestaActualizado = await postFlujos(id_flujo, '0', '', '69', null, idUsuario)
+      const respuestaActualizado = await postFlujos(
+        id_flujo,
+        '0',
+        '',
+        '69',
+        null,
+        idUsuario,
+        session.api_token,
+      )
       const detalleFlujoActualizado = await postFlujoDetalle(
         id_flujo,
         '13',
         idUsuario,
         'Rechazada solicitud para retorno a bandeja de pendientes',
         '0',
+        session.api_token,
       )
       if (respuestaActualizado == 'OK' && detalleFlujoActualizado == 'OK') {
         history.go(-1)

@@ -31,12 +31,12 @@ const Usuarios = () => {
     if (session) {
       idUsuario = session.id
     }
-    getUsuarios(null, null, null, null).then((items) => {
+    getUsuarios(null, null, null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.users)
       }
     })
-    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -63,9 +63,20 @@ const Usuarios = () => {
 
   async function eliminarUsuario(id, opcion) {
     if (opcion == 1) {
-      const respuesta = await postEditarUsuario(id, '', '', '', '', '', '', '2', session.id)
+      const respuesta = await postEditarUsuario(
+        id,
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '2',
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
-        await getUsuarios(null, null, null, null).then((items) => {
+        await getUsuarios(null, null, null, null, session.api_token).then((items) => {
           setList(items.users)
         })
       }
@@ -82,7 +93,7 @@ const Usuarios = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

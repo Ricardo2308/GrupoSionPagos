@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}permisos`
 
-export function postCrudPermiso(idPermiso, descripcion, estado, opcion, id_usuario) {
+export function postCrudPermiso(idPermiso, descripcion, estado, opcion, id_usuario, token) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -22,6 +22,7 @@ export function postCrudPermiso(idPermiso, descripcion, estado, opcion, id_usuar
     method: 'POST',
     body: data,
     headers: {
+      Authorization: 'Bearer ' + token,
       Accept: 'application/json',
       'Content-type': 'application/json;charset=UTF-8',
     },

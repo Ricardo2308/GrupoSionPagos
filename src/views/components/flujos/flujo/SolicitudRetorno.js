@@ -19,13 +19,13 @@ const SolicitudRetorno = (prop) => {
   useEffect(() => {
     let mounted = true
     if (location.comentarios && location.tipo) {
-      getSolicitudRetorno(location.tipo, session.id).then((items) => {
+      getSolicitudRetorno(location.tipo, session.id, session.api_token).then((items) => {
         if (mounted) {
           setList(items.flujos)
         }
       })
     } else {
-      getSolicitudRetorno(prop.tipo, session.id).then((items) => {
+      getSolicitudRetorno(prop.tipo, session.id, session.api_token).then((items) => {
         if (mounted) {
           setList(items.flujos)
         }

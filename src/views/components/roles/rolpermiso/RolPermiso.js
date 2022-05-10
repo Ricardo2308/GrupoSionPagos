@@ -38,7 +38,7 @@ const RolPermiso = () => {
 
   useEffect(() => {
     let mounted = true
-    getPermisos(null, null).then((items) => {
+    getPermisos(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.permisos)
       }
@@ -63,7 +63,16 @@ const RolPermiso = () => {
       }
     }
     if (result !== '') {
-      const respuesta = await postRolPermiso('', location.id_rol, result, '', '', '', session.id)
+      const respuesta = await postRolPermiso(
+        '',
+        location.id_rol,
+        result,
+        '',
+        '',
+        '',
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
         history.push('/roles')
       } else if (respuesta === 'Error') {
@@ -94,7 +103,7 @@ const RolPermiso = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

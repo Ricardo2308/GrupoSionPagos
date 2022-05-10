@@ -39,7 +39,7 @@ const NuevoRol = () => {
 
   useEffect(() => {
     let mounted = true
-    getEmpresaDisponible().then((items) => {
+    getEmpresaDisponible(session.api_token).then((items) => {
       if (mounted) {
         setList(items.restriccion_empresa)
       }
@@ -73,6 +73,7 @@ const NuevoRol = () => {
         form.empresa_nombre,
         '',
         session.id,
+        session.api_token,
       )
       if (respuesta === 'OK') {
         history.push('/restriccionempresa')
@@ -93,7 +94,7 @@ const NuevoRol = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

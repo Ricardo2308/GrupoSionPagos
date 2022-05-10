@@ -6,6 +6,7 @@ export function postCrudRestriccionEmpresa(
   empresa_nombre,
   opcion,
   id_usuario,
+  token,
 ) {
   let ApiFinal = API
   let ApiWhere = ''
@@ -28,6 +29,7 @@ export function postCrudRestriccionEmpresa(
     method: 'POST',
     body: data,
     headers: {
+      Authorization: 'Bearer ' + token,
       Accept: 'application/json',
       'Content-type': 'application/json;charset=UTF-8',
     },

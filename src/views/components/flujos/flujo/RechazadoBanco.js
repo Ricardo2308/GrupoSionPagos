@@ -54,7 +54,7 @@ const RechazadosBanco = (prop) => {
   async function leerNotificaciones(IdFlujo, Pago, Estado, Nivel, IdGrupo) {
     let pagos = []
     pagos.push(IdFlujo)
-    const respuesta = await postNotificacion(pagos, session.id, '', '1')
+    const respuesta = await postNotificacion(pagos, session.id, '', '1', session.api_token)
     if (respuesta == 'OK') {
       history.push({
         pathname: '/pagos/tabs',
@@ -71,13 +71,13 @@ const RechazadosBanco = (prop) => {
     let mounted = true
     if (location.tipo) {
       setRechazados(location.rechazadosBanco)
-      getRechazadosBanco(location.tipo, session.id).then((items) => {
+      getRechazadosBanco(location.tipo, session.id, session.api_token).then((items) => {
         if (mounted) {
           setList(items.flujos)
         }
       })
     } else {
-      getRechazadosBanco(prop.tipo, session.id).then((items) => {
+      getRechazadosBanco(prop.tipo, session.id, session.api_token).then((items) => {
         if (mounted) {
           setList(items.flujos)
         }

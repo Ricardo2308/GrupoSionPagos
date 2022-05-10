@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}flujoorden`
 
-export function getFlujoOrden(idFlujo, docNum) {
+export function getFlujoOrden(idFlujo, docNum, token) {
   let ApiFinal = API
   let ApiWhere = ''
   if (idFlujo !== null) {
@@ -10,7 +10,13 @@ export function getFlujoOrden(idFlujo, docNum) {
     ApiWhere += '/' + docNum
   }
   ApiFinal += ApiWhere
-  return fetch(ApiFinal)
+  return fetch(ApiFinal, {
+    method: 'GET',
+    headers: {
+      Authorization: 'Bearer ' + token,
+      Accept: 'application/json',
+    },
+  })
     .then(function (response) {
       return response.json()
     })

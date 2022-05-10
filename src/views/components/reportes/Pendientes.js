@@ -20,7 +20,7 @@ const Pendientes = (prop) => {
   useEffect(() => {
     let mounted = true
     let pagos = []
-    getPendientesReporte().then((items) => {
+    getPendientesReporte(session.api_token).then((items) => {
       if (mounted) {
         pagos.push(items.flujos)
         var pivot = new WebDataRocks({
@@ -144,7 +144,7 @@ const Pendientes = (prop) => {
     if (session) {
       idUsuario = session.id
     }
-    const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+    const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
     if (respuesta === 'OK') {
       clear()
       history.push('/')

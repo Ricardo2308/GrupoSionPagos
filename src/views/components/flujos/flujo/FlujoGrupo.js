@@ -46,12 +46,12 @@ const FlujoGrupo = (props) => {
 
   useEffect(() => {
     let mounted = true
-    getGruposAutorizacion(null, null).then((items) => {
+    getGruposAutorizacion(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.grupos)
       }
     })
-    getSugerenciaAsignacionFlujo(location.id_flujo).then((items) => {
+    getSugerenciaAsignacionFlujo(location.id_flujo, session.api_token).then((items) => {
       if (mounted) {
         setSugerencias(items.sugerencias)
         if (items.sugerencias.length > 0) {
@@ -98,6 +98,7 @@ const FlujoGrupo = (props) => {
         '',
         null,
         session.id,
+        session.api_token,
       )
       if (respuesta === 'OK') {
         const answer = await postFlujoDetalle(
@@ -106,6 +107,7 @@ const FlujoGrupo = (props) => {
           session.id,
           'Asignado a responsable',
           '0',
+          session.api_token,
         )
         if (answer === 'OK') {
           history.go(-1)
@@ -125,7 +127,7 @@ const FlujoGrupo = (props) => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

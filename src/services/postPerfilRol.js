@@ -1,6 +1,15 @@
 const API = `${process.env.REACT_APP_API_URL}perfilrol`
 
-export function postPerfilRol(idPerfilRol, idPerfil, roles, opcion, idRol, estado, id_usuario) {
+export function postPerfilRol(
+  idPerfilRol,
+  idPerfil,
+  roles,
+  opcion,
+  idRol,
+  estado,
+  id_usuario,
+  token,
+) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -27,6 +36,7 @@ export function postPerfilRol(idPerfilRol, idPerfil, roles, opcion, idRol, estad
     method: 'POST',
     body: data,
     headers: {
+      Authorization: 'Bearer ' + token,
       Accept: 'application/json',
       'Content-type': 'application/json;charset=UTF-8',
     },

@@ -43,12 +43,12 @@ const EditarUsuarioGrupo = (props) => {
 
   useEffect(() => {
     let mounted = true
-    getGruposAutorizacion(null, null).then((items) => {
+    getGruposAutorizacion(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.grupos)
       }
     })
-    getUsuarioGrupo(location.id_usuario, null).then((items) => {
+    getUsuarioGrupo(location.id_usuario, null, session.api_token).then((items) => {
       if (mounted) {
         setDetalle(items.detalle)
       }
@@ -98,6 +98,7 @@ const EditarUsuarioGrupo = (props) => {
           form.nivel,
           1,
           session.id,
+          session.api_token,
         )
         if (respuesta === 'OK') {
           history.push('/usuarios')
@@ -119,7 +120,7 @@ const EditarUsuarioGrupo = (props) => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

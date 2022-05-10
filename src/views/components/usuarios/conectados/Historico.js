@@ -29,7 +29,7 @@ const Historico = () => {
     if (location.IdUsuario) {
       idUsuario = location.IdUsuario
     }
-    getSesionUsuario(location.IdUsuario).then((items) => {
+    getSesionUsuario(location.IdUsuario, session.api_token).then((items) => {
       if (mounted) {
         setList(items.sesiones)
       }
@@ -45,7 +45,7 @@ const Historico = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

@@ -14,7 +14,7 @@ const Compensados = (prop) => {
   useEffect(() => {
     let mounted = true
     let pagos = []
-    getReporteCompensados().then((items) => {
+    getReporteCompensados(session.api_token).then((items) => {
       if (mounted) {
         pagos.push(items.flujos)
         var pivot = new WebDataRocks({

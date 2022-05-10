@@ -23,7 +23,7 @@ class Chat extends Component {
 
   componentDidMount() {
     let cont = 0
-    getContadorChat(this.props.id_flujo, this.props.id_usuario).then((items) => {
+    getContadorChat(this.props.id_flujo, this.props.id_usuario, this.props.token).then((items) => {
       this.setState({
         mensajes: items.mensajes,
       })
@@ -40,21 +40,23 @@ class Chat extends Component {
     })
     const interval = setInterval(() => {
       let cont = 0
-      getContadorChat(this.props.id_flujo, this.props.id_usuario).then((items) => {
-        this.setState({
-          mensajes: items.mensajes,
-        })
-        this.state.mensajes.map((item) => {
-          if (item.eliminado == 0) {
-            if (item.leido == 0) {
-              cont++
+      getContadorChat(this.props.id_flujo, this.props.id_usuario, this.props.token).then(
+        (items) => {
+          this.setState({
+            mensajes: items.mensajes,
+          })
+          this.state.mensajes.map((item) => {
+            if (item.eliminado == 0) {
+              if (item.leido == 0) {
+                cont++
+              }
             }
-          }
-        })
-        this.setState({
-          newMessagesCount: cont,
-        })
-      })
+          })
+          this.setState({
+            newMessagesCount: cont,
+          })
+        },
+      )
     }, 3000)
     return () => clearInterval(interval)
   }
@@ -70,34 +72,36 @@ class Chat extends Component {
     this.setState({ newCount: 0 })
     this.setState({ id_receptor: receptor })
     if (receptor != 0) {
-      getMensajesChat(this.props.id_flujo, this.props.id_usuario).then((items) => {
-        this.setState({
-          mensajes: items.mensajes,
-        })
-        this.state.mensajes.map((item) => {
-          if (
-            item.id_usuariorecibe == this.props.id_usuario &&
-            item.id_usuarioenvia == receptor &&
-            item.eliminado == 0
-          ) {
-            if (item.leido == 0) {
-              this.setState({ newCount: this.state.newCount + 1 })
+      getMensajesChat(this.props.id_flujo, this.props.id_usuario, this.props.token).then(
+        (items) => {
+          this.setState({
+            mensajes: items.mensajes,
+          })
+          this.state.mensajes.map((item) => {
+            if (
+              item.id_usuariorecibe == this.props.id_usuario &&
+              item.id_usuarioenvia == receptor &&
+              item.eliminado == 0
+            ) {
+              if (item.leido == 0) {
+                this.setState({ newCount: this.state.newCount + 1 })
+              }
+              this._sendMessage(item.mensaje, item.usuarioenvia, item.fecha_hora)
+            } else if (
+              item.id_usuariorecibe == receptor &&
+              item.id_usuarioenvia == this.props.id_usuario &&
+              item.eliminado == 0
+            ) {
+              if (item.leido == 0) {
+                this._sendMessageMe(item.mensaje, item.fecha_hora, 'Enviado')
+              } else {
+                this._sendMessageMe(item.mensaje, item.fecha_hora, 'Leído')
+              }
             }
-            this._sendMessage(item.mensaje, item.usuarioenvia, item.fecha_hora)
-          } else if (
-            item.id_usuariorecibe == receptor &&
-            item.id_usuarioenvia == this.props.id_usuario &&
-            item.eliminado == 0
-          ) {
-            if (item.leido == 0) {
-              this._sendMessageMe(item.mensaje, item.fecha_hora, 'Enviado')
-            } else {
-              this._sendMessageMe(item.mensaje, item.fecha_hora, 'Leído')
-            }
-          }
-        })
-      })
-      this.mensajesLeidos(this.props.id_flujo, this.props.id_usuario, receptor)
+          })
+        },
+      )
+      this.mensajesLeidos(this.props.id_flujo, this.props.id_usuario, receptor, this.props.token)
     }
   }
 
@@ -157,8 +161,8 @@ class Chat extends Component {
     }
   }
 
-  async mensajesLeidos(pago, emisor, receptor) {
-    const respuesta = await postMensajes(pago, emisor, receptor, '', '1')
+  async mensajesLeidos(pago, emisor, receptor, token) {
+    const respuesta = await postMensajes(pago, emisor, receptor, '', '1', token)
     if (respuesta === 'Error') {
       this.setShow(true)
     }
@@ -198,6 +202,9 @@ class Chat extends Component {
             id_flujo={this.props.id_flujo}
             id_grupo={this.props.id_grupo}
             Receptor={this.obtenerReceptor}
+            token={this.props.token}
+            prioridad_usuario={this.props.prioridad_usuario}
+            lista_usuarios={this.props.lista_usuarios}
           />
         </div>
       </>

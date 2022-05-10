@@ -36,12 +36,12 @@ const NuevoBanco = (props) => {
 
   useEffect(() => {
     let mounted = true
-    getBancos(null, null).then((items) => {
+    getBancos(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.bancos)
       }
     })
-    getMonedas(null, null).then((items) => {
+    getMonedas(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList1(items.monedas)
       }
@@ -85,6 +85,7 @@ const NuevoBanco = (props) => {
         form.codigo_ach,
         '',
         session.id,
+        session.api_token,
       )
       if (respuesta === 'OK') {
         history.push('/cuentas')
@@ -103,7 +104,7 @@ const NuevoBanco = (props) => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

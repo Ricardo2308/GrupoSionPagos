@@ -42,7 +42,15 @@ const NuevaMoneda = (props) => {
   const handleSubmit = async (event) => {
     if (form.nombre !== '' && form.simbolo !== '') {
       event.preventDefault()
-      const respuesta = await postCrudMonedas('', form.nombre, form.simbolo, '', '', session.id)
+      const respuesta = await postCrudMonedas(
+        '',
+        form.nombre,
+        form.simbolo,
+        '',
+        '',
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
         history.push('/monedas')
       }
@@ -60,7 +68,7 @@ const NuevaMoneda = (props) => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

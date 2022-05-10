@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}loglogin`
 
-export function postLogLogin(idUsuario, maximo) {
+export function postLogLogin(idUsuario, maximo, token) {
   var datos = {
     id_usuario: idUsuario,
     maximo: maximo,
@@ -11,6 +11,7 @@ export function postLogLogin(idUsuario, maximo) {
     method: 'POST',
     body: data,
     headers: {
+      Authorization: 'Bearer ' + token,
       Accept: 'application/json',
       'Content-type': 'application/json;charset=UTF-8',
     },

@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}roles`
 
-export function postCrudRoles(idRol, descripcion, objeto, estado, opcion, id_usuario) {
+export function postCrudRoles(idRol, descripcion, objeto, estado, opcion, id_usuario, token) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -23,6 +23,7 @@ export function postCrudRoles(idRol, descripcion, objeto, estado, opcion, id_usu
     method: 'POST',
     body: data,
     headers: {
+      Authorization: 'Bearer ' + token,
       Accept: 'application/json',
       'Content-type': 'application/json;charset=UTF-8',
     },

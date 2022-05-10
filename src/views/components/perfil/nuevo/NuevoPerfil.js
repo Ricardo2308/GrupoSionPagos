@@ -42,7 +42,14 @@ const NuevoPerfil = (props) => {
   const handleSubmit = async (event) => {
     if (form.descripcion !== '') {
       event.preventDefault()
-      const respuesta = await postCrudPerfil('', form.descripcion, '', '', session.id)
+      const respuesta = await postCrudPerfil(
+        '',
+        form.descripcion,
+        '',
+        '',
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
         history.push('/perfiles')
       }
@@ -62,7 +69,7 @@ const NuevoPerfil = (props) => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

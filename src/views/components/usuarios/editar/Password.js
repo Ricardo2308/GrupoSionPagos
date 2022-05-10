@@ -54,7 +54,7 @@ const EditarPassword = (props) => {
     const myip = await publicIp.v4()
     for (var i in navegadores) {
       if (agente.indexOf(navegadores[i]) != -1) {
-        const respuesta = await postSesionUsuario(id, navegadores[i], myip, '1')
+        const respuesta = await postSesionUsuario(id, navegadores[i], myip, '1', session.api_token)
         if (respuesta === 'OK') {
           return true
         } else {
@@ -72,7 +72,13 @@ const EditarPassword = (props) => {
       form.password_repetida !== ''
     ) {
       event.preventDefault()
-      const respuesta = await getUsuarios(null, null, session.user_name, null).then((items) => {
+      const respuesta = await getUsuarios(
+        null,
+        null,
+        session.user_name,
+        null,
+        session.api_token,
+      ).then((items) => {
         if (items) {
           if (items.users.length > 0) {
             for (let item of items.users) {
@@ -170,7 +176,7 @@ const EditarPassword = (props) => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

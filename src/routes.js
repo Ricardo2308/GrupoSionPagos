@@ -1,7 +1,9 @@
 import React from 'react'
 
 // examples
-
+const PendientesRecordatorio = React.lazy(() =>
+  import('./views/components/flujos/flujo/PendientesRecordatorio'),
+)
 const Bitacora = React.lazy(() => import('./views/components/bitacora/Bitacora'))
 const DetalleBitacora = React.lazy(() => import('./views/components/bitacora/DetalleBitacora'))
 const Usuarios = React.lazy(() => import('./views/components/usuarios/usuarios/Usuarios'))
@@ -40,6 +42,12 @@ const NuevoRestriccionEmpresa = React.lazy(() =>
 )
 const RestriccionEmpresa = React.lazy(() =>
   import('./views/components/restriccionempresa/listado/RestriccionEmpresa'),
+)
+const NuevaPrioridadChat = React.lazy(() =>
+  import('./views/components/usuarios/prioridadchat/NuevaPrioridadChat'),
+)
+const PrioridadChat = React.lazy(() =>
+  import('./views/components/usuarios/prioridadchat/PrioridadChat'),
 )
 const CuentaGrupoAutorizacion = React.lazy(() =>
   import('./views/components/cuentagrupoautorizacion/listado/CuentaGrupoAutorizacion'),
@@ -176,6 +184,11 @@ const routes = [
   { path: '/home', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   { path: '/bitacora', name: 'Bitacora', component: Bitacora },
+  {
+    path: '/recordatoriopendiente',
+    name: 'Recordatorio pendientes',
+    component: PendientesRecordatorio,
+  },
   { path: '/detallebitacora', name: 'Detalle bitacora', component: DetalleBitacora },
   { path: '/usuarios', name: 'Usuarios', component: Usuarios, exact: true },
   { path: '/usuarios/registro', name: 'Nuevo', component: Register },
@@ -356,6 +369,13 @@ const routes = [
     component: FlujoConArchivos,
   },
   { path: '/archivoflujo/nuevo', name: 'Nuevo', component: NuevoArchivoFlujo },
+  {
+    path: '/prioridadchat',
+    exact: true,
+    name: 'Prioridad usuario en chat',
+    component: PrioridadChat,
+  },
+  { path: '/prioridadchat/nueva', name: 'Nuevo Registro', component: NuevaPrioridadChat },
   // { path: '/login', name: 'Login', component: Login },
   // { path: '/register', name: 'Register', component: Register },
   // { path: '/404', name: '404', component: Page404 },

@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}sesionusuario`
 
-export function postSesionUsuario(IdUsuario, Navegador, IP, Opcion) {
+export function postSesionUsuario(IdUsuario, Navegador, IP, Opcion, token) {
   var datos = {
     IdUsuario: IdUsuario,
     Navegador: Navegador,
@@ -13,6 +13,7 @@ export function postSesionUsuario(IdUsuario, Navegador, IP, Opcion) {
     method: 'POST',
     body: data,
     headers: {
+      Authorization: 'Bearer ' + token,
       Accept: 'application/json',
       'Content-type': 'application/json;charset=UTF-8',
     },

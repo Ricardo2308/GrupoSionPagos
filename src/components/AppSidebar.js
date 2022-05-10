@@ -59,7 +59,7 @@ const AppSidebar = () => {
     if (session) {
       idUsuario = session.id
     }
-    getPerfilUsuario(idUsuario, '3', '0').then((items) => {
+    getPerfilUsuario(idUsuario, '3', '0', session.api_token).then((items) => {
       for (const item of items.detalle) {
         permisos.push(item.objeto)
       }

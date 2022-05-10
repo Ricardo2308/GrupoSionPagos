@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}solicitudretorno`
 
-export function getSolicitudRetorno(Tipo, idUsuario) {
+export function getSolicitudRetorno(Tipo, idUsuario, token) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -11,7 +11,13 @@ export function getSolicitudRetorno(Tipo, idUsuario) {
     ApiWhere += '/' + idUsuario
   }
   ApiFinal += ApiWhere
-  return fetch(ApiFinal)
+  return fetch(ApiFinal, {
+    method: 'GET',
+    headers: {
+      Authorization: 'Bearer ' + token,
+      Accept: 'application/json',
+    },
+  })
     .then(function (response) {
       return response.json()
     })

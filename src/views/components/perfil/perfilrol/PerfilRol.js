@@ -38,7 +38,7 @@ const PerfilRol = () => {
 
   useEffect(() => {
     let mounted = true
-    getRoles(null, null).then((items) => {
+    getRoles(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.roles)
       }
@@ -63,7 +63,16 @@ const PerfilRol = () => {
       }
     }
     if (result !== '') {
-      const respuesta = await postPerfilRol('', location.id_perfil, result, '', '', '', session.id)
+      const respuesta = await postPerfilRol(
+        '',
+        location.id_perfil,
+        result,
+        '',
+        '',
+        '',
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
         history.push('/perfiles')
       } else if (respuesta === 'Error') {
@@ -94,7 +103,7 @@ const PerfilRol = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

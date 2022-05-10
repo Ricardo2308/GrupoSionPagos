@@ -54,6 +54,7 @@ const EditarPolitica = () => {
         form.estado,
         '1',
         session.id,
+        session.api_token,
       )
       if (respuesta === 'OK') {
         history.push('/politicas')
@@ -72,7 +73,7 @@ const EditarPolitica = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

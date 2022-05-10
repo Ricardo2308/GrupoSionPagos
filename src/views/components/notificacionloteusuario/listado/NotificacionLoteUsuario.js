@@ -32,12 +32,12 @@ const NotificacionLoteUsuario = () => {
     if (session) {
       idUsuario = session.id
     }
-    getNotificacionLoteUsuario(null, null).then((items) => {
+    getNotificacionLoteUsuario(null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.UsuarioNotificacionTransaccion)
       }
     })
-    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -63,7 +63,7 @@ const NotificacionLoteUsuario = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')
@@ -80,9 +80,16 @@ const NotificacionLoteUsuario = () => {
 
   async function eliminarRol(id, opcion) {
     if (opcion == 1) {
-      const respuesta = await postCrudNotificacionTipoDocumentoLote(id, '', '', '2', session.id)
+      const respuesta = await postCrudNotificacionTipoDocumentoLote(
+        id,
+        '',
+        '',
+        '2',
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
-        await getNotificacionLoteUsuario(null, null).then((items) => {
+        await getNotificacionLoteUsuario(null, session.api_token).then((items) => {
           setList(items.UsuarioNotificacionTransaccion)
         })
       }

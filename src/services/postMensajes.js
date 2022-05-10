@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}mensajes`
 
-export function postMensajes(idFlujo, idUsuarioEnvia, idUsuarioRecibe, mensaje, opcion) {
+export function postMensajes(idFlujo, idUsuarioEnvia, idUsuarioRecibe, mensaje, opcion, token) {
   let ApiFinal = API
   let ApiWhere = ''
 
@@ -22,6 +22,7 @@ export function postMensajes(idFlujo, idUsuarioEnvia, idUsuarioRecibe, mensaje, 
     method: 'POST',
     body: data,
     headers: {
+      Authorization: 'Bearer ' + token,
       Accept: 'application/json',
       'Content-type': 'application/json;charset=UTF-8',
     },

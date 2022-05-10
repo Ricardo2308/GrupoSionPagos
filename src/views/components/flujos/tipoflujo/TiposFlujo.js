@@ -37,12 +37,12 @@ const TiposFlujo = () => {
     if (session) {
       idUsuario = session.id
     }
-    getTiposFlujo(null, null).then((items) => {
+    getTiposFlujo(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.tipos)
       }
     })
-    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -68,7 +68,7 @@ const TiposFlujo = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')
@@ -85,9 +85,17 @@ const TiposFlujo = () => {
 
   async function eliminarTipo(id_tipoflujo, opcion) {
     if (opcion == 1) {
-      const respuesta = await postTipoFlujo(id_tipoflujo, '', '', '', '2', session.id)
+      const respuesta = await postTipoFlujo(
+        id_tipoflujo,
+        '',
+        '',
+        '',
+        '2',
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
-        await getTiposFlujo(null, null).then((items) => {
+        await getTiposFlujo(null, null, session.api_token).then((items) => {
           setList(items.tipos)
         })
       }

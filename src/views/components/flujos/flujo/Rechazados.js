@@ -22,7 +22,7 @@ const Rechazados = (prop) => {
   async function leerNotificaciones(IdFlujo, Pago, Estado, Nivel, IdGrupo) {
     let pagos = []
     pagos.push(IdFlujo)
-    const respuesta = await postNotificacion(pagos, session.id, '', '1')
+    const respuesta = await postNotificacion(pagos, session.id, '', '1', session.api_token)
     if (respuesta == 'OK') {
       history.push({
         pathname: '/pagos/tabs',
@@ -39,13 +39,13 @@ const Rechazados = (prop) => {
     let mounted = true
     if (location.tipo) {
       setRechazados(location.rechazados)
-      getRechazados(session.id, location.tipo).then((items) => {
+      getRechazados(session.id, location.tipo, session.api_token).then((items) => {
         if (mounted) {
           setList(items.bitacora)
         }
       })
     } else {
-      getRechazados(session.id, prop.tipo).then((items) => {
+      getRechazados(session.id, prop.tipo, session.api_token).then((items) => {
         if (mounted) {
           setList(items.bitacora)
         }

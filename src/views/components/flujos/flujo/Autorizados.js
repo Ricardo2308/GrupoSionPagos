@@ -23,7 +23,7 @@ const Autorizados = (prop) => {
     if (location.opcion == 1) {
       let pagos = []
       pagos.push(IdFlujo)
-      const respuesta = await postNotificacion(pagos, session.id, '', '1')
+      const respuesta = await postNotificacion(pagos, session.id, '', '1', session.api_token)
       if (respuesta == 'OK') {
         history.push({
           pathname: '/pagos/tabs',
@@ -50,13 +50,13 @@ const Autorizados = (prop) => {
     let mounted = true
     if (location.tipo) {
       setAutorizados(location.autorizados)
-      getAutorizados(session.id, location.tipo).then((items) => {
+      getAutorizados(session.id, location.tipo, session.api_token).then((items) => {
         if (mounted) {
           setList(items.bitacora)
         }
       })
     } else {
-      getAutorizados(session.id, prop.tipo).then((items) => {
+      getAutorizados(session.id, prop.tipo, session.api_token).then((items) => {
         if (mounted) {
           setList(items.bitacora)
         }

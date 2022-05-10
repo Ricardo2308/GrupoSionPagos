@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}monedas`
 
-export function getMonedas(idMoneda, Nombre) {
+export function getMonedas(idMoneda, Nombre, token) {
   let ApiFinal = API
   let ApiWhere = ''
   if (idMoneda !== null) {
@@ -10,7 +10,13 @@ export function getMonedas(idMoneda, Nombre) {
     ApiWhere += '/' + Nombre
   }
   ApiFinal += ApiWhere
-  return fetch(ApiFinal)
+  return fetch(ApiFinal, {
+    method: 'GET',
+    headers: {
+      Authorization: 'Bearer ' + token,
+      Accept: 'application/json',
+    },
+  })
     .then(function (response) {
       return response.json()
     })

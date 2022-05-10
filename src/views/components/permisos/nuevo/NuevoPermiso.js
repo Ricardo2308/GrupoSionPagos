@@ -42,7 +42,14 @@ const NuevoPermiso = () => {
   const handleSubmit = async (event) => {
     if (form.descripcion !== '') {
       event.preventDefault()
-      const respuesta = await postCrudPermiso('', form.descripcion, '', '', session.id)
+      const respuesta = await postCrudPermiso(
+        '',
+        form.descripcion,
+        '',
+        '',
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
         history.push('/permisos')
       }
@@ -62,7 +69,7 @@ const NuevoPermiso = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

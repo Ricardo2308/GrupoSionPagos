@@ -42,7 +42,7 @@ const PendientesPago = (prop) => {
   const [filterText, setFilterText] = useState('')
   const [titulo, setTitulo] = useState('Error!')
   const [color, setColor] = useState('danger')
-  const [MostrarReprocesar, setMostrarReprocesar] = useState(false)
+  const [MostrarReprocesar, setMostrarReprocesar] = useState(true)
   const filteredItems = results
 
   const handleClose = () => setShow(false)
@@ -54,22 +54,22 @@ const PendientesPago = (prop) => {
     if (session) {
       idUsuario = session.id
     }
-    getPendientesCompensacion(prop.tipo, idUsuario).then((items) => {
+    getPendientesCompensacion(prop.tipo, idUsuario, session.api_token).then((items) => {
       if (mounted) {
         setList(items.flujos)
       }
     })
-    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisosRol(items.detalle)
       }
     })
-    getPerfilUsuario(idUsuario, '4', objeto).then((items) => {
+    getPerfilUsuario(idUsuario, '4', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
         for (let item of items.detalle) {
-          if ('Reprocesar' == item.descripcion) {
-            setMostrarReprocesar(true)
+          if ('Compensar' == item.descripcion) {
+            setMostrarReprocesar(false)
           }
         }
       }
@@ -111,11 +111,18 @@ const PendientesPago = (prop) => {
 
   async function Compensar() {
     let bandera = 1
-    const respuesta = await postFlujos('0', '', '', '2', pagos, session.id)
+    const respuesta = await postFlujos('0', '', '', '2', pagos, session.id, session.api_token)
     if (respuesta === 'OK') {
       for (let pago of pagos) {
         sessionStorage.removeItem(pago)
-        const pagado = await postFlujoDetalle(pago, '7', session.id, 'Compensado', '0')
+        const pagado = await postFlujoDetalle(
+          pago,
+          '7',
+          session.id,
+          'Compensado',
+          '0',
+          session.api_token,
+        )
         if (pagado === 'OK') {
           bandera *= 1
         } else {
@@ -123,11 +130,19 @@ const PendientesPago = (prop) => {
         }
       }
       if (bandera == 1) {
-        const enviada = await postNotificacion(pagos, session.id, 'compensado.', '')
+        const enviada = await postNotificacion(
+          pagos,
+          session.id,
+          'compensado.',
+          '',
+          session.api_token,
+        )
         if (enviada == 'OK') {
-          await getPendientesCompensacion(prop.tipo, session.id).then((items) => {
-            setList(items.flujos)
-          })
+          await getPendientesCompensacion(prop.tipo, session.id, session.api_token).then(
+            (items) => {
+              setList(items.flujos)
+            },
+          )
         }
       }
     } else {

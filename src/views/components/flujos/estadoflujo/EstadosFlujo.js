@@ -31,12 +31,12 @@ const EstadosFlujo = () => {
     if (session) {
       idUsuario = session.id
     }
-    getEstadosFlujo(null, null).then((items) => {
+    getEstadosFlujo(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.estados)
       }
     })
-    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -62,7 +62,7 @@ const EstadosFlujo = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')
@@ -79,9 +79,17 @@ const EstadosFlujo = () => {
 
   async function eliminarEstado(id_estado, opcion) {
     if (opcion == 1) {
-      const respuesta = await postEstadoFlujo(id_estado, '', '', '', '2', session.id)
+      const respuesta = await postEstadoFlujo(
+        id_estado,
+        '',
+        '',
+        '',
+        '2',
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
-        await getEstadosFlujo(null, null).then((items) => {
+        await getEstadosFlujo(null, null, session.api_token).then((items) => {
           setList(items.estados)
         })
       }

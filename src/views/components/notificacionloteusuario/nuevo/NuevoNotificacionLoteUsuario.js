@@ -51,12 +51,12 @@ const NuevoNotificacionLoteUsuario = () => {
 
   useEffect(() => {
     let mounted = true
-    getUsuarios(null, null, null, null).then((items) => {
+    getUsuarios(null, null, null, null, session.api_token).then((items) => {
       if (mounted) {
         setListUsuarios(items.users)
       }
     })
-    getPermisos(null, null).then((items) => {
+    getPermisos(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.permisos)
       }
@@ -78,7 +78,7 @@ const NuevoNotificacionLoteUsuario = () => {
       ...form,
       [event.target.name]: event.target.value,
     })
-    getNotificacionLoteUsuario(event.target.value).then((items) => {
+    getNotificacionLoteUsuario(event.target.value, session.api_token).then((items) => {
       let contadorBan = 0
       let contadorTra = 0
       let contadorInt = 0
@@ -188,6 +188,7 @@ const NuevoNotificacionLoteUsuario = () => {
         '',
         session.id,
         result,
+        session.api_token,
       )
       if (respuesta === 'OK') {
         history.push('/notificacionloteusuario')
@@ -217,7 +218,7 @@ const NuevoNotificacionLoteUsuario = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

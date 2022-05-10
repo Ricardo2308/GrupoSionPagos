@@ -42,12 +42,12 @@ const EditarPerfilRol = () => {
 
   useEffect(() => {
     let mounted = true
-    getRoles(null, null).then((items) => {
+    getRoles(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.roles)
       }
     })
-    getPerfilRol(location.id_perfil, null).then((items) => {
+    getPerfilRol(location.id_perfil, null, session.api_token).then((items) => {
       if (mounted) {
         setList1(items.detalle)
       }
@@ -89,6 +89,7 @@ const EditarPerfilRol = () => {
           form.rol,
           form.estado,
           session.id,
+          session.api_token,
         )
         if (respuesta === 'OK') {
           history.push('/perfiles')
@@ -110,7 +111,7 @@ const EditarPerfilRol = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

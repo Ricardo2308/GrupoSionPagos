@@ -42,12 +42,12 @@ const EditarRolPermiso = () => {
 
   useEffect(() => {
     let mounted = true
-    getPermisos(null, null).then((items) => {
+    getPermisos(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.permisos)
       }
     })
-    getRolPermiso(location.id_rol, null).then((items) => {
+    getRolPermiso(location.id_rol, null, session.api_token).then((items) => {
       if (mounted) {
         setList1(items.detalle)
       }
@@ -89,6 +89,7 @@ const EditarRolPermiso = () => {
           form.permiso,
           form.estado,
           session.id,
+          session.api_token,
         )
         if (respuesta === 'OK') {
           history.push('/roles')
@@ -110,7 +111,7 @@ const EditarRolPermiso = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

@@ -45,12 +45,12 @@ const Consultar = () => {
     if (session) {
       idUsuario2 = session.id
     }
-    getUsuarioGrupo(idUsuario1, null).then((items) => {
+    getUsuarioGrupo(idUsuario1, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.detalle)
       }
     })
-    getPerfilUsuario(idUsuario2, '2', objeto).then((items) => {
+    getPerfilUsuario(idUsuario2, '2', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -74,7 +74,7 @@ const Consultar = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')
@@ -110,9 +110,10 @@ const Consultar = () => {
         '',
         '',
         session.id,
+        session.api_token,
       )
       if (respuesta === 'OK') {
-        await getUsuarioGrupo(id_usuario, null).then((items) => {
+        await getUsuarioGrupo(id_usuario, null, session.api_token).then((items) => {
           setList(items.detalle)
         })
       }
@@ -130,9 +131,10 @@ const Consultar = () => {
         '',
         result,
         session.id,
+        session.api_token,
       )
       if (respuesta === 'OK') {
-        await getUsuarioGrupo(id_usuario, null).then((items) => {
+        await getUsuarioGrupo(id_usuario, null, session.api_token).then((items) => {
           setList(items.detalle)
         })
       }

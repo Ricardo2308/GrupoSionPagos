@@ -48,9 +48,8 @@ const EditarGrupo = () => {
         location.id_usuario,
         form.descripcion,
         form.archivos,
-        form.estado,
         '1',
-        location.url_archivo,
+        session.api_token,
       )
       if (respuesta === 'OK' && location.opcion === '1') {
         history.go(-2)

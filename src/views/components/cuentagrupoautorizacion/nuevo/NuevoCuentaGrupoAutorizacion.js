@@ -39,7 +39,7 @@ const NuevoRol = () => {
 
   useEffect(() => {
     let mounted = true
-    getGruposAutorizacion(null, null).then((items) => {
+    getGruposAutorizacion(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.grupos)
       }
@@ -63,6 +63,7 @@ const NuevoRol = () => {
         form.CodigoCuenta,
         '',
         session.id,
+        session.api_token,
       )
       if (respuesta === 'OK') {
         history.push('/cuentagrupoautorizacion')
@@ -83,7 +84,7 @@ const NuevoRol = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

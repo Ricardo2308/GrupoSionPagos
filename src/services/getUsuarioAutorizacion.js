@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}usuarioautorizacion`
 
-export function getUsuarioAutorizacion(idAprobador, idAutorizacion) {
+export function getUsuarioAutorizacion(idAprobador, idAutorizacion, token) {
   let ApiFinal = API
   let ApiWhere = ''
   if (idAprobador !== null) {
@@ -10,7 +10,13 @@ export function getUsuarioAutorizacion(idAprobador, idAutorizacion) {
     ApiWhere += '/' + idAutorizacion
   }
   ApiFinal += ApiWhere
-  return fetch(ApiFinal)
+  return fetch(ApiFinal, {
+    method: 'GET',
+    headers: {
+      Authorization: 'Bearer ' + token,
+      Accept: 'application/json',
+    },
+  })
     .then(function (response) {
       return response.json()
     })

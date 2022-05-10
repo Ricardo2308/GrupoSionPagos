@@ -1,13 +1,19 @@
 const API = `${process.env.REACT_APP_API_URL}restriccionempresa`
 
-export function getRestriccionEmpresa(idRestriccionEmpresa) {
+export function getRestriccionEmpresa(idRestriccionEmpresa, token) {
   let ApiFinal = API
   let ApiWhere = ''
   if (idRestriccionEmpresa !== null) {
     ApiWhere += '/' + idRestriccionEmpresa
   }
   ApiFinal += ApiWhere
-  return fetch(ApiFinal)
+  return fetch(ApiFinal, {
+    method: 'GET',
+    headers: {
+      Authorization: 'Bearer ' + token,
+      Accept: 'application/json',
+    },
+  })
     .then(function (response) {
       return response.json()
     })
@@ -16,8 +22,14 @@ export function getRestriccionEmpresa(idRestriccionEmpresa) {
 
 const APIDisponible = `${process.env.REACT_APP_API_URL}empresasdisponibles`
 
-export function getEmpresaDisponible() {
-  return fetch(APIDisponible)
+export function getEmpresaDisponible(token) {
+  return fetch(APIDisponible, {
+    method: 'GET',
+    headers: {
+      Authorization: 'Bearer ' + token,
+      Accept: 'application/json',
+    },
+  })
     .then(function (response) {
       return response.json()
     })

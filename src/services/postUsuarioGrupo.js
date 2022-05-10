@@ -8,6 +8,7 @@ export function postUsuarioGrupo(
   nivel,
   estado,
   id_usuario,
+  token,
 ) {
   let ApiFinal = API
   let ApiWhere = ''
@@ -32,6 +33,7 @@ export function postUsuarioGrupo(
     method: 'POST',
     body: data,
     headers: {
+      Authorization: 'Bearer ' + token,
       Accept: 'application/json',
       'Content-type': 'application/json;charset=UTF-8',
     },

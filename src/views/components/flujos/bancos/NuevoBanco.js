@@ -42,7 +42,7 @@ const NuevoBanco = (props) => {
 
   useEffect(() => {
     let mounted = true
-    getPaises(null, null).then((items) => {
+    getPaises(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.paises)
       }
@@ -75,6 +75,7 @@ const NuevoBanco = (props) => {
         '',
         '',
         session.id,
+        session.api_token,
       )
       if (respuesta === 'OK') {
         history.push('/bancos')
@@ -96,7 +97,7 @@ const NuevoBanco = (props) => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

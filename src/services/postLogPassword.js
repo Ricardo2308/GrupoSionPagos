@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}logpassword`
 
-export function postLogPassword(idUsuario) {
+export function postLogPassword(idUsuario, token) {
   var datos = {
     id_usuario: idUsuario,
   }
@@ -10,6 +10,7 @@ export function postLogPassword(idUsuario) {
     method: 'POST',
     body: data,
     headers: {
+      Authorization: 'Bearer ' + token,
       Accept: 'application/json',
       'Content-type': 'application/json;charset=UTF-8',
     },

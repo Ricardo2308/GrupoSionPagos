@@ -7,6 +7,7 @@ export function postCrudNotificacionLoteUsuario(
   opcion,
   idUsuario,
   ConfiguracionDocumentos,
+  token,
 ) {
   let ApiFinal = API
   let ApiWhere = ''
@@ -30,6 +31,7 @@ export function postCrudNotificacionLoteUsuario(
     method: 'POST',
     body: data,
     headers: {
+      Authorization: 'Bearer ' + token,
       Accept: 'application/json',
       'Content-type': 'application/json;charset=UTF-8',
     },

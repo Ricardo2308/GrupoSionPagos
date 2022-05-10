@@ -34,7 +34,7 @@ const DefaultLayout = () => {
   }
 
   const handleLogout = async () => {
-    const respuesta = await postSesionUsuario(session.id, null, null, '2')
+    const respuesta = await postSesionUsuario(session.id, null, null, '2', session.api_token)
     if (respuesta === 'OK') {
       clear()
       history.push('/')

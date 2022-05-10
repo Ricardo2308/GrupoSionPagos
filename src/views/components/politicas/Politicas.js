@@ -45,7 +45,7 @@ const Politicas = () => {
         setList(items.politicas)
       }
     })
-    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -72,7 +72,16 @@ const Politicas = () => {
 
   async function eliminarPolitica(idPolitica, opcion) {
     if (opcion == 1) {
-      const respuesta = await postCrudPoliticas(idPolitica, '', '', '', '', '2', session.id)
+      const respuesta = await postCrudPoliticas(
+        idPolitica,
+        '',
+        '',
+        '',
+        '',
+        '2',
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
         await getPoliticas(null, null).then((items) => {
           setList(items.politicas)
@@ -90,7 +99,7 @@ const Politicas = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

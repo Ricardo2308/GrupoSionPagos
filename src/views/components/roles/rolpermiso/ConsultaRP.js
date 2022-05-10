@@ -33,7 +33,7 @@ const ConsultarRP = () => {
 
   useEffect(() => {
     let mounted = true
-    getRolPermiso(location.id_rol, null).then((items) => {
+    getRolPermiso(location.id_rol, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.detalle)
       }
@@ -47,7 +47,7 @@ const ConsultarRP = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')
@@ -75,9 +75,18 @@ const ConsultarRP = () => {
   async function crudRolPermiso(id_rol, id_rolpermiso, opcion, estado) {
     let result
     if (opcion == 1) {
-      const respuesta = await postRolPermiso(id_rolpermiso, '', '', '1', '', '', session.id)
+      const respuesta = await postRolPermiso(
+        id_rolpermiso,
+        '',
+        '',
+        '1',
+        '',
+        '',
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
-        await getRolPermiso(id_rol, null).then((items) => {
+        await getRolPermiso(id_rol, null, session.api_token).then((items) => {
           setList(items.detalle)
         })
       }
@@ -87,9 +96,18 @@ const ConsultarRP = () => {
       } else {
         result = '0'
       }
-      const respuesta = await postRolPermiso(id_rolpermiso, '', '', '3', '', result, session.id)
+      const respuesta = await postRolPermiso(
+        id_rolpermiso,
+        '',
+        '',
+        '3',
+        '',
+        result,
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
-        await getRolPermiso(id_rol, null).then((items) => {
+        await getRolPermiso(id_rol, null, session.api_token).then((items) => {
           setList(items.detalle)
         })
       }

@@ -40,12 +40,12 @@ const GruposAutorizacion = () => {
     if (session) {
       idUsuario = session.id
     }
-    getGruposAutorizacion(null, null).then((items) => {
+    getGruposAutorizacion(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.grupos)
       }
     })
-    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -71,7 +71,7 @@ const GruposAutorizacion = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')
@@ -88,9 +88,18 @@ const GruposAutorizacion = () => {
 
   async function eliminarGrupo(id_grupo, opcion) {
     if (opcion == 1) {
-      const respuesta = await postGruposAutorizacion(id_grupo, '', '', '', '', '2', session.id)
+      const respuesta = await postGruposAutorizacion(
+        id_grupo,
+        '',
+        '',
+        '',
+        '',
+        '2',
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
-        await getGruposAutorizacion(null, null).then((items) => {
+        await getGruposAutorizacion(null, null, session.api_token).then((items) => {
           setList(items.grupos)
         })
       }

@@ -56,7 +56,7 @@ const NuevoArchivoFlujo = (props) => {
 
   useEffect(() => {
     let mounted = true
-    getArchivosFlujo(location.id_flujo, null).then((items) => {
+    getArchivosFlujo(location.id_flujo, null, session.api_token).then((items) => {
       if (mounted) {
         if (items.archivos.length > 0) {
           if (location.estado > 1) {
@@ -106,7 +106,15 @@ const NuevoArchivoFlujo = (props) => {
   }
 
   const finalizarCarga = async () => {
-    const respuesta = await postFlujos(location.id_flujo, '', location.grupo, '', null, session.id)
+    const respuesta = await postFlujos(
+      location.id_flujo,
+      '',
+      location.grupo,
+      '',
+      null,
+      session.id,
+      session.api_token,
+    )
     if (location.grupo == null) {
       const answer = await postFlujoDetalle(
         location.id_flujo,
@@ -114,6 +122,7 @@ const NuevoArchivoFlujo = (props) => {
         session.id,
         'Documento de pago cargado',
         '0',
+        session.api_token,
       )
       if (answer === 'OK') {
         history.go(-1)
@@ -125,6 +134,7 @@ const NuevoArchivoFlujo = (props) => {
         session.id,
         'Documento de pago cargado',
         '0',
+        session.api_token,
       )
       const asignado = await postFlujoDetalle(
         location.id_flujo,
@@ -132,6 +142,7 @@ const NuevoArchivoFlujo = (props) => {
         session.id,
         'Asignado a responsable',
         '0',
+        session.api_token,
       )
       if (cargado === 'OK' && asignado === 'OK') {
         const respuesta = await postFlujos(
@@ -141,6 +152,7 @@ const NuevoArchivoFlujo = (props) => {
           '',
           null,
           session.id,
+          session.api_token,
         )
         if (respuesta === 'OK') {
           history.go(-1)
@@ -159,6 +171,7 @@ const NuevoArchivoFlujo = (props) => {
         descripcion,
         archivos,
         '',
+        session.api_token,
       )
       if (respuesta === 'OK') {
         setCargaArchivo(!cargaArchivo)
@@ -181,7 +194,7 @@ const NuevoArchivoFlujo = (props) => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')
@@ -330,7 +343,15 @@ const NuevoArchivoFlujo = (props) => {
 
   async function Accion(opcion) {
     if (opcion == 1) {
-      const respuesta = await postArchivoFlujo(archivoEliminar, '', '', '', '', '1')
+      const respuesta = await postArchivoFlujo(
+        archivoEliminar,
+        '',
+        '',
+        '',
+        '',
+        '1',
+        session.api_token,
+      )
       if (respuesta === 'OK') {
         setCargaArchivo(!cargaArchivo)
       }

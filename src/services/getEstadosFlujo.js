@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}estadoflujo`
 
-export function getEstadosFlujo(idEstado, descripcion) {
+export function getEstadosFlujo(idEstado, descripcion, token) {
   let ApiFinal = API
   let ApiWhere = ''
   if (idEstado !== null) {
@@ -18,7 +18,13 @@ export function getEstadosFlujo(idEstado, descripcion) {
     }
   }
   ApiFinal += ApiWhere
-  return fetch(ApiFinal)
+  return fetch(ApiFinal, {
+    method: 'GET',
+    headers: {
+      Authorization: 'Bearer ' + token,
+      Accept: 'application/json',
+    },
+  })
     .then(function (response) {
       return response.json()
     })

@@ -25,12 +25,12 @@ const Bitacora = () => {
     if (session) {
       idUsuario = session.id
     }
-    getSoporteBitacora(null, null, location.id_bitacora).then((items) => {
+    getSoporteBitacora(null, null, location.id_bitacora, session.api_token).then((items) => {
       if (mounted) {
         setList(items.bitacora[0])
       }
     })
-    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }

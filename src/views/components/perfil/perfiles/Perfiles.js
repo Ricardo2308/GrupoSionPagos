@@ -40,12 +40,12 @@ const Perfiles = () => {
     if (session) {
       idUsuario = session.id
     }
-    getPerfiles(null, null).then((items) => {
+    getPerfiles(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.perfiles)
       }
     })
-    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -71,7 +71,7 @@ const Perfiles = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')
@@ -88,9 +88,9 @@ const Perfiles = () => {
 
   async function eliminarPerfil(id_perfil, opcion) {
     if (opcion == 1) {
-      const respuesta = await postCrudPerfil(id_perfil, '', '', '2', session.id)
+      const respuesta = await postCrudPerfil(id_perfil, '', '', '2', session.id, session.api_token)
       if (respuesta === 'OK') {
-        await getPerfiles(null, null).then((items) => {
+        await getPerfiles(null, null, session.api_token).then((items) => {
           setList(items.perfiles)
         })
       }

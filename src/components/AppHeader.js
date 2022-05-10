@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { FiMenu } from 'react-icons/fi'
 import { getMensajesRecibidos } from '../services/getMensajesRecibidos'
 import { getNotificaciones } from '../services/getNotificaciones'
+import { getRecordatorioUsuario } from '../services/getRecordatorioUsuario'
 import { AppBreadcrumb } from './index'
 import { AppHeaderDropdown } from './header/index'
 import { MessageDropdown } from './header/index'
@@ -27,17 +28,20 @@ const AppHeader = () => {
   const [notificaciones, setNotificaciones] = useState([])
   const [contadorM, ContarM] = useState(0)
   const [contadorN, ContarN] = useState(0)
+  const [contadorR, ContarR] = useState(0)
   const sidebarShow = useSelector((state) => state.sidebarShow)
   const { session } = useSession('PendrogonIT-Session')
+  const [mostrarRecordatorio, setMostrarRecordatorio] = useState(false)
 
   useEffect(() => {
     let contM = 0
     let contN = 0
+    let contR = 0
     let idUsuario = 0
     if (session) {
       idUsuario = session.id
     }
-    getMensajesRecibidos(idUsuario).then((items) => {
+    getMensajesRecibidos(idUsuario, session.api_token).then((items) => {
       if (items.mensajes !== undefined) {
         for (let item of items.mensajes) {
           if (item.leido == 0) {
@@ -48,7 +52,7 @@ const AppHeader = () => {
         setMensajes(items.mensajes)
       }
     })
-    getNotificaciones(null, idUsuario).then((items) => {
+    getNotificaciones(null, idUsuario, session.api_token).then((items) => {
       if (items.notificaciones !== undefined) {
         for (let item of items.notificaciones) {
           if (item.Leido == 0) {
@@ -59,14 +63,24 @@ const AppHeader = () => {
         setNotificaciones(items.notificaciones)
       }
     })
+    getRecordatorioUsuario(idUsuario, session.api_token).then((items) => {
+      if (items.recordatorioUsuario !== undefined) {
+        if (items.recordatorioUsuario.length > 0) {
+          contR++
+          ContarR(contR)
+          setMostrarRecordatorio(true)
+        }
+      }
+    })
     const interval = setInterval(() => {
       let contM = 0
       let contN = 0
+      let contR = 0
       let idUsuario = 0
       if (session) {
         idUsuario = session.id
       }
-      getMensajesRecibidos(idUsuario).then((items) => {
+      getMensajesRecibidos(idUsuario, session.api_token).then((items) => {
         if (items.mensajes !== undefined) {
           for (let item of items.mensajes) {
             if (item.leido == 0) {
@@ -77,7 +91,7 @@ const AppHeader = () => {
           setMensajes(items.mensajes)
         }
       })
-      getNotificaciones(null, idUsuario).then((items) => {
+      getNotificaciones(null, idUsuario, session.api_token).then((items) => {
         if (items.notificaciones !== undefined) {
           for (let item of items.notificaciones) {
             if (item.Leido == 0) {
@@ -86,6 +100,18 @@ const AppHeader = () => {
           }
           ContarN(contN)
           setNotificaciones(items.notificaciones)
+        }
+      })
+      getRecordatorioUsuario(idUsuario, session.api_token).then((items) => {
+        if (items.recordatorioUsuario !== undefined) {
+          if (items.recordatorioUsuario.length > 0) {
+            contR++
+            ContarR(contR)
+            setMostrarRecordatorio(true)
+          } else {
+            ContarR(contR)
+            setMostrarRecordatorio(false)
+          }
         }
       })
     }, 5000)
@@ -106,8 +132,11 @@ const AppHeader = () => {
           <CNavItem></CNavItem>
         </CHeaderNav>
         <CHeaderNav title="Notificaciones Pagos">
-          <NotificationDropdown notificaciones={notificaciones} />
-          <NotificationsCount count={contadorN} />
+          <NotificationDropdown
+            recordatorio={mostrarRecordatorio}
+            notificaciones={notificaciones}
+          />
+          <NotificationsCount count={contadorN} contador={contadorR} />
         </CHeaderNav>
         <CHeaderNav title="Mensajes Pagos">
           <MessageDropdown mensajes={mensajes} />
@@ -122,10 +151,10 @@ const AppHeader = () => {
 }
 
 const NotificationsCount = (props) => {
-  if (props.count === 0) {
+  if (props.count === 0 && props.contador === 0) {
     return null
   }
-  return <div className={'new-messages-count'}>{props.count}</div>
+  return <div className={'new-messages-count'}>{props.count + props.contador}</div>
 }
 
 const MessageCount = (props) => {

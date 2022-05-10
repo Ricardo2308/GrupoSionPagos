@@ -4,10 +4,6 @@ import { Alert } from 'react-bootstrap'
 import { FiUser, FiLock, FiEye } from 'react-icons/fi'
 import { getUsuarios } from '../../../services/getUsuarios'
 import { getPoliticas } from '../../../services/getPoliticas'
-import { getCantidadDias } from '../../../services/getCantidadDias'
-import { verificarConexion } from '../../../services/verificarConexion'
-import { postLogPassword } from '../../../services/postLogPassword'
-import { postSesionUsuario } from '../../../services/postSesionUsuario'
 import { getPerfilUsuario } from '../../../services/getPerfilUsuario'
 import { postLogLogin } from '../../../services/postLogLogin'
 import { postDescargarArchivoLote } from '../../../services/postDescargarArchivoLote'
@@ -27,10 +23,12 @@ import {
   CInputGroupText,
   CRow,
 } from '@coreui/react'
+import { postLogIn } from 'src/services/postLogIn'
 
 const DescargarArchivos = () => {
   const history = useHistory()
   const { idLote } = useParams()
+  const { session, clear } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
   const [mostrar, setMostrar] = useState(false)
   const [passwordShown, setPasswordShown] = useState(false)
@@ -79,53 +77,64 @@ const DescargarArchivos = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    getUsuarios(null, null, form.usuario, null).then((items) => {
-      if (items) {
-        if (items.users.length > 0) {
-          for (let item of items.users) {
-            if (md5(form.password, { encoding: 'binary' }) === item.password) {
-              if (item.activo == 1 && item.eliminado == 0) {
-                setmostrarItem(true)
-                getPerfilUsuario(item.id, '4', 'Modulo DescargaArchivos').then((itemsPermisos) => {
-                  let puedeDescartar = false
-                  for (let itemPermisos of itemsPermisos.detalle) {
-                    if ('Descargar' == itemPermisos.descripcion) {
-                      puedeDescartar = true
-                    }
-                  }
-                  if (puedeDescartar) {
-                    postDescargarArchivoLote(idLote, 'PDF')
-                    postDescargarArchivoLote(idLote, 'XLSX')
-                    setMensajeExito(true)
+    postLogIn(form.usuario, md5(form.password, { encoding: 'binary' })).then((itemsLogin) => {
+      if (itemsLogin) {
+        getUsuarios(null, null, form.usuario, null, itemsLogin).then((items) => {
+          if (items) {
+            if (items.users.length > 0) {
+              for (let item of items.users) {
+                if (md5(form.password, { encoding: 'binary' }) === item.password) {
+                  if (item.activo == 1 && item.eliminado == 0) {
+                    setmostrarItem(true)
+                    getPerfilUsuario(item.id, '4', 'Modulo DescargaArchivos', itemsLogin).then(
+                      (itemsPermisos) => {
+                        let puedeDescartar = false
+                        for (let itemPermisos of itemsPermisos.detalle) {
+                          if ('Descargar' == itemPermisos.descripcion) {
+                            puedeDescartar = true
+                          }
+                        }
+                        if (puedeDescartar) {
+                          postDescargarArchivoLote(idLote, 'PDF')
+                          postDescargarArchivoLote(idLote, 'XLSX')
+                          setMensajeExito(true)
+                        } else {
+                          setMensajeExito(false)
+                        }
+                      },
+                    )
                   } else {
-                    setMensajeExito(false)
+                    setShow(true)
+                    setTitulo('Error!')
+                    setColor('danger')
+                    setMensaje(
+                      'Parece que tu usuario ha sido bloqueado o eliminado. Consulta con el soporte técnico.',
+                    )
                   }
-                })
-              } else {
-                setShow(true)
-                setTitulo('Error!')
-                setColor('danger')
-                setMensaje(
-                  'Parece que tu usuario ha sido bloqueado o eliminado. Consulta con el soporte técnico.',
-                )
+                } else {
+                  setShow(true)
+                  setTitulo('Error!')
+                  setColor('danger')
+                  setMensaje('Credenciales incorrectas. Vuelva a intentarlo.')
+                  if (item.activo == 1 && item.eliminado == 0) {
+                    let valor = obtenerPolitica('_LIMITE_ERROR_LOGIN_')
+                    postLogLogin(item.id, valor, itemsLogin)
+                  }
+                }
               }
             } else {
               setShow(true)
               setTitulo('Error!')
               setColor('danger')
               setMensaje('Credenciales incorrectas. Vuelva a intentarlo.')
-              if (item.activo == 1 && item.eliminado == 0) {
-                let valor = obtenerPolitica('_LIMITE_ERROR_LOGIN_')
-                postLogLogin(item.id, valor)
-              }
             }
+          } else {
+            setShow(true)
+            setTitulo('Error!')
+            setColor('danger')
+            setMensaje('Credenciales incorrectas. Vuelva a intentarlo.')
           }
-        } else {
-          setShow(true)
-          setTitulo('Error!')
-          setColor('danger')
-          setMensaje('Credenciales incorrectas. Vuelva a intentarlo.')
-        }
+        })
       } else {
         setShow(true)
         setTitulo('Error!')

@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}usuarios`
 
-export function getUsuarios(idGrupo, idFlujo, Usuario, Estado) {
+export function getUsuarios(idGrupo, idFlujo, Usuario, Estado, token) {
   let ApiFinal = API
   let ApiWhere = ''
   if (idGrupo !== null) {
@@ -16,7 +16,13 @@ export function getUsuarios(idGrupo, idFlujo, Usuario, Estado) {
     ApiWhere += '/' + Estado
   }
   ApiFinal += ApiWhere
-  return fetch(ApiFinal)
+  return fetch(ApiFinal, {
+    method: 'GET',
+    headers: {
+      Authorization: 'Bearer ' + token,
+      Accept: 'application/json',
+    },
+  })
     .then(function (response) {
       return response.json()
     })

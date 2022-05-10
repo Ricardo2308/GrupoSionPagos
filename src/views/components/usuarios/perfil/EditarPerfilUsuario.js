@@ -42,12 +42,12 @@ const EditarPerfilUsuario = () => {
 
   useEffect(() => {
     let mounted = true
-    getPerfiles(null, null).then((items) => {
+    getPerfiles(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.perfiles)
       }
     })
-    getPerfilUsuario(location.id_usuario, '1', '0').then((items) => {
+    getPerfilUsuario(location.id_usuario, '1', '0', session.api_token).then((items) => {
       if (mounted) {
         setList1(items.detalle)
       }
@@ -89,6 +89,7 @@ const EditarPerfilUsuario = () => {
           form.perfil,
           form.estado,
           session.id,
+          session.api_token,
         )
         if (respuesta === 'OK') {
           history.push('/usuarios')
@@ -110,7 +111,7 @@ const EditarPerfilUsuario = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

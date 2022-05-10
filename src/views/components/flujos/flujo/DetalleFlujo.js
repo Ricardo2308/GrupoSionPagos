@@ -16,7 +16,7 @@ const DetalleFlujo = (prop) => {
 
   useEffect(() => {
     let mounted = true
-    getDetalle(prop.id_flujo).then((items) => {
+    getDetalle(prop.id_flujo, session.api_token).then((items) => {
       if (mounted) {
         setList(items.flujos[0])
       }
@@ -32,7 +32,7 @@ const DetalleFlujo = (prop) => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')
@@ -52,7 +52,9 @@ const DetalleFlujo = (prop) => {
     console.log('time remaining', getRemainingTime())
   }
 
-  const handleOnAction = (event) => {}
+  const handleOnAction = (event) => {
+    return false
+  }
 
   const { getRemainingTime, getLastActiveTime } = useIdleTimer({
     timeout: 1000 * 60 * parseInt(session == null ? 1 : session.limiteconexion),

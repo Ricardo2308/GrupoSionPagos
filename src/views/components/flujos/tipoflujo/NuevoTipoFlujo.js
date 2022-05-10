@@ -37,7 +37,7 @@ const NuevoEstadoFlujo = () => {
 
   useEffect(() => {
     let mounted = true
-    getEstadosFlujo(null, null).then((items) => {
+    getEstadosFlujo(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.estados)
       }
@@ -62,6 +62,7 @@ const NuevoEstadoFlujo = () => {
         '',
         '',
         session.id,
+        session.api_token,
       )
       if (respuesta === 'OK') {
         history.push('/tipoflujo')
@@ -82,7 +83,7 @@ const NuevoEstadoFlujo = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

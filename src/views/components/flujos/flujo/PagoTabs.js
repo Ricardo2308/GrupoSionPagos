@@ -28,7 +28,9 @@ import { useSession } from 'react-use-session'
 import Chat from './Chat'
 import FlujoBitacora from './FlujoBitacora'
 import '../../../../scss/estilos.scss'
-import { FaArrowLeft, FaAngleLeft, FaAngleRight, FaDoorClosed } from 'react-icons/fa'
+import { FaArrowLeft, FaAngleLeft, FaAngleRight, FaDoorClosed, FaBullseye } from 'react-icons/fa'
+import { getUsuarioPrioridadMensajes } from '../../../../services/getUsuarioPrioridadMensajes'
+import { getUsuarios } from '../../../../services/getUsuarios'
 
 const PagoTabs = () => {
   const history = useHistory()
@@ -85,6 +87,9 @@ const PagoTabs = () => {
   const [keyDetalleFlujo, setKeyDetalleFlujo] = useState(0)
   const [desBotonSeleccionar, setDesBotonSeleccionar] = useState(false)
   const [detalleFlujo, setDetlleFlujo] = useState([])
+  const [resultsPrioridad, setListPrioridad] = useState([])
+  const [keyChat, setkeyChat] = useState(0)
+  const [usuarios, setListUsuarios] = useState([])
 
   useEffect(() => {
     let listaPagos = JSON.parse(sessionStorage.getItem('listaPagos'))
@@ -98,10 +103,14 @@ const PagoTabs = () => {
     )
     if (yaEstaMarcado === 'true') {
       setDesBotonSeleccionar(true)
+    } else {
+      setDesBotonSeleccionar(false)
     }
 
     if (!yaAutorizoInterno && locationEstado != 10 && locationPuedoAutorizar == '1') {
       setMostrarAprobarRechazar(true)
+    } else {
+      setMostrarAprobarRechazar(false)
     }
     if (locationIdGrupo) {
       setGrupo(locationIdGrupo)
@@ -128,69 +137,85 @@ const PagoTabs = () => {
       setMostrarActualizar(false)
     }
 
-    getDetalle(locationIdFlujo).then((items) => {
+    getDetalle(locationIdFlujo, session.api_token).then((items) => {
       if (mounted) {
         setDetlleFlujo(items.flujos[0])
       }
     })
-    getFlujoSolicitud(locationIdFlujo, null).then((items) => {
+    getFlujoSolicitud(locationIdFlujo, null, session.api_token).then((items) => {
       if (mounted) {
         setSolicitud(items.solicitud)
         if (items.solicitud.length > 0) {
           setMostrarSolicitud(true)
+        } else {
+          setMostrarSolicitud(false)
         }
       }
     })
-    getFlujoOferta(locationIdFlujo, null).then((items) => {
+    getFlujoOferta(locationIdFlujo, null, session.api_token).then((items) => {
       if (mounted) {
         setOferta(items.oferta)
         if (items.oferta.length > 0) {
           setMostrarOferta(true)
+        } else {
+          setMostrarOferta(false)
         }
       }
     })
-    getFlujoOrden(locationIdFlujo, null).then((items) => {
+    getFlujoOrden(locationIdFlujo, null, session.api_token).then((items) => {
       if (mounted) {
         setOrden(items.orden)
         if (items.orden.length > 0) {
           setMostrarOrden(true)
+        } else {
+          setMostrarOrden(false)
         }
       }
     })
-    getFlujoIngreso(locationIdFlujo).then((items) => {
+    getFlujoIngreso(locationIdFlujo, session.api_token).then((items) => {
       if (mounted) {
         setIngreso(items.ingreso)
         if (items.ingreso.length > 0) {
           setMostrarIngreso(true)
+        } else {
+          setMostrarIngreso(false)
         }
       }
     })
-    getFlujoFacturaCantidad(locationIdFlujo).then((items) => {
+    getFlujoFacturaCantidad(locationIdFlujo, session.api_token).then((items) => {
       if (mounted) {
         setFacturaCantidad(items.facturacantidad)
         if (items.facturacantidad.length > 0) {
           setMostrarFacturaCantidad(true)
+        } else {
+          setMostrarFacturaCantidad(false)
         }
       }
     })
-    getFlujoFacturaDocumento(locationIdFlujo).then((items) => {
+    getFlujoFacturaDocumento(locationIdFlujo, session.api_token).then((items) => {
       if (mounted) {
         setFacturaDocumento(items.facturadocumento)
         if (items.facturadocumento.length > 0) {
           setMostrarFacturaDocumento(true)
+        } else {
+          setMostrarFacturaDocumento(false)
         }
       }
     })
-    getArchivosFlujo(locationIdFlujo, null).then((items) => {
+    getArchivosFlujo(locationIdFlujo, null, session.api_token).then((items) => {
       if (mounted) {
         setArchivos(items.archivos)
       }
     })
-    getPerfilUsuario(session.id, '4', objeto).then((items) => {
+    getPerfilUsuario(session.id, '4', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
+        setMostrarRevision(false)
+        setOcultarBotones(false)
+        setOcultarBotones(false)
+        setMostrarAutorizar(false)
         for (let item of items.detalle) {
-          if ('Revisar' == item.descripcion) {
+          if ('Revisar' == item.descripcion && (locationNivel < 5 || locationNivel > 9)) {
             setMostrarRevision(true)
           }
           if ('Cargar' == item.descripcion) {
@@ -205,11 +230,26 @@ const PagoTabs = () => {
         }
       }
     })
-    getBitacora(locationIdFlujo).then((items) => {
+    getBitacora(locationIdFlujo, session.api_token).then((items) => {
       if (mounted) {
         setListBitacora(items.bitacora)
       }
     })
+    getUsuarioPrioridadMensajes(session.id, session.api_token)
+      .then((items) => {
+        if (mounted) {
+          setListPrioridad(items.prioridad)
+        }
+      })
+      .then(() =>
+        getUsuarios(locationIdGrupo, locationIdFlujo, null, null, session.api_token)
+          .then((items) => {
+            if (mounted) {
+              setListUsuarios(items.users)
+            }
+          })
+          .then(() => setkeyChat(keyChat + 1)),
+      )
     return () => (mounted = false)
   }, [actualizarDatos])
 
@@ -229,7 +269,7 @@ const PagoTabs = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')
@@ -332,13 +372,36 @@ const PagoTabs = () => {
     pagos.push(id_flujo)
     if (opcion === 1) {
       if (locationEstado == 3) {
-        const respuesta = await postFlujos(id_flujo, '2', '', '', null, idUsuario)
-        const aprobado = await postFlujoDetalle(id_flujo, '4', idUsuario, 'Aprobado', '1')
+        const respuesta = await postFlujos(
+          id_flujo,
+          '2',
+          '',
+          '',
+          null,
+          idUsuario,
+          session.api_token,
+        )
+        const aprobado = await postFlujoDetalle(
+          id_flujo,
+          '4',
+          idUsuario,
+          'Aprobado',
+          '1',
+          session.api_token,
+        )
         if (respuesta == 'OK' && aprobado == 'OK') {
           history.go(-1)
         }
       } else if (locationEstado == 4) {
-        const respuesta = await postFlujos(id_flujo, locationNivel, '', '', null, idUsuario)
+        const respuesta = await postFlujos(
+          id_flujo,
+          locationNivel,
+          '',
+          '',
+          null,
+          idUsuario,
+          session.api_token,
+        )
         if (respuesta == 'OK') {
           const aprobado = await postFlujoDetalle(
             id_flujo,
@@ -346,6 +409,7 @@ const PagoTabs = () => {
             idUsuario,
             'Aprobado',
             locationNivel,
+            session.api_token,
           )
           if (aprobado == 'OK') {
             history.go(-1)
@@ -357,9 +421,16 @@ const PagoTabs = () => {
             idUsuario,
             'Autorización completa',
             locationNivel,
+            session.api_token,
           )
           if (finalizado == 'OK') {
-            const enviada = await postNotificacion(pagos, idUsuario, 'autorizado por completo.', '')
+            const enviada = await postNotificacion(
+              pagos,
+              idUsuario,
+              'autorizado por completo.',
+              '',
+              session.api_token,
+            )
             if (enviada == 'OK') {
               history.go(-1)
             }
@@ -367,10 +438,23 @@ const PagoTabs = () => {
         }
       }
     } else if (opcion == 2) {
-      const respuesta = await postFlujos(id_flujo, '', '', '1', null, idUsuario)
-      const rechazado = await postFlujoDetalle(id_flujo, '6', idUsuario, 'Rechazado', '0')
+      const respuesta = await postFlujos(id_flujo, '', '', '1', null, idUsuario, session.api_token)
+      const rechazado = await postFlujoDetalle(
+        id_flujo,
+        '6',
+        idUsuario,
+        'Rechazado',
+        '0',
+        session.api_token,
+      )
       if (respuesta == 'OK' && rechazado == 'OK') {
-        const enviada = await postNotificacion(pagos, idUsuario, 'rechazado.', '')
+        const enviada = await postNotificacion(
+          pagos,
+          idUsuario,
+          'rechazado.',
+          '',
+          session.api_token,
+        )
         if (enviada == 'OK') {
           history.go(-1)
         }
@@ -379,13 +463,22 @@ const PagoTabs = () => {
       setShow(true)
     } else if (opcion == 4) {
       setMostrarPausado(false)
-      const respuestaPausado = await postFlujos(id_flujo, '0', '', '4', null, idUsuario)
+      const respuestaPausado = await postFlujos(
+        id_flujo,
+        '0',
+        '',
+        '4',
+        null,
+        idUsuario,
+        session.api_token,
+      )
       const detalleFlujoActualizado = await postFlujoDetalle(
         id_flujo,
         '10',
         idUsuario,
         'Pausado',
         '0',
+        session.api_token,
       )
       if (respuestaPausado == 'OK' && detalleFlujoActualizado == 'OK') {
         setMostrarActualizar(true)
@@ -397,34 +490,61 @@ const PagoTabs = () => {
     } else if (opcion == 44) {
       setMostrarPausado(false)
       setMostrarAutorizar(false)
-      const respuestaPausado = await postFlujos(id_flujo, '0', '', '44', null, idUsuario)
+      const respuestaPausado = await postFlujos(
+        id_flujo,
+        '0',
+        '',
+        '44',
+        null,
+        idUsuario,
+        session.api_token,
+      )
       const detalleFlujoActualizado = await postFlujoDetalle(
         id_flujo,
         '14',
         idUsuario,
         'Trasladado a no visado',
         '0',
+        session.api_token,
       )
       if (respuestaPausado == 'OK' && detalleFlujoActualizado == 'OK') {
         history.go(-1)
       }
     } else if (opcion == 5) {
-      const respuestaActualizado = await postFlujos(id_flujo, '0', '', '5', null, idUsuario)
+      const respuestaActualizado = await postFlujos(
+        id_flujo,
+        '0',
+        '',
+        '5',
+        null,
+        idUsuario,
+        session.api_token,
+      )
       const detalleFlujoActualizado = await postFlujoDetalle(
         id_flujo,
         '11',
         idUsuario,
         'Actualizado',
         '0',
+        session.api_token,
       )
       if (respuestaActualizado == 'OK' && detalleFlujoActualizado == 'OK') {
-        const respuestaReset = await postFlujos(id_flujo, '0', '', '6', null, idUsuario)
+        const respuestaReset = await postFlujos(
+          id_flujo,
+          '0',
+          '',
+          '6',
+          null,
+          idUsuario,
+          session.api_token,
+        )
         const detalleFlujoReset = await postFlujoDetalle(
           id_flujo,
           '3',
           idUsuario,
           'Reinicio de autorización por actualización',
           '0',
+          session.api_token,
         )
         if (respuestaReset == 'OK' && detalleFlujoReset == 'OK') {
           history.go(-1)
@@ -437,9 +557,18 @@ const PagoTabs = () => {
         idUsuario,
         'Actualizado',
         '0',
+        session.api_token,
       )
       if (detalleFlujoActualizado == 'OK') {
-        const respuestaReset = await postFlujos(id_flujo, '0', '', '7', null, idUsuario)
+        const respuestaReset = await postFlujos(
+          id_flujo,
+          '0',
+          '',
+          '7',
+          null,
+          idUsuario,
+          session.api_token,
+        )
         if (respuestaReset == 'OK') {
           history.go(-1)
         }
@@ -695,10 +824,14 @@ const PagoTabs = () => {
               </div>
             </div>
             <Chat
+              key={keyChat}
               id_usuario={session.id}
               id_flujo={locationIdFlujo}
               pago={locationPago}
               id_grupo={grupo}
+              token={session.api_token}
+              prioridad_usuario={resultsPrioridad}
+              lista_usuarios={usuarios}
             />
           </div>
         )
@@ -877,10 +1010,14 @@ const PagoTabs = () => {
               </div>
             </div>
             <Chat
+              key={keyChat}
               id_usuario={session.id}
               id_flujo={locationIdFlujo}
               pago={locationPago}
               id_grupo={grupo}
+              token={session.api_token}
+              prioridad_usuario={resultsPrioridad}
+              lista_usuarios={usuarios}
             />
           </div>
         )

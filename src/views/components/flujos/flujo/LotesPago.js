@@ -54,13 +54,13 @@ const LotesPago = (prop) => {
     let mounted = true
     if (location.tipo) {
       setLotesPago(location.LotesPago)
-      getLotesPago(location.tipo).then((items) => {
+      getLotesPago(location.tipo, session.api_token).then((items) => {
         if (mounted) {
           setList(items.lotes)
         }
       })
     } else {
-      getLotesPago(prop.tipo).then((items) => {
+      getLotesPago(prop.tipo, session.api_token).then((items) => {
         if (mounted) {
           setList(items.lotes)
         }

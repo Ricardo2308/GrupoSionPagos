@@ -45,7 +45,15 @@ const NuevoRol = () => {
   const handleSubmit = async (event) => {
     if (form.descripcion !== '') {
       event.preventDefault()
-      const respuesta = await postCrudRoles('', form.descripcion, form.objeto, '', '', session.id)
+      const respuesta = await postCrudRoles(
+        '',
+        form.descripcion,
+        form.objeto,
+        '',
+        '',
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
         history.push('/roles')
       }
@@ -65,7 +73,7 @@ const NuevoRol = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')
@@ -150,6 +158,7 @@ const NuevoRol = () => {
                     <option value="Modulo DescargaArchivos">Modulo DescargaArchivos</option>
                     <option value="Modulo NotificacionLote">Modulo NotificacionLote</option>
                     <option value="Modulo Bitacora">Modulo Bitacora</option>
+                    <option value="Modulo PrioridadChat">Modulo PrioridadChat</option>
                   </CFormSelect>
                 </CInputGroup>
                 <CButton color="primary" onClick={handleSubmit}>

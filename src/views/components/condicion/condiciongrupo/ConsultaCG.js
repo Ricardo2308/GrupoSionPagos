@@ -33,7 +33,7 @@ const ConsultarPR = () => {
 
   useEffect(() => {
     let mounted = true
-    getCondicionGrupo(location.id_condicion, null).then((items) => {
+    getCondicionGrupo(location.id_condicion, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.detalle)
       }
@@ -59,9 +59,18 @@ const ConsultarPR = () => {
   async function crudCondicionGrupo(id_condicion, id_condiciongrupo, opcion, estado) {
     let result
     if (opcion == 1) {
-      const respuesta = await postCondicionGrupo(id_condiciongrupo, '', '', '1', '', '', session.id)
+      const respuesta = await postCondicionGrupo(
+        id_condiciongrupo,
+        '',
+        '',
+        '1',
+        '',
+        '',
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
-        await getCondicionGrupo(id_condicion, null).then((items) => {
+        await getCondicionGrupo(id_condicion, null, session.api_token).then((items) => {
           setList(items.detalle)
         })
       }
@@ -79,9 +88,10 @@ const ConsultarPR = () => {
         '',
         result,
         session.id,
+        session.api_token,
       )
       if (respuesta === 'OK') {
-        await getCondicionGrupo(id_condicion, null).then((items) => {
+        await getCondicionGrupo(id_condicion, null, session.api_token).then((items) => {
           setList(items.detalle)
         })
       }
@@ -96,7 +106,7 @@ const ConsultarPR = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

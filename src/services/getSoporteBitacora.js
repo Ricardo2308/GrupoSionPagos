@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}soportebitacora`
 
-export function getSoporteBitacora(inicio, fin, id) {
+export function getSoporteBitacora(inicio, fin, id, token) {
   let ApiFinal = API
   let ApiWhere = ''
   if (inicio !== null) {
@@ -10,7 +10,13 @@ export function getSoporteBitacora(inicio, fin, id) {
     ApiWhere += '/' + id
   }
   ApiFinal += ApiWhere
-  return fetch(ApiFinal)
+  return fetch(ApiFinal, {
+    method: 'GET',
+    headers: {
+      Authorization: 'Bearer ' + token,
+      Accept: 'application/json',
+    },
+  })
     .then(function (response) {
       return response.json()
     })

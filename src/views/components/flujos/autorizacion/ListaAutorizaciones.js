@@ -41,12 +41,12 @@ const ListaAutorizaciones = () => {
     if (session) {
       idUsuario = session.id
     }
-    getUsuarioAutorizacion(idUsuario, null).then((items) => {
+    getUsuarioAutorizacion(idUsuario, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.autorizacion)
       }
     })
-    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -72,7 +72,7 @@ const ListaAutorizaciones = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')
@@ -105,9 +105,10 @@ const ListaAutorizaciones = () => {
         opcion,
         result,
         session.id,
+        session.api_token,
       )
       if (respuesta === 'OK') {
-        await getUsuarioAutorizacion(session.id, null).then((items) => {
+        await getUsuarioAutorizacion(session.id, null, session.api_token).then((items) => {
           setList(items.autorizacion)
         })
       }

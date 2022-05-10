@@ -50,12 +50,12 @@ const Bitacora = () => {
       setFinal(sessionStorage.getItem('fechaBitacoraFinal'))
       dateFinFormat = sessionStorage.getItem('fechaBitacoraFinal')
     }
-    getSoporteBitacora(dateIniFormat, dateFinFormat, null).then((items) => {
+    getSoporteBitacora(dateIniFormat, dateFinFormat, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.bitacora)
       }
     })
-    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -64,7 +64,7 @@ const Bitacora = () => {
   }, [])
 
   async function Buscar() {
-    await getSoporteBitacora(inicio, final, null).then((items) => {
+    await getSoporteBitacora(inicio, final, null, session.api_token).then((items) => {
       setList(items.bitacora)
     })
   }

@@ -22,7 +22,7 @@ const FlujoArchivos = () => {
 
   useEffect(() => {
     let mounted = true
-    getFlujosConArchivos(session.id).then((items) => {
+    getFlujosConArchivos(session.id, session.api_token).then((items) => {
       if (mounted) {
         setList(items.flujos)
       }
@@ -38,7 +38,7 @@ const FlujoArchivos = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

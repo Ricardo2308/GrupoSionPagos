@@ -31,12 +31,12 @@ const CuentaGrupoAutorizacion = () => {
     if (session) {
       idUsuario = session.id
     }
-    getCuentaGrupoAutorizacion(null, null).then((items) => {
+    getCuentaGrupoAutorizacion(null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.cuenta_grupo_autorizacion)
       }
     })
-    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -62,7 +62,7 @@ const CuentaGrupoAutorizacion = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')
@@ -79,9 +79,16 @@ const CuentaGrupoAutorizacion = () => {
 
   async function eliminarRol(id, opcion) {
     if (opcion == 1) {
-      const respuesta = await postCrudCuentaGrupoAutorizacion(id, '', '', '2', session.id)
+      const respuesta = await postCrudCuentaGrupoAutorizacion(
+        id,
+        '',
+        '',
+        '2',
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
-        await getCuentaGrupoAutorizacion(null, null).then((items) => {
+        await getCuentaGrupoAutorizacion(null, session.api_token).then((items) => {
           setList(items.cuenta_grupo_autorizacion)
         })
       }

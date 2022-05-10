@@ -7,17 +7,37 @@ import { Alert } from 'react-bootstrap'
 import { CFormSelect } from '@coreui/react'
 import { getUsuarios } from '../../../services/getUsuarios'
 import { postMensajes } from '../../../services/postMensajes'
+import { FaPlusSquare } from 'react-icons/fa'
 
 class ChatWindow extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      usuarios: [],
+      usuarios: props.lista_usuarios,
       grupos: [],
       id_receptor: '0',
       show: false,
     }
     this.handleChange = this.handleChange.bind(this)
+    let seEncontro = false
+    props.prioridad_usuario.forEach((itemP) => {
+      if (seEncontro) {
+        return
+      }
+      let encontrado = props.lista_usuarios.find(
+        (item) => itemP.id_usuario_prioridad == item.id_usuario,
+      )
+      if (encontrado !== undefined) {
+        seEncontro = true
+        this.state = {
+          ...this.state,
+          id_receptor: '' + encontrado.id_usuario,
+        }
+        this.obtenerChat(encontrado.id_usuario)
+        return
+      }
+      return
+    })
   }
 
   handleChange(event) {
@@ -31,13 +51,9 @@ class ChatWindow extends Component {
     })
   }
 
-  componentDidMount() {
-    getUsuarios(this.props.id_grupo, this.props.id_flujo, null, null).then((items) => {
-      this.setState({
-        usuarios: items.users,
-      })
-    })
-  }
+  /* componentDidMount() {
+    return false
+  } */
 
   async onUserInputSubmit(message) {
     if (this.props.id_flujo !== '' && this.props.id_usuario !== '' && this.state.id_receptor != 0) {
@@ -47,6 +63,7 @@ class ChatWindow extends Component {
         this.state.id_receptor,
         message.data.text,
         '',
+        this.props.token,
       )
       if (respuesta === 'OK') {
         this.props.onUserInputSubmit(message)
@@ -86,10 +103,18 @@ class ChatWindow extends Component {
         <CFormSelect onChange={this.handleChange}>
           <option value="0">Seleccione receptor</option>
           {this.state.usuarios.map((item, i) => {
+            let yaEstaSeleccionado = false
+            if (item.id_usuario == this.state.id_receptor) {
+              yaEstaSeleccionado = true
+            }
             if (this.props.id_usuario != item.id_usuario) {
               if (item.nivel == 0) {
                 return (
-                  <option key={item.id_usuario} value={item.id_usuario}>
+                  <option
+                    selected={yaEstaSeleccionado}
+                    key={item.id_usuario}
+                    value={item.id_usuario}
+                  >
                     {item.nombre_usuario}
                     {' => '}
                     {item.perfil}
@@ -98,7 +123,11 @@ class ChatWindow extends Component {
               }
               if (item.nivel != 0) {
                 return (
-                  <option key={item.id_usuario} value={item.id_usuario}>
+                  <option
+                    selected={yaEstaSeleccionado}
+                    key={item.id_usuario}
+                    value={item.id_usuario}
+                  >
                     {item.nombre_usuario}
                     {' => Autorizador de nivel '}
                     {item.nivel}

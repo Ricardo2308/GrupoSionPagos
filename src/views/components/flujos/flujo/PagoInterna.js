@@ -24,7 +24,7 @@ const PagoInterna = () => {
   useEffect(() => {
     let mounted = true
     let objeto = 'Modulo Compensacion Pagos'
-    getPerfilUsuario(session.id, '4', objeto).then((items) => {
+    getPerfilUsuario(session.id, '4', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -50,7 +50,7 @@ const PagoInterna = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

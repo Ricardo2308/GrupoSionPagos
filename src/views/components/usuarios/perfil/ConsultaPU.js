@@ -44,12 +44,12 @@ const Consultar = () => {
     if (session) {
       idUsuario2 = session.id
     }
-    getPerfilUsuario(idUsuario1, '1', '0').then((items) => {
+    getPerfilUsuario(idUsuario1, '1', '0', session.api_token).then((items) => {
       if (mounted) {
         setList(items.detalle)
       }
     })
-    getPerfilUsuario(idUsuario2, '2', objeto).then((items) => {
+    getPerfilUsuario(idUsuario2, '2', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -73,7 +73,7 @@ const Consultar = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')
@@ -101,9 +101,18 @@ const Consultar = () => {
   async function crudPerfil(id_usuario, id_usuarioperfil, opcion, estado) {
     let result
     if (opcion == 1) {
-      const respuesta = await postPerfilUsuario(id_usuarioperfil, '', '', '1', '', '', session.id)
+      const respuesta = await postPerfilUsuario(
+        id_usuarioperfil,
+        '',
+        '',
+        '1',
+        '',
+        '',
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
-        await getPerfilUsuario(id_usuario, '1').then((items) => {
+        await getPerfilUsuario(id_usuario, '1', '0', session.api_token).then((items) => {
           setList(items.detalle)
         })
       }
@@ -121,9 +130,10 @@ const Consultar = () => {
         '',
         result,
         session.id,
+        session.api_token,
       )
       if (respuesta === 'OK') {
-        await getPerfilUsuario(id_usuario, '1').then((items) => {
+        await getPerfilUsuario(id_usuario, '1', '0', session.api_token).then((items) => {
           setList(items.detalle)
         })
       }

@@ -22,7 +22,7 @@ const Compensados = (prop) => {
   async function leerNotificaciones(IdFlujo, Pago, Estado, Nivel, IdGrupo) {
     let pagos = []
     pagos.push(IdFlujo)
-    const respuesta = await postNotificacion(pagos, session.id, '', '1')
+    const respuesta = await postNotificacion(pagos, session.id, '', '1', session.api_token)
     if (respuesta == 'OK') {
       history.push({
         pathname: '/compensacion/tabs',
@@ -39,13 +39,13 @@ const Compensados = (prop) => {
     let mounted = true
     if (location.tipo) {
       setCompensados(location.compensados)
-      getCompensados(session.id, location.tipo).then((items) => {
+      getCompensados(session.id, location.tipo, session.api_token).then((items) => {
         if (mounted) {
           setList(items.bitacora)
         }
       })
     } else {
-      getCompensados(session.id, prop.tipo).then((items) => {
+      getCompensados(session.id, prop.tipo, session.api_token).then((items) => {
         if (mounted) {
           setList(items.bitacora)
         }

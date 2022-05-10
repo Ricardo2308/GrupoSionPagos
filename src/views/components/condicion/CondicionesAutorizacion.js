@@ -37,12 +37,12 @@ const Cards = () => {
     if (session) {
       idUsuario = session.id
     }
-    getCondicionesAutorizacion(null, null).then((items) => {
+    getCondicionesAutorizacion(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.condiciones)
       }
     })
-    getPerfilUsuario(idUsuario, '2', objeto).then((items) => {
+    getPerfilUsuario(idUsuario, '2', objeto, session.api_token).then((items) => {
       if (mounted) {
         setPermisos(items.detalle)
       }
@@ -69,9 +69,17 @@ const Cards = () => {
 
   async function eliminarCondicion(id_condicion, opcion) {
     if (opcion == 1) {
-      const respuesta = await postCondicionAutorizacion(id_condicion, '', '', '', '2', session.id)
+      const respuesta = await postCondicionAutorizacion(
+        id_condicion,
+        '',
+        '',
+        '',
+        '2',
+        session.id,
+        session.api_token,
+      )
       if (respuesta === 'OK') {
-        await getCondicionesAutorizacion(null, null).then((items) => {
+        await getCondicionesAutorizacion(null, null, session.api_token).then((items) => {
           setList(items.condiciones)
         })
       }
@@ -88,7 +96,7 @@ const Cards = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')

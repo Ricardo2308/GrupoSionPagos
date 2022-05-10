@@ -41,12 +41,12 @@ const EditarCondicionGrupo = () => {
 
   useEffect(() => {
     let mounted = true
-    getGruposAutorizacion(null, null).then((items) => {
+    getGruposAutorizacion(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.grupos)
       }
     })
-    getCondicionGrupo(location.id_condicion, null).then((items) => {
+    getCondicionGrupo(location.id_condicion, null, session.api_token).then((items) => {
       if (mounted) {
         setList1(items.detalle)
       }
@@ -88,6 +88,7 @@ const EditarCondicionGrupo = () => {
           form.grupo,
           form.estado,
           session.id,
+          session.api_token,
         )
         if (respuesta === 'OK') {
           history.push('/condiciones')
@@ -109,7 +110,7 @@ const EditarCondicionGrupo = () => {
       if (session) {
         idUsuario = session.id
       }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2')
+      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
       if (respuesta === 'OK') {
         clear()
         history.push('/')
