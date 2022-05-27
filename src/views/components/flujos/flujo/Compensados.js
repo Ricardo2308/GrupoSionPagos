@@ -9,6 +9,7 @@ import { FaList } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
+import { getOcultarColumnaUsuario } from '../../../../services/getOcultarColumnaUsuario'
 
 const Compensados = (prop) => {
   const history = useHistory()
@@ -16,6 +17,8 @@ const Compensados = (prop) => {
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [compensados, setCompensados] = useState([])
+  const [camposOcultos, setListOcultos] = useState([])
+  const [anchoConcepto, setAnchoConcepto] = useState('285px')
   const filteredItems = results
   const filteredItemsA = compensados
 
@@ -44,10 +47,30 @@ const Compensados = (prop) => {
           setList(items.bitacora)
         }
       })
+      getOcultarColumnaUsuario(session.id, session.api_token).then((items) => {
+        if (mounted) {
+          setListOcultos(items.ocultar)
+          if (items.ocultar.length > 0) {
+            setAnchoConcepto('auto')
+          } else {
+            setAnchoConcepto('285px')
+          }
+        }
+      })
     } else {
       getCompensados(session.id, prop.tipo, session.api_token).then((items) => {
         if (mounted) {
           setList(items.bitacora)
+        }
+      })
+      getOcultarColumnaUsuario(session.id, session.api_token).then((items) => {
+        if (mounted) {
+          setListOcultos(items.ocultar)
+          if (items.ocultar.length > 0) {
+            setAnchoConcepto('auto')
+          } else {
+            setAnchoConcepto('285px')
+          }
         }
       })
     }
@@ -85,6 +108,16 @@ const Compensados = (prop) => {
     },
   }
 
+  function OcultarCampo(campo) {
+    let result = false
+    for (let item of camposOcultos) {
+      if (campo == item.NombreColumna) {
+        result = true
+      }
+    }
+    return result
+  }
+
   const formatear = (valor, moneda) => {
     if (moneda === 'QTZ') {
       return formatter.format(valor)
@@ -113,6 +146,7 @@ const Compensados = (prop) => {
       sortable: true,
       wrap: true,
       width: '150px',
+      omit: OcultarCampo('Empresa'),
     },
     {
       name: 'No.',
@@ -123,6 +157,7 @@ const Compensados = (prop) => {
       },
       sortable: true,
       width: '90px',
+      omit: OcultarCampo('No. documento'),
     },
     {
       name: 'Fecha Sis.',
@@ -133,6 +168,7 @@ const Compensados = (prop) => {
         fontSize: '11px',
       },
       width: '100px',
+      omit: OcultarCampo('Fecha sistema'),
     },
     {
       name: 'Fecha auto.',
@@ -143,6 +179,7 @@ const Compensados = (prop) => {
         fontSize: '11px',
       },
       width: '100px',
+      omit: OcultarCampo('Fecha autorización'),
     },
     {
       name: 'Beneficiario',
@@ -154,6 +191,7 @@ const Compensados = (prop) => {
       },
       wrap: true,
       width: '250px',
+      omit: OcultarCampo('Beneficiario'),
     },
     {
       name: 'Concepto',
@@ -163,7 +201,8 @@ const Compensados = (prop) => {
         fontSize: '11px',
       },
       wrap: true,
-      width: '285px',
+      width: anchoConcepto,
+      omit: OcultarCampo('Concepto'),
     },
     {
       name: 'Monto',
@@ -173,6 +212,7 @@ const Compensados = (prop) => {
         fontSize: '11px',
       },
       width: '120px',
+      omit: OcultarCampo('Monto'),
     },
     {
       name: 'Acciones',
@@ -202,6 +242,7 @@ const Compensados = (prop) => {
       },
       center: true,
       width: '70px',
+      omit: OcultarCampo('Acciones'),
     },
   ])
 
@@ -216,6 +257,7 @@ const Compensados = (prop) => {
       sortable: true,
       wrap: true,
       width: '150px',
+      omit: OcultarCampo('Empresa'),
     },
     {
       name: 'No.',
@@ -226,6 +268,7 @@ const Compensados = (prop) => {
       },
       sortable: true,
       width: '90px',
+      omit: OcultarCampo('No. documento'),
     },
     {
       name: 'Fecha Sis.',
@@ -236,6 +279,7 @@ const Compensados = (prop) => {
         fontSize: '11px',
       },
       width: '100px',
+      omit: OcultarCampo('Fecha sistema'),
     },
     {
       name: 'Fecha auto.',
@@ -246,6 +290,7 @@ const Compensados = (prop) => {
         fontSize: '11px',
       },
       width: '100px',
+      omit: OcultarCampo('Fecha autorización'),
     },
     {
       name: 'Tipo',
@@ -256,6 +301,7 @@ const Compensados = (prop) => {
       },
       sortable: true,
       width: '123px',
+      omit: OcultarCampo('Tipo'),
     },
     {
       name: 'Beneficiario',
@@ -267,6 +313,7 @@ const Compensados = (prop) => {
       },
       wrap: true,
       width: '250px',
+      omit: OcultarCampo('Beneficiario'),
     },
     {
       name: 'Concepto',
@@ -276,7 +323,8 @@ const Compensados = (prop) => {
         fontSize: '11px',
       },
       wrap: true,
-      width: '285px',
+      width: anchoConcepto,
+      omit: OcultarCampo('Concepto'),
     },
     {
       name: 'Monto',
@@ -286,6 +334,7 @@ const Compensados = (prop) => {
         fontSize: '11px',
       },
       width: '120px',
+      omit: OcultarCampo('Monto'),
     },
     {
       name: 'Acciones',
@@ -308,6 +357,7 @@ const Compensados = (prop) => {
       },
       center: true,
       width: '70px',
+      omit: OcultarCampo('Acciones'),
     },
   ])
 

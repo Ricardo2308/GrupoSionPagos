@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
 import { Alert, Modal, Button } from 'react-bootstrap'
-import { useIdleTimer } from 'react-idle-timer'
 import { useHistory } from 'react-router-dom'
-import { FiUserPlus, FiLayout } from 'react-icons/fi'
-import { postCrudRoles } from '../../../../services/postCrudRoles'
+import { useIdleTimer } from 'react-idle-timer'
+import { FiUserCheck, FiUserPlus } from 'react-icons/fi'
+import { postOcultarColumnaUsuario } from '../../../../services/postOcultarColumnaUsuario'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import '../../../../scss/estilos.scss'
 import {
@@ -19,8 +19,9 @@ import {
   CFormSelect,
 } from '@coreui/react'
 import { FaArrowLeft } from 'react-icons/fa'
+import { getUsuarios } from '../../../../services/getUsuarios'
 
-const NuevoRol = () => {
+const NuevoOcultarColumna = () => {
   const history = useHistory()
   const [time, setTime] = useState(null)
   const { session, clear } = useSession('PendrogonIT-Session')
@@ -29,11 +30,27 @@ const NuevoRol = () => {
   const [mensaje, setMensaje] = useState('')
   const [color, setColor] = useState('danger')
   const [titulo, setTitulo] = useState('Error!')
+  const [resultsUsuarios, setListUsuarios] = useState([])
 
   const [form, setValues] = useState({
-    descripcion: '',
-    objeto: '',
+    id_usuario: '',
+    NombreColumna: '',
   })
+
+  useEffect(() => {
+    let mounted = true
+    let objeto = 'Modulo OcultarColumnas'
+    let idUsuario = 0
+    if (session) {
+      idUsuario = session.id
+    }
+    getUsuarios(null, null, null, null, session.api_token).then((items) => {
+      if (mounted) {
+        setListUsuarios(items.users)
+      }
+    })
+    return () => (mounted = false)
+  }, [])
 
   const handleInput = (event) => {
     setValues({
@@ -43,25 +60,25 @@ const NuevoRol = () => {
   }
 
   const handleSubmit = async (event) => {
-    if (form.descripcion !== '') {
+    if (form.id_usuario !== '' && form.NombreColumna !== '') {
       event.preventDefault()
-      const respuesta = await postCrudRoles(
+      const respuesta = await postOcultarColumnaUsuario(
         '',
-        form.descripcion,
-        form.objeto,
+        form.id_usuario,
+        form.NombreColumna,
         '',
         '',
         session.id,
         session.api_token,
       )
       if (respuesta === 'OK') {
-        history.push('/roles')
+        history.push('/ocultarcolumnas')
       }
     } else {
       setShow(true)
       setTitulo('Error!')
       setColor('danger')
-      setMensaje('No has ingresado ninguna descripción.')
+      setMensaje('No has llenado todos los campos.')
     }
   }
 
@@ -114,57 +131,47 @@ const NuevoRol = () => {
           <CCard style={{ display: 'flex', alignItems: 'center' }}>
             <CCardBody style={{ width: '80%' }}>
               <CForm style={{ width: '100%' }}>
-                <h1>Creación de Rol</h1>
-                <p className="text-medium-emphasis">Cree un nuevo rol</p>
+                <h1>Oculta columna a usuario</h1>
+                <p className="text-medium-emphasis">
+                  Agregue columna a lista de ocultos para usuario especifico.
+                </p>
+                <CInputGroup className="mb-3">
+                  <CInputGroupText>
+                    <FiUserCheck />
+                  </CInputGroupText>
+                  <CFormSelect name="id_usuario" onChange={handleInput}>
+                    <option value="0">Seleccione un usuario.</option>
+                    {resultsUsuarios.map((item, i) => {
+                      if (item.eliminado == 0 && item.activo == 1) {
+                        return (
+                          <option key={item.id} value={item.id}>
+                            {item.nombre + ' ' + item.apellido + ' [' + item.nombre_usuario + ']'}
+                          </option>
+                        )
+                      }
+                    })}
+                  </CFormSelect>
+                </CInputGroup>
                 <CInputGroup className="mb-3">
                   <CInputGroupText>
                     <FiUserPlus />
                   </CInputGroupText>
-                  <textarea
-                    placeholder="Descripción"
-                    className="form-control"
-                    rows="2"
-                    onChange={handleInput}
-                    name="descripcion"
-                  ></textarea>
-                </CInputGroup>
-                <CInputGroup className="mb-3">
-                  <CInputGroupText>
-                    <FiLayout />
-                  </CInputGroupText>
-                  <CFormSelect placeholder="Objeto" name="objeto" onChange={handleInput}>
-                    <option value="Modulo Perfiles">Modulo Perfiles</option>
-                    <option value="Modulo Roles">Modulo Roles</option>
-                    <option value="Modulo Permisos">Modulo Permisos</option>
-                    <option value="Modulo Politicas">Modulo Politicas</option>
-                    <option value="Modulo Condiciones">Modulo Condiciones</option>
-                    <option value="Modulo Grupos Autorizacion">Modulo Grupos Autorizacion</option>
-                    <option value="Modulo Estados Pago">Modulo Estados Pago</option>
-                    <option value="Modulo Tipos Flujo">Modulo Tipos Flujo</option>
-                    <option value="Modulo Archivos Pago">Modulo Archivos Pago</option>
-                    <option value="Modulo Bancos">Modulo Bancos</option>
-                    <option value="Modulo Monedas">Modulo Monedas</option>
-                    <option value="Modulo Cuentas">Modulo Cuentas</option>
-                    <option value="Modulo Autorizacion Pagos">Modulo Autorizacion Pagos</option>
-                    <option value="Modulo Compensacion Pagos">Modulo Compensacion Pagos</option>
-                    <option value="Modulo Autorizacion">Modulo Autorizacion</option>
-                    <option value="Modulo Conectados">Modulo Conectados</option>
-                    <option value="Modulo Usuarios">Modulo Usuarios</option>
-                    <option value="Seccion Reportes">Seccion Reportes</option>
-                    <option value="Modulo RestriccionEmpresa">Modulo RestriccionEmpresa</option>
-                    <option value="Modulo CuentaGrupoAutorizacion">
-                      Modulo CuentaGrupoAutorizacion
-                    </option>
-                    <option value="Modulo DescargaArchivos">Modulo DescargaArchivos</option>
-                    <option value="Modulo NotificacionLote">Modulo NotificacionLote</option>
-                    <option value="Modulo Bitacora">Modulo Bitacora</option>
-                    <option value="Modulo PrioridadChat">Modulo PrioridadChat</option>
-                    <option value="Modulo OcultarColumnas">Modulo OcultarColumnas</option>
-                    <option value="Modulo RecordatorioGrupo">Modulo RecordatorioGrupo</option>
+                  <CFormSelect name="NombreColumna" onChange={handleInput}>
+                    <option value="0">Seleccione columna</option>
+                    <option value="Selección">Selección</option>
+                    <option value="Empresa">Empresa</option>
+                    <option value="No. documento">No. documento</option>
+                    <option value="Fecha sistema">Fecha sistema</option>
+                    <option value="Beneficiario">Beneficiario</option>
+                    <option value="Concepto">Concepto</option>
+                    <option value="Monto">Monto</option>
+                    <option value="Acciones">Acciones</option>
+                    <option value="Fecha autorización">Fecha autorización</option>
+                    <option value="Tipo">Tipo</option>
                   </CFormSelect>
                 </CInputGroup>
                 <CButton color="primary" onClick={handleSubmit}>
-                  Crear Rol
+                  Agregar
                 </CButton>
               </CForm>
             </CCardBody>
@@ -178,4 +185,4 @@ const NuevoRol = () => {
   }
 }
 
-export default NuevoRol
+export default NuevoOcultarColumna

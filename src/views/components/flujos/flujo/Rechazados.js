@@ -9,6 +9,7 @@ import { FaList } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
+import { getOcultarColumnaUsuario } from '../../../../services/getOcultarColumnaUsuario'
 
 const Rechazados = (prop) => {
   const history = useHistory()
@@ -16,6 +17,8 @@ const Rechazados = (prop) => {
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [rechazados, setRechazados] = useState([])
+  const [camposOcultos, setListOcultos] = useState([])
+  const [anchoConcepto, setAnchoConcepto] = useState('285px')
   const filteredItems = results
   const filteredItemsR = rechazados
 
@@ -42,12 +45,58 @@ const Rechazados = (prop) => {
       getRechazados(session.id, location.tipo, session.api_token).then((items) => {
         if (mounted) {
           setList(items.bitacora)
+          let datosOrdenados = []
+          items.bitacora.forEach((item) => {
+            datosOrdenados.push({
+              id_flujo: item.IdFlujo,
+              estado: item.estado,
+              nivel: item.nivel,
+              id_grupo: item.id_grupoautorizacion,
+              PuedoAutorizar: '0',
+              pago: item.doc_num,
+              seccion: 'Rechazados',
+            })
+          })
+          sessionStorage.setItem('listaPagosRechazados', JSON.stringify(datosOrdenados))
+        }
+      })
+      getOcultarColumnaUsuario(session.id, session.api_token).then((items) => {
+        if (mounted) {
+          setListOcultos(items.ocultar)
+          if (items.ocultar.length > 0) {
+            setAnchoConcepto('auto')
+          } else {
+            setAnchoConcepto('285px')
+          }
         }
       })
     } else {
       getRechazados(session.id, prop.tipo, session.api_token).then((items) => {
         if (mounted) {
           setList(items.bitacora)
+          let datosOrdenados = []
+          items.bitacora.forEach((item) => {
+            datosOrdenados.push({
+              id_flujo: item.IdFlujo,
+              estado: item.estado,
+              nivel: item.nivel,
+              id_grupo: item.id_grupoautorizacion,
+              PuedoAutorizar: '0',
+              pago: item.doc_num,
+              seccion: 'Rechazados',
+            })
+          })
+          sessionStorage.setItem('listaPagosRechazados', JSON.stringify(datosOrdenados))
+        }
+      })
+      getOcultarColumnaUsuario(session.id, session.api_token).then((items) => {
+        if (mounted) {
+          setListOcultos(items.ocultar)
+          if (items.ocultar.length > 0) {
+            setAnchoConcepto('auto')
+          } else {
+            setAnchoConcepto('285px')
+          }
         }
       })
     }
@@ -85,6 +134,16 @@ const Rechazados = (prop) => {
     },
   }
 
+  function OcultarCampo(campo) {
+    let result = false
+    for (let item of camposOcultos) {
+      if (campo == item.NombreColumna) {
+        result = true
+      }
+    }
+    return result
+  }
+
   const formatear = (valor, moneda) => {
     if (moneda === 'QTZ') {
       return formatter.format(valor)
@@ -113,6 +172,7 @@ const Rechazados = (prop) => {
       sortable: true,
       wrap: true,
       width: '150px',
+      omit: OcultarCampo('Empresa'),
     },
     {
       name: 'No.',
@@ -123,6 +183,7 @@ const Rechazados = (prop) => {
       },
       sortable: true,
       width: '90px',
+      omit: OcultarCampo('No. documento'),
     },
     {
       name: 'Fecha Sis.',
@@ -133,6 +194,7 @@ const Rechazados = (prop) => {
         fontSize: '11px',
       },
       width: '100px',
+      omit: OcultarCampo('Fecha sistema'),
     },
     {
       name: 'Beneficiario',
@@ -144,6 +206,7 @@ const Rechazados = (prop) => {
       },
       wrap: true,
       width: '250px',
+      omit: OcultarCampo('Beneficiario'),
     },
     {
       name: 'Concepto',
@@ -153,7 +216,8 @@ const Rechazados = (prop) => {
         fontSize: '11px',
       },
       wrap: true,
-      width: '285px',
+      width: anchoConcepto,
+      omit: OcultarCampo('Concepto'),
     },
     {
       name: 'Monto',
@@ -163,6 +227,7 @@ const Rechazados = (prop) => {
         fontSize: '11px',
       },
       width: '120px',
+      omit: OcultarCampo('Monto'),
     },
     {
       name: 'Acciones',
@@ -182,6 +247,8 @@ const Rechazados = (prop) => {
                   estado: row.estado,
                   nivel: row.nivel,
                   id_grupo: row.id_grupoautorizacion,
+                  PuedoAutorizar: '0',
+                  seccion: 'Rechazados',
                 })
               }
             >
@@ -192,6 +259,7 @@ const Rechazados = (prop) => {
       },
       center: true,
       width: '70px',
+      omit: OcultarCampo('Acciones'),
     },
   ])
 
@@ -206,6 +274,7 @@ const Rechazados = (prop) => {
       sortable: true,
       wrap: true,
       width: '150px',
+      omit: OcultarCampo('Empresa'),
     },
     {
       name: 'No.',
@@ -216,6 +285,7 @@ const Rechazados = (prop) => {
       },
       sortable: true,
       width: '90px',
+      omit: OcultarCampo('No. documento'),
     },
     {
       name: 'Fecha Sis.',
@@ -226,6 +296,7 @@ const Rechazados = (prop) => {
         fontSize: '11px',
       },
       width: '100px',
+      omit: OcultarCampo('Fecha sistema'),
     },
     {
       name: 'Tipo',
@@ -236,6 +307,7 @@ const Rechazados = (prop) => {
       },
       sortable: true,
       width: '123px',
+      omit: OcultarCampo('Tipo'),
     },
     {
       name: 'Beneficiario',
@@ -247,6 +319,7 @@ const Rechazados = (prop) => {
       },
       wrap: true,
       width: '250px',
+      omit: OcultarCampo('Beneficiario'),
     },
     {
       name: 'Concepto',
@@ -256,7 +329,8 @@ const Rechazados = (prop) => {
         fontSize: '11px',
       },
       wrap: true,
-      width: '285px',
+      width: anchoConcepto,
+      omit: OcultarCampo('Concepto'),
     },
     {
       name: 'Monto',
@@ -266,6 +340,7 @@ const Rechazados = (prop) => {
         fontSize: '11px',
       },
       width: '120px',
+      omit: OcultarCampo('Monto'),
     },
     {
       name: 'Acciones',
@@ -288,6 +363,7 @@ const Rechazados = (prop) => {
       },
       center: true,
       width: '70px',
+      omit: OcultarCampo('Acciones'),
     },
   ])
 
@@ -304,6 +380,133 @@ const Rechazados = (prop) => {
     filterPlaceholder: 'Filtrar datos',
     export: false,
     print: false,
+  }
+
+  function Ordenamiento(columna, direccion, e) {
+    if (columna.name == 'Empresa' && direccion == 'asc') {
+      filteredItems.sort(function (a, b) {
+        if (a.empresa_nombre > b.empresa_nombre) {
+          return 1
+        }
+        if (a.empresa_nombre < b.empresa_nombre) {
+          return -1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'Empresa' && direccion == 'desc') {
+      filteredItems.sort(function (a, b) {
+        if (a.empresa_nombre > b.empresa_nombre) {
+          return -1
+        }
+        if (a.empresa_nombre < b.empresa_nombre) {
+          return 1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'No.' && direccion == 'asc') {
+      filteredItems.sort(function (a, b) {
+        if (a.doc_num > b.doc_num) {
+          return 1
+        }
+        if (a.doc_num < b.doc_num) {
+          return -1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'No.' && direccion == 'desc') {
+      filteredItems.sort(function (a, b) {
+        if (a.doc_num > b.doc_num) {
+          return -1
+        }
+        if (a.doc_num < b.doc_num) {
+          return 1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'Fecha Sis.' && direccion == 'asc') {
+      filteredItems.sort(function (a, b) {
+        if (a.creation_date > b.creation_date) {
+          return 1
+        }
+        if (a.creation_date < b.creation_date) {
+          return -1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'Fecha Sis.' && direccion == 'desc') {
+      filteredItems.sort(function (a, b) {
+        if (a.creation_date > b.creation_date) {
+          return -1
+        }
+        if (a.creation_date < b.creation_date) {
+          return 1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'Beneficiario' && direccion == 'asc') {
+      filteredItems.sort(function (a, b) {
+        if (a.en_favor_de > b.en_favor_de) {
+          return 1
+        }
+        if (a.en_favor_de < b.en_favor_de) {
+          return -1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'Beneficiario' && direccion == 'desc') {
+      filteredItems.sort(function (a, b) {
+        if (a.en_favor_de > b.en_favor_de) {
+          return -1
+        }
+        if (a.en_favor_de < b.en_favor_de) {
+          return 1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'Monto' && direccion == 'asc') {
+      filteredItems.sort(function (a, b) {
+        if (formatear(a.doc_total, a.doc_curr) > formatear(b.doc_total, b.doc_curr)) {
+          return 1
+        }
+        if (formatear(a.doc_total, a.doc_curr) < formatear(b.doc_total, b.doc_curr)) {
+          return -1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'Monto' && direccion == 'desc') {
+      filteredItems.sort(function (a, b) {
+        if (formatear(a.doc_total, a.doc_curr) > formatear(b.doc_total, b.doc_curr)) {
+          return -1
+        }
+        if (formatear(a.doc_total, a.doc_curr) < formatear(b.doc_total, b.doc_curr)) {
+          return 1
+        }
+        return 0
+      })
+    }
+    let datosOrdenados = []
+    filteredItems.forEach((item) => {
+      datosOrdenados.push({
+        id_flujo: item.IdFlujo,
+        estado: item.estado,
+        nivel: item.nivel,
+        id_grupo: item.id_grupoautorizacion,
+        PuedoAutorizar: '0',
+        pago: item.doc_num,
+        seccion: 'Rechazados',
+      })
+    })
+    sessionStorage.setItem('listaPagosRechazados', JSON.stringify(datosOrdenados))
+    return true
   }
 
   if (session) {
@@ -352,6 +555,7 @@ const Rechazados = (prop) => {
               responsive={true}
               persistTableHead
               striped={true}
+              onSort={Ordenamiento}
               dense
             />
           </DataTableExtensions>

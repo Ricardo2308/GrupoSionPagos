@@ -21,7 +21,7 @@ import {
   CInputGroup,
   CInputGroupText,
 } from '@coreui/react'
-import { FaArrowLeft, FaRegFilePdf, FaTrash } from 'react-icons/fa'
+import { FaArrowLeft, FaRegFilePdf, FaTrash, FaEdit } from 'react-icons/fa'
 import { getArchivosFlujo } from '../../../../services/getArchivosFlujo'
 import DataTable, { defaultThemes } from 'react-data-table-component'
 import DataTableExtensions from 'react-data-table-component-extensions'
@@ -82,7 +82,7 @@ const NuevoArchivoFlujo = (props) => {
         top: 0,
         height: '100%',
         width: '100%',
-        zIndex: 9999,
+        zIndex: 10001,
         display: 'flex',
         flexDirection: 'column',
         overflowY: 'scroll',
@@ -170,6 +170,7 @@ const NuevoArchivoFlujo = (props) => {
         session.id,
         descripcion,
         archivos,
+        '',
         '',
         session.api_token,
       )
@@ -285,7 +286,7 @@ const NuevoArchivoFlujo = (props) => {
         )
       },
       center: true,
-      width: '520px',
+      width: '490px',
     },
     {
       name: 'Acciones',
@@ -302,9 +303,27 @@ const NuevoArchivoFlujo = (props) => {
               <FaRegFilePdf />
             </Button>{' '}
             <CButton
+              color="success"
+              size="sm"
+              title="Editar archivo"
+              onClick={() =>
+                history.push({
+                  pathname: '/archivoflujo/editar',
+                  id_archivoflujo: row.id_archivoflujo,
+                  ArchivoOriginal: row.archivo_original,
+                  id_flujo: location.id_flujo,
+                  pago: location.pago,
+                  grupo: location.grupo,
+                  estado: location.estado,
+                })
+              }
+            >
+              <FaEdit />
+            </CButton>{' '}
+            <CButton
               color="danger"
               size="sm"
-              title="Eliminar Rol"
+              title="Eliminar archivo"
               onClick={() => mostrarModalEliminar(row.id_archivoflujo)}
             >
               <FaTrash />
@@ -313,7 +332,7 @@ const NuevoArchivoFlujo = (props) => {
         )
       },
       center: true,
-      width: '120px',
+      width: '130px',
     },
   ])
   const tableData = {
@@ -345,6 +364,7 @@ const NuevoArchivoFlujo = (props) => {
     if (opcion == 1) {
       const respuesta = await postArchivoFlujo(
         archivoEliminar,
+        '',
         '',
         '',
         '',

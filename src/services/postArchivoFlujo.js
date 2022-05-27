@@ -6,6 +6,7 @@ export function postArchivoFlujo(
   idUsuario,
   descripcion,
   archivos,
+  nombre_archivo,
   opcion,
   token,
 ) {
@@ -18,8 +19,9 @@ export function postArchivoFlujo(
     id_usuario: idUsuario,
     descripcion: descripcion,
     archivos: archivos,
+    nombre_archivo: nombre_archivo,
     opcion: opcion,
-    url: 'http://34.208.193.210/pagos/archivos/',
+    url: `${process.env.REACT_APP_URL_ARCHIVOS}`,
   }
   const data = JSON.stringify(datos)
 

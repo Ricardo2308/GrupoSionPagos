@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { CCard, CCardBody, CCol, CCardHeader, CRow, CFormSelect } from '@coreui/react'
 import { CChartBar, CChartDoughnut, CChartPie } from '@coreui/react-chartjs'
 import { useIdleTimer } from 'react-idle-timer'
-import { Button, Modal } from 'react-bootstrap'
+import { Tab, Tabs, Modal, Button } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
 import { postSesionUsuario } from '../../services/postSesionUsuario'
 import { getReportesFlujos } from '../../services/getReportesFlujos'
+import { getDatosSemaforoIndividual } from '../../services/getDatosSemaforoIndividual'
 import { useSession } from 'react-use-session'
 import { FaSearch } from 'react-icons/fa'
 import '../../scss/estilos.scss'
@@ -23,6 +24,16 @@ const Dashboard = () => {
   const [estadosLabel, setEstadosLabel] = useState([])
   const [semaforos, setSemaforos] = useState([])
   const [semaforosNom, setSemaforosNom] = useState([])
+  const [semaforosIndividualB, setSemaforosIndividualB] = useState([])
+  const [semaforosNomIndividualB, setSemaforosNomIndividualB] = useState([])
+  const [semaforosIndividualT, setSemaforosIndividualT] = useState([])
+  const [semaforosNomIndividualT, setSemaforosNomIndividualT] = useState([])
+  const [semaforosIndividualI, setSemaforosIndividualI] = useState([])
+  const [semaforosNomIndividualI, setSemaforosNomIndividualI] = useState([])
+  const [PagosTotales, setPagosTotales] = useState(0)
+  const [PagosTotalesIndividualB, setPagosTotalesIndividualB] = useState(0)
+  const [PagosTotalesIndividualT, setPagosTotalesIndividualT] = useState(0)
+  const [PagosTotalesIndividualI, setPagosTotalesIndividualI] = useState(0)
   const [years, setYears] = useState([])
   const [show, setShow] = useState(false)
 
@@ -70,13 +81,59 @@ const Dashboard = () => {
       setEstadosLabel(estadosLabel)
     })
     getReportesFlujos('4', '0', '0', session.api_token).then((items) => {
+      let contador = 0
       for (const pago of items.flujos) {
         semaforos.push(parseInt(pago.cantidad))
+        contador = contador + parseInt(pago.cantidad)
         semaforosNom.push(pago.nombreSemaforo)
       }
+      setPagosTotales(contador)
       setSemaforos(semaforos)
       setSemaforosNom(semaforosNom)
     })
+
+    let semaforosIndividualB = []
+    let semaforosNomIndividualB = []
+    getDatosSemaforoIndividual(session.id, 'BANCARIO', session.api_token).then((items) => {
+      let contador = 0
+      for (const pago of items.flujos) {
+        semaforosIndividualB.push(parseInt(pago.cantidad))
+        contador = contador + parseInt(pago.cantidad)
+        semaforosNomIndividualB.push(pago.nombreSemaforo)
+      }
+      setPagosTotalesIndividualB(contador)
+      setSemaforosIndividualB(semaforosIndividualB)
+      setSemaforosNomIndividualB(semaforosNomIndividualB)
+    })
+
+    let semaforosIndividualT = []
+    let semaforosNomIndividualT = []
+    getDatosSemaforoIndividual(session.id, 'TRANSFERENCIA', session.api_token).then((items) => {
+      let contador = 0
+      for (const pago of items.flujos) {
+        semaforosIndividualT.push(parseInt(pago.cantidad))
+        contador = contador + parseInt(pago.cantidad)
+        semaforosNomIndividualT.push(pago.nombreSemaforo)
+      }
+      setPagosTotalesIndividualT(contador)
+      setSemaforosIndividualT(semaforosIndividualT)
+      setSemaforosNomIndividualT(semaforosNomIndividualT)
+    })
+
+    let semaforosIndividualI = []
+    let semaforosNomIndividualI = []
+    getDatosSemaforoIndividual(session.id, 'INTERNA', session.api_token).then((items) => {
+      let contador = 0
+      for (const pago of items.flujos) {
+        semaforosIndividualI.push(parseInt(pago.cantidad))
+        contador = contador + parseInt(pago.cantidad)
+        semaforosNomIndividualI.push(pago.nombreSemaforo)
+      }
+      setPagosTotalesIndividualI(contador)
+      setSemaforosIndividualI(semaforosIndividualI)
+      setSemaforosNomIndividualI(semaforosNomIndividualI)
+    })
+
     const interval = setInterval(() => {
       let estados = []
       let labelestados = []
@@ -108,12 +165,54 @@ const Dashboard = () => {
         setPromedioT(promedioT)
       })
       getReportesFlujos('4', '0', '0', session.api_token).then((items) => {
+        let contador = 0
         for (const pago of items.flujos) {
           semaforos.push(parseInt(pago.cantidad))
+          contador = contador + parseInt(pago.cantidad)
           semaforosNom.push(pago.nombreSemaforo)
         }
+        setPagosTotales(contador)
         setSemaforos(semaforos)
         setSemaforosNom(semaforosNom)
+      })
+      let semaforosIndividualB = []
+      let semaforosNomIndividualB = []
+      getDatosSemaforoIndividual(session.id, 'BANCARIO', session.api_token).then((items) => {
+        let contador = 0
+        for (const pago of items.flujos) {
+          semaforosIndividualB.push(parseInt(pago.cantidad))
+          contador = contador + parseInt(pago.cantidad)
+          semaforosNomIndividualB.push(pago.nombreSemaforo)
+        }
+        setPagosTotalesIndividualB(contador)
+        setSemaforosIndividualB(semaforosIndividualB)
+        setSemaforosNomIndividualB(semaforosNomIndividualB)
+      })
+      let semaforosIndividualT = []
+      let semaforosNomIndividualT = []
+      getDatosSemaforoIndividual(session.id, 'TRANSFERENCIA', session.api_token).then((items) => {
+        let contador = 0
+        for (const pago of items.flujos) {
+          semaforosIndividualT.push(parseInt(pago.cantidad))
+          contador = contador + parseInt(pago.cantidad)
+          semaforosNomIndividualT.push(pago.nombreSemaforo)
+        }
+        setPagosTotalesIndividualT(contador)
+        setSemaforosIndividualT(semaforosIndividualT)
+        setSemaforosNomIndividualT(semaforosNomIndividualT)
+      })
+      let semaforosIndividualI = []
+      let semaforosNomIndividualI = []
+      getDatosSemaforoIndividual(session.id, 'INTERNA', session.api_token).then((items) => {
+        let contador = 0
+        for (const pago of items.flujos) {
+          semaforosIndividualI.push(parseInt(pago.cantidad))
+          contador = contador + parseInt(pago.cantidad)
+          semaforosNomIndividualI.push(pago.nombreSemaforo)
+        }
+        setPagosTotalesIndividualI(contador)
+        setSemaforosIndividualI(semaforosIndividualI)
+        setSemaforosNomIndividualI(semaforosNomIndividualI)
       })
     }, 900000)
     return () => clearInterval(interval)
@@ -157,10 +256,13 @@ const Dashboard = () => {
       setPromedioT(promedioT)
     })
     getReportesFlujos('4', form.year, form.year, session.api_token).then((items) => {
+      let contador = 0
       for (const pago of items.flujos) {
         semaforos.push(parseInt(pago.cantidad))
+        contador = contador + parseInt(pago.cantidad)
         semaforosNom.push(pago.nombreSemaforo)
       }
+      setPagosTotales(contador)
       setSemaforos(semaforos)
       setSemaforosNom(semaforosNom)
     })
@@ -170,7 +272,7 @@ const Dashboard = () => {
     return (
       <>
         <CRow>
-          <div className="div-search">
+          <div className="div-search" style={{ marginBottom: '20px' }}>
             <CFormSelect
               name="year"
               style={{ marginLeft: '51%', marginRight: '10px' }}
@@ -209,6 +311,193 @@ const Dashboard = () => {
               <FaSearch />
             </Button>
           </div>
+          <CCol xs={6}>
+            <CCard className="mb-4">
+              <CCardHeader>Semáforo de aprobación vs días de credito</CCardHeader>
+              <CCardBody style={{ height: '340px' }}>
+                <CChartBar
+                  height={195}
+                  data={{
+                    labels: semaforosNom,
+                    datasets: [
+                      {
+                        backgroundColor: ['#D02F2F', '#AF940B', '#428A49'],
+                        data: semaforos,
+                      },
+                    ],
+                  }}
+                  options={{
+                    plugins: {
+                      title: {
+                        display: true,
+                        text: 'Total de pagos: ' + PagosTotales,
+                        font: {
+                          weight: 'normal',
+                        },
+                        position: 'bottom',
+                      },
+                      legend: {
+                        display: false,
+                      },
+                    },
+                  }}
+                />
+              </CCardBody>
+            </CCard>
+          </CCol>
+          <CCol xs={6}>
+            <CCard className="mb-4">
+              <CCardHeader>Semáforo de aprobación vs días de credito personal</CCardHeader>
+              <CCardBody>
+                <Tabs defaultActiveKey="bancaria" id="uncontrolled-tab-example" className="mb-3">
+                  <Tab eventKey="bancaria" title="Bancaria">
+                    <CChartBar
+                      data={{
+                        labels: semaforosNomIndividualB,
+                        datasets: [
+                          {
+                            backgroundColor: ['#D02F2F', '#AF940B', '#428A49'],
+                            data: semaforosIndividualB,
+                          },
+                        ],
+                      }}
+                      options={{
+                        plugins: {
+                          title: {
+                            display: true,
+                            text: 'Total de pagos: ' + PagosTotalesIndividualB,
+                            font: {
+                              weight: 'normal',
+                            },
+                            position: 'bottom',
+                          },
+                          legend: {
+                            display: false,
+                          },
+                        },
+                        onClick: (e, a) => {
+                          //console.log(e) //captura el evento
+                          //console.log(a) //captura el item de la grafica y devuelve array
+                          if (a.length > 0) {
+                            let colorFiltro = 'NO'
+                            if (a[0].index === 0) {
+                              colorFiltro = 'ROJO'
+                            }
+                            if (a[0].index === 1) {
+                              colorFiltro = 'AMARILLO'
+                            }
+                            if (a[0].index === 2) {
+                              colorFiltro = 'VERDE'
+                            }
+                            history.push({
+                              pathname: '/pagos/bancario',
+                              colorFiltro,
+                            })
+                          }
+                        },
+                      }}
+                    />
+                  </Tab>
+                  <Tab eventKey="transferencia" title="Transferencia">
+                    <CChartBar
+                      data={{
+                        labels: semaforosNomIndividualT,
+                        datasets: [
+                          {
+                            backgroundColor: ['#D02F2F', '#AF940B', '#428A49'],
+                            data: semaforosIndividualT,
+                          },
+                        ],
+                      }}
+                      options={{
+                        plugins: {
+                          title: {
+                            display: true,
+                            text: 'Total de pagos: ' + PagosTotalesIndividualT,
+                            font: {
+                              weight: 'normal',
+                            },
+                            position: 'bottom',
+                          },
+                          legend: {
+                            display: false,
+                          },
+                        },
+                        onClick: (e, a) => {
+                          //console.log(e) captura el evento
+                          //console.log(a) captura el item de la grafica y devuelve array
+                          if (a.length > 0) {
+                            let colorFiltro = 'NO'
+                            if (a[0].index === 0) {
+                              colorFiltro = 'ROJO'
+                            }
+                            if (a[0].index === 1) {
+                              colorFiltro = 'AMARILLO'
+                            }
+                            if (a[0].index === 2) {
+                              colorFiltro = 'VERDE'
+                            }
+                            history.push({
+                              pathname: '/pagos/transferencia',
+                              colorFiltro,
+                            })
+                          }
+                        },
+                      }}
+                    />
+                  </Tab>
+                  <Tab eventKey="interna" title="Interna">
+                    <CChartBar
+                      data={{
+                        labels: semaforosNomIndividualI,
+                        datasets: [
+                          {
+                            backgroundColor: ['#D02F2F', '#AF940B', '#428A49'],
+                            data: semaforosIndividualI,
+                          },
+                        ],
+                      }}
+                      options={{
+                        plugins: {
+                          title: {
+                            display: true,
+                            text: 'Total de pagos: ' + PagosTotalesIndividualI,
+                            font: {
+                              weight: 'normal',
+                            },
+                            position: 'bottom',
+                          },
+                          legend: {
+                            display: false,
+                          },
+                        },
+                        onClick: (e, a) => {
+                          //console.log(e) captura el evento
+                          //console.log(a) captura el item de la grafica y devuelve array
+                          if (a.length > 0) {
+                            let colorFiltro = 'NO'
+                            if (a[0].index === 0) {
+                              colorFiltro = 'ROJO'
+                            }
+                            if (a[0].index === 1) {
+                              colorFiltro = 'AMARILLO'
+                            }
+                            if (a[0].index === 2) {
+                              colorFiltro = 'VERDE'
+                            }
+                            history.push({
+                              pathname: '/pagos/interna',
+                              colorFiltro,
+                            })
+                          }
+                        },
+                      }}
+                    />
+                  </Tab>
+                </Tabs>
+              </CCardBody>
+            </CCard>
+          </CCol>
           <CCol xs={6} style={{ marginTop: '10px' }}>
             <CCard className="mb-4">
               <CCardHeader>Cantidad de pagos por estado</CCardHeader>
@@ -283,25 +572,6 @@ const Dashboard = () => {
                         label: 'Horas',
                         backgroundColor: '#1D2377',
                         data: promedioT,
-                      },
-                    ],
-                  }}
-                />
-              </CCardBody>
-            </CCard>
-          </CCol>
-          <CCol xs={6}>
-            <CCard className="mb-4">
-              <CCardHeader>Semáforo de aprobación vs días de credito</CCardHeader>
-              <CCardBody>
-                <CChartBar
-                  data={{
-                    labels: semaforosNom,
-                    datasets: [
-                      {
-                        label: 'Pagos',
-                        backgroundColor: ['#D02F2F', '#AF940B', '#428A49'],
-                        data: semaforos,
                       },
                     ],
                   }}

@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
-import FileUploader from '../../../../components/FileUploader'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { useSession } from 'react-use-session'
-import { Alert } from 'react-bootstrap'
+import { Alert, Button, Spinner } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { postArchivoFlujo } from '../../../../services/postArchivoFlujo'
 import { FiUser, FiFile, FiDownloadCloud, FiSettings } from 'react-icons/fi'
+import { FaArrowLeft, FaTrash } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import {
   CButton,
@@ -17,153 +17,336 @@ import {
   CInputGroup,
   CFormSelect,
 } from '@coreui/react'
-
-const EditarGrupo = () => {
+import ReactCrop, { centerCrop, makeAspectCrop, Crop, PixelCrop } from 'react-image-crop'
+import 'react-image-crop/dist/ReactCrop.css'
+import { canvasPreview } from './canvasPreview'
+import { useDebounceEffect } from './useDebounceEffect'
+import cropImage from './cropImage'
+import { jsPDF } from 'jspdf'
+//Agregar la validación al botón de generar
+//Desactivar botones y agregar loading al momento de generar el archivo
+const EditarArchivoFlujo = () => {
   const history = useHistory()
   const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
-  const [show, setShow] = useState(false)
-  const [mensaje, setMensaje] = useState('')
+  const [crop, setCrop] = useState()
+  const [completedCrop, setCompletedCrop] = useState()
+  const previewCanvasRef = useRef()
+  const imgRef = useRef()
+  const [imgSrc, setImgSrc] = useState(location.ArchivoOriginal)
+  const [aspect, setAspect] = useState(undefined)
+  const [scale, setScale] = useState(1)
+  const [rotate, setRotate] = useState(0)
+  const [imagenes, setImagenes] = useState([])
+  const [direcciones, setDirecciones] = useState([])
+  const [mostrarMensaje, setMostrarMensaje] = useState(false)
+  const [deshabilitarCortar, setDeshabilitarCortar] = useState(false)
+  const [deshabilitarGenerar, setDeshabilitarGenerar] = useState(true)
+  const [deshabilitarLimpiar, setDeshabilitarLimpiar] = useState(true)
+  const [mostrarCargando, setMostrarCargando] = useState(false)
 
-  const [form, setValues] = useState({
-    id_flujo: location.id_flujo,
-    descripcion: location.descripcion,
-    estado: location.estado,
-    archivos: [],
-  })
-
-  const handleInput = (event) => {
-    setValues({
-      ...form,
-      [event.target.name]: event.target.value,
-    })
-  }
-
-  const handleSubmit = async (event) => {
-    if (form.descripcion !== '' && form.archivos !== '' && form.estado !== '') {
-      event.preventDefault()
-      const respuesta = await postArchivoFlujo(
-        location.id_archivoflujo,
-        form.id_flujo,
-        location.id_usuario,
-        form.descripcion,
-        form.archivos,
-        '1',
-        session.api_token,
-      )
-      if (respuesta === 'OK' && location.opcion === '1') {
-        history.go(-2)
-      } else if (respuesta === 'OK' && location.opcion === '0') {
-        history.go(-1)
-      }
-    } else {
-      setShow(true)
-      setMensaje('No has llenado todos los campos')
+  function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
+    if (aspect) {
+      const { width, height } = e.currentTarget
+      setCrop(centerAspectCrop(width, height, aspect))
     }
   }
 
-  const handlerUploadFile = (file) => {
-    setValues({
-      ...form,
-      archivos: [...form.archivos, file],
-    })
+  function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: number) {
+    return centerCrop(
+      makeAspectCrop(
+        {
+          unit: '%',
+          width: 90,
+        },
+        aspect,
+        mediaWidth,
+        mediaHeight,
+      ),
+      mediaWidth,
+      mediaHeight,
+    )
   }
 
-  const handlerRemoveFile = (file) => {
-    setValues({
-      ...form,
-      archivos: [
-        ...form.archivos.filter(function (item) {
-          return item !== file
-        }),
-      ],
-    })
+  async function GuardarCorte() {
+    var img1 = new Image()
+    img1.src = imgSrc
+    img1.crossOrigin = 'anonymous'
+    const { blob: croppedBlob, blobUrl, revokeUrl } = await cropImage(
+      imgRef.current,
+      imgRef.current,
+      completedCrop,
+      true,
+    )
+    setImagenes([...imagenes, croppedBlob])
+    setDirecciones([...direcciones, blobUrl])
+    setDeshabilitarGenerar(false)
+    setDeshabilitarLimpiar(false)
   }
 
-  const handlerRemoveAll = () => {
-    setValues({
-      ...form,
-      archivos: [],
-    })
+  function Limpiar() {
+    setCompletedCrop(null)
+    setCrop(null)
+    setImagenes([])
+    setDirecciones([])
+    setDeshabilitarGenerar(true)
+    setDeshabilitarLimpiar(true)
   }
 
+  function Eliminar(imagen) {
+    setDirecciones([
+      ...direcciones.filter(function (item) {
+        return item !== imagen
+      }),
+    ])
+  }
+
+  function crearid(length) {
+    var result = []
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    var largo = characters.length
+    for (var i = 0; i < length; i++) {
+      result.push(characters.charAt(Math.floor(Math.random() * largo)))
+    }
+    return result.join('')
+  }
+
+  function generarPDF() {
+    const doc = new jsPDF({ compress: true })
+    let contador = 0
+    direcciones.forEach((item) => {
+      contador++
+      var imagen = new Image()
+      imagen.src = item
+      const imgProps = doc.getImageProperties(imagen)
+      let imgWidth = doc.internal.pageSize.getWidth() - 5
+      let pageHeight = doc.internal.pageSize.getHeight()
+      let imgHeight = (imgProps.height * imgWidth) / imgProps.width
+      if (contador > 1) {
+        doc.addPage()
+      }
+      doc.addImage(imagen, 'PNG', -1, 0, imgWidth, imgHeight, '', 'FAST')
+    })
+    return doc.output('blob')
+  }
+
+  async function GuardarPdf() {
+    setMostrarCargando(true)
+    setDeshabilitarCortar(false)
+    setDeshabilitarGenerar(true)
+    setDeshabilitarLimpiar(true)
+    setTimeout(() => {
+      const data = new FormData()
+      let nombre = crearid(6) + '_' + location.pago + '.pdf'
+      let fileModificado = generarPDF()
+      data.append('image', fileModificado)
+      data.append('prefijo', nombre)
+      fetch(`${process.env.REACT_APP_BACKEND_URL}upload.php`, {
+        method: 'POST',
+        body: data,
+      })
+        .then(function (response) {
+          if (response.status === 200) {
+            setCompletedCrop(null)
+            setCrop(null)
+            setImagenes([])
+            setDirecciones([])
+
+            return postArchivoFlujo(
+              location.id_archivoflujo,
+              location.id_flujo,
+              session.id,
+              '',
+              '',
+              nombre,
+              '2',
+              session.api_token,
+            )
+          }
+        })
+        .then(function (response2) {
+          if (response2 == 'OK') {
+            history.push({
+              pathname: '/archivoflujo/nuevo',
+              id_flujo: location.id_flujo,
+              pago: location.pago,
+              grupo: location.grupo,
+              estado: location.estado,
+            })
+          }
+        })
+        .catch((error) => error)
+    }, 3000)
+  }
+
+  useEffect(() => {
+    let mounted = true
+    return () => (mounted = false)
+  }, [])
+
+  useDebounceEffect(
+    async () => {
+      if (
+        completedCrop?.width &&
+        completedCrop?.height &&
+        imgRef.current &&
+        previewCanvasRef.current
+      ) {
+        // We use canvasPreview as it's much faster than imgPreview.
+
+        if (completedCrop.height > 657) {
+          setMostrarMensaje(true)
+          setDeshabilitarCortar(true)
+          setDeshabilitarGenerar(true)
+          setDeshabilitarLimpiar(true)
+        } else {
+          setMostrarMensaje(false)
+          setDeshabilitarCortar(false)
+          if (direcciones.length > 0) {
+            setDeshabilitarGenerar(false)
+            setDeshabilitarLimpiar(false)
+          }
+        }
+        canvasPreview(imgRef.current, previewCanvasRef.current, completedCrop, scale, rotate)
+      }
+    },
+    100,
+    [completedCrop, scale, rotate],
+  )
   if (session) {
     if (location.id_archivoflujo) {
       return (
         <div style={{ flexDirection: 'row' }}>
+          <div style={{ width: '25%', marginLeft: '10px' }}>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() =>
+                history.push({
+                  pathname: '/archivoflujo/nuevo',
+                  id_flujo: location.id_flujo,
+                  pago: location.pago,
+                  grupo: location.grupo,
+                  estado: location.estado,
+                })
+              }
+            >
+              <FaArrowLeft />
+              &nbsp;&nbsp;Regresar
+            </Button>
+          </div>
+          <br />
+          <br />
           <CContainer>
-            <Alert show={show} variant="danger" onClose={() => setShow(false)} dismissible>
-              <Alert.Heading>Error!</Alert.Heading>
-              <p>{mensaje}</p>
-            </Alert>
-            <CCard style={{ display: 'flex', alignItems: 'center' }}>
-              <CCardBody style={{ width: '80%' }}>
-                <CForm style={{ width: '100%' }} onSubmit={handleSubmit}>
-                  <h1>Modificación del Archivo de Flujo</h1>
-                  <p className="text-medium-emphasis">
-                    Modifique la información del registro del archivo de flujo
-                  </p>
-                  <CInputGroup className="mb-3">
-                    <CInputGroupText>
-                      <FiUser />
-                    </CInputGroupText>
-                    <CFormControl
-                      type="text"
-                      placeholder="Usuario"
-                      name="usuario"
-                      defaultValue={location.nombre_usuario}
-                      disabled={true}
-                    />
-                  </CInputGroup>
-                  <CInputGroup className="mb-3">
-                    <CInputGroupText>
-                      <FiFile />
-                    </CInputGroupText>
-                    <CFormControl
-                      placeholder="Descripción"
-                      name="descripcion"
-                      className="form-control"
-                      onChange={handleInput}
-                      defaultValue={location.descripcion}
-                    />
-                  </CInputGroup>
-                  <CInputGroup className="mb-3">
-                    <CInputGroupText>
-                      <FiDownloadCloud />
-                    </CInputGroupText>
-                    <CFormControl
-                      type="text"
-                      onChange={handleInput}
-                      value={location.url_archivo}
-                      disabled={true}
-                    />
-                  </CInputGroup>
-                  <FileUploader
-                    sendData={handlerUploadFile}
-                    sendDataRemove={handlerRemoveFile}
-                    senDataRemoveAll={handlerRemoveAll}
+            <div
+              style={{ width: '95%', display: 'flex', gap: '10px', justifyContent: 'flex-start' }}
+            >
+              <div style={{ width: '50%', height: '800px', overflow: 'auto' }}>
+                <ReactCrop
+                  crop={crop}
+                  onChange={(_, percentCrop) => setCrop(percentCrop)}
+                  onComplete={(c) => setCompletedCrop(c)}
+                  aspect={aspect}
+                >
+                  <img
+                    ref={imgRef}
+                    alt="Crop me"
+                    src={imgSrc}
+                    style={{ transform: `scale(${scale}) rotate(${rotate}deg)` }}
+                    onLoad={onImageLoad}
                   />
-                  <CInputGroup className="mb-3" style={{ marginTop: '15px' }}>
-                    <CInputGroupText>
-                      <FiSettings />
-                    </CInputGroupText>
-                    <CFormSelect name="estado" onChange={handleInput}>
-                      <option>Seleccione estado. (Opcional)</option>
-                      <option value="1">Activo</option>
-                      <option value="0">Inactivo</option>
-                    </CFormSelect>
-                  </CInputGroup>
-                  <CButton color="primary" type="submit" block>
-                    Guardar Cambios
-                  </CButton>
-                </CForm>
-              </CCardBody>
-            </CCard>
+                </ReactCrop>
+              </div>
+              <div style={{ width: '50%' }}>
+                <Button
+                  variant="success"
+                  size="sm"
+                  disabled={deshabilitarCortar}
+                  onClick={() => {
+                    GuardarCorte()
+                  }}
+                >
+                  Cortar
+                </Button>{' '}
+                <Button
+                  variant="primary"
+                  size="sm"
+                  disabled={deshabilitarGenerar}
+                  onClick={() => {
+                    GuardarPdf()
+                  }}
+                >
+                  Generar documento
+                </Button>{' '}
+                <Button
+                  variant="danger"
+                  size="sm"
+                  disabled={deshabilitarLimpiar}
+                  onClick={() => {
+                    Limpiar()
+                  }}
+                >
+                  Limpiar
+                </Button>
+                <br />
+                <Spinner animation="border" className={!mostrarCargando ? 'd-none' : ''} />
+                <Alert variant="danger" className={!mostrarMensaje ? 'd-none' : ''}>
+                  {
+                    'El área seleccionada es más grande que una página, por favor seleccione un área más pequeña.'
+                  }
+                </Alert>
+                <br />
+                <div>
+                  {Boolean(completedCrop) && (
+                    <canvas
+                      ref={previewCanvasRef}
+                      style={{
+                        border: '1px solid black',
+                        objectFit: 'contain',
+                        width: completedCrop.width,
+                        height: completedCrop.height,
+                      }}
+                    />
+                  )}
+                </div>
+                <div style={{ height: '400px', overflow: 'auto' }}>
+                  {direcciones.map((item, i) => {
+                    return (
+                      <>
+                        <div key={i + 100}>
+                          <br />
+                          <div key={i + 200} style={{ display: 'flex' }}>
+                            <div key={i + 300} style={{ width: '50%' }}>
+                              <h2 key={i + 1000}>Página {i + 1}</h2>
+                            </div>
+                            <div key={i + 400} style={{ width: '50%' }}>
+                              <Button
+                                variant="danger"
+                                size="sm"
+                                onClick={() => {
+                                  Eliminar(item)
+                                }}
+                              >
+                                <FaTrash />
+                              </Button>
+                            </div>
+                          </div>
+                          <br />
+                          <img key={i} src={item} style={{ width: '50%' }} />
+                          <br />
+                        </div>
+                        <br />
+                      </>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
           </CContainer>
         </div>
       )
     } else {
-      history.push('/archivoflujo/archivos')
+      history.goBack()
       return (
         <div className="sin-sesion">
           NO SE CARGÓ EL CÓDIGO DEL ARCHIVO. REGRESE A LA PANTALLA DE PAGOS.
@@ -176,4 +359,4 @@ const EditarGrupo = () => {
   }
 }
 
-export default EditarGrupo
+export default EditarArchivoFlujo

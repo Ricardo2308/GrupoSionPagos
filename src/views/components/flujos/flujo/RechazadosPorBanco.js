@@ -8,12 +8,15 @@ import { FaList } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
+import { getOcultarColumnaUsuario } from '../../../../services/getOcultarColumnaUsuario'
 
 const RechazadosPorBanco = (prop) => {
   const history = useHistory()
   const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
+  const [camposOcultos, setListOcultos] = useState([])
+  const [anchoConcepto, setAnchoConcepto] = useState('285px')
   const filteredItems = results
 
   useEffect(() => {
@@ -24,10 +27,30 @@ const RechazadosPorBanco = (prop) => {
           setList(items.flujos)
         }
       })
+      getOcultarColumnaUsuario(session.id, session.api_token).then((items) => {
+        if (mounted) {
+          setListOcultos(items.ocultar)
+          if (items.ocultar.length > 0) {
+            setAnchoConcepto('auto')
+          } else {
+            setAnchoConcepto('285px')
+          }
+        }
+      })
     } else {
       getRechazadosBanco(prop.tipo, session.id, session.api_token).then((items) => {
         if (mounted) {
           setList(items.flujos)
+        }
+      })
+      getOcultarColumnaUsuario(session.id, session.api_token).then((items) => {
+        if (mounted) {
+          setListOcultos(items.ocultar)
+          if (items.ocultar.length > 0) {
+            setAnchoConcepto('auto')
+          } else {
+            setAnchoConcepto('285px')
+          }
         }
       })
     }
@@ -65,6 +88,16 @@ const RechazadosPorBanco = (prop) => {
     },
   }
 
+  function OcultarCampo(campo) {
+    let result = false
+    for (let item of camposOcultos) {
+      if (campo == item.NombreColumna) {
+        result = true
+      }
+    }
+    return result
+  }
+
   const formatear = (valor, moneda) => {
     if (moneda === 'QTZ') {
       return formatter.format(valor)
@@ -93,6 +126,7 @@ const RechazadosPorBanco = (prop) => {
       sortable: true,
       wrap: true,
       width: '150px',
+      omit: OcultarCampo('Empresa'),
     },
     {
       name: 'No.',
@@ -103,6 +137,7 @@ const RechazadosPorBanco = (prop) => {
       },
       sortable: true,
       width: '90px',
+      omit: OcultarCampo('No. documento'),
     },
     {
       name: 'Fecha Sis.',
@@ -113,6 +148,7 @@ const RechazadosPorBanco = (prop) => {
         fontSize: '11px',
       },
       width: '100px',
+      omit: OcultarCampo('Fecha sistema'),
     },
     {
       name: 'Fecha auto.',
@@ -123,6 +159,7 @@ const RechazadosPorBanco = (prop) => {
         fontSize: '11px',
       },
       width: '100px',
+      omit: OcultarCampo('Fecha autorización'),
     },
     {
       name: 'Beneficiario',
@@ -134,6 +171,7 @@ const RechazadosPorBanco = (prop) => {
       },
       wrap: true,
       width: '250px',
+      omit: OcultarCampo('Beneficiario'),
     },
     {
       name: 'Concepto',
@@ -143,7 +181,8 @@ const RechazadosPorBanco = (prop) => {
         fontSize: '11px',
       },
       wrap: true,
-      width: '285px',
+      width: anchoConcepto,
+      omit: OcultarCampo('Concepto'),
     },
     {
       name: 'Monto',
@@ -153,6 +192,7 @@ const RechazadosPorBanco = (prop) => {
         fontSize: '11px',
       },
       width: '120px',
+      omit: OcultarCampo('Monto'),
     },
     {
       name: 'Acciones',
@@ -182,6 +222,7 @@ const RechazadosPorBanco = (prop) => {
       },
       center: true,
       width: '70px',
+      omit: OcultarCampo('Acciones'),
     },
   ])
   const tableData = {

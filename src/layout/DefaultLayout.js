@@ -5,6 +5,7 @@ import { useSession } from 'react-use-session'
 import { IdleTimeOutModal } from '../components/IdleTimeOutModal'
 import IdleTimer from 'react-idle-timer'
 import { postSesionUsuario } from '../services/postSesionUsuario'
+import StickyBox from 'react-sticky-box'
 
 const DefaultLayout = () => {
   const history = useHistory()
@@ -57,8 +58,10 @@ const DefaultLayout = () => {
     } else {
       return (
         <div style={{ display: 'flex', width: '100%' }}>
-          <aside id="header">
-            <AppSidebar className="sticky" />
+          <aside style={{ backgroundColor: '#313c4f', zIndex: '10000' }} id="header">
+            <StickyBox offsetBottom={0} offsetTop={0}>
+              <AppSidebar />
+            </StickyBox>
           </aside>
           <article
             style={{ width: '100%' }}

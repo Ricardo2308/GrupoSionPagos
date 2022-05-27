@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import { Tab, Tabs, Modal, Button } from 'react-bootstrap'
 import Rechazados from './Rechazados'
 import Autorizados from './Autorizados'
@@ -12,6 +12,7 @@ import '../../../../scss/estilos.scss'
 
 const Interna = () => {
   const history = useHistory()
+  const location = useLocation()
   const [time, setTime] = useState(null)
   const [mensaje, setMensaje] = useState('')
   const [show, setShow] = useState(false)
@@ -54,7 +55,7 @@ const Interna = () => {
           <div style={{ width: '100%' }}>
             <Tabs defaultActiveKey="pendientes" id="uncontrolled-tab-example" className="mb-3">
               <Tab eventKey="pendientes" title="Pendientes">
-                <Pendientes tipo={'INTERNA'} />
+                <Pendientes colorFiltro={location.colorFiltro} tipo={'INTERNA'} />
               </Tab>
               <Tab eventKey="autorizados" title="Autorizados">
                 <Autorizados tipo={'INTERNA'} />

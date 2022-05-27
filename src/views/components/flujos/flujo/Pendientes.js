@@ -1,11 +1,19 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { CButton } from '@coreui/react'
-import { useHistory } from 'react-router-dom'
-import { Button, FormControl, ModalTitle, Modal } from 'react-bootstrap'
+import { useHistory, useLocation } from 'react-router-dom'
+import {
+  Button,
+  FormControl,
+  ModalTitle,
+  Modal,
+  Tooltip,
+  OverlayTrigger,
+  Alert,
+} from 'react-bootstrap'
 import DataTable, { defaultThemes } from 'react-data-table-component'
 import { getPendientesAutorizacion } from '../../../../services/getPendientesAutorizacion'
 import { useSession } from 'react-use-session'
-import { FaList, FaFileUpload, FaUsersCog } from 'react-icons/fa'
+import { FaList, FaFileUpload, FaUsersCog, FaCircle } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
@@ -15,11 +23,16 @@ import { postFlujos } from '../../../../services/postFlujos'
 import { postFlujoDetalle } from '../../../../services/postFlujoDetalle'
 import { postNotificacion } from '../../../../services/postNotificacion'
 import { postRecordatorioUsuario } from '../../../../services/postRecordatorioUsuario'
+import styled from 'styled-components'
+import { getOcultarColumnaUsuario } from '../../../../services/getOcultarColumnaUsuario'
+import { getUsuarioRecordatorioGrupo } from '../../../../services/getUsuarioRecordatorioGrupo'
 
 const Pendientes = (prop) => {
   const history = useHistory()
+  const location = useLocation()
   const { session } = useSession('PendrogonIT-Session')
   const [data, setListdata] = useState([])
+  const [dataOriginal, setDataOriginal] = useState([])
   const [permisos, setPermisos] = useState([])
   const [ocultarBotonCargar, setocultarBotonCargar] = useState(true)
   const [showCargarNuevos, setShowCargarNuevos] = useState(false)
@@ -28,8 +41,57 @@ const Pendientes = (prop) => {
   const [actualizarTabla, setActualizarTabla] = useState(0)
   //Cambio recordatorio
   const [showModalRecordar, setShowModalRecordar] = useState(false)
+  const [columnaOrden, setColumnaOrden] = useState('')
+  const [direccionOrden, setDireccionOrden] = useState('')
+  const [actualizarColor, setActualizarColor] = useState(true)
+  const [camposOcultos, setListOcultos] = useState([])
+  const [anchoConcepto, setAnchoConcepto] = useState('285px')
+  const [PuedeEnviarRecordatorio, setPuedeEnviarRecordatorio] = useState(false)
+  const [show, setShow] = useState(false)
+  const [mensaje, setMensaje] = useState('')
+  const [color, setColor] = useState('danger')
+  const [titulo, setTitulo] = useState('Error!')
+
+  const StyledCell = styled.div`
+    &.VERDE {
+      background: #9cff84 !important;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    &.AMARILLO {
+      background: #ffff84 !important;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    &.ROJO {
+      background: #ff8484 !important;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    &.NO {
+      background: transparent !important;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  `
 
   useEffect(() => {
+    let colorFiltro = 'NO'
+    if (location.colorFiltro !== undefined) {
+      colorFiltro = location.colorFiltro
+    }
     let mounted = true
     let objeto = 'Modulo Autorizacion Pagos'
     let idUsuario = 0
@@ -38,17 +100,41 @@ const Pendientes = (prop) => {
     }
     getPendientesAutorizacion(prop.tipo, idUsuario, session.api_token).then((items) => {
       if (mounted) {
-        setListdata(items.flujos)
+        setDataOriginal(items.flujos)
+        if (colorFiltro === 'NO') {
+          setListdata(items.flujos)
+        } else {
+          setListdata(
+            items.flujos.filter(function (pago) {
+              return pago.colorSemaforo == colorFiltro
+            }),
+          )
+        }
         let datosOrdenados = []
         items.flujos.forEach((item) => {
-          datosOrdenados.push({
-            id_flujo: item.id_flujo,
-            estado: item.estado,
-            nivel: item.nivel,
-            id_grupo: item.id_grupoautorizacion,
-            PuedoAutorizar: item.PuedoAutorizar,
-            pago: item.doc_num,
-          })
+          if (colorFiltro === 'NO') {
+            datosOrdenados.push({
+              id_flujo: item.id_flujo,
+              estado: item.estado,
+              nivel: item.nivel,
+              id_grupo: item.id_grupoautorizacion,
+              PuedoAutorizar: item.PuedoAutorizar,
+              pago: item.doc_num,
+              seccion: 'Pendientes',
+            })
+          } else {
+            if (item.colorSemaforo == colorFiltro) {
+              datosOrdenados.push({
+                id_flujo: item.id_flujo,
+                estado: item.estado,
+                nivel: item.nivel,
+                id_grupo: item.id_grupoautorizacion,
+                PuedoAutorizar: item.PuedoAutorizar,
+                pago: item.doc_num,
+                seccion: 'Pendientes',
+              })
+            }
+          }
         })
         sessionStorage.setItem('listaPagos', JSON.stringify(datosOrdenados))
       }
@@ -63,8 +149,35 @@ const Pendientes = (prop) => {
         }
       }
     })
+    getOcultarColumnaUsuario(session.id, session.api_token).then((items) => {
+      if (mounted) {
+        setListOcultos(items.ocultar)
+        if (items.ocultar.length > 0) {
+          setAnchoConcepto('auto')
+        } else {
+          setAnchoConcepto('285px')
+        }
+      }
+    })
+    getUsuarioRecordatorioGrupo(session.id, session.api_token).then((items) => {
+      if (items.recordatorio.length > 0) {
+        setPuedeEnviarRecordatorio(true)
+      } else {
+        setPuedeEnviarRecordatorio(false)
+      }
+    })
     return () => (mounted = false)
   }, [actualizarTabla])
+
+  function OcultarCampo(campo) {
+    let result = false
+    for (let item of camposOcultos) {
+      if (campo == item.NombreColumna) {
+        result = true
+      }
+    }
+    return result
+  }
 
   function ExistePermiso(permiso) {
     let result = false
@@ -144,7 +257,7 @@ const Pendientes = (prop) => {
         if (row.PuedoAutorizar == 1 && tienePermisoAutorizar) {
           setShowAutorizar(true)
           return (
-            <div>
+            <StyledCell className={row.colorSemaforo}>
               <input
                 type="checkbox"
                 name="autorizarPago"
@@ -154,12 +267,17 @@ const Pendientes = (prop) => {
                 onChange={handleInput}
                 defaultChecked={estaChequeado(row.id_flujo + '|' + row.estado + '|' + row.nivel)}
               />
-            </div>
+            </StyledCell>
           )
         }
       },
       center: true,
       width: '35px',
+      style: {
+        paddingLeft: '0px',
+        paddingRight: '0px',
+      },
+      omit: OcultarCampo('Selección'),
     },
     {
       name: 'Empresa',
@@ -171,6 +289,7 @@ const Pendientes = (prop) => {
       sortable: true,
       wrap: true,
       width: '150px',
+      omit: OcultarCampo('Empresa'),
     },
     {
       name: 'No.',
@@ -181,6 +300,7 @@ const Pendientes = (prop) => {
       },
       sortable: true,
       width: '90px',
+      omit: OcultarCampo('No. documento'),
     },
     {
       name: 'Fecha Sis.',
@@ -191,6 +311,7 @@ const Pendientes = (prop) => {
         fontSize: '11px',
       },
       width: '100px',
+      omit: OcultarCampo('Fecha sistema'),
     },
     {
       name: 'Beneficiario',
@@ -202,6 +323,7 @@ const Pendientes = (prop) => {
       },
       wrap: true,
       width: '250px',
+      omit: OcultarCampo('Beneficiario'),
     },
     {
       name: 'Concepto',
@@ -211,7 +333,8 @@ const Pendientes = (prop) => {
         fontSize: '11px',
       },
       wrap: true,
-      width: '285px',
+      width: anchoConcepto,
+      omit: OcultarCampo('Concepto'),
     },
     {
       name: 'Monto',
@@ -222,6 +345,7 @@ const Pendientes = (prop) => {
         fontSize: '11px',
       },
       width: '120px',
+      omit: OcultarCampo('Monto'),
     },
     {
       name: 'Acciones',
@@ -246,6 +370,7 @@ const Pendientes = (prop) => {
                     id_grupo: row.id_grupoautorizacion,
                     PuedoAutorizar: row.PuedoAutorizar,
                     pagina: 'transferencia',
+                    seccion: 'Pendientes',
                   })
                 }
               >
@@ -290,6 +415,7 @@ const Pendientes = (prop) => {
                       id_grupo: row.id_grupoautorizacion,
                       PuedoAutorizar: row.PuedoAutorizar,
                       pagina: 'transferencia',
+                      seccion: 'Pendientes',
                     })
                   }
                 >
@@ -348,6 +474,7 @@ const Pendientes = (prop) => {
                       id_grupo: row.id_grupoautorizacion,
                       PuedoAutorizar: row.PuedoAutorizar,
                       pagina: 'transferencia',
+                      seccion: 'Pendientes',
                     })
                   }
                 >
@@ -391,6 +518,7 @@ const Pendientes = (prop) => {
                       id_grupo: row.id_grupoautorizacion,
                       PuedoAutorizar: row.PuedoAutorizar,
                       pagina: 'transferencia',
+                      seccion: 'Pendientes',
                     })
                   }
                 >
@@ -403,6 +531,7 @@ const Pendientes = (prop) => {
       },
       center: true,
       width: '125px',
+      omit: OcultarCampo('Acciones'),
     },
   ])
   const tableData = {
@@ -438,6 +567,8 @@ const Pendientes = (prop) => {
   }
 
   function Ordenamiento(columna, direccion, e) {
+    setColumnaOrden(columna)
+    setDireccionOrden(direccion)
     if (columna.name == 'Empresa' && direccion == 'asc') {
       data.sort(function (a, b) {
         if (a.empresa_nombre > b.empresa_nombre) {
@@ -557,6 +688,7 @@ const Pendientes = (prop) => {
         id_grupo: item.id_grupoautorizacion,
         PuedoAutorizar: item.PuedoAutorizar,
         pago: item.doc_num,
+        seccion: 'Pendientes',
       })
     })
     sessionStorage.setItem('listaPagos', JSON.stringify(datosOrdenados))
@@ -624,21 +756,137 @@ const Pendientes = (prop) => {
 
   async function AccionModalRecordar(opcion) {
     if (opcion == 1) {
-      var markedCheckbox = document.getElementsByName('autorizarPago')
-      for (var checkbox of markedCheckbox) {
-        if (checkbox.checked) {
-          let valorPago = checkbox.value
-          let partes = checkbox.value.split('|')
-          await postRecordatorioUsuario('', '', '', session.id, partes[0], session.api_token)
-          sessionStorage.removeItem(valorPago)
-          checkbox.checked = false
+      if (PuedeEnviarRecordatorio) {
+        var markedCheckbox = document.getElementsByName('autorizarPago')
+        for (var checkbox of markedCheckbox) {
+          if (checkbox.checked) {
+            let valorPago = checkbox.value
+            let partes = checkbox.value.split('|')
+            await postRecordatorioUsuario('', '', '', session.id, partes[0], session.api_token)
+            sessionStorage.removeItem(valorPago)
+            checkbox.checked = false
+          }
         }
+      } else {
+        setShow(true)
+        setTitulo('Error!')
+        setColor('danger')
+        setMensaje(
+          'No tiene configurados usuarios para enviar recordatorio, comuniquese con el administrador.',
+        )
       }
       setShowModalRecordar(false)
+      setActualizarTabla(actualizarTabla + 1)
     } else if (opcion == 2) {
       setShowModalRecordar(false)
     }
   }
+
+  function MostrarPorFiltro(color) {
+    if (color == 'NO') {
+      setListdata(dataOriginal)
+
+      let datosOrdenados = []
+      dataOriginal.forEach((item) => {
+        datosOrdenados.push({
+          id_flujo: item.id_flujo,
+          estado: item.estado,
+          nivel: item.nivel,
+          id_grupo: item.id_grupoautorizacion,
+          PuedoAutorizar: item.PuedoAutorizar,
+          pago: item.doc_num,
+          seccion: 'Pendientes',
+        })
+      })
+      sessionStorage.setItem('listaPagos', JSON.stringify(datosOrdenados))
+      setActualizarColor(!actualizarColor)
+    }
+    if (color == 'ROJO') {
+      setListdata(
+        dataOriginal.filter(function (pago) {
+          return pago.colorSemaforo == color
+        }),
+      )
+
+      let datosOrdenados = []
+      dataOriginal.forEach((item) => {
+        if (item.colorSemaforo == color) {
+          datosOrdenados.push({
+            id_flujo: item.id_flujo,
+            estado: item.estado,
+            nivel: item.nivel,
+            id_grupo: item.id_grupoautorizacion,
+            PuedoAutorizar: item.PuedoAutorizar,
+            pago: item.doc_num,
+            seccion: 'Pendientes',
+          })
+        }
+      })
+      sessionStorage.setItem('listaPagos', JSON.stringify(datosOrdenados))
+      setActualizarColor(!actualizarColor)
+    }
+    if (color == 'AMARILLO') {
+      setListdata(
+        dataOriginal.filter(function (pago) {
+          return pago.colorSemaforo == color
+        }),
+      )
+
+      let datosOrdenados = []
+      dataOriginal.forEach((item) => {
+        if (item.colorSemaforo == color) {
+          datosOrdenados.push({
+            id_flujo: item.id_flujo,
+            estado: item.estado,
+            nivel: item.nivel,
+            id_grupo: item.id_grupoautorizacion,
+            PuedoAutorizar: item.PuedoAutorizar,
+            pago: item.doc_num,
+            seccion: 'Pendientes',
+          })
+        }
+      })
+      sessionStorage.setItem('listaPagos', JSON.stringify(datosOrdenados))
+      setActualizarColor(!actualizarColor)
+    }
+    if (color == 'VERDE') {
+      setListdata(
+        dataOriginal.filter(function (pago) {
+          return pago.colorSemaforo == color
+        }),
+      )
+
+      let datosOrdenados = []
+      dataOriginal.forEach((item) => {
+        if (item.colorSemaforo == color) {
+          datosOrdenados.push({
+            id_flujo: item.id_flujo,
+            estado: item.estado,
+            nivel: item.nivel,
+            id_grupo: item.id_grupoautorizacion,
+            PuedoAutorizar: item.PuedoAutorizar,
+            pago: item.doc_num,
+            seccion: 'Pendientes',
+          })
+        }
+      })
+      sessionStorage.setItem('listaPagos', JSON.stringify(datosOrdenados))
+      setActualizarColor(!actualizarColor)
+    }
+  }
+
+  useEffect(() => {
+    Ordenamiento(columnaOrden, direccionOrden, null)
+  }, [actualizarColor])
+
+  const conditionalRowStyles = [
+    {
+      when: (row) => row.marcarRecordado > 0,
+      style: {
+        backgroundColor: '#fffadd',
+      },
+    },
+  ]
 
   if (session) {
     return (
@@ -687,36 +935,88 @@ const Pendientes = (prop) => {
             </Button>
           </Modal.Footer>
         </Modal>
-        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-          <CButton
-            className={ocultarBotonCargar ? 'd-none float-right' : 'float-right'}
-            color="success"
-            size="sm"
-            onClick={() => mostrarModalCargarNuevos()}
+        <Alert show={show} variant={color} onClose={() => setShow(false)} dismissible>
+          <Alert.Heading>{titulo}</Alert.Heading>
+          <p>{mensaje}</p>
+        </Alert>
+        <div style={{ display: 'flex' }}>
+          <div
+            style={{
+              width: '50%',
+              display: 'flex',
+              gap: '10px',
+              justifyContent: 'flex-start',
+              paddingLeft: '10px',
+            }}
           >
-            Cargar nuevos pagos
-          </CButton>
-          {'  '}
-          <CButton
-            className={!showAutorizar ? 'd-none float-right' : 'float-right'}
-            color="primary"
-            size="sm"
-            onClick={() => mostrarModalAutorizar()}
-          >
-            Autorizar pagos seleccionados
-          </CButton>
-          {'  '}
-          <CButton
-            /* className={!showAutorizar ? 'd-none float-right' : 'float-right'} */
-            className="float-right"
-            color="secondary"
-            size="sm"
-            onClick={() => mostrarModalRecordar()}
-          >
-            Enviar recordatorio pagos seleccionados
-          </CButton>
-          <br />
-          <br />
+            <OverlayTrigger
+              placement="top"
+              delay={{ show: 250, hide: 150 }}
+              overlay={<Tooltip>Mostrar todos</Tooltip>}
+            >
+              <Button variant="outline-secondary" onClick={() => MostrarPorFiltro('NO')}>
+                <FaCircle />
+              </Button>
+            </OverlayTrigger>
+            <OverlayTrigger
+              placement="top"
+              delay={{ show: 250, hide: 150 }}
+              overlay={<Tooltip>Mostrar pendientes</Tooltip>}
+            >
+              <Button variant="outline-success" onClick={() => MostrarPorFiltro('VERDE')}>
+                <FaCircle />
+              </Button>
+            </OverlayTrigger>
+            <OverlayTrigger
+              placement="top"
+              delay={{ show: 250, hide: 150 }}
+              overlay={<Tooltip>Mostrar importantes</Tooltip>}
+            >
+              <Button variant="outline-warning" onClick={() => MostrarPorFiltro('AMARILLO')}>
+                <FaCircle />
+              </Button>
+            </OverlayTrigger>
+            <OverlayTrigger
+              placement="top"
+              delay={{ show: 250, hide: 150 }}
+              overlay={<Tooltip>Mostrar urgentes</Tooltip>}
+            >
+              <Button variant="outline-danger" onClick={() => MostrarPorFiltro('ROJO')}>
+                <FaCircle />
+              </Button>
+            </OverlayTrigger>
+          </div>
+          <div style={{ width: '50%', display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+            <CButton
+              className={ocultarBotonCargar ? 'd-none float-right' : 'float-right'}
+              color="success"
+              size="sm"
+              onClick={() => mostrarModalCargarNuevos()}
+            >
+              Cargar nuevos pagos
+            </CButton>
+            {'  '}
+            <CButton
+              className={!showAutorizar ? 'd-none float-right' : 'float-right'}
+              color="primary"
+              size="sm"
+              onClick={() => mostrarModalAutorizar()}
+            >
+              Autorizar pagos seleccionados
+            </CButton>
+            {'  '}
+            <CButton
+              /* className={!showAutorizar ? 'd-none float-right' : 'float-right'} */
+              className="float-right"
+              color="secondary"
+              size="sm"
+              onClick={() => mostrarModalRecordar()}
+            >
+              Enviar recordatorio pagos seleccionados
+            </CButton>
+            <br />
+            <br />
+          </div>
         </div>
         <DataTableExtensions {...tableData}>
           <DataTable
@@ -730,6 +1030,7 @@ const Pendientes = (prop) => {
             persistTableHead
             striped={true}
             onSort={Ordenamiento}
+            conditionalRowStyles={conditionalRowStyles}
             dense
           />
         </DataTableExtensions>

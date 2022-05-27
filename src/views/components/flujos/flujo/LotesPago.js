@@ -31,7 +31,7 @@ const LotesPago = (prop) => {
         top: 0,
         height: '100%',
         width: '100%',
-        zIndex: 9999,
+        zIndex: 10001,
         display: 'flex',
         flexDirection: 'column',
         overflowY: 'scroll',

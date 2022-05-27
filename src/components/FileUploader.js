@@ -5,6 +5,7 @@ import { jsPDF } from 'jspdf'
 
 const FileUploader = (prop) => {
   const [prefijo, setValor] = useState('')
+  const [prefijoTmp, setValorTmp] = useState('')
 
   function crearid(length) {
     var result = []
@@ -19,7 +20,7 @@ const FileUploader = (prop) => {
   function generarPDF(url) {
     var imagen = new Image()
     imagen.src = url
-    const doc = new jsPDF()
+    const doc = new jsPDF({ compress: true })
     const imgProps = doc.getImageProperties(imagen)
     /* const pdfWidth = doc.internal.pageSize.getWidth()
     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
@@ -29,26 +30,31 @@ const FileUploader = (prop) => {
     let imgHeight = (imgProps.height * imgWidth) / imgProps.width
     let heightLeft = imgHeight
     let position = 5
-    doc.addImage(imagen, 'PNG', 0, position, imgWidth, imgHeight)
+    doc.addImage(imagen, 'PNG', 0, position, imgWidth, imgHeight, '', 'FAST')
     heightLeft -= pageHeight
     while (heightLeft >= 0) {
       //let diferenciaPosicion = heightLeft - imgHeight
       position -= 297
       doc.addPage()
-      doc.addImage(imagen, 'PNG', 0, position, imgWidth, imgHeight)
+      doc.addImage(imagen, 'PNG', 0, position, imgWidth, imgHeight, '', 'FAST')
       heightLeft -= pageHeight
     }
-
     return doc.output('blob')
   }
 
   const getUploadParams = ({ file, meta }) => {
     const body = new FormData()
+    let fileModificado
     if (file.type === 'image/png' || file.type === 'image/jpeg') {
-      file = generarPDF(URL.createObjectURL(file))
+      fileModificado = generarPDF(URL.createObjectURL(file))
+    } else {
+      fileModificado = file
     }
-    body.append('image', file)
+    body.append('original', file)
+    body.append('image', fileModificado)
     body.append('prefijo', prefijo)
+    body.append('prefijoTmp', prefijoTmp)
+
     return { url: `${process.env.REACT_APP_BACKEND_URL}upload.php`, body }
   }
 
@@ -59,15 +65,17 @@ const FileUploader = (prop) => {
       nombre = crearid(6) + '_' + pago
       if (file.type === 'image/png' || file.type === 'image/jpeg') {
         setValor(nombre + '.pdf')
+        setValorTmp(nombre)
       } else if (file.type === 'application/pdf') {
         setValor(nombre + '.pdf')
+        setValorTmp(nombre)
       }
     }
     if (status === 'done') {
-      prop.sendData(prefijo)
+      prop.sendData(prefijo + '|original_' + prefijoTmp + '_' + file.name)
     }
     if (status === 'removed') {
-      prop.sendDataRemove(prefijo)
+      prop.sendDataRemove(prefijo + '|original_' + prefijoTmp + '_' + file.name)
     }
   }
 
@@ -82,7 +90,7 @@ const FileUploader = (prop) => {
       onChangeStatus={handleChangeStatus}
       onSubmit={handleSubmit}
       inputContent="Cargar Archivo"
-      accept="image/*,audio/*,video/*,application/pdf"
+      accept="image/*,application/pdf"
       inputWithFilesContent={(files) => 'Cargar otro'}
       submitButtonContent="Limpiar"
     />

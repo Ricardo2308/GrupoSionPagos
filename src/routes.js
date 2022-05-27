@@ -49,6 +49,18 @@ const NuevaPrioridadChat = React.lazy(() =>
 const PrioridadChat = React.lazy(() =>
   import('./views/components/usuarios/prioridadchat/PrioridadChat'),
 )
+const NuevaOcultarColumnas = React.lazy(() =>
+  import('./views/components/usuarios/ocultarcolumnas/NuevoOcultarColumna'),
+)
+const OcultarColumnas = React.lazy(() =>
+  import('./views/components/usuarios/ocultarcolumnas/OcultarColumnas'),
+)
+const NuevaRecordatorioGrupo = React.lazy(() =>
+  import('./views/components/usuarios/recordatoriogrupo/NuevoRecordatorioGrupo'),
+)
+const RecordatorioGrupo = React.lazy(() =>
+  import('./views/components/usuarios/recordatoriogrupo/RecordatorioGrupo'),
+)
 const CuentaGrupoAutorizacion = React.lazy(() =>
   import('./views/components/cuentagrupoautorizacion/listado/CuentaGrupoAutorizacion'),
 )
@@ -134,6 +146,9 @@ const FlujoConArchivos = React.lazy(() =>
 )
 const NuevoArchivoFlujo = React.lazy(() =>
   import('./views/components/flujos/archivoflujo/NuevoArchivoFlujo'),
+)
+const EditarArchivoFlujo = React.lazy(() =>
+  import('./views/components/flujos/archivoflujo/EditarArchivoFlujo'),
 )
 const CompensacionBancario = React.lazy(() =>
   import('./views/components/flujos/flujo/PagoBancario'),
@@ -369,6 +384,7 @@ const routes = [
     component: FlujoConArchivos,
   },
   { path: '/archivoflujo/nuevo', name: 'Nuevo', component: NuevoArchivoFlujo },
+  { path: '/archivoflujo/editar', name: 'Editar', component: EditarArchivoFlujo },
   {
     path: '/prioridadchat',
     exact: true,
@@ -376,6 +392,20 @@ const routes = [
     component: PrioridadChat,
   },
   { path: '/prioridadchat/nueva', name: 'Nuevo Registro', component: NuevaPrioridadChat },
+  {
+    path: '/ocultarcolumnas',
+    exact: true,
+    name: 'Ocultar columnas a usuario',
+    component: OcultarColumnas,
+  },
+  { path: '/ocultarcolumnas/nueva', name: 'Nuevo Registro', component: NuevaOcultarColumnas },
+  {
+    path: '/recordatoriogrupo',
+    exact: true,
+    name: 'Usuario para recordatorio por grupo',
+    component: RecordatorioGrupo,
+  },
+  { path: '/recordatoriogrupo/nueva', name: 'Nuevo Registro', component: NuevaRecordatorioGrupo },
   // { path: '/login', name: 'Login', component: Login },
   // { path: '/register', name: 'Register', component: Register },
   // { path: '/404', name: '404', component: Page404 },

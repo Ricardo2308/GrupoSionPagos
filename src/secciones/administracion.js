@@ -10,6 +10,8 @@ import {
   FiSend,
   FiFlag,
   FiMessageCircle,
+  FiDelete,
+  FiUserPlus,
 } from 'react-icons/fi'
 import { BiUserCircle } from 'react-icons/bi'
 import { MenuItem, SubMenu } from 'react-pro-sidebar'
@@ -111,6 +113,24 @@ const administracion = [
       <MenuItem key="prioridadchat" icon={<FiMessageCircle />}>
         Prioridad usuario en chat
         <Link to="/prioridadchat" />
+      </MenuItem>
+    ),
+  },
+  {
+    objeto: 'Modulo OcultarColumnas',
+    menu: (
+      <MenuItem key="ocultarcolumnas" icon={<FiDelete />}>
+        Ocultar columnas a usuarios
+        <Link to="/ocultarcolumnas" />
+      </MenuItem>
+    ),
+  },
+  {
+    objeto: 'Modulo RecordatorioGrupo',
+    menu: (
+      <MenuItem key="recordatoriogrupo" icon={<FiUserPlus />}>
+        Usuario para recordatorio por grupo
+        <Link to="/recordatoriogrupo" />
       </MenuItem>
     ),
   },

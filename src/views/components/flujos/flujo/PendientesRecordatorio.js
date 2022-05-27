@@ -13,6 +13,7 @@ import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 import { postFlujos } from '../../../../services/postFlujos'
 import { postFlujoDetalle } from '../../../../services/postFlujoDetalle'
 import { postNotificacion } from '../../../../services/postNotificacion'
+import { getOcultarColumnaUsuario } from '../../../../services/getOcultarColumnaUsuario'
 
 const PendientesRecordatorio = (prop) => {
   const history = useHistory()
@@ -22,6 +23,8 @@ const PendientesRecordatorio = (prop) => {
   const [showModalAutorizar, setShowModalAutorizar] = useState(false)
   const [showAutorizar, setShowAutorizar] = useState(false)
   const [actualizarTabla, setActualizarTabla] = useState(0)
+  const [camposOcultos, setListOcultos] = useState([])
+  const [anchoConcepto, setAnchoConcepto] = useState('285px')
 
   useEffect(() => {
     let mounted = true
@@ -52,8 +55,28 @@ const PendientesRecordatorio = (prop) => {
         setPermisos(items.detalle)
       }
     })
+    getOcultarColumnaUsuario(session.id, session.api_token).then((items) => {
+      if (mounted) {
+        setListOcultos(items.ocultar)
+        if (items.ocultar.length > 0) {
+          setAnchoConcepto('auto')
+        } else {
+          setAnchoConcepto('285px')
+        }
+      }
+    })
     return () => (mounted = false)
   }, [actualizarTabla])
+
+  function OcultarCampo(campo) {
+    let result = false
+    for (let item of camposOcultos) {
+      if (campo == item.NombreColumna) {
+        result = true
+      }
+    }
+    return result
+  }
 
   function ExistePermiso(permiso) {
     let result = false
@@ -149,6 +172,7 @@ const PendientesRecordatorio = (prop) => {
       },
       center: true,
       width: '35px',
+      omit: OcultarCampo('Selección'),
     },
     {
       name: 'Empresa',
@@ -160,6 +184,7 @@ const PendientesRecordatorio = (prop) => {
       sortable: true,
       wrap: true,
       width: '150px',
+      omit: OcultarCampo('Empresa'),
     },
     {
       name: 'No.',
@@ -170,6 +195,7 @@ const PendientesRecordatorio = (prop) => {
       },
       sortable: true,
       width: '90px',
+      omit: OcultarCampo('No. documento'),
     },
     {
       name: 'Fecha Sis.',
@@ -180,6 +206,7 @@ const PendientesRecordatorio = (prop) => {
         fontSize: '11px',
       },
       width: '100px',
+      omit: OcultarCampo('Fecha sistema'),
     },
     {
       name: 'Beneficiario',
@@ -191,6 +218,7 @@ const PendientesRecordatorio = (prop) => {
       },
       wrap: true,
       width: '250px',
+      omit: OcultarCampo('Beneficiario'),
     },
     {
       name: 'Concepto',
@@ -200,7 +228,8 @@ const PendientesRecordatorio = (prop) => {
         fontSize: '11px',
       },
       wrap: true,
-      width: '285px',
+      width: anchoConcepto,
+      omit: OcultarCampo('Concepto'),
     },
     {
       name: 'Monto',
@@ -211,6 +240,7 @@ const PendientesRecordatorio = (prop) => {
         fontSize: '11px',
       },
       width: '120px',
+      omit: OcultarCampo('Monto'),
     },
     {
       name: 'Acciones',
@@ -392,6 +422,7 @@ const PendientesRecordatorio = (prop) => {
       },
       center: true,
       width: '125px',
+      omit: OcultarCampo('Acciones'),
     },
   ])
   const tableData = {

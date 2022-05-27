@@ -65,6 +65,7 @@ const PagoTabs = () => {
   const [locationNivel, setLocationNivel] = useState(location.nivel)
   const [locationIdGrupo, setLocationIdGrupo] = useState(location.id_grupo)
   const [locationPuedoAutorizar, setLocationPuedoAutorizar] = useState(location.PuedoAutorizar)
+  const [locationSeccion, setLocationSeccion] = useState(location.seccion)
   const [actualizarDatos, setActualizarDatos] = useState(false)
 
   //Estados validaciones pestañas
@@ -92,7 +93,19 @@ const PagoTabs = () => {
   const [usuarios, setListUsuarios] = useState([])
 
   useEffect(() => {
-    let listaPagos = JSON.parse(sessionStorage.getItem('listaPagos'))
+    let listaPagos
+    if (locationSeccion == 'Pendientes') {
+      listaPagos = JSON.parse(sessionStorage.getItem('listaPagos'))
+    }
+    if (locationSeccion == 'Autorizados') {
+      listaPagos = JSON.parse(sessionStorage.getItem('listaPagosAutorizados'))
+    }
+    if (locationSeccion == 'Rechazados') {
+      listaPagos = JSON.parse(sessionStorage.getItem('listaPagosRechazados'))
+    }
+    if (locationSeccion == 'Cancelados') {
+      listaPagos = JSON.parse(sessionStorage.getItem('listaPagosCancelados'))
+    }
     let indexActual = listaPagos.findIndex((e) => e.pago == locationPago)
     let largoPagos = listaPagos.length
     let yaAutorizoInterno = ExisteEnBitacora(session.id)
@@ -689,7 +702,7 @@ const PagoTabs = () => {
                 <div className={ocultarBotones ? 'd-none' : ''}>
                   <div className={!MostrarAutorizar && !yaAutorizo ? 'd-none' : ''}>
                     <Button
-                      variant="success"
+                      variant="warning"
                       size="sm"
                       title="Seleccionar"
                       className={!MostrarAprobarRechazar ? 'd-none' : ''}

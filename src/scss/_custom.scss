@@ -1,34 +1,44 @@
 // Here you can add other styles
-body{
-    font-size: 12px !important;
+body {
+  font-size: 12px !important;
 }
-.form-select{
-    font-size: 12px !important;
+
+.form-select {
+  font-size: 12px !important;
 }
+
 .pro-sidebar .pro-menu .pro-menu-item {
-    font-size: 12px !important;
+  font-size: 12px !important;
 }
-.header-brand{
-    font-size: 12px !important;
+
+.pro-sidebar>.pro-sidebar-inner {
+  background: rgb(49, 60, 79) !important;
 }
+
+.header-brand {
+  font-size: 12px !important;
+}
+
 .closemenu {
-    color: rgb(161, 161, 161);
-    position: absolute;
-    right: 0;
-    z-index: 9999;
-    line-height: 30px;
-    border-radius: 50%;
-    font-weight: bold;
-    font-size: 22px;
-    top: 70px;
-    cursor: pointer;
+  color: rgb(161, 161, 161);
+  position: absolute;
+  right: 0;
+  z-index: 10001;
+  line-height: 30px;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 22px;
+  top: 70px;
+  cursor: pointer;
 }
+
 #root.App {
   font-family: sans-serif;
   height: 100%;
   //display: flex;
   position: relative;
 }
+
 .App {
   font-family: sans-serif;
   height: 100%;
@@ -41,53 +51,64 @@ body{
   flex-grow: 1;
   display: flex;
 }
-.pro-sidebar{
+
+.pro-sidebar {
   background-color: #3d4b63;
 }
-.pro-sidebar-header{
-    background-color: #3d4b63;
+
+.pro-sidebar-header {
+  background-color: #3d4b63;
 }
-.pro-sidebar-content{
-    background-color: #313c4f;
+
+.pro-sidebar-content {
+  background-color: #313c4f;
 }
-.pro-sidebar .pro-menu > ul > .pro-sub-menu > .pro-inner-list-item {
-    background-color: #263040 !important;
+
+.pro-sidebar .pro-menu>ul>.pro-sub-menu>.pro-inner-list-item {
+  background-color: #263040 !important;
 }
-.pro-sidebar.collapsed .pro-menu > ul > .pro-menu-item.pro-sub-menu > .pro-inner-list-item > .popper-inner {
-    background-color: #263040 !important;
-    z-index: 2030 !important;
+
+.pro-sidebar.collapsed .pro-menu>ul>.pro-menu-item.pro-sub-menu>.pro-inner-list-item>.popper-inner {
+  background-color: #263040 !important;
+  z-index: 2030 !important;
 }
-.pro-sidebar.collapsed .pro-menu > ul > .pro-menu-item > .pro-inner-list-item {
+
+.pro-sidebar.collapsed .pro-menu>ul>.pro-menu-item>.pro-inner-list-item {
   z-index: 2029 !important;
 }
+
 .header.header-sticky {
   z-index: 1 !important;
 }
 
 
-.btn-sm{
+.btn-sm {
   font-size: 10px !important;
 }
-.data-table-extensions > .data-table-extensions-filter > .filter-text{
+
+.data-table-extensions>.data-table-extensions-filter>.filter-text {
   border-bottom: 1px solid rgb(177, 177, 177) !important;
 }
-.footer{
+
+.footer {
   padding: 0px 10px !important;
 }
-.modal-backdrop{
+
+.modal-backdrop {
   z-index: 10 !important;
 }
-.container{
+
+.container {
   width: 100% !important;
 }
 
-h1{
+h1 {
   font-size: 2.5rem !important;
   font-weight: 500 !important;
 }
 
 @media only screen and (max-width: 720px) {
-html {
-overflow: hidden;
-}
+  html {
+    overflow: hidden;
+  }
 }

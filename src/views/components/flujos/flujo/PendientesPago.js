@@ -12,6 +12,7 @@ import { FaList } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
+import { getOcultarColumnaUsuario } from '../../../../services/getOcultarColumnaUsuario'
 
 const FilterComponent = (prop) => (
   <div className="div-search">
@@ -43,6 +44,9 @@ const PendientesPago = (prop) => {
   const [titulo, setTitulo] = useState('Error!')
   const [color, setColor] = useState('danger')
   const [MostrarReprocesar, setMostrarReprocesar] = useState(true)
+  const [camposOcultos, setListOcultos] = useState([])
+  const [anchoConcepto, setAnchoConcepto] = useState('285px')
+  const [anchoConcepto2, setAnchoConcepto2] = useState('270px')
   const filteredItems = results
 
   const handleClose = () => setShow(false)
@@ -74,8 +78,30 @@ const PendientesPago = (prop) => {
         }
       }
     })
+    getOcultarColumnaUsuario(session.id, session.api_token).then((items) => {
+      if (mounted) {
+        setListOcultos(items.ocultar)
+        if (items.ocultar.length > 0) {
+          setAnchoConcepto('auto')
+          setAnchoConcepto2('auto')
+        } else {
+          setAnchoConcepto('285px')
+          setAnchoConcepto2('270px')
+        }
+      }
+    })
     return () => (mounted = false)
   }, [])
+
+  function OcultarCampo(campo) {
+    let result = false
+    for (let item of camposOcultos) {
+      if (campo == item.NombreColumna) {
+        result = true
+      }
+    }
+    return result
+  }
 
   function ExistePermisoObjeto(objeto) {
     let result = false
@@ -216,6 +242,7 @@ const PendientesPago = (prop) => {
           sortable: true,
           wrap: true,
           width: '150px',
+          omit: OcultarCampo('Empresa'),
         },
         {
           name: 'No.',
@@ -226,6 +253,7 @@ const PendientesPago = (prop) => {
           },
           sortable: true,
           width: '90px',
+          omit: OcultarCampo('No. documento'),
         },
         {
           name: 'Fecha Sis.',
@@ -236,6 +264,7 @@ const PendientesPago = (prop) => {
             fontSize: '11px',
           },
           width: '100px',
+          omit: OcultarCampo('Fecha sistema'),
         },
         {
           name: 'Fecha auto.',
@@ -246,6 +275,7 @@ const PendientesPago = (prop) => {
             fontSize: '11px',
           },
           width: '100px',
+          omit: OcultarCampo('Fecha autorización'),
         },
         {
           name: 'Beneficiario',
@@ -257,6 +287,7 @@ const PendientesPago = (prop) => {
           },
           wrap: true,
           width: '250px',
+          omit: OcultarCampo('Beneficiario'),
         },
         {
           name: 'Concepto',
@@ -266,7 +297,8 @@ const PendientesPago = (prop) => {
             fontSize: '11px',
           },
           wrap: true,
-          width: '285px',
+          width: anchoConcepto,
+          omit: OcultarCampo('Concepto'),
         },
         {
           name: 'Monto',
@@ -276,6 +308,7 @@ const PendientesPago = (prop) => {
             fontSize: '11px',
           },
           width: '120px',
+          omit: OcultarCampo('Monto'),
         },
         {
           name: 'Acciones',
@@ -303,6 +336,7 @@ const PendientesPago = (prop) => {
           },
           center: true,
           width: '70px',
+          omit: OcultarCampo('Acciones'),
         },
       ]
     } else {
@@ -343,6 +377,7 @@ const PendientesPago = (prop) => {
           },
           center: true,
           width: '7%',
+          omit: OcultarCampo('Selección'),
         },
         {
           name: 'Empresa',
@@ -354,6 +389,7 @@ const PendientesPago = (prop) => {
           sortable: true,
           wrap: true,
           width: '150px',
+          omit: OcultarCampo('Empresa'),
         },
         {
           name: 'No.',
@@ -364,6 +400,7 @@ const PendientesPago = (prop) => {
           },
           sortable: true,
           width: '90px',
+          omit: OcultarCampo('No. documento'),
         },
         {
           name: 'Fecha Sis.',
@@ -374,6 +411,7 @@ const PendientesPago = (prop) => {
             fontSize: '11px',
           },
           width: '100px',
+          omit: OcultarCampo('Fecha sistema'),
         },
         {
           name: 'Fecha auto.',
@@ -384,6 +422,7 @@ const PendientesPago = (prop) => {
             fontSize: '11px',
           },
           width: '100px',
+          omit: OcultarCampo('Fecha autorización'),
         },
         {
           name: 'Beneficiario',
@@ -395,6 +434,7 @@ const PendientesPago = (prop) => {
           },
           wrap: true,
           width: '245px',
+          omit: OcultarCampo('Beneficiario'),
         },
         {
           name: 'Concepto',
@@ -404,7 +444,8 @@ const PendientesPago = (prop) => {
             fontSize: '11px',
           },
           wrap: true,
-          width: '270px',
+          width: anchoConcepto2,
+          omit: OcultarCampo('Concepto'),
         },
         {
           name: 'Monto',
@@ -414,6 +455,7 @@ const PendientesPago = (prop) => {
             fontSize: '11px',
           },
           width: '120px',
+          omit: OcultarCampo('Monto'),
         },
         {
           name: 'Acciones',
@@ -441,6 +483,7 @@ const PendientesPago = (prop) => {
           },
           center: true,
           width: '80px',
+          omit: OcultarCampo('Acciones'),
         },
       ]
     }

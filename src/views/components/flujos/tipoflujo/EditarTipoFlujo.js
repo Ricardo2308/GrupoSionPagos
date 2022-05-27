@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { useSession } from 'react-use-session'
-import { useIdleTimer } from 'react-idle-timer'
 import { Alert, FormControl, Modal } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { getEstadosFlujo } from '../../../../services/getEstadosFlujo'
@@ -22,7 +21,6 @@ import '../../../../scss/estilos.scss'
 const EditarEstadoFlujo = () => {
   const history = useHistory()
   const location = useLocation()
-  const [time, setTime] = useState(null)
   const [results, setList] = useState([])
   const { session, clear } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
