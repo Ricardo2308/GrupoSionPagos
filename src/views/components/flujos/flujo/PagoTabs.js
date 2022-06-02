@@ -31,6 +31,7 @@ import '../../../../scss/estilos.scss'
 import { FaArrowLeft, FaAngleLeft, FaAngleRight, FaDoorClosed, FaBullseye } from 'react-icons/fa'
 import { getUsuarioPrioridadMensajes } from '../../../../services/getUsuarioPrioridadMensajes'
 import { getUsuarios } from '../../../../services/getUsuarios'
+import { getContadorChat } from '../../../../services/getContadorChat'
 
 const PagoTabs = () => {
   const history = useHistory()
@@ -91,6 +92,7 @@ const PagoTabs = () => {
   const [resultsPrioridad, setListPrioridad] = useState([])
   const [keyChat, setkeyChat] = useState(0)
   const [usuarios, setListUsuarios] = useState([])
+  const [contadorMensajesRecibidos, setContadorMensajesRecibidos] = useState(0)
 
   useEffect(() => {
     let listaPagos
@@ -105,6 +107,12 @@ const PagoTabs = () => {
     }
     if (locationSeccion == 'Cancelados') {
       listaPagos = JSON.parse(sessionStorage.getItem('listaPagosCancelados'))
+    }
+    if (locationSeccion == 'Notificaciones') {
+      listaPagos = JSON.parse(sessionStorage.getItem('listaPagosNotificaciones'))
+    }
+    if (locationSeccion == 'Mensajes') {
+      listaPagos = JSON.parse(sessionStorage.getItem('listaPagosMensajes'))
     }
     let indexActual = listaPagos.findIndex((e) => e.pago == locationPago)
     let largoPagos = listaPagos.length
@@ -263,6 +271,31 @@ const PagoTabs = () => {
           })
           .then(() => setkeyChat(keyChat + 1)),
       )
+    let contMensajes = 0
+    getContadorChat(locationIdFlujo, session.id, session.api_token).then((items) => {
+      items.mensajes.map((item) => {
+        if (item.eliminado == 0) {
+          if (item.leido == 0) {
+            contMensajes++
+          }
+        }
+      })
+      setContadorMensajesRecibidos(contMensajes)
+    })
+
+    setInterval(() => {
+      let contMensajes = 0
+      getContadorChat(locationIdFlujo, session.id, session.api_token).then((items) => {
+        items.mensajes.map((item) => {
+          if (item.eliminado == 0) {
+            if (item.leido == 0) {
+              contMensajes++
+            }
+          }
+        })
+        setContadorMensajesRecibidos(contMensajes)
+      })
+    }, 3000)
     return () => (mounted = false)
   }, [actualizarDatos])
 
@@ -836,7 +869,32 @@ const PagoTabs = () => {
                 </Tabs>
               </div>
             </div>
+            <div
+              className={contadorMensajesRecibidos == 0 ? 'd-none' : ''}
+              style={{
+                zIndex: 2,
+                position: 'fixed',
+                bottom: '80px',
+                right: '20px',
+                display: 'flex',
+                justifyContent: 'center',
+                flexDirection: 'column',
+                borderRadius: '50%',
+                background: '#ff4646',
+                color: '#fff',
+                textAlign: 'center',
+                margin: 'auto',
+                fontWeight: '500',
+                boxShadow: '-1px 1px 2px rgba(0,0,0,.3)',
+                width: '22px',
+                height: '22px',
+                fontSize: '12px',
+              }}
+            >
+              {contadorMensajesRecibidos}
+            </div>
             <Chat
+              style={{ zIndex: 1 }}
               key={keyChat}
               id_usuario={session.id}
               id_flujo={locationIdFlujo}
@@ -1022,7 +1080,32 @@ const PagoTabs = () => {
                 </Tabs>
               </div>
             </div>
+            <div
+              className={contadorMensajesRecibidos == 0 ? 'd-none' : ''}
+              style={{
+                zIndex: 2,
+                position: 'fixed',
+                bottom: '80px',
+                right: '20px',
+                display: 'flex',
+                justifyContent: 'center',
+                flexDirection: 'column',
+                borderRadius: '50%',
+                background: '#ff4646',
+                color: '#fff',
+                textAlign: 'center',
+                margin: 'auto',
+                fontWeight: '500',
+                boxShadow: '-1px 1px 2px rgba(0,0,0,.3)',
+                width: '22px',
+                height: '22px',
+                fontSize: '12px',
+              }}
+            >
+              {contadorMensajesRecibidos}
+            </div>
             <Chat
+              style={{ zIndex: 1 }}
               key={keyChat}
               id_usuario={session.id}
               id_flujo={locationIdFlujo}

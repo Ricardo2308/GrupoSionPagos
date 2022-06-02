@@ -146,6 +146,7 @@ const NuevoPermiso = () => {
                     <option value="_LIMITE_CAMBIO_PASSWORD_">_LIMITE_CAMBIO_PASSWORD_</option>
                     <option value="_CORREO">_CORREO</option>
                     <option value="_CORREO_LOTES_PAGO_">_CORREO_LOTES_PAGO_</option>
+                    <option value="_DIAS_BASE_CREDITO_">_DIAS_BASE_CREDITO_</option>
                   </CFormSelect>
                 </CInputGroup>
                 <CInputGroup className="mb-3">

@@ -35,6 +35,8 @@ const Autorizados = (prop) => {
           estado: Estado,
           nivel: Nivel,
           id_grupo: IdGrupo,
+          PuedoAutorizar: '0',
+          seccion: 'Notificaciones',
         })
       }
     } else if (location.opcion == 2) {
@@ -45,6 +47,8 @@ const Autorizados = (prop) => {
         estado: Estado,
         nivel: Nivel,
         id_grupo: IdGrupo,
+        PuedoAutorizar: '1',
+        seccion: 'Mensajes',
       })
     }
   }
@@ -53,6 +57,37 @@ const Autorizados = (prop) => {
     let mounted = true
     if (location.tipo) {
       setAutorizados(location.autorizados)
+      if (location.autorizados) {
+        if (location.opcion == 1) {
+          let datosNotificaciones = []
+          location.autorizados.forEach((item) => {
+            datosNotificaciones.push({
+              id_flujo: item.IdFlujo,
+              estado: item.estado,
+              nivel: item.nivel,
+              id_grupo: item.IdGrupo,
+              PuedoAutorizar: '0',
+              pago: item.Pago,
+              seccion: 'Notificaciones',
+            })
+          })
+          sessionStorage.setItem('listaPagosNotificaciones', JSON.stringify(datosNotificaciones))
+        } else if (location.opcion == 2) {
+          let datosMensajes = []
+          location.autorizados.forEach((item) => {
+            datosMensajes.push({
+              id_flujo: item.IdFlujo,
+              estado: item.estado,
+              nivel: item.nivel,
+              id_grupo: item.IdGrupo,
+              PuedoAutorizar: '1',
+              pago: item.Pago,
+              seccion: 'Mensajes',
+            })
+          })
+          sessionStorage.setItem('listaPagosMensajes', JSON.stringify(datosMensajes))
+        }
+      }
       getAutorizados(session.id, location.tipo, session.api_token).then((items) => {
         if (mounted) {
           setList(items.bitacora)

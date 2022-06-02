@@ -206,8 +206,8 @@ const Politicas = () => {
               }
             >
               <FaPen />
-            </CButton>{' '}
-            <CButton
+            </CButton>
+            {/* {' '}<CButton
               color="danger"
               size="sm"
               title="Eliminar Política"
@@ -215,7 +215,7 @@ const Politicas = () => {
               onClick={() => mostrarModal(row.id_politica, 1, row.identificador)}
             >
               <FaTrash />
-            </CButton>
+            </CButton> */}
           </div>
         )
       },
@@ -255,7 +255,7 @@ const Politicas = () => {
             </CButton>
           </Modal.Footer>
         </Modal>
-        <div className="float-right" style={{ marginBottom: '10px' }}>
+        {/* <div className="float-right" style={{ marginBottom: '10px' }}>
           <CButton
             color="primary"
             size="sm"
@@ -264,7 +264,7 @@ const Politicas = () => {
           >
             Crear Nueva
           </CButton>
-        </div>
+        </div> */}
         <DataTableExtensions {...tableData}>
           <DataTable
             columns={columns}

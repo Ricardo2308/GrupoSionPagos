@@ -112,7 +112,7 @@ class ChatWindow extends Component {
                 return (
                   <option
                     selected={yaEstaSeleccionado}
-                    key={item.id_usuario}
+                    key={item.id_usuario + 2 * i}
                     value={item.id_usuario}
                   >
                     {item.nombre_usuario}
@@ -125,7 +125,7 @@ class ChatWindow extends Component {
                 return (
                   <option
                     selected={yaEstaSeleccionado}
-                    key={item.id_usuario}
+                    key={item.id_usuario + 2 * i}
                     value={item.id_usuario}
                   >
                     {item.nombre_usuario}

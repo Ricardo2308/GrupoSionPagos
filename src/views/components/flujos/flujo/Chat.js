@@ -38,27 +38,6 @@ class Chat extends Component {
         newMessagesCount: cont,
       })
     })
-    const interval = setInterval(() => {
-      let cont = 0
-      getContadorChat(this.props.id_flujo, this.props.id_usuario, this.props.token).then(
-        (items) => {
-          this.setState({
-            mensajes: items.mensajes,
-          })
-          this.state.mensajes.map((item) => {
-            if (item.eliminado == 0) {
-              if (item.leido == 0) {
-                cont++
-              }
-            }
-          })
-          this.setState({
-            newMessagesCount: cont,
-          })
-        },
-      )
-    }, 3000)
-    return () => clearInterval(interval)
   }
 
   setShow(valor) {
@@ -195,7 +174,6 @@ class Chat extends Component {
             onMessageWasSent={this._onMessageWasSent.bind(this)}
             onFilesSelected={this._onFilesSelected.bind(this)}
             messageList={this.state.messageList}
-            newMessagesCount={this.state.newMessagesCount}
             handleClick={this._handleClick.bind(this)}
             isOpen={this.state.isOpen}
             id_usuario={this.props.id_usuario}

@@ -5,6 +5,8 @@ import launcherIcon from './../assets/logo-no-bg.svg'
 import incomingMessageSound from '../assets/sounds/notification.mp3'
 import launcherIconActive from './../assets/close-icon.png'
 
+import { getContadorChat } from '../../../services/getContadorChat'
+
 class Launcher extends Component {
   constructor(props) {
     super(props)
