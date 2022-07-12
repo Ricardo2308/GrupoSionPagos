@@ -9,6 +9,7 @@ import {
   CDropdownToggle,
 } from '@coreui/react'
 import { FiBell } from 'react-icons/fi'
+import { postNotificacion } from '../../services/postNotificacion'
 
 const NotificationDropdown = (props) => {
   const history = useHistory()
@@ -17,7 +18,10 @@ const NotificationDropdown = (props) => {
   const comentariosR = ['Rechazado']
   const comentariosC = ['Compensado']
 
-  async function leerNotificacion(estado, tipo) {
+  async function leerNotificacion(estado, tipo, IdFlujo) {
+    let pagos = []
+    pagos.push(IdFlujo)
+    const respuesta = await postNotificacion(pagos, session.id, '', '1', session.api_token)
     let autorizados = []
     let rechazados = []
     let compensados = []
@@ -101,7 +105,7 @@ const NotificationDropdown = (props) => {
                   title="Ir al Pago"
                   key={item.IdNotificacion}
                   style={{ cursor: 'pointer' }}
-                  onClick={() => leerNotificacion(item.estado, item.tipo)}
+                  onClick={() => leerNotificacion(item.estado, item.tipo, item.IdFlujo)}
                 >
                   {item.Mensaje}
                 </CDropdownItem>

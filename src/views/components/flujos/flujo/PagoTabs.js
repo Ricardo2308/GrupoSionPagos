@@ -813,6 +813,11 @@ const PagoTabs = () => {
                       key={keyArchivosFlujo}
                       results={archivos}
                       estado={locationEstado}
+                      empresa={detalleFlujo.empresa_nombre}
+                      docNum={detalleFlujo.doc_num}
+                      beneficiario={detalleFlujo.en_favor_de}
+                      concepto={detalleFlujo.comments}
+                      monto={formatear(detalleFlujo.doc_total, detalleFlujo.doc_curr)}
                     />
                   </Tab>
                   <Tab

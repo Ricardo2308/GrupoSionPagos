@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
-import { Modal, Button } from 'react-bootstrap'
 import { PDFReader } from 'reactjs-pdf-view'
 import { useSession } from 'react-use-session'
 import { useHistory } from 'react-router-dom'
@@ -15,6 +14,7 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
+import { Row, Col, Container, Modal, Tab, Tabs, Button } from 'react-bootstrap'
 
 const ArchivosFlujo = (prop) => {
   const history = useHistory()
@@ -24,33 +24,94 @@ const ArchivosFlujo = (prop) => {
   const [titulo, setTitulo] = useState('')
   const cerrarPDF = () => setMostrar(false)
 
-  const modalBody = () => (
-    <div
-      style={{
-        background: 'rgba(0,0,0,0.7)',
-        left: 0,
-        position: 'fixed',
-        top: 0,
-        height: '100%',
-        width: '100%',
-        zIndex: 10001,
-        display: 'flex',
-        flexDirection: 'column',
-        overflowY: 'scroll',
-      }}
-    >
-      <div className="float-right" style={{ margin: '10px', textAlign: 'right' }}>
-        <Button variant="danger" size="sm" onClick={() => setMostrar(false)}>
-          Cerrar
-        </Button>
-      </div>
-      <object data={urlArchivo} type="application/pdf" width="100%" height="100%">
-        <p>
-          Alternative text - include a link <a href={urlArchivo}>to the PDF!</a>
-        </p>
-      </object>
-    </div>
-  )
+  const modalBody = () => {
+    if (prop.empresa === undefined) {
+      return (
+        <div
+          style={{
+            background: 'rgba(0,0,0,0.7)',
+            left: 0,
+            position: 'fixed',
+            top: 0,
+            height: '100%',
+            width: '100%',
+            zIndex: 10001,
+            display: 'flex',
+            flexDirection: 'column',
+            overflowY: 'scroll',
+          }}
+        >
+          <div className="float-right" style={{ margin: '10px', textAlign: 'right' }}>
+            <Button variant="danger" size="sm" onClick={() => setMostrar(false)}>
+              Cerrar
+            </Button>
+          </div>
+          <object data={urlArchivo} type="application/pdf" width="100%" height="100%">
+            <p>
+              Alternative text - include a link <a href={urlArchivo}>to the PDF!</a>
+            </p>
+          </object>
+        </div>
+      )
+    } else {
+      return (
+        <div
+          style={{
+            background: 'rgba(0,0,0,0.7)',
+            left: 0,
+            position: 'fixed',
+            top: 0,
+            height: '100%',
+            width: '100%',
+            zIndex: 10001,
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <div className="float-right" style={{ margin: '10px', textAlign: 'right' }}>
+            <Button variant="danger" size="sm" onClick={() => setMostrar(false)}>
+              Cerrar
+            </Button>
+          </div>
+          <div style={{ display: 'flex', height: '100%', width: '100%', backgroundColor: '#fff' }}>
+            <div style={{ width: '30%', padding: '10px' }}>
+              <h2>Encabezado</h2>
+              <br />
+              <Container className="mb-0">
+                <Row className="mb-0">
+                  <Col className="mb-0 border column">Empresa</Col>
+                  <Col className="mb-0 border">{prop.empresa}</Col>
+                </Row>
+                <Row className="mb-0">
+                  <Col className="mb-0 border column">Número Documento</Col>
+                  <Col className="mb-0 border">{prop.docNum}</Col>
+                </Row>
+                <Row className="mb-0">
+                  <Col className="mb-0 border column">Beneficiario</Col>
+                  <Col className="mb-0 border">{prop.beneficiario}</Col>
+                </Row>
+                <Row className="mb-0">
+                  <Col className="mb-0 border column">Concepto</Col>
+                  <Col className="mb-0 border">{prop.concepto}</Col>
+                </Row>
+                <Row className="mb-0">
+                  <Col className="mb-0 border column">Monto</Col>
+                  <Col className="mb-0 border">{prop.monto}</Col>
+                </Row>
+              </Container>
+            </div>
+            <div style={{ height: '100%', width: '70%' }}>
+              <object data={urlArchivo} type="application/pdf" width="100%" height="100%">
+                <p>
+                  Alternative text - include a link <a href={urlArchivo}>to the PDF!</a>
+                </p>
+              </object>
+            </div>
+          </div>
+        </div>
+      )
+    }
+  }
 
   function mostrarModal(id_archivoflujo, url_archivo, usuario) {
     if (id_archivoflujo === '' && url_archivo !== '' && usuario !== '') {
@@ -87,7 +148,7 @@ const ArchivosFlujo = (prop) => {
                       <CTableDataCell className="text-center">{i + 1}</CTableDataCell>
                       <CTableDataCell className="text-center">{item.nombre_usuario}</CTableDataCell>
                       <CTableDataCell className="text-center">{item.descripcion}</CTableDataCell>
-                      <CTableDataCell className="text-center">{estado}</CTableDataCell>
+                      <CTableDataCell className="text-center">{estado}aqui</CTableDataCell>
                       <CTableDataCell className="text-center">
                         <CButton
                           color="danger"
