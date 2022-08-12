@@ -1,7 +1,13 @@
 const API = `${process.env.REACT_APP_API_URL}rechazadosreporte`
 
-export function getReporteRechazados(token) {
-  return fetch(API, {
+export function getReporteRechazados(idUsuario, token) {
+  let ApiFinal = API
+  let ApiWhere = ''
+  if (idUsuario !== null) {
+    ApiWhere += '/' + idUsuario
+  }
+  ApiFinal += ApiWhere
+  return fetch(ApiFinal, {
     method: 'GET',
     headers: {
       Authorization: 'Bearer ' + token,

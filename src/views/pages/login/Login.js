@@ -26,6 +26,7 @@ import {
   CRow,
 } from '@coreui/react'
 import { postLogIn } from 'src/services/postLogIn'
+import { getPendientesAutorizacionCompleto } from '../../../services/getPendientesAutorizacionCompleto'
 
 const Login = () => {
   const history = useHistory()
@@ -188,7 +189,42 @@ const Login = () => {
                               if (item.cantidadIngresos == '0') {
                                 history.push('/usuarios/password')
                               } else {
-                                history.push('/home')
+                                history.push(item.redireccion)
+                                /* if (item.redireccion == '/pagos/tabscompleto') {
+                                  getPendientesAutorizacionCompleto(item.id, itemsLogin).then(
+                                    (items) => {
+                                      let datosOrdenados = []
+                                      items.flujos.forEach((item) => {
+                                        datosOrdenados.push({
+                                          id_flujo: item.id_flujo,
+                                          estado: item.estado,
+                                          nivel: item.nivel,
+                                          id_grupo: item.id_grupoautorizacion,
+                                          PuedoAutorizar: item.PuedoAutorizar,
+                                          pago: item.doc_num,
+                                          seccion: 'Pendientes',
+                                        })
+                                      })
+                                      sessionStorage.setItem(
+                                        'listaPagos',
+                                        JSON.stringify(datosOrdenados),
+                                      )
+                                      history.push({
+                                        pathname: item.redireccion,
+                                        id_flujo: datosOrdenados[0].id_flujo,
+                                        pago: datosOrdenados[0].pago,
+                                        estado: datosOrdenados[0].estado,
+                                        nivel: datosOrdenados[0].nivel,
+                                        id_grupo: datosOrdenados[0].id_grupo,
+                                        PuedoAutorizar: datosOrdenados[0].PuedoAutorizar,
+                                        pagina: 'transferencia',
+                                        seccion: 'Pendientes',
+                                      })
+                                    },
+                                  )
+                                } else {
+                                  history.push(item.redireccion)
+                                } */
                               }
                             }
                           })

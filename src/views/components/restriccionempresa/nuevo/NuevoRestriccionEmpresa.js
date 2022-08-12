@@ -21,7 +21,7 @@ import {
 } from '@coreui/react'
 import { FaArrowLeft } from 'react-icons/fa'
 
-const NuevoRol = () => {
+const NuevoRestriccionEmpresa = () => {
   const history = useHistory()
   const [time, setTime] = useState(null)
   const { session, clear } = useSession('PendrogonIT-Session')
@@ -172,4 +172,4 @@ const NuevoRol = () => {
   }
 }
 
-export default NuevoRol
+export default NuevoRestriccionEmpresa

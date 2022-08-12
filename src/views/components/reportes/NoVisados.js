@@ -14,7 +14,7 @@ const NoVisados = (prop) => {
   useEffect(() => {
     let mounted = true
     let pagos = []
-    getReporteNoVisados(session.api_token).then((items) => {
+    getReporteNoVisados(session.id,session.api_token).then((items) => {
       if (mounted) {
         pagos.push(items.flujos)
         var pivot = new WebDataRocks({

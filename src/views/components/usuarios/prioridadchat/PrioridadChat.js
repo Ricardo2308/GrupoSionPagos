@@ -233,7 +233,7 @@ const PrioridadChat = () => {
             <CButton
               color="primary"
               size="sm"
-              title="Eliminar prioridad"
+              title="Subir prioridad"
               disabled={deshabilitar}
               onClick={() => CambiarNivelPrioridad(row.id_usuarioprioridadmensajes, row.nivel - 1)}
             >
@@ -242,7 +242,7 @@ const PrioridadChat = () => {
             <CButton
               color="primary"
               size="sm"
-              title="Eliminar prioridad"
+              title="Bajar prioridad"
               disabled={deshabilitar}
               onClick={() => CambiarNivelPrioridad(row.id_usuarioprioridadmensajes, row.nivel + 1)}
             >

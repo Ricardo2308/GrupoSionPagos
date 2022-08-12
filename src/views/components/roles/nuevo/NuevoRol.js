@@ -161,6 +161,10 @@ const NuevoRol = () => {
                     <option value="Modulo PrioridadChat">Modulo PrioridadChat</option>
                     <option value="Modulo OcultarColumnas">Modulo OcultarColumnas</option>
                     <option value="Modulo RecordatorioGrupo">Modulo RecordatorioGrupo</option>
+                    <option value="Modulo BloqueoNotificacionCorreo">
+                      Modulo BloqueoNotificacionCorreo
+                    </option>
+                    <option value="Modulo Redireccion">Modulo Redirección</option>
                   </CFormSelect>
                 </CInputGroup>
                 <CButton color="primary" onClick={handleSubmit}>

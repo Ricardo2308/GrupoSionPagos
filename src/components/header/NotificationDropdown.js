@@ -9,7 +9,6 @@ import {
   CDropdownToggle,
 } from '@coreui/react'
 import { FiBell } from 'react-icons/fi'
-import { postNotificacion } from '../../services/postNotificacion'
 
 const NotificationDropdown = (props) => {
   const history = useHistory()
@@ -18,10 +17,9 @@ const NotificationDropdown = (props) => {
   const comentariosR = ['Rechazado']
   const comentariosC = ['Compensado']
 
-  async function leerNotificacion(estado, tipo, IdFlujo) {
-    let pagos = []
-    pagos.push(IdFlujo)
-    const respuesta = await postNotificacion(pagos, session.id, '', '1', session.api_token)
+  async function leerNotificacion(estado, tipo, IdFlujo, Pago, Nivel, IdGrupo) {
+    //let pagos = []
+    //pagos.push(IdFlujo)
     let autorizados = []
     let rechazados = []
     let compensados = []
@@ -77,6 +75,29 @@ const NotificationDropdown = (props) => {
         tipo: tipo,
         comentarios: comentariosC,
       })
+    } else {
+      let datosOrdenados = []
+      datosOrdenados.push({
+        id_flujo: IdFlujo,
+        estado: estado,
+        nivel: Nivel,
+        id_grupo: IdGrupo,
+        PuedoAutorizar: 1,
+        pago: Pago,
+        seccion: 'Pendientes',
+      })
+      sessionStorage.setItem('listaPagos', JSON.stringify(datosOrdenados))
+      history.push({
+        pathname: '/pagos/tabs',
+        id_flujo: IdFlujo,
+        pago: Pago,
+        estado: estado,
+        nivel: Nivel,
+        id_grupo: IdGrupo,
+        PuedoAutorizar: 1,
+        pagina: 'transferencia',
+        seccion: 'Pendientes',
+      })
     }
   }
 
@@ -105,7 +126,16 @@ const NotificationDropdown = (props) => {
                   title="Ir al Pago"
                   key={item.IdNotificacion}
                   style={{ cursor: 'pointer' }}
-                  onClick={() => leerNotificacion(item.estado, item.tipo, item.IdFlujo)}
+                  onClick={() =>
+                    leerNotificacion(
+                      item.estado,
+                      item.tipo,
+                      item.IdFlujo,
+                      item.Pago,
+                      item.nivel,
+                      item.IdGrupo,
+                    )
+                  }
                 >
                   {item.Mensaje}
                 </CDropdownItem>

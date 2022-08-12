@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { CButton } from '@coreui/react'
 import { Row, Col, Container, Modal, Tab, Tabs, Button } from 'react-bootstrap'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import FlujoSolicitud from './FlujoSolicitud'
@@ -32,6 +31,10 @@ import { FaArrowLeft, FaAngleLeft, FaAngleRight, FaDoorClosed, FaBullseye } from
 import { getUsuarioPrioridadMensajes } from '../../../../services/getUsuarioPrioridadMensajes'
 import { getUsuarios } from '../../../../services/getUsuarios'
 import { getContadorChat } from '../../../../services/getContadorChat'
+import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
+import { CButton, CInputGroup, CInputGroupText, CFormSelect } from '@coreui/react'
+import { FaUsers } from 'react-icons/fa'
+import { getUsuarioGrupo } from '../../../../services/getUsuarioGrupo'
 
 const PagoTabs = () => {
   const history = useHistory()
@@ -93,6 +96,11 @@ const PagoTabs = () => {
   const [keyChat, setkeyChat] = useState(0)
   const [usuarios, setListUsuarios] = useState([])
   const [contadorMensajesRecibidos, setContadorMensajesRecibidos] = useState(0)
+  const [gruposList, setGruposList] = useState([])
+  const [MostrarAsignacion, setMostrarAsignacion] = useState(false)
+  const [showAsignacion, setShowAsignacion] = useState(false)
+  const [grupoAsignado, setGrupoAsignado] = useState(0)
+  const [usuarioGrupoList, setUsuarioGrupoList] = useState([])
 
   useEffect(() => {
     let listaPagos
@@ -149,6 +157,16 @@ const PagoTabs = () => {
       setHayPagoPosterior(false)
     }
     let mounted = true
+    getGruposAutorizacion(null, null, session.api_token).then((items) => {
+      if (mounted) {
+        setGruposList(items.grupos)
+      }
+    })
+    getUsuarioGrupo(session.id, null, session.api_token).then((items) => {
+      if (mounted) {
+        setUsuarioGrupoList(items.detalle)
+      }
+    })
     let objeto = 'Modulo Autorizacion Pagos'
     if (locationEstado == 10) {
       setMostrarPausado(false)
@@ -235,6 +253,7 @@ const PagoTabs = () => {
         setOcultarBotones(false)
         setOcultarBotones(false)
         setMostrarAutorizar(false)
+        setMostrarAsignacion(false)
         for (let item of items.detalle) {
           if ('Revisar' == item.descripcion && (locationNivel < 5 || locationNivel > 9)) {
             setMostrarRevision(true)
@@ -247,6 +266,9 @@ const PagoTabs = () => {
           }
           if ('Autorizar' == item.descripcion) {
             setMostrarAutorizar(true)
+          }
+          if ('Asignar' == item.descripcion) {
+            setMostrarAsignacion(true)
           }
         }
       }
@@ -622,6 +644,104 @@ const PagoTabs = () => {
     }
   }
 
+  const MostrarAsignacionGrupo = (event) => {
+    if (event.target.value != 0) {
+      setIdFlujo(locationIdFlujo)
+      setShowAsignacion(true)
+      setGrupoAsignado(event.target.value)
+    }
+  }
+
+  async function CancelarAsignacion() {
+    setShowAsignacion(false)
+    setGrupoAsignado(0)
+  }
+
+  async function AsignarGrupo() {
+    const respuesta = await postFlujos(
+      idFlujo,
+      '',
+      grupoAsignado,
+      '',
+      null,
+      session.id,
+      session.api_token,
+    )
+    if (respuesta === 'OK') {
+      const answer = await postFlujoDetalle(
+        idFlujo,
+        '3',
+        session.id,
+        'Asignado a responsable',
+        '0',
+        session.api_token,
+      )
+      if (answer === 'OK') {
+        let GrupoEncontrado = usuarioGrupoList.find(
+          (x) => x.id_grupoautorizacion == grupoAsignado && x.nivel == 1,
+        )
+        let listaPagos
+        if (locationSeccion == 'Pendientes') {
+          listaPagos = JSON.parse(sessionStorage.getItem('listaPagos'))
+        }
+        if (locationSeccion == 'Autorizados') {
+          listaPagos = JSON.parse(sessionStorage.getItem('listaPagosAutorizados'))
+        }
+        if (locationSeccion == 'Rechazados') {
+          listaPagos = JSON.parse(sessionStorage.getItem('listaPagosRechazados'))
+        }
+        if (locationSeccion == 'Cancelados') {
+          listaPagos = JSON.parse(sessionStorage.getItem('listaPagosCancelados'))
+        }
+        if (locationSeccion == 'Notificaciones') {
+          listaPagos = JSON.parse(sessionStorage.getItem('listaPagosNotificaciones'))
+        }
+        if (locationSeccion == 'Mensajes') {
+          listaPagos = JSON.parse(sessionStorage.getItem('listaPagosMensajes'))
+        }
+        let objIndex = listaPagos.findIndex((obj) => obj.id_flujo == idFlujo)
+        listaPagos[objIndex].estado = 3
+        listaPagos[objIndex].id_grupo = grupoAsignado
+
+        if (GrupoEncontrado !== undefined) {
+          setLocationPuedoAutorizar(1)
+          listaPagos[objIndex].PuedoAutorizar = 1
+        }
+        setLocationEstado(3)
+        setLocationIdGrupo(grupoAsignado)
+
+        if (locationSeccion == 'Pendientes') {
+          sessionStorage.setItem('listaPagos', JSON.stringify(listaPagos))
+        }
+        if (locationSeccion == 'Autorizados') {
+          sessionStorage.setItem('listaPagosAutorizados', JSON.stringify(listaPagos))
+        }
+        if (locationSeccion == 'Rechazados') {
+          sessionStorage.setItem('listaPagosRechazados', JSON.stringify(listaPagos))
+        }
+        if (locationSeccion == 'Cancelados') {
+          sessionStorage.setItem('listaPagosCancelados', JSON.stringify(listaPagos))
+        }
+        if (locationSeccion == 'Notificaciones') {
+          sessionStorage.setItem('listaPagosNotificaciones', JSON.stringify(listaPagos))
+        }
+        if (locationSeccion == 'Mensajes') {
+          sessionStorage.setItem('listaPagosMensajes', JSON.stringify(listaPagos))
+        }
+        setActualizarDatos(!actualizarDatos)
+        setllaveBitacora(llaveBitacora + 1)
+        setKeyArchivosFlujo(keyArchivosFlujo + 1)
+        setKeyFlujoSolicitud(keyFlujoSolicitud + 1)
+        setKeyFlujoOferta(keyFlujoOferta + 1)
+        setKeyFlujoOrden(keyFlujoOrden + 1)
+        setKeyFlujoIngreso(keyFlujoIngreso + 1)
+        setKeyFlujoFacturaCantidad(keyFlujoFacturaCantidad + 1)
+        setKeyFlujoFacturaDocumento(keyFlujoFacturaDocumento + 1)
+        setKeyDetalleFlujo(keyDetalleFlujo + 1)
+      }
+    }
+  }
+
   if (session) {
     if (locationIdFlujo) {
       if (
@@ -931,6 +1051,23 @@ const PagoTabs = () => {
                 </CButton>
               </Modal.Footer>
             </Modal>
+            <Modal responsive show={showAsignacion} onHide={() => CancelarAsignacion()} centered>
+              <Modal.Header closeButton>
+                <Modal.Title>Confirmación</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>Está seguro de asignar el grupo seleccionado al pago?</Modal.Body>
+              <Modal.Footer>
+                <CButton color="secondary" onClick={() => CancelarAsignacion()}>
+                  Cancelar
+                </CButton>
+                <CButton
+                  color="primary"
+                  onClick={() => AsignarGrupo().then(() => CancelarAsignacion())}
+                >
+                  Aceptar
+                </CButton>
+              </Modal.Footer>
+            </Modal>
             <div
               style={{
                 display: 'flex',
@@ -962,8 +1099,32 @@ const PagoTabs = () => {
                   paddingTop: '10px',
                   marginRight: '10px',
                   width: '50%',
+                  maxHeight: '41.5px',
                 }}
               >
+                <div
+                  className={
+                    MostrarAsignacion && locationEstado == 2 ? 'float-right' : 'd-none float-right'
+                  }
+                >
+                  <CInputGroup className="mb-3">
+                    <CInputGroupText>
+                      <FaUsers />
+                    </CInputGroupText>
+                    <CFormSelect name="grupo_autorizacion" onChange={MostrarAsignacionGrupo}>
+                      <option value="0">Seleccione un grupo de autorización.</option>
+                      {gruposList.map((item, i) => {
+                        if (item.eliminado == 0 && item.activo == 1) {
+                          return (
+                            <option key={item.id_grupo} value={item.id_grupo}>
+                              {item.identificador}
+                            </option>
+                          )
+                        }
+                      })}
+                    </CFormSelect>
+                  </CInputGroup>
+                </div>
                 <Button
                   data-tag="allowRowEvents"
                   variant="primary"

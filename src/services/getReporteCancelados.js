@@ -1,7 +1,13 @@
 const API = `${process.env.REACT_APP_API_URL}canceladosreporte`
 
-export function getReporteCancelados(token) {
-  return fetch(API, {
+export function getReporteCancelados(idUsuario, token) {
+  let ApiFinal = API
+  let ApiWhere = ''
+  if (idUsuario !== null) {
+    ApiWhere += '/' + idUsuario
+  }
+  ApiFinal += ApiWhere
+  return fetch(ApiFinal, {
     method: 'GET',
     headers: {
       Authorization: 'Bearer ' + token,

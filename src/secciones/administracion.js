@@ -12,6 +12,8 @@ import {
   FiMessageCircle,
   FiDelete,
   FiUserPlus,
+  FiSlash,
+  FiShuffle,
 } from 'react-icons/fi'
 import { BiUserCircle } from 'react-icons/bi'
 import { MenuItem, SubMenu } from 'react-pro-sidebar'
@@ -90,6 +92,15 @@ const administracion = [
     ),
   },
   {
+    objeto: 'Modulo RestriccionEmpresa',
+    menu: (
+      <MenuItem key="usuariorestricionempresa" icon={<FiUserCheck />}>
+        Restricción a empresa por usuario
+        <Link to="/usuariorestriccionempresa" />
+      </MenuItem>
+    ),
+  },
+  {
     objeto: 'Modulo CuentaGrupoAutorizacion',
     menu: (
       <MenuItem key="cuentagrupoautorizacion" icon={<FiLayers />}>
@@ -131,6 +142,24 @@ const administracion = [
       <MenuItem key="recordatoriogrupo" icon={<FiUserPlus />}>
         Usuario para recordatorio por grupo
         <Link to="/recordatoriogrupo" />
+      </MenuItem>
+    ),
+  },
+  {
+    objeto: 'Modulo BloqueoNotificacionCorreo',
+    menu: (
+      <MenuItem key="bloqueonotificacioncorreo" icon={<FiSlash />}>
+        Bloqueo notificacion por correo
+        <Link to="/bloqueonotificacioncorreo" />
+      </MenuItem>
+    ),
+  },
+  {
+    objeto: 'Modulo Redireccion',
+    menu: (
+      <MenuItem key="redireccion" icon={<FiShuffle />}>
+        Redirección para usuarios
+        <Link to="/usuarioredireccion" />
       </MenuItem>
     ),
   },

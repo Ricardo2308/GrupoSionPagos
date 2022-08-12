@@ -20,9 +20,22 @@ const Cancelados = (prop) => {
   useEffect(() => {
     let mounted = true
     let pagos = []
-    getReporteCancelados(session.api_token).then((items) => {
+    getReporteCancelados(session.id,session.api_token).then((items) => {
       if (mounted) {
-        pagos.push(items.flujos)
+        pagos.push(
+          { 
+            "doc_num" : { type: "string"},
+            "cuenta_orgien" : { type: "string"},
+            "en_favor_de" : { type: "string"},
+            "comments" : { type: "string"},
+            "doc_total" : { type: "number"},
+            "fecha" : { type: "datetime"},
+            "doc_date" : { type: "datetime"},
+          }
+        )
+        items.flujos.forEach((item) => {
+          pagos.push(item)
+        })
         var pivot = new WebDataRocks({
           container: '#wdr-component',
           beforetoolbarcreated: customizeToolbar,
@@ -30,7 +43,7 @@ const Cancelados = (prop) => {
           toolbar: true,
           report: {
             dataSource: {
-              data: items.flujos,
+              data: pagos,
             },
             slice: {
               rows: [
@@ -107,6 +120,7 @@ const Cancelados = (prop) => {
                 showGrandTotals: 'off',
               },
               showEmptyData: false,
+              datePattern: "yyyy/MM/dd",
             },
             formats: [
               {

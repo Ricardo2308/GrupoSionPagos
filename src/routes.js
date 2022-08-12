@@ -49,6 +49,12 @@ const NuevaPrioridadChat = React.lazy(() =>
 const PrioridadChat = React.lazy(() =>
   import('./views/components/usuarios/prioridadchat/PrioridadChat'),
 )
+const NuevoBloqueoNotificacion = React.lazy(() =>
+  import('./views/components/usuarios/bloqueonotificacioncorreo/NuevoBloqueoNotificacionCorreo'),
+)
+const BloqueoNotificacion = React.lazy(() =>
+  import('./views/components/usuarios/bloqueonotificacioncorreo/BloqueoNotificacionCorreo'),
+)
 const NuevaOcultarColumnas = React.lazy(() =>
   import('./views/components/usuarios/ocultarcolumnas/NuevoOcultarColumna'),
 )
@@ -186,6 +192,34 @@ const NoVisadoReporte = React.lazy(() => import('./views/components/reportes/NoV
 const RechazadosReporte = React.lazy(() => import('./views/components/reportes/Rechazados'))
 const PendientesValidacion = React.lazy(() =>
   import('./views/components/reportes/PendientesValidacion'),
+)
+
+const SeccionAplicacion = React.lazy(() =>
+  import('./views/components/seccionaplicacion/SeccionAplicacion'),
+)
+const SeccionAplicacionNueva = React.lazy(() =>
+  import('./views/components/seccionaplicacion/NuevaSeccion'),
+)
+const SeccionAplicacionEditar = React.lazy(() =>
+  import('./views/components/seccionaplicacion/EditarSeccion'),
+)
+
+const UsuarioRedireccion = React.lazy(() =>
+  import('./views/components/usuarios/usuarioredireccion/UsuarioRedireccion'),
+)
+const UsuarioRedireccionNueva = React.lazy(() =>
+  import('./views/components/usuarios/usuarioredireccion/NuevaRedireccion'),
+)
+
+const PagoTabsCompleto = React.lazy(() =>
+  import('./views/components/flujos/flujo/PagoTabsCompleto'),
+)
+
+const UsuarioRestriccionEmpresa = React.lazy(() =>
+  import('./views/components/usuarios/usuariorestriccionempresa/UsuarioRestriccionEmpresa'),
+)
+const UsuarioRestriccionEmpresaNueva = React.lazy(() =>
+  import('./views/components/usuarios/usuariorestriccionempresa/NuevaUsuarioRestriccionEmpresa'),
 )
 
 // const Login = React.lazy(() => import('./views/examples/pages/login/Login'))
@@ -393,6 +427,17 @@ const routes = [
   },
   { path: '/prioridadchat/nueva', name: 'Nuevo Registro', component: NuevaPrioridadChat },
   {
+    path: '/bloqueonotificacioncorreo',
+    exact: true,
+    name: 'Bloqueo notificacion por correo',
+    component: BloqueoNotificacion,
+  },
+  {
+    path: '/bloqueonotificacioncorreo/nueva',
+    name: 'Nuevo usuario',
+    component: NuevoBloqueoNotificacion,
+  },
+  {
     path: '/ocultarcolumnas',
     exact: true,
     name: 'Ocultar columnas a usuario',
@@ -406,6 +451,37 @@ const routes = [
     component: RecordatorioGrupo,
   },
   { path: '/recordatoriogrupo/nueva', name: 'Nuevo Registro', component: NuevaRecordatorioGrupo },
+  {
+    path: '/seccionaplicacion',
+    exact: true,
+    name: 'Secciones de aplicación',
+    component: SeccionAplicacion,
+  },
+  { path: '/seccionaplicacion/nueva', name: 'Nueva Sección', component: SeccionAplicacionNueva },
+  { path: '/seccionaplicacion/editar', name: 'Editar Sección', component: SeccionAplicacionEditar },
+  {
+    path: '/usuarioredireccion',
+    exact: true,
+    name: 'Redirección para usuario',
+    component: UsuarioRedireccion,
+  },
+  {
+    path: '/usuarioredireccion/nueva',
+    name: 'Nueva Redirección',
+    component: UsuarioRedireccionNueva,
+  },
+  { path: '/pagos/tabscompleto', name: 'Detalle Pagos', component: PagoTabsCompleto },
+  {
+    path: '/usuariorestriccionempresa',
+    exact: true,
+    name: 'Restriccion de empresa para usuario',
+    component: UsuarioRestriccionEmpresa,
+  },
+  {
+    path: '/usuariorestriccionempresa/nueva',
+    name: 'Nuevo registro',
+    component: UsuarioRestriccionEmpresaNueva,
+  },
   // { path: '/login', name: 'Login', component: Login },
   // { path: '/register', name: 'Register', component: Register },
   // { path: '/404', name: '404', component: Page404 },

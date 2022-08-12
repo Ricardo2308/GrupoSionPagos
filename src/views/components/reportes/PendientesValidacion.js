@@ -20,7 +20,7 @@ const PendientesValidacion = (prop) => {
   useEffect(() => {
     let mounted = true
     let pagos = []
-    getPendientesValidacionReporte(session.api_token).then((items) => {
+    getPendientesValidacionReporte(session.id,session.api_token).then((items) => {
       if (mounted) {
         pagos.push(items.flujos)
         var pivot = new WebDataRocks({

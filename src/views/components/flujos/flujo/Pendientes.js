@@ -13,7 +13,7 @@ import {
 import DataTable, { defaultThemes } from 'react-data-table-component'
 import { getPendientesAutorizacion } from '../../../../services/getPendientesAutorizacion'
 import { useSession } from 'react-use-session'
-import { FaList, FaFileUpload, FaUsersCog, FaCircle } from 'react-icons/fa'
+import { FaList, FaFileUpload, FaUsersCog, FaCircle, FaFlag } from 'react-icons/fa'
 import '../../../../scss/estilos.scss'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
@@ -41,6 +41,7 @@ const Pendientes = (prop) => {
   const [actualizarTabla, setActualizarTabla] = useState(0)
   //Cambio recordatorio
   const [showModalRecordar, setShowModalRecordar] = useState(false)
+  const [showModalConDuda, setShowModalConDuda] = useState(false)
   const [columnaOrden, setColumnaOrden] = useState('')
   const [direccionOrden, setDireccionOrden] = useState('')
   const [actualizarColor, setActualizarColor] = useState(true)
@@ -71,6 +72,14 @@ const Pendientes = (prop) => {
     }
     &.ROJO {
       background: #ff8484 !important;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    &.AZUL {
+      background: #b7d7e8 !important;
       width: 100%;
       height: 100%;
       display: flex;
@@ -425,7 +434,7 @@ const Pendientes = (prop) => {
             )
           } else if (row.estado == 2) {
             return (
-              <div>
+              <div style={{}}>
                 <Button
                   data-tag="allowRowEvents"
                   size="sm"
@@ -444,7 +453,7 @@ const Pendientes = (prop) => {
                 >
                   <FaFileUpload />
                 </Button>{' '}
-                <Button
+                {/* <Button
                   data-tag="allowRowEvents"
                   size="sm"
                   variant="primary"
@@ -458,10 +467,10 @@ const Pendientes = (prop) => {
                   }
                 >
                   <FaUsersCog />
-                </Button>{' '}
+                </Button>{' '} */}
                 <Button
                   data-tag="allowRowEvents"
-                  variant="success"
+                  variant="warning"
                   size="sm"
                   title="Consultar Detalle Pago"
                   onClick={() =>
@@ -478,7 +487,8 @@ const Pendientes = (prop) => {
                     })
                   }
                 >
-                  <FaList />
+                  {/* <FaList /> */}
+                  <FaFlag style={{ color: 'white' }} />
                 </Button>
               </div>
             )
@@ -552,6 +562,10 @@ const Pendientes = (prop) => {
 
   function mostrarModalRecordar() {
     setShowModalRecordar(true)
+  }
+
+  function mostrarModalConDuda() {
+    setShowModalConDuda(true)
   }
 
   function AccionModalCargarNuevos(opcion) {
@@ -782,6 +796,25 @@ const Pendientes = (prop) => {
     }
   }
 
+  async function AccionModalConDuda(opcion) {
+    if (opcion == 1) {
+      var markedCheckbox = document.getElementsByName('autorizarPago')
+      for (var checkbox of markedCheckbox) {
+        if (checkbox.checked) {
+          let valorPago = checkbox.value
+          let partes = checkbox.value.split('|')
+          await postFlujos(partes[0], '0', '', '8', null, session.id, session.api_token)
+          sessionStorage.removeItem(valorPago)
+          checkbox.checked = false
+        }
+      }
+      setShowModalConDuda(false)
+      setActualizarTabla(actualizarTabla + 1)
+    } else if (opcion == 2) {
+      setShowModalConDuda(false)
+    }
+  }
+
   function MostrarPorFiltro(color) {
     if (color == 'NO') {
       setListdata(dataOriginal)
@@ -800,56 +833,7 @@ const Pendientes = (prop) => {
       })
       sessionStorage.setItem('listaPagos', JSON.stringify(datosOrdenados))
       setActualizarColor(!actualizarColor)
-    }
-    if (color == 'ROJO') {
-      setListdata(
-        dataOriginal.filter(function (pago) {
-          return pago.colorSemaforo == color
-        }),
-      )
-
-      let datosOrdenados = []
-      dataOriginal.forEach((item) => {
-        if (item.colorSemaforo == color) {
-          datosOrdenados.push({
-            id_flujo: item.id_flujo,
-            estado: item.estado,
-            nivel: item.nivel,
-            id_grupo: item.id_grupoautorizacion,
-            PuedoAutorizar: item.PuedoAutorizar,
-            pago: item.doc_num,
-            seccion: 'Pendientes',
-          })
-        }
-      })
-      sessionStorage.setItem('listaPagos', JSON.stringify(datosOrdenados))
-      setActualizarColor(!actualizarColor)
-    }
-    if (color == 'AMARILLO') {
-      setListdata(
-        dataOriginal.filter(function (pago) {
-          return pago.colorSemaforo == color
-        }),
-      )
-
-      let datosOrdenados = []
-      dataOriginal.forEach((item) => {
-        if (item.colorSemaforo == color) {
-          datosOrdenados.push({
-            id_flujo: item.id_flujo,
-            estado: item.estado,
-            nivel: item.nivel,
-            id_grupo: item.id_grupoautorizacion,
-            PuedoAutorizar: item.PuedoAutorizar,
-            pago: item.doc_num,
-            seccion: 'Pendientes',
-          })
-        }
-      })
-      sessionStorage.setItem('listaPagos', JSON.stringify(datosOrdenados))
-      setActualizarColor(!actualizarColor)
-    }
-    if (color == 'VERDE') {
+    } else {
       setListdata(
         dataOriginal.filter(function (pago) {
           return pago.colorSemaforo == color
@@ -935,6 +919,20 @@ const Pendientes = (prop) => {
             </Button>
           </Modal.Footer>
         </Modal>
+        <Modal responsive variant="primary" show={showModalConDuda} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmación</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>¿Está seguro de marcar con duda los pagos seleccionados?</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => AccionModalConDuda(2)}>
+              Cancelar
+            </Button>
+            <Button variant="primary" onClick={() => AccionModalConDuda(1)}>
+              Aceptar
+            </Button>
+          </Modal.Footer>
+        </Modal>
         <Alert show={show} variant={color} onClose={() => setShow(false)} dismissible>
           <Alert.Heading>{titulo}</Alert.Heading>
           <p>{mensaje}</p>
@@ -942,7 +940,7 @@ const Pendientes = (prop) => {
         <div style={{ display: 'flex' }}>
           <div
             style={{
-              width: '50%',
+              width: '40%',
               display: 'flex',
               gap: '10px',
               justifyContent: 'flex-start',
@@ -985,8 +983,17 @@ const Pendientes = (prop) => {
                 <FaCircle />
               </Button>
             </OverlayTrigger>
+            <OverlayTrigger
+              placement="top"
+              delay={{ show: 250, hide: 150 }}
+              overlay={<Tooltip>Mostrar urgentes</Tooltip>}
+            >
+              <Button variant="outline-primary" onClick={() => MostrarPorFiltro('AZUL')}>
+                <FaCircle />
+              </Button>
+            </OverlayTrigger>
           </div>
-          <div style={{ width: '50%', display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+          <div style={{ width: '60%', display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
             <CButton
               className={ocultarBotonCargar ? 'd-none float-right' : 'float-right'}
               color="success"
@@ -1013,6 +1020,16 @@ const Pendientes = (prop) => {
               onClick={() => mostrarModalRecordar()}
             >
               Enviar recordatorio pagos seleccionados
+            </CButton>
+            {'  '}
+            <CButton
+              /* className={!showAutorizar ? 'd-none float-right' : 'float-right'} */
+              className="float-right"
+              color="info"
+              size="sm"
+              onClick={() => mostrarModalConDuda()}
+            >
+              Marcar pago(s) con duda
             </CButton>
             <br />
             <br />

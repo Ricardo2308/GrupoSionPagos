@@ -314,7 +314,7 @@ const Dashboard = () => {
           <CCol xs={6}>
             <CCard className="mb-4">
               <CCardHeader>Semáforo de aprobación vs días de credito</CCardHeader>
-              <CCardBody style={{ height: '340px' }}>
+              <CCardBody style={{ height: '400px' }}>
                 <CChartBar
                   height={195}
                   data={{
@@ -348,7 +348,7 @@ const Dashboard = () => {
           <CCol xs={6}>
             <CCard className="mb-4">
               <CCardHeader>Semáforo de aprobación vs días de credito personal</CCardHeader>
-              <CCardBody>
+              <CCardBody style={{ height: '400px' }}>
                 <Tabs defaultActiveKey="bancaria" id="uncontrolled-tab-example" className="mb-3">
                   <Tab eventKey="bancaria" title="Bancaria">
                     <CChartBar
