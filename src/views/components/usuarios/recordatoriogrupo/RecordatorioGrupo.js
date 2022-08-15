@@ -96,7 +96,7 @@ const RecordatorioGrupo = () => {
         session.api_token,
       )
       if (respuesta === 'OK') {
-        await getUsuarioRecordatorioGrupo(usuarioSeleccionado, session.api_token).then((items) => {
+        await getUsuarioRecordatorioGrupo(null, session.api_token).then((items) => {
           setList(items.recordatorio)
         })
       } else if (opcion == 2) {

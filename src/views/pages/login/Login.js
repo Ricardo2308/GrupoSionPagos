@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import { Alert } from 'react-bootstrap'
 import { FiUser, FiLock, FiEye } from 'react-icons/fi'
 import { getUsuarios } from '../../../services/getUsuarios'
@@ -30,6 +30,7 @@ import { getPendientesAutorizacionCompleto } from '../../../services/getPendient
 
 const Login = () => {
   const history = useHistory()
+  const location = useLocation()
   const { saveJWT } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
   const [mostrar, setMostrar] = useState(false)
@@ -189,42 +190,11 @@ const Login = () => {
                               if (item.cantidadIngresos == '0') {
                                 history.push('/usuarios/password')
                               } else {
-                                history.push(item.redireccion)
-                                /* if (item.redireccion == '/pagos/tabscompleto') {
-                                  getPendientesAutorizacionCompleto(item.id, itemsLogin).then(
-                                    (items) => {
-                                      let datosOrdenados = []
-                                      items.flujos.forEach((item) => {
-                                        datosOrdenados.push({
-                                          id_flujo: item.id_flujo,
-                                          estado: item.estado,
-                                          nivel: item.nivel,
-                                          id_grupo: item.id_grupoautorizacion,
-                                          PuedoAutorizar: item.PuedoAutorizar,
-                                          pago: item.doc_num,
-                                          seccion: 'Pendientes',
-                                        })
-                                      })
-                                      sessionStorage.setItem(
-                                        'listaPagos',
-                                        JSON.stringify(datosOrdenados),
-                                      )
-                                      history.push({
-                                        pathname: item.redireccion,
-                                        id_flujo: datosOrdenados[0].id_flujo,
-                                        pago: datosOrdenados[0].pago,
-                                        estado: datosOrdenados[0].estado,
-                                        nivel: datosOrdenados[0].nivel,
-                                        id_grupo: datosOrdenados[0].id_grupo,
-                                        PuedoAutorizar: datosOrdenados[0].PuedoAutorizar,
-                                        pagina: 'transferencia',
-                                        seccion: 'Pendientes',
-                                      })
-                                    },
-                                  )
+                                if (location.id_flujo) {
+                                  history.push('/redireccion/pago/' + location.id_flujo)
                                 } else {
                                   history.push(item.redireccion)
-                                } */
+                                }
                               }
                             }
                           })

@@ -221,7 +221,6 @@ const UsuarioRestriccionEmpresa = React.lazy(() =>
 const UsuarioRestriccionEmpresaNueva = React.lazy(() =>
   import('./views/components/usuarios/usuariorestriccionempresa/NuevaUsuarioRestriccionEmpresa'),
 )
-
 // const Login = React.lazy(() => import('./views/examples/pages/login/Login'))
 // const Register = React.lazy(() => import('./views/examples/pages/register/Register'))
 // const Page404 = React.lazy(() => import('./views/examples/pages/page404/Page404'))

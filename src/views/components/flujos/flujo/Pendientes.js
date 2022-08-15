@@ -1013,8 +1013,7 @@ const Pendientes = (prop) => {
             </CButton>
             {'  '}
             <CButton
-              /* className={!showAutorizar ? 'd-none float-right' : 'float-right'} */
-              className="float-right"
+              className={!PuedeEnviarRecordatorio ? 'd-none float-right' : 'float-right'}
               color="secondary"
               size="sm"
               onClick={() => mostrarModalRecordar()}

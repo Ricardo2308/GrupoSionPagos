@@ -165,6 +165,7 @@ const NuevoRol = () => {
                       Modulo BloqueoNotificacionCorreo
                     </option>
                     <option value="Modulo Redireccion">Modulo Redirección</option>
+                    <option value="Modulo Dashboard">Modulo Dashboard</option>
                   </CFormSelect>
                 </CInputGroup>
                 <CButton color="primary" onClick={handleSubmit}>

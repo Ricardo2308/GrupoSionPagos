@@ -18,6 +18,7 @@ const Recuperar = React.lazy(() => import('./views/pages/recuperar/Recuperar'))
 const CorreoEnviado = React.lazy(() => import('./views/pages/recuperar/CorreoEnviado'))
 const CambiarPassword = React.lazy(() => import('./views/pages/recuperar/CambiarPassword'))
 const DescargarArchivos = React.lazy(() => import('./views/pages/archivos/DescargarArchivos'))
+const RedireccionDetalleFlujo = React.lazy(() => import('./views/pages/redireccion/DetalleFlujo'))
 
 class App extends Component {
   render() {
@@ -50,6 +51,12 @@ class App extends Component {
                 path="/descargararchivos/:idLote"
                 name="Cambiar Contraseña"
                 render={(props) => <DescargarArchivos {...props} />}
+              />
+              <Route
+                exact
+                path="/redireccion/pago/:id_flujo"
+                name="Redirección a pago"
+                render={(props) => <RedireccionDetalleFlujo {...props} />}
               />
               <Route path="/" name="Home" render={(props) => <DefaultLayout {...props} />} />
             </Switch>

@@ -50,6 +50,7 @@ const AppSidebar = () => {
   const unfoldable = useSelector((state) => state.sidebarUnfoldable)
   const sidebarShow = useSelector((state) => state.sidebarShow)
   const [menuCollapse, setMenuCollapse] = useState(true)
+  const [mostrarDashboard, setMostrarDashboard] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -62,6 +63,9 @@ const AppSidebar = () => {
     getPerfilUsuario(idUsuario, '3', '0', session.api_token).then((items) => {
       for (const item of items.detalle) {
         permisos.push(item.objeto)
+      }
+      if (tieneModulo(permisos, 'Modulo Dashboard') > 0) {
+        setMostrarDashboard(true)
       }
       if (obtenerItems(administracion, permisos).length > 0) {
         let items = obtenerItems(administracion, eliminaDuplicados(permisos))
@@ -117,6 +121,16 @@ const AppSidebar = () => {
     return array
   }
 
+  function tieneModulo(items, modulo) {
+    let contadorItems = 0
+    for (let item of items) {
+      if (item == modulo) {
+        contadorItems++
+      }
+    }
+    return contadorItems
+  }
+
   if (session) {
     return (
       <ProSidebar collapsed={menuCollapse}>
@@ -152,7 +166,7 @@ const AppSidebar = () => {
           }}
         >
           <Menu>
-            <MenuItem>
+            <MenuItem className={!mostrarDashboard ? 'd-none' : ''}>
               <img src={logo} style={{ width: '15px', marginRight: '18px', marginLeft: '10px' }} />
               Dashboard
               <Link to="/dashboard" />
