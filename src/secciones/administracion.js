@@ -14,6 +14,7 @@ import {
   FiUserPlus,
   FiSlash,
   FiShuffle,
+  FiEdit3,
 } from 'react-icons/fi'
 import { BiUserCircle } from 'react-icons/bi'
 import { MenuItem, SubMenu } from 'react-pro-sidebar'
@@ -97,6 +98,15 @@ const administracion = [
       <MenuItem key="usuariorestricionempresa" icon={<FiUserCheck />}>
         Restricción a empresa por usuario
         <Link to="/usuariorestriccionempresa" />
+      </MenuItem>
+    ),
+  },
+  {
+    objeto: 'Modulo RestriccionEmpresa',
+    menu: (
+      <MenuItem key="usuariorestriciontexto" icon={<FiEdit3 />}>
+        Restricción de texto por usuario
+        <Link to="/usuariorestricciontexto" />
       </MenuItem>
     ),
   },

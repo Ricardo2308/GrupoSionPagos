@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Row, Col, Container, Modal, Tab, Tabs, Button } from 'react-bootstrap'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import FlujoSolicitud from './FlujoSolicitud'
 import FlujoOferta from './FlujoOferta'
 import FlujoOrden from './FlujoOrden'
@@ -27,13 +27,12 @@ import { useSession } from 'react-use-session'
 import Chat from './Chat'
 import FlujoBitacora from './FlujoBitacora'
 import '../../../../scss/estilos.scss'
-import { FaArrowLeft, FaAngleLeft, FaAngleRight, FaDoorClosed, FaBullseye } from 'react-icons/fa'
+import { FaAngleLeft, FaAngleRight } from 'react-icons/fa'
 import { getUsuarioPrioridadMensajes } from '../../../../services/getUsuarioPrioridadMensajes'
 import { getUsuarios } from '../../../../services/getUsuarios'
 import { getContadorChat } from '../../../../services/getContadorChat'
 import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacion'
-import { CButton, CInputGroup, CInputGroupText, CFormSelect } from '@coreui/react'
-import { FaUsers } from 'react-icons/fa'
+import { CButton } from '@coreui/react'
 import { getUsuarioGrupo } from '../../../../services/getUsuarioGrupo'
 import { getPendientesAutorizacionCompleto } from '../../../../services/getPendientesAutorizacionCompleto'
 
@@ -136,7 +135,6 @@ const PagoTabsCompleto = () => {
   }, [])
 
   useEffect(() => {
-    console.log(2)
     let mounted = true
     if (listadoPagosInicial.length > 0) {
       let listaPagos = listadoPagosInicial
@@ -158,7 +156,7 @@ const PagoTabsCompleto = () => {
       if (locationSeccion == 'Mensajes') {
         listaPagos = JSON.parse(sessionStorage.getItem('listaPagosMensajes'))
       } */
-      let indexActual = listaPagos.findIndex((e) => e.pago == locationPagoInicial)
+      let indexActual = listaPagos.findIndex((e) => e.pago == locationPago)
       let largoPagos = listaPagos.length
       let yaAutorizoInterno = ExisteEnBitacora(session.id)
       setYaAutorizo(yaAutorizoInterno)

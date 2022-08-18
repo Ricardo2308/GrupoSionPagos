@@ -986,7 +986,7 @@ const Pendientes = (prop) => {
             <OverlayTrigger
               placement="top"
               delay={{ show: 250, hide: 150 }}
-              overlay={<Tooltip>Mostrar urgentes</Tooltip>}
+              overlay={<Tooltip>Mostrar urgentes con duda</Tooltip>}
             >
               <Button variant="outline-primary" onClick={() => MostrarPorFiltro('AZUL')}>
                 <FaCircle />

@@ -221,6 +221,13 @@ const UsuarioRestriccionEmpresa = React.lazy(() =>
 const UsuarioRestriccionEmpresaNueva = React.lazy(() =>
   import('./views/components/usuarios/usuariorestriccionempresa/NuevaUsuarioRestriccionEmpresa'),
 )
+
+const UsuarioRestriccionTexto = React.lazy(() =>
+  import('./views/components/usuarios/usuariorestricciontexto/UsuarioRestriccionTexto'),
+)
+const UsuarioRestriccionTextoNueva = React.lazy(() =>
+  import('./views/components/usuarios/usuariorestricciontexto/NuevaUsuarioRestriccionTexto'),
+)
 // const Login = React.lazy(() => import('./views/examples/pages/login/Login'))
 // const Register = React.lazy(() => import('./views/examples/pages/register/Register'))
 // const Page404 = React.lazy(() => import('./views/examples/pages/page404/Page404'))
@@ -480,6 +487,17 @@ const routes = [
     path: '/usuariorestriccionempresa/nueva',
     name: 'Nuevo registro',
     component: UsuarioRestriccionEmpresaNueva,
+  },
+  {
+    path: '/usuariorestricciontexto',
+    exact: true,
+    name: 'Restriccion de texto para usuario',
+    component: UsuarioRestriccionTexto,
+  },
+  {
+    path: '/usuariorestricciontexto/nueva',
+    name: 'Nuevo registro',
+    component: UsuarioRestriccionTextoNueva,
   },
   // { path: '/login', name: 'Login', component: Login },
   // { path: '/register', name: 'Register', component: Register },
