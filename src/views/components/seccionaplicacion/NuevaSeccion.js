@@ -32,6 +32,7 @@ const NuevaSeccion = () => {
   const [form, setValues] = useState({
     nombre: '',
     direccion: '',
+    direccion_movil: '',
   })
 
   const handleInput = (event) => {
@@ -48,6 +49,7 @@ const NuevaSeccion = () => {
         '',
         form.nombre,
         form.direccion,
+        form.direccion_movil,
         '',
         '',
         session.id,
@@ -134,6 +136,17 @@ const NuevaSeccion = () => {
                     type="text"
                     placeholder="Dirección"
                     name="direccion"
+                    onChange={handleInput}
+                  />
+                </CInputGroup>
+                <CInputGroup className="mb-3">
+                  <CInputGroupText>
+                    <FiGrid />
+                  </CInputGroupText>
+                  <CFormControl
+                    type="text"
+                    placeholder="Dirección movil"
+                    name="direccion_movil"
                     onChange={handleInput}
                   />
                 </CInputGroup>

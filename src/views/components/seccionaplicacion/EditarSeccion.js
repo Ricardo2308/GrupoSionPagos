@@ -31,6 +31,7 @@ const EditarSeccionAplicacion = () => {
   const [form, setValues] = useState({
     nombre: location.nombre,
     direccion: location.direccion,
+    direccion_movil: location.direccion_movil,
     estado: location.estado,
   })
 
@@ -48,6 +49,7 @@ const EditarSeccionAplicacion = () => {
         location.id_seccionaplicacion,
         form.nombre,
         form.direccion,
+        form.direccion_movil,
         '1',
         form.estado,
         session.id,
@@ -136,6 +138,18 @@ const EditarSeccionAplicacion = () => {
                       name="direccion"
                       onChange={handleInput}
                       defaultValue={location.direccion}
+                    />
+                  </CInputGroup>
+                  <CInputGroup className="mb-3">
+                    <CInputGroupText>
+                      <FiGrid />
+                    </CInputGroupText>
+                    <CFormControl
+                      type="text"
+                      placeholder="Dirección movil"
+                      name="direccion_movil"
+                      onChange={handleInput}
+                      defaultValue={location.direccion_movil}
                     />
                   </CInputGroup>
                   <CInputGroup className="mb-3">

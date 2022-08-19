@@ -50,6 +50,7 @@ const SeccionAplicacion = () => {
         idSeccionAplicacion,
         '',
         '',
+        '',
         '2',
         '',
         session.id,
@@ -130,6 +131,14 @@ const SeccionAplicacion = () => {
       },
     },
     {
+      name: 'Dirección movil',
+      selector: (row) => row.direccion_movil,
+      center: true,
+      style: {
+        fontSize: '11px',
+      },
+    },
+    {
       name: 'Estado',
       cell: function OrderItems(row) {
         let estado = 'Inactivo'
@@ -160,6 +169,7 @@ const SeccionAplicacion = () => {
                   id_seccionaplicacion: row.id_seccionaplicacion,
                   nombre: row.nombre,
                   direccion: row.direccion,
+                  direccion_movil: row.direccion_movil,
                   estado: row.activo,
                 })
               }

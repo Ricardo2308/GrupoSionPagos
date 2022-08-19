@@ -4,6 +4,7 @@ export function postSeccionAplicacion(
   id_seccionaplicacion,
   nombre,
   direccion,
+  direccion_movil,
   opcion,
   estado,
   id_usuario,
@@ -15,6 +16,7 @@ export function postSeccionAplicacion(
   var datos = {
     nombre: nombre,
     direccion: direccion,
+    direccion_movil: direccion_movil,
     activo: estado,
     id_usuario: id_usuario,
   }
