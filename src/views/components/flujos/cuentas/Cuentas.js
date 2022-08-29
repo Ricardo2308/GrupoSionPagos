@@ -34,7 +34,6 @@ const Cuentas = () => {
     }
     getCuentas(null, null, session.api_token).then((items) => {
       if (mounted) {
-        console.log(items)
         setList(items.cuentas)
       }
     })

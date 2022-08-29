@@ -27,7 +27,6 @@ const DefaultLayout = () => {
   }
 
   const handleStayLoggedIn = () => {
-    console.log(session.limiteconexion)
     clearTimeout(logoutTimer)
     setlogoutTimer(null)
     idleTimer.reset()

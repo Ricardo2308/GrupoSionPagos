@@ -5,7 +5,6 @@ import UserInput from './UserInput'
 import Header from './Header'
 import { Alert } from 'react-bootstrap'
 import { CFormSelect } from '@coreui/react'
-import { getUsuarios } from '../../../services/getUsuarios'
 import { postMensajes } from '../../../services/postMensajes'
 import { FaPlusSquare } from 'react-icons/fa'
 
@@ -100,7 +99,7 @@ class ChatWindow extends Component {
           <Alert.Heading>Error!</Alert.Heading>
           <p>No has elegido destinatario!</p>
         </Alert>
-        <CFormSelect onChange={this.handleChange}>
+        <CFormSelect key={Math.random()} onChange={this.handleChange}>
           <option value="0">Seleccione receptor</option>
           {this.state.usuarios.map((item, i) => {
             let yaEstaSeleccionado = false

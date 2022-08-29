@@ -284,15 +284,19 @@ const PagoTabs = () => {
           setListPrioridad(items.prioridad)
         }
       })
-      .then(() =>
-        getUsuarios(locationIdGrupo, locationIdFlujo, null, null, session.api_token)
+      .then(() => {
+        let locationIdGrupoTmp = 0
+        if (locationIdGrupo != null && locationIdGrupo != undefined) {
+          locationIdGrupoTmp = locationIdGrupo
+        }
+        getUsuarios(locationIdGrupoTmp, locationIdFlujo, null, null, session.api_token)
           .then((items) => {
             if (mounted) {
               setListUsuarios(items.users)
             }
           })
-          .then(() => setkeyChat(keyChat + 1)),
-      )
+          .then(() => setkeyChat(keyChat + 1))
+      })
     let contMensajes = 0
     getContadorChat(locationIdFlujo, session.id, session.api_token).then((items) => {
       items.mensajes.map((item) => {
@@ -1190,6 +1194,11 @@ const PagoTabs = () => {
                       key={keyArchivosFlujo}
                       results={archivos}
                       estado={locationEstado}
+                      empresa={detalleFlujo.empresa_nombre}
+                      docNum={detalleFlujo.doc_num}
+                      beneficiario={detalleFlujo.en_favor_de}
+                      concepto={detalleFlujo.comments}
+                      monto={formatear(detalleFlujo.doc_total, detalleFlujo.doc_curr)}
                     />
                   </Tab>
                   <Tab

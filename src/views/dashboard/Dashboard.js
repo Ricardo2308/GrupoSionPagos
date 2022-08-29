@@ -376,8 +376,6 @@ const Dashboard = () => {
                           },
                         },
                         onClick: (e, a) => {
-                          //console.log(e) //captura el evento
-                          //console.log(a) //captura el item de la grafica y devuelve array
                           if (a.length > 0) {
                             let colorFiltro = 'NO'
                             if (a[0].index === 0) {
@@ -424,8 +422,6 @@ const Dashboard = () => {
                           },
                         },
                         onClick: (e, a) => {
-                          //console.log(e) captura el evento
-                          //console.log(a) captura el item de la grafica y devuelve array
                           if (a.length > 0) {
                             let colorFiltro = 'NO'
                             if (a[0].index === 0) {
@@ -472,8 +468,6 @@ const Dashboard = () => {
                           },
                         },
                         onClick: (e, a) => {
-                          //console.log(e) captura el evento
-                          //console.log(a) captura el item de la grafica y devuelve array
                           if (a.length > 0) {
                             let colorFiltro = 'NO'
                             if (a[0].index === 0) {

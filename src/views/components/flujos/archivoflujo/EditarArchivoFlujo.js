@@ -111,7 +111,7 @@ const EditarArchivoFlujo = () => {
     return result.join('')
   }
 
-  function generarPDF() {
+  async function generarPDF() {
     const doc = new jsPDF({ compress: true })
     let contador = 0
     direcciones.forEach((item) => {
@@ -125,7 +125,7 @@ const EditarArchivoFlujo = () => {
       if (contador > 1) {
         doc.addPage()
       }
-      doc.addImage(imagen, 'PNG', -1, 0, imgWidth, imgHeight, '', 'FAST')
+      doc.addImage(imagen, 'PNG', -1, 0, imgWidth, imgHeight, undefined, 'FAST')
     })
     return doc.output('blob')
   }
@@ -138,44 +138,46 @@ const EditarArchivoFlujo = () => {
     setTimeout(() => {
       const data = new FormData()
       let nombre = crearid(6) + '_' + location.pago + '.pdf'
-      let fileModificado = generarPDF()
-      data.append('image', fileModificado)
-      data.append('prefijo', nombre)
-      fetch(`${process.env.REACT_APP_BACKEND_URL}upload.php`, {
-        method: 'POST',
-        body: data,
-      })
-        .then(function (response) {
-          if (response.status === 200) {
-            setCompletedCrop(null)
-            setCrop(null)
-            setImagenes([])
-            setDirecciones([])
+      //let fileModificado = generarPDF().then(()=>{
+      generarPDF().then((fileModificado) => {
+        data.append('image', fileModificado)
+        data.append('prefijo', nombre)
+        fetch(`${process.env.REACT_APP_BACKEND_URL}upload.php`, {
+          method: 'POST',
+          body: data,
+        })
+          .then(function (response) {
+            if (response.status === 200) {
+              setCompletedCrop(null)
+              setCrop(null)
+              setImagenes([])
+              setDirecciones([])
 
-            return postArchivoFlujo(
-              location.id_archivoflujo,
-              location.id_flujo,
-              session.id,
-              '',
-              '',
-              nombre,
-              '2',
-              session.api_token,
-            )
-          }
-        })
-        .then(function (response2) {
-          if (response2 == 'OK') {
-            history.push({
-              pathname: '/archivoflujo/nuevo',
-              id_flujo: location.id_flujo,
-              pago: location.pago,
-              grupo: location.grupo,
-              estado: location.estado,
-            })
-          }
-        })
-        .catch((error) => error)
+              return postArchivoFlujo(
+                location.id_archivoflujo,
+                location.id_flujo,
+                session.id,
+                '',
+                '',
+                nombre,
+                '2',
+                session.api_token,
+              )
+            }
+          })
+          .then(function (response2) {
+            if (response2 == 'OK') {
+              history.push({
+                pathname: '/archivoflujo/nuevo',
+                id_flujo: location.id_flujo,
+                pago: location.pago,
+                grupo: location.grupo,
+                estado: location.estado,
+              })
+            }
+          })
+          .catch((error) => error)
+      })
     }, 3000)
   }
 

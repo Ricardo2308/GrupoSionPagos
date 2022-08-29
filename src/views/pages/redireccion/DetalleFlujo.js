@@ -9,7 +9,6 @@ const DetalleFlujo = () => {
   const { session, clear } = useSession('PendrogonIT-Session')
 
   if (session) {
-    console.log('tenia sesion')
     getDetalle(id_flujo, session.api_token).then((items) => {
       let datosOrdenados = []
       datosOrdenados.push({

@@ -18,14 +18,14 @@ const MessageDropdown = (props) => {
   async function responderMensajes(tipo) {
     let mensajes = []
     for (let item of props.mensajes) {
-      if (item.leido == 0) {
-        let yaExiste = mensajes.find((obj) => {
-          return obj.Pago === item.Pago
-        })
-        if (yaExiste === undefined) {
-          mensajes.push(item)
-        }
+      //if (item.leido == 0) {
+      let yaExiste = mensajes.find((obj) => {
+        return obj.Pago === item.Pago
+      })
+      if (yaExiste === undefined) {
+        mensajes.push(item)
       }
+      //}
     }
     history.push({
       pathname: '/pagos/autorizados',
