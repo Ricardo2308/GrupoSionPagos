@@ -85,6 +85,7 @@ const Usuarios = () => {
     } else if (opcion == 2) {
       setShow(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   async function Cancelar(opcion) {
