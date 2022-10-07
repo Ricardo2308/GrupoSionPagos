@@ -198,16 +198,16 @@ const EditarArchivoFlujo = () => {
 
         if (completedCrop.height > 657) {
           setMostrarMensaje(true)
-          setDeshabilitarCortar(true)
+          /* setDeshabilitarCortar(true)
           setDeshabilitarGenerar(true)
-          setDeshabilitarLimpiar(true)
+          setDeshabilitarLimpiar(true) */
         } else {
           setMostrarMensaje(false)
-          setDeshabilitarCortar(false)
+          /* setDeshabilitarCortar(false)
           if (direcciones.length > 0) {
             setDeshabilitarGenerar(false)
             setDeshabilitarLimpiar(false)
-          }
+          } */
         }
         canvasPreview(imgRef.current, previewCanvasRef.current, completedCrop, scale, rotate)
       }
@@ -292,9 +292,9 @@ const EditarArchivoFlujo = () => {
                 </Button>
                 <br />
                 <Spinner animation="border" className={!mostrarCargando ? 'd-none' : ''} />
-                <Alert variant="danger" className={!mostrarMensaje ? 'd-none' : ''}>
+                <Alert variant="warning" className={!mostrarMensaje ? 'd-none' : ''}>
                   {
-                    'El área seleccionada es más grande que una página, por favor seleccione un área más pequeña.'
+                    'El área seleccionada es más grande que una página, es posible que al generar el documento se distorsione la imagen.'
                   }
                 </Alert>
                 <br />

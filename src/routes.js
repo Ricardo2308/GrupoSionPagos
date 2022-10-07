@@ -189,6 +189,7 @@ const PendientesReporte = React.lazy(() => import('./views/components/reportes/P
 const CanceladosReporte = React.lazy(() => import('./views/components/reportes/Cancelados'))
 const CompensadosReporte = React.lazy(() => import('./views/components/reportes/Compensados'))
 const NoVisadoReporte = React.lazy(() => import('./views/components/reportes/NoVisados'))
+const ReemplazosReporte = React.lazy(() => import('./views/components/reportes/Reemplazos'))
 const RechazadosReporte = React.lazy(() => import('./views/components/reportes/Rechazados'))
 const PendientesValidacion = React.lazy(() =>
   import('./views/components/reportes/PendientesValidacion'),
@@ -227,6 +228,15 @@ const UsuarioRestriccionTexto = React.lazy(() =>
 )
 const UsuarioRestriccionTextoNueva = React.lazy(() =>
   import('./views/components/usuarios/usuariorestricciontexto/NuevaUsuarioRestriccionTexto'),
+)
+const ConsultorPagos = React.lazy(() => import('./views/components/consultor/pagos'))
+const ConsultorPagosDetalle = React.lazy(() => import('./views/components/consultor/pagosDetalle'))
+
+const Reasignacion = React.lazy(() =>
+  import('./views/components/flujos/reasignacion/ListarReasignacion'),
+)
+const ReasignarGrupo = React.lazy(() =>
+  import('./views/components/flujos/reasignacion/ReasignarGrupo'),
 )
 // const Login = React.lazy(() => import('./views/examples/pages/login/Login'))
 // const Register = React.lazy(() => import('./views/examples/pages/register/Register'))
@@ -391,6 +401,12 @@ const routes = [
     component: NoVisadoReporte,
   },
   {
+    path: '/reportereemplazos',
+    exact: true,
+    name: 'Reemplazos de pagos',
+    component: ReemplazosReporte,
+  },
+  {
     path: '/reporterechazados',
     exact: true,
     name: 'Pagos Rechazados por banco',
@@ -498,6 +514,18 @@ const routes = [
     path: '/usuariorestricciontexto/nueva',
     name: 'Nuevo registro',
     component: UsuarioRestriccionTextoNueva,
+  },
+  { path: '/consultor', name: 'Consultor de Pagos', component: ConsultorPagos },
+  {
+    path: '/consultordetalle',
+    name: 'Consultor de Pagos - detalle',
+    component: ConsultorPagosDetalle,
+  },
+  { path: '/reasignacion', name: 'Reasignacion de responsable', component: Reasignacion },
+  {
+    path: '/reasignacioncambio',
+    name: 'Reasignacion de responsable - editar',
+    component: ReasignarGrupo,
   },
   // { path: '/login', name: 'Login', component: Login },
   // { path: '/register', name: 'Register', component: Register },

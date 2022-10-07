@@ -103,6 +103,7 @@ const PagoTabsCompleto = () => {
   const [grupoAsignado, setGrupoAsignado] = useState(0)
   const [usuarioGrupoList, setUsuarioGrupoList] = useState([])
   const [listadoPagosInicial, setListadoPagosInicial] = useState([])
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let datosOrdenados = []
@@ -138,24 +139,6 @@ const PagoTabsCompleto = () => {
     let mounted = true
     if (listadoPagosInicial.length > 0) {
       let listaPagos = listadoPagosInicial
-      /* if (locationSeccion == 'Pendientes') {
-        listaPagos = JSON.parse(sessionStorage.getItem('listaPagos'))
-      }
-      if (locationSeccion == 'Autorizados') {
-        listaPagos = JSON.parse(sessionStorage.getItem('listaPagosAutorizados'))
-      }
-      if (locationSeccion == 'Rechazados') {
-        listaPagos = JSON.parse(sessionStorage.getItem('listaPagosRechazados'))
-      }
-      if (locationSeccion == 'Cancelados') {
-        listaPagos = JSON.parse(sessionStorage.getItem('listaPagosCancelados'))
-      }
-      if (locationSeccion == 'Notificaciones') {
-        listaPagos = JSON.parse(sessionStorage.getItem('listaPagosNotificaciones'))
-      }
-      if (locationSeccion == 'Mensajes') {
-        listaPagos = JSON.parse(sessionStorage.getItem('listaPagosMensajes'))
-      } */
       let indexActual = listaPagos.findIndex((e) => e.pago == locationPago)
       let largoPagos = listaPagos.length
       let yaAutorizoInterno = ExisteEnBitacora(session.id)
@@ -466,6 +449,7 @@ const PagoTabsCompleto = () => {
   }
 
   async function Aprobar_Rechazar(id_flujo, opcion) {
+    setDesactivarBotonModal(true)
     let idUsuario = 0
     if (session) {
       idUsuario = session.id
@@ -676,6 +660,7 @@ const PagoTabsCompleto = () => {
         }
       }
     }
+    setDesactivarBotonModal(false)
   }
 
   /* const MostrarAsignacionGrupo = (event) => {
@@ -692,6 +677,7 @@ const PagoTabsCompleto = () => {
   }
 
   async function AsignarGrupo() {
+    setDesactivarBotonModal(true)
     const respuesta = await postFlujos(
       idFlujo,
       '',
@@ -727,6 +713,9 @@ const PagoTabsCompleto = () => {
         if (locationSeccion == 'Cancelados') {
           listaPagos = JSON.parse(sessionStorage.getItem('listaPagosCancelados'))
         }
+        if (locationSeccion == 'Reemplazos') {
+          listaPagos = JSON.parse(sessionStorage.getItem('listaPagosReemplazos'))
+        }
         if (locationSeccion == 'Notificaciones') {
           listaPagos = JSON.parse(sessionStorage.getItem('listaPagosNotificaciones'))
         }
@@ -756,6 +745,9 @@ const PagoTabsCompleto = () => {
         if (locationSeccion == 'Cancelados') {
           sessionStorage.setItem('listaPagosCancelados', JSON.stringify(listaPagos))
         }
+        if (locationSeccion == 'Reemplazos') {
+          sessionStorage.setItem('listaPagosReemplazos', JSON.stringify(listaPagos))
+        }
         if (locationSeccion == 'Notificaciones') {
           sessionStorage.setItem('listaPagosNotificaciones', JSON.stringify(listaPagos))
         }
@@ -774,6 +766,7 @@ const PagoTabsCompleto = () => {
         setKeyDetalleFlujo(keyDetalleFlujo + 1)
       }
     }
+    setDesactivarBotonModal(false)
   }
 
   if (session) {
@@ -791,6 +784,7 @@ const PagoTabsCompleto = () => {
                   Cancelar
                 </CButton>
                 <CButton
+                  disabled={desactivarBotonModal}
                   color="primary"
                   onClick={() => Aprobar_Rechazar(idFlujo, opcion).then(() => Cancelar(1))}
                 >
@@ -1074,6 +1068,7 @@ const PagoTabsCompleto = () => {
                   Cancelar
                 </CButton>
                 <CButton
+                  disabled={desactivarBotonModal}
                   color="primary"
                   onClick={() => Aprobar_Rechazar(idFlujo, opcion).then(() => Cancelar(1))}
                 >
@@ -1091,6 +1086,7 @@ const PagoTabsCompleto = () => {
                   Cancelar
                 </CButton>
                 <CButton
+                  disabled={desactivarBotonModal}
                   color="primary"
                   onClick={() => AsignarGrupo().then(() => CancelarAsignacion())}
                 >

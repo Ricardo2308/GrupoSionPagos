@@ -63,6 +63,8 @@ const RechazadosBanco = (prop) => {
         estado: Estado,
         nivel: Nivel,
         id_grupo: IdGrupo,
+        PuedoAutorizar: '0',
+        seccion: 'Rechazados',
       })
     }
   }
@@ -165,6 +167,8 @@ const RechazadosBanco = (prop) => {
                   estado: row.estado,
                   nivel: row.nivel,
                   id_grupo: row.id_grupoautorizacion,
+                  PuedoAutorizar: '0',
+                  seccion: 'Rechazados',
                 })
               }
             >

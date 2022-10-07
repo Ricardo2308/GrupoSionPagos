@@ -6,7 +6,7 @@ const AppFooter = () => {
     <CFooter>
       <div>
         <span style={{ color: '#0C70AA' }}>Control de Pagos</span>
-        <span className="ms-1">&copy; 2021 Grupo Sion.</span>
+        <span className="ms-1">&copy; 2021 Grupo Sion. v.0.12</span>
       </div>
       <div className="ms-auto">
         <span className="me-1">Desarrollado por</span>

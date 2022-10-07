@@ -30,6 +30,7 @@ const ConsultarRP = () => {
   const [estado, setEstado] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -73,6 +74,7 @@ const ConsultarRP = () => {
   }
 
   async function crudRolPermiso(id_rol, id_rolpermiso, opcion, estado) {
+    setDesactivarBotonModal(true)
     let result
     if (opcion == 1) {
       const respuesta = await postRolPermiso(
@@ -114,6 +116,7 @@ const ConsultarRP = () => {
     } else if (opcion == 3) {
       setShow(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   if (session) {
@@ -131,6 +134,7 @@ const ConsultarRP = () => {
               </CButton>
               <CButton
                 color="primary"
+                disabled={desactivarBotonModal}
                 onClick={() =>
                   crudRolPermiso(location.id_rol, idPermiso, opcion, estado).then(() => Cancelar(1))
                 }

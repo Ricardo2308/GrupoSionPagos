@@ -7,6 +7,7 @@ import { useHistory } from 'react-router-dom'
 import { postSesionUsuario } from '../../services/postSesionUsuario'
 import { getReportesFlujos } from '../../services/getReportesFlujos'
 import { getDatosSemaforoIndividual } from '../../services/getDatosSemaforoIndividual'
+import { getDatosSemaforo } from '../../services/getDatosSemaforo'
 import { useSession } from 'react-use-session'
 import { FaSearch } from 'react-icons/fa'
 import '../../scss/estilos.scss'
@@ -80,7 +81,7 @@ const Dashboard = () => {
       setPromedioT(promedioT)
       setEstadosLabel(estadosLabel)
     })
-    getReportesFlujos('4', '0', '0', session.api_token).then((items) => {
+    getDatosSemaforo(session.id, session.api_token).then((items) => {
       let contador = 0
       for (const pago of items.flujos) {
         semaforos.push(parseInt(pago.cantidad))
@@ -321,7 +322,7 @@ const Dashboard = () => {
                     labels: semaforosNom,
                     datasets: [
                       {
-                        backgroundColor: ['#D02F2F', '#AF940B', '#428A49'],
+                        backgroundColor: ['#D02F2F', '#AF940B', '#428A49', '#3F4AAE'],
                         data: semaforos,
                       },
                     ],
@@ -356,7 +357,7 @@ const Dashboard = () => {
                         labels: semaforosNomIndividualB,
                         datasets: [
                           {
-                            backgroundColor: ['#D02F2F', '#AF940B', '#428A49'],
+                            backgroundColor: ['#D02F2F', '#AF940B', '#428A49', '#3F4AAE'],
                             data: semaforosIndividualB,
                           },
                         ],
@@ -387,6 +388,9 @@ const Dashboard = () => {
                             if (a[0].index === 2) {
                               colorFiltro = 'VERDE'
                             }
+                            if (a[0].index === 3) {
+                              colorFiltro = 'AZUL'
+                            }
                             history.push({
                               pathname: '/pagos/bancario',
                               colorFiltro,
@@ -402,7 +406,7 @@ const Dashboard = () => {
                         labels: semaforosNomIndividualT,
                         datasets: [
                           {
-                            backgroundColor: ['#D02F2F', '#AF940B', '#428A49'],
+                            backgroundColor: ['#D02F2F', '#AF940B', '#428A49', '#3F4AAE'],
                             data: semaforosIndividualT,
                           },
                         ],
@@ -433,6 +437,9 @@ const Dashboard = () => {
                             if (a[0].index === 2) {
                               colorFiltro = 'VERDE'
                             }
+                            if (a[0].index === 3) {
+                              colorFiltro = 'AZUL'
+                            }
                             history.push({
                               pathname: '/pagos/transferencia',
                               colorFiltro,
@@ -448,7 +455,7 @@ const Dashboard = () => {
                         labels: semaforosNomIndividualI,
                         datasets: [
                           {
-                            backgroundColor: ['#D02F2F', '#AF940B', '#428A49'],
+                            backgroundColor: ['#D02F2F', '#AF940B', '#428A49', '#3F4AAE'],
                             data: semaforosIndividualI,
                           },
                         ],
@@ -478,6 +485,9 @@ const Dashboard = () => {
                             }
                             if (a[0].index === 2) {
                               colorFiltro = 'VERDE'
+                            }
+                            if (a[0].index === 3) {
+                              colorFiltro = 'AZUL'
                             }
                             history.push({
                               pathname: '/pagos/interna',

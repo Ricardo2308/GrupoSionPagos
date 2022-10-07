@@ -143,35 +143,9 @@ const Rechazados = (prop) => {
         }
     }
 
-    async function Salir() {
-        let idUsuario = 0
-        if (session) {
-            idUsuario = session.id
-        }
-        const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
-        if (respuesta === 'OK') {
-            clear()
-            history.push('/')
-        }
-    }
-
     if (session) {
         return (
             <>
-                <Modal responsive variant="primary" show={show} onHide={() => Salir()} centered>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Confirmación</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>{mensaje}</Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={() => Salir()}>
-                            Cancelar
-                        </Button>
-                        <Button variant="primary" onClick={handleClose}>
-                            Aceptar
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
                 <div id="wdr-component"></div>
             </>
         )

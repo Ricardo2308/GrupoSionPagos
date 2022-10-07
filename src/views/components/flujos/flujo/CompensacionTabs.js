@@ -47,6 +47,7 @@ const CompensacionTabs = () => {
   const [idFlujo, setIdFlujo] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [opcionOperacion, setOpcionOperacion] = useState(0)
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -156,6 +157,7 @@ const CompensacionTabs = () => {
   }
 
   async function Aprobar_Rechazar(id_flujo, opcion) {
+    setDesactivarBotonModal(true)
     let idUsuario = 0
     if (session) {
       idUsuario = session.id
@@ -253,6 +255,7 @@ const CompensacionTabs = () => {
         history.go(-1)
       }
     }
+    setDesactivarBotonModal(false)
   }
 
   if (session) {
@@ -305,20 +308,6 @@ const CompensacionTabs = () => {
       }
       return (
         <div className="div-tabs">
-          <Modal responsive variant="primary" show={show} onHide={() => Cancelar(opcion)} centered>
-            <Modal.Header closeButton>
-              <Modal.Title>Confirmación</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>{mensaje}</Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={() => Cancelar(opcion)}>
-                Cancelar
-              </Button>
-              <Button variant="primary" onClick={() => Cancelar(opcion)}>
-                Aceptar
-              </Button>
-            </Modal.Footer>
-          </Modal>
           <Modal
             responsive
             variant="primary"
@@ -335,6 +324,7 @@ const CompensacionTabs = () => {
                 Cancelar
               </Button>
               <Button
+                disabled={desactivarBotonModal}
                 variant="primary"
                 onClick={() =>
                   Aprobar_Rechazar(idFlujo, opcionOperacion).then(() => Cancelar(opcionOperacion))

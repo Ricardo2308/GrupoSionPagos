@@ -32,6 +32,7 @@ const GruposAutorizacion = () => {
   const [idGrupo, setIdGrupo] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -87,6 +88,7 @@ const GruposAutorizacion = () => {
   }
 
   async function eliminarGrupo(id_grupo, opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       const respuesta = await postGruposAutorizacion(
         id_grupo,
@@ -106,6 +108,7 @@ const GruposAutorizacion = () => {
     } else if (opcion == 2) {
       setShow(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   const customStyles = {
@@ -253,6 +256,7 @@ const GruposAutorizacion = () => {
               Cancelar
             </CButton>
             <CButton
+              disabled={desactivarBotonModal}
               color="primary"
               onClick={() => eliminarGrupo(idGrupo, opcion).then(() => Cancelar(1))}
             >
@@ -282,6 +286,7 @@ const GruposAutorizacion = () => {
             persistTableHead
             striped={true}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>

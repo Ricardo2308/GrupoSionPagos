@@ -22,6 +22,7 @@ const SeccionAplicacion = () => {
   const [idSeccionAplicacion, setIdSeccionAplicacion] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -45,6 +46,7 @@ const SeccionAplicacion = () => {
   }
 
   async function eliminarSeccionAplicacion(idSeccionAplicacion, opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       const respuesta = await postSeccionAplicacion(
         idSeccionAplicacion,
@@ -64,6 +66,7 @@ const SeccionAplicacion = () => {
         setShow(false)
       }
     }
+    setDesactivarBotonModal(false)
   }
   async function Cancelar(opcion) {
     if (opcion == 1) {
@@ -213,6 +216,7 @@ const SeccionAplicacion = () => {
             </CButton>
             <CButton
               color="primary"
+              disabled={desactivarBotonModal}
               onClick={() =>
                 eliminarSeccionAplicacion(idSeccionAplicacion, opcion).then(() => Cancelar(1))
               }
@@ -242,6 +246,7 @@ const SeccionAplicacion = () => {
             persistTableHead
             striped={true}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>

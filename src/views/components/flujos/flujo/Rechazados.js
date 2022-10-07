@@ -34,6 +34,8 @@ const Rechazados = (prop) => {
         estado: Estado,
         nivel: Nivel,
         id_grupo: IdGrupo,
+        PuedoAutorizar: '0',
+        seccion: 'Rechazados',
       })
     }
   }
@@ -221,8 +223,10 @@ const Rechazados = (prop) => {
     },
     {
       name: 'Monto',
-      selector: (row) => formatear(row.doc_total, row.doc_curr),
+      selector: (row) => row.doc_total,
+      cell: (row) => formatear(row.doc_total, row.doc_curr),
       center: true,
+      sortable: true,
       style: {
         fontSize: '11px',
       },
@@ -334,8 +338,10 @@ const Rechazados = (prop) => {
     },
     {
       name: 'Monto',
-      selector: (row) => formatear(row.doc_total, row.doc_curr),
+      selector: (row) => row.doc_total,
+      cell: (row) => formatear(row.doc_total, row.doc_curr),
       center: true,
+      sortable: true,
       style: {
         fontSize: '11px',
       },
@@ -557,6 +563,7 @@ const Rechazados = (prop) => {
               striped={true}
               onSort={Ordenamiento}
               dense
+              paginationRowsPerPageOptions={[25, 50, 100, 300]}
             />
           </DataTableExtensions>
         </div>

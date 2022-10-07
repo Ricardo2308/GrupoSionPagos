@@ -25,12 +25,10 @@ import {
 const EditarUsuarioGrupo = (props) => {
   const history = useHistory()
   const location = useLocation()
-  const [time, setTime] = useState(null)
   const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [detalle, setDetalle] = useState([])
   const [show, setShow] = useState(false)
-  const [showM, setShowM] = useState(false)
   const [mensaje, setMensaje] = useState('')
   const [titulo, setTitulo] = useState('Error!')
   const [color, setColor] = useState('danger')
@@ -112,22 +110,6 @@ const EditarUsuarioGrupo = (props) => {
     }
   }
 
-  async function Cancelar(opcion) {
-    if (opcion == 1) {
-      setShowM(false)
-    } else if (opcion == 2) {
-      let idUsuario = 0
-      if (session) {
-        idUsuario = session.id
-      }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
-      if (respuesta === 'OK') {
-        clear()
-        history.push('/')
-      }
-    }
-  }
-
   if (session) {
     if (location.id_usuario) {
       return (
@@ -137,20 +119,6 @@ const EditarUsuarioGrupo = (props) => {
               <Alert.Heading>{titulo}</Alert.Heading>
               <p>{mensaje}</p>
             </Alert>
-            <Modal responsive variant="primary" show={showM} onHide={() => Cancelar(2)} centered>
-              <Modal.Header closeButton>
-                <Modal.Title>Confirmación</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>{mensaje}</Modal.Body>
-              <Modal.Footer>
-                <CButton color="secondary" onClick={() => Cancelar(2)}>
-                  Cancelar
-                </CButton>
-                <CButton color="primary" onClick={() => Cancelar(1)}>
-                  Aceptar
-                </CButton>
-              </Modal.Footer>
-            </Modal>
             <CCard style={{ display: 'flex', alignItems: 'center' }}>
               <CCardBody style={{ width: '80%' }}>
                 <CForm style={{ width: '100%' }}>

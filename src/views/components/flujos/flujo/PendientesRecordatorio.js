@@ -25,6 +25,7 @@ const PendientesRecordatorio = (prop) => {
   const [actualizarTabla, setActualizarTabla] = useState(0)
   const [camposOcultos, setListOcultos] = useState([])
   const [anchoConcepto, setAnchoConcepto] = useState('285px')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -233,7 +234,8 @@ const PendientesRecordatorio = (prop) => {
     },
     {
       name: 'Monto',
-      selector: (row) => formatear(row.doc_total, row.doc_curr),
+      selector: (row) => row.doc_total,
+      cell: (row) => formatear(row.doc_total, row.doc_curr),
       center: true,
       sortable: true,
       style: {
@@ -265,6 +267,7 @@ const PendientesRecordatorio = (prop) => {
                     id_grupo: row.id_grupoautorizacion,
                     PuedoAutorizar: row.PuedoAutorizar,
                     pagina: 'transferencia',
+                    seccion: 'Pendientes',
                   })
                 }
               >
@@ -309,6 +312,7 @@ const PendientesRecordatorio = (prop) => {
                       id_grupo: row.id_grupoautorizacion,
                       PuedoAutorizar: row.PuedoAutorizar,
                       pagina: 'transferencia',
+                      seccion: 'Pendientes',
                     })
                   }
                 >
@@ -367,6 +371,7 @@ const PendientesRecordatorio = (prop) => {
                       id_grupo: row.id_grupoautorizacion,
                       PuedoAutorizar: row.PuedoAutorizar,
                       pagina: 'transferencia',
+                      seccion: 'Pendientes',
                     })
                   }
                 >
@@ -410,6 +415,7 @@ const PendientesRecordatorio = (prop) => {
                       id_grupo: row.id_grupoautorizacion,
                       PuedoAutorizar: row.PuedoAutorizar,
                       pagina: 'transferencia',
+                      seccion: 'Pendientes',
                     })
                   }
                 >
@@ -564,6 +570,7 @@ const PendientesRecordatorio = (prop) => {
   }
 
   async function AccionModalAutorizar(opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       let pagos = []
       var markedCheckbox = document.getElementsByName('autorizarPago')
@@ -620,6 +627,7 @@ const PendientesRecordatorio = (prop) => {
     } else if (opcion == 2) {
       setShowModalAutorizar(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   if (session) {
@@ -634,7 +642,11 @@ const PendientesRecordatorio = (prop) => {
             <Button variant="secondary" onClick={() => AccionModalAutorizar(2)}>
               Cancelar
             </Button>
-            <Button variant="primary" onClick={() => AccionModalAutorizar(1)}>
+            <Button
+              disabled={desactivarBotonModal}
+              variant="primary"
+              onClick={() => AccionModalAutorizar(1)}
+            >
               Aceptar
             </Button>
           </Modal.Footer>
@@ -664,6 +676,7 @@ const PendientesRecordatorio = (prop) => {
             striped={true}
             onSort={Ordenamiento}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>

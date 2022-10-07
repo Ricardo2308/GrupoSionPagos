@@ -52,6 +52,7 @@ const Pendientes = (prop) => {
   const [mensaje, setMensaje] = useState('')
   const [color, setColor] = useState('danger')
   const [titulo, setTitulo] = useState('Error!')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   const StyledCell = styled.div`
     &.VERDE {
@@ -280,7 +281,7 @@ const Pendientes = (prop) => {
           )
         }
       },
-      center: true,
+      center: false,
       width: '35px',
       style: {
         paddingLeft: '0px',
@@ -291,7 +292,7 @@ const Pendientes = (prop) => {
     {
       name: 'Empresa',
       selector: (row) => row.empresa_nombre,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -303,7 +304,7 @@ const Pendientes = (prop) => {
     {
       name: 'No.',
       selector: (row) => row.doc_num,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -314,7 +315,7 @@ const Pendientes = (prop) => {
     {
       name: 'Fecha Sis.',
       selector: (row) => row.creation_date,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -325,7 +326,7 @@ const Pendientes = (prop) => {
     {
       name: 'Beneficiario',
       selector: (row) => row.en_favor_de,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -337,7 +338,7 @@ const Pendientes = (prop) => {
     {
       name: 'Concepto',
       selector: (row) => row.comments,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -347,8 +348,9 @@ const Pendientes = (prop) => {
     },
     {
       name: 'Monto',
-      selector: (row) => formatear(row.doc_total, row.doc_curr),
-      center: true,
+      selector: (row) => row.doc_total,
+      cell: (row) => formatear(row.doc_total, row.doc_curr),
+      right: true,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -404,6 +406,7 @@ const Pendientes = (prop) => {
                       pago: row.doc_num,
                       grupo: row.id_grupoautorizacion,
                       estado: row.estado,
+                      concepto: row.comments,
                     })
                   }
                 >
@@ -448,6 +451,7 @@ const Pendientes = (prop) => {
                       pago: row.doc_num,
                       grupo: row.id_grupoautorizacion,
                       estado: row.estado,
+                      concepto: row.comments,
                     })
                   }
                 >
@@ -508,6 +512,7 @@ const Pendientes = (prop) => {
                       pago: row.doc_num,
                       grupo: row.id_grupoautorizacion,
                       estado: row.estado,
+                      concepto: row.comments,
                     })
                   }
                 >
@@ -539,7 +544,7 @@ const Pendientes = (prop) => {
           }
         }
       },
-      center: true,
+      center: false,
       width: '125px',
       omit: OcultarCampo('Acciones'),
     },
@@ -569,6 +574,7 @@ const Pendientes = (prop) => {
   }
 
   function AccionModalCargarNuevos(opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       getCargaDatos(session.api_token).then(() => {
         setActualizarTabla(actualizarTabla + 1)
@@ -578,6 +584,7 @@ const Pendientes = (prop) => {
     } else if (opcion == 2) {
       setShowCargarNuevos(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   function Ordenamiento(columna, direccion, e) {
@@ -673,10 +680,12 @@ const Pendientes = (prop) => {
     }
     if (columna.name == 'Monto' && direccion == 'asc') {
       data.sort(function (a, b) {
-        if (formatear(a.doc_total, a.doc_curr) > formatear(b.doc_total, b.doc_curr)) {
+        //if (formatear(a.doc_total, a.doc_curr) > formatear(b.doc_total, b.doc_curr)) {
+        if (parseFloat(a.doc_total) > parseFloat(b.doc_total)) {
           return 1
         }
-        if (formatear(a.doc_total, a.doc_curr) < formatear(b.doc_total, b.doc_curr)) {
+        //if (formatear(a.doc_total, a.doc_curr) < formatear(b.doc_total, b.doc_curr)) {
+        if (parseFloat(a.doc_total) < parseFloat(b.doc_total)) {
           return -1
         }
         return 0
@@ -684,10 +693,12 @@ const Pendientes = (prop) => {
     }
     if (columna.name == 'Monto' && direccion == 'desc') {
       data.sort(function (a, b) {
-        if (formatear(a.doc_total, a.doc_curr) > formatear(b.doc_total, b.doc_curr)) {
+        //if (formatear(a.doc_total, a.doc_curr) > formatear(b.doc_total, b.doc_curr)) {
+        if (parseFloat(a.doc_total) > parseFloat(b.doc_total)) {
           return -1
         }
-        if (formatear(a.doc_total, a.doc_curr) < formatear(b.doc_total, b.doc_curr)) {
+        //if (formatear(a.doc_total, a.doc_curr) < formatear(b.doc_total, b.doc_curr)) {
+        if (parseFloat(a.doc_total) < parseFloat(b.doc_total)) {
           return 1
         }
         return 0
@@ -710,21 +721,30 @@ const Pendientes = (prop) => {
   }
 
   async function AccionModalAutorizar(opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       let pagos = []
-      var markedCheckbox = document.getElementsByName('autorizarPago')
-      for (var checkbox of markedCheckbox) {
-        if (checkbox.checked) {
-          let valorPago = checkbox.value
-          let partes = checkbox.value.split('|')
-          if (partes[1] == 3) {
-            await postFlujos(partes[0], '2', '', '', null, session.id, session.api_token)
-            await postFlujoDetalle(partes[0], '4', session.id, 'Aprobado', '1', session.api_token)
+      //var markedCheckbox = document.getElementsByName('autorizarPago')
+      //for (var checkbox of markedCheckbox) {
+      data.map(async (row) => {
+        if (estaChequeado(row.id_flujo + '|' + row.estado + '|' + row.nivel)) {
+          let valorPago = row.id_flujo + '|' + row.estado + '|' + row.nivel
+          //let partes = checkbox.value.split('|')
+          if (row.estado == 3) {
+            await postFlujos(row.id_flujo, '1', '', '', null, session.id, session.api_token)
+            await postFlujoDetalle(
+              row.id_flujo,
+              '4',
+              session.id,
+              'Aprobado',
+              '1',
+              session.api_token,
+            )
             sessionStorage.removeItem(valorPago)
-          } else if (partes[1] == 4) {
+          } else if (row.estado == 4) {
             const respuesta = await postFlujos(
-              partes[0],
-              partes[2],
+              row.id_flujo,
+              row.nivel,
               '',
               '',
               null,
@@ -733,31 +753,31 @@ const Pendientes = (prop) => {
             )
             if (respuesta == 'OK') {
               await postFlujoDetalle(
-                partes[0],
+                row.id_flujo,
                 '4',
                 session.id,
                 'Aprobado',
-                partes[2],
+                row.nivel,
                 session.api_token,
               )
               sessionStorage.removeItem(valorPago)
             } else if (respuesta == 'Finalizado') {
               const finalizado = await postFlujoDetalle(
-                partes[0],
+                row.id_flujo,
                 '5',
                 session.id,
                 'Autorización completa',
-                partes[2],
+                row.nivel,
                 session.api_token,
               )
               if (finalizado == 'OK') {
-                pagos.push(partes[0])
+                pagos.push(row.id_flujo)
                 sessionStorage.removeItem(valorPago)
               }
             }
           }
         }
-      }
+      })
       if (pagos.length > 0) {
         await postNotificacion(pagos, session.id, 'autorizado por completo.', '', session.api_token)
       }
@@ -766,9 +786,11 @@ const Pendientes = (prop) => {
     } else if (opcion == 2) {
       setShowModalAutorizar(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   async function AccionModalRecordar(opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       if (PuedeEnviarRecordatorio) {
         var markedCheckbox = document.getElementsByName('autorizarPago')
@@ -794,9 +816,11 @@ const Pendientes = (prop) => {
     } else if (opcion == 2) {
       setShowModalRecordar(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   async function AccionModalConDuda(opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       var markedCheckbox = document.getElementsByName('autorizarPago')
       for (var checkbox of markedCheckbox) {
@@ -813,6 +837,7 @@ const Pendientes = (prop) => {
     } else if (opcion == 2) {
       setShowModalConDuda(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   function MostrarPorFiltro(color) {
@@ -884,7 +909,11 @@ const Pendientes = (prop) => {
             <Button variant="secondary" onClick={() => AccionModalCargarNuevos(2)}>
               Cancelar
             </Button>
-            <Button variant="primary" onClick={() => AccionModalCargarNuevos(1)}>
+            <Button
+              disabled={desactivarBotonModal}
+              variant="primary"
+              onClick={() => AccionModalCargarNuevos(1)}
+            >
               Aceptar
             </Button>
           </Modal.Footer>
@@ -898,7 +927,11 @@ const Pendientes = (prop) => {
             <Button variant="secondary" onClick={() => AccionModalAutorizar(2)}>
               Cancelar
             </Button>
-            <Button variant="primary" onClick={() => AccionModalAutorizar(1)}>
+            <Button
+              disabled={desactivarBotonModal}
+              variant="primary"
+              onClick={() => AccionModalAutorizar(1)}
+            >
               Aceptar
             </Button>
           </Modal.Footer>
@@ -914,7 +947,11 @@ const Pendientes = (prop) => {
             <Button variant="secondary" onClick={() => AccionModalRecordar(2)}>
               Cancelar
             </Button>
-            <Button variant="primary" onClick={() => AccionModalRecordar(1)}>
+            <Button
+              disabled={desactivarBotonModal}
+              variant="primary"
+              onClick={() => AccionModalRecordar(1)}
+            >
               Aceptar
             </Button>
           </Modal.Footer>
@@ -928,7 +965,11 @@ const Pendientes = (prop) => {
             <Button variant="secondary" onClick={() => AccionModalConDuda(2)}>
               Cancelar
             </Button>
-            <Button variant="primary" onClick={() => AccionModalConDuda(1)}>
+            <Button
+              disabled={desactivarBotonModal}
+              variant="primary"
+              onClick={() => AccionModalConDuda(1)}
+            >
               Aceptar
             </Button>
           </Modal.Footer>
@@ -1048,6 +1089,7 @@ const Pendientes = (prop) => {
             onSort={Ordenamiento}
             conditionalRowStyles={conditionalRowStyles}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>

@@ -33,6 +33,7 @@ const ListaAutorizaciones = () => {
   const [estado, setEstado] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -89,6 +90,7 @@ const ListaAutorizaciones = () => {
   }
 
   async function cambiarEstado(id_autorizacion, opcion, estado) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       let result
       if (estado == 0) {
@@ -115,6 +117,7 @@ const ListaAutorizaciones = () => {
     } else if (opcion == 2) {
       setShow(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   const customStyles = {
@@ -242,6 +245,7 @@ const ListaAutorizaciones = () => {
               Cancelar
             </CButton>
             <CButton
+              disabled={desactivarBotonModal}
               color="primary"
               onClick={() => cambiarEstado(idAutorizacion, opcion, estado).then(() => Cancelar(1))}
             >
@@ -276,6 +280,7 @@ const ListaAutorizaciones = () => {
             persistTableHead
             striped={true}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>

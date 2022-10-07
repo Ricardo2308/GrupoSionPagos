@@ -16,7 +16,20 @@ const NoVisados = (prop) => {
     let pagos = []
     getReporteNoVisados(session.id,session.api_token).then((items) => {
       if (mounted) {
-        pagos.push(items.flujos)
+        pagos.push(
+          { 
+            "empresa_nombre" : { type: "string" },
+            "doc_num" : { type: "string"},
+            "cuenta_orgien" : { type: "string"},
+            "en_favor_de" : { type: "string"},
+            "comments" : { type: "string"},
+            "doc_total" : { type: "number"},
+            "doc_date" : { type: "datetime"},
+          }
+        )
+        items.flujos.forEach((item) => {
+          pagos.push(item)
+        })
         var pivot = new WebDataRocks({
           container: '#wdr-component',
           beforetoolbarcreated: customizeToolbar,
@@ -24,7 +37,7 @@ const NoVisados = (prop) => {
           toolbar: true,
           report: {
             dataSource: {
-              data: items.flujos,
+              data: pagos,
             },
             slice: {
               rows: [

@@ -1,7 +1,8 @@
 import React from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { FiFile, FiCreditCard } from 'react-icons/fi'
+import { FiFile, FiCreditCard, FiEye } from 'react-icons/fi'
 import { MenuItem, SubMenu } from 'react-pro-sidebar'
+import { FaFlag } from 'react-icons/fa'
 
 const pagos = [
   {
@@ -10,6 +11,24 @@ const pagos = [
       <MenuItem key="flujosconarchivo" icon={<FiFile />}>
         Archivos Pagos
         <Link to="/flujosconarchivo" />
+      </MenuItem>
+    ),
+  },
+  {
+    objeto: 'Modulo Reasignador',
+    menu: (
+      <MenuItem key="reasignacionresponsable" icon={<FaFlag />}>
+        Reasignación de responsable
+        <Link to="/reasignacion" />
+      </MenuItem>
+    ),
+  },
+  {
+    objeto: 'Modulo Consultor',
+    menu: (
+      <MenuItem key="consultor" icon={<FiEye />}>
+        Consultor de pagos
+        <Link to="/consultor" />
       </MenuItem>
     ),
   },

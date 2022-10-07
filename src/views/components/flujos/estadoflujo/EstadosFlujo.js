@@ -23,6 +23,7 @@ const EstadosFlujo = () => {
   const [idEstado, setIdEstado] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -78,6 +79,7 @@ const EstadosFlujo = () => {
   }
 
   async function eliminarEstado(id_estado, opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       const respuesta = await postEstadoFlujo(
         id_estado,
@@ -96,6 +98,7 @@ const EstadosFlujo = () => {
     } else if (opcion == 2) {
       setShow(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   const customStyles = {
@@ -239,6 +242,7 @@ const EstadosFlujo = () => {
               Cancelar
             </CButton>
             <CButton
+              disabled={desactivarBotonModal}
               color="primary"
               onClick={() => eliminarEstado(idEstado, opcion).then(() => Cancelar(1))}
             >
@@ -268,6 +272,7 @@ const EstadosFlujo = () => {
             persistTableHead
             striped={true}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>

@@ -33,6 +33,7 @@ const Consultar = () => {
   const [estado, setEstado] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -100,6 +101,7 @@ const Consultar = () => {
   }
 
   async function crudPerfil(id_usuariogrupo, id_usuario, opcion, estado) {
+    setDesactivarBotonModal(true)
     let result
     if (opcion == 1) {
       const respuesta = await postUsuarioGrupo(
@@ -141,6 +143,7 @@ const Consultar = () => {
     } else if (opcion == 3) {
       setShow(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   if (session) {
@@ -162,6 +165,7 @@ const Consultar = () => {
               </CButton>
               <CButton
                 color="primary"
+                disabled={desactivarBotonModal}
                 onClick={() =>
                   crudPerfil(idGrupo, location.id_usuario, opcion, estado).then(() => Cancelar(1))
                 }

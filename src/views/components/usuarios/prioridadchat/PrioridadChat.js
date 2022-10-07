@@ -36,6 +36,7 @@ const PrioridadChat = () => {
   const [mensaje, setMensaje] = useState('')
   const [resultsUsuarios, setListUsuarios] = useState([])
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(0)
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -89,6 +90,7 @@ const PrioridadChat = () => {
   }
 
   async function eliminarPrioridad(idPrioridad, opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       const respuesta = await postUsuarioPrioridadMensajes(
         idPrioridad,
@@ -108,6 +110,7 @@ const PrioridadChat = () => {
         setShow(false)
       }
     }
+    setDesactivarBotonModal(false)
   }
 
   async function CambiarNivelPrioridad(idPrioridad, nivel) {
@@ -290,6 +293,7 @@ const PrioridadChat = () => {
             </CButton>
             <CButton
               color="primary"
+              disabled={desactivarBotonModal}
               onClick={() => eliminarPrioridad(idPrioridad, opcion).then(() => Cancelar(1))}
             >
               Aceptar
@@ -365,6 +369,7 @@ const PrioridadChat = () => {
             persistTableHead
             striped={true}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>

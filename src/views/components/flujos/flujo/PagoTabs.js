@@ -101,6 +101,7 @@ const PagoTabs = () => {
   const [showAsignacion, setShowAsignacion] = useState(false)
   const [grupoAsignado, setGrupoAsignado] = useState(0)
   const [usuarioGrupoList, setUsuarioGrupoList] = useState([])
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let listaPagos
@@ -115,6 +116,9 @@ const PagoTabs = () => {
     }
     if (locationSeccion == 'Cancelados') {
       listaPagos = JSON.parse(sessionStorage.getItem('listaPagosCancelados'))
+    }
+    if (locationSeccion == 'Reemplazos') {
+      listaPagos = JSON.parse(sessionStorage.getItem('listaPagosReemplazos'))
     }
     if (locationSeccion == 'Notificaciones') {
       listaPagos = JSON.parse(sessionStorage.getItem('listaPagosNotificaciones'))
@@ -422,6 +426,11 @@ const PagoTabs = () => {
       setOpcion(opcion)
       setMensaje('Está seguro de trasladar el pago a no visado?')
       setShow(true)
+    } else if (opcion == 45) {
+      setIdFlujo(id_flujo)
+      setOpcion(opcion)
+      setMensaje('Está seguro de marcar el pago como reemplazo?')
+      setShow(true)
     } else if (opcion == 5) {
       setIdFlujo(id_flujo)
       setOpcion(opcion)
@@ -436,6 +445,7 @@ const PagoTabs = () => {
   }
 
   async function Aprobar_Rechazar(id_flujo, opcion) {
+    setDesactivarBotonModal(true)
     let idUsuario = 0
     if (session) {
       idUsuario = session.id
@@ -446,7 +456,7 @@ const PagoTabs = () => {
       if (locationEstado == 3) {
         const respuesta = await postFlujos(
           id_flujo,
-          '2',
+          '1',
           '',
           '',
           null,
@@ -484,6 +494,31 @@ const PagoTabs = () => {
             session.api_token,
           )
           if (aprobado == 'OK') {
+            let listaPagos
+            if (locationSeccion == 'Pendientes') {
+              listaPagos = JSON.parse(sessionStorage.getItem('listaPagos'))
+            }
+            if (locationSeccion == 'Autorizados') {
+              listaPagos = JSON.parse(sessionStorage.getItem('listaPagosAutorizados'))
+            }
+            if (locationSeccion == 'Rechazados') {
+              listaPagos = JSON.parse(sessionStorage.getItem('listaPagosRechazados'))
+            }
+            if (locationSeccion == 'Cancelados') {
+              listaPagos = JSON.parse(sessionStorage.getItem('listaPagosCancelados'))
+            }
+            if (locationSeccion == 'Reemplazos') {
+              listaPagos = JSON.parse(sessionStorage.getItem('listaPagosReemplazos'))
+            }
+            if (locationSeccion == 'Notificaciones') {
+              listaPagos = JSON.parse(sessionStorage.getItem('listaPagosNotificaciones'))
+            }
+            if (locationSeccion == 'Mensajes') {
+              listaPagos = JSON.parse(sessionStorage.getItem('listaPagosMensajes'))
+            }
+            let indexActual = listaPagos.findIndex((e) => e.pago == locationPago)
+            setLocationPuedoAutorizar(1)
+            listaPagos[indexActual].PuedoAutorizar = 1
             history.go(-1)
           }
         } else if (respuesta == 'Finalizado') {
@@ -582,6 +617,29 @@ const PagoTabs = () => {
       if (respuestaPausado == 'OK' && detalleFlujoActualizado == 'OK') {
         history.go(-1)
       }
+    } else if (opcion == 45) {
+      setMostrarPausado(false)
+      setMostrarAutorizar(false)
+      const respuestaPausado = await postFlujos(
+        id_flujo,
+        '0',
+        '',
+        '45',
+        null,
+        idUsuario,
+        session.api_token,
+      )
+      const detalleFlujoActualizado = await postFlujoDetalle(
+        id_flujo,
+        '16',
+        idUsuario,
+        'Cambio por reemplazo de pago',
+        '0',
+        session.api_token,
+      )
+      if (respuestaPausado == 'OK' && detalleFlujoActualizado == 'OK') {
+        history.go(-1)
+      }
     } else if (opcion == 5) {
       const respuestaActualizado = await postFlujos(
         id_flujo,
@@ -646,6 +704,7 @@ const PagoTabs = () => {
         }
       }
     }
+    setDesactivarBotonModal(false)
   }
 
   const MostrarAsignacionGrupo = (event) => {
@@ -662,6 +721,7 @@ const PagoTabs = () => {
   }
 
   async function AsignarGrupo() {
+    setDesactivarBotonModal(true)
     const respuesta = await postFlujos(
       idFlujo,
       '',
@@ -697,6 +757,9 @@ const PagoTabs = () => {
         if (locationSeccion == 'Cancelados') {
           listaPagos = JSON.parse(sessionStorage.getItem('listaPagosCancelados'))
         }
+        if (locationSeccion == 'Reemplazos') {
+          listaPagos = JSON.parse(sessionStorage.getItem('listaPagosReemplazos'))
+        }
         if (locationSeccion == 'Notificaciones') {
           listaPagos = JSON.parse(sessionStorage.getItem('listaPagosNotificaciones'))
         }
@@ -726,6 +789,9 @@ const PagoTabs = () => {
         if (locationSeccion == 'Cancelados') {
           sessionStorage.setItem('listaPagosCancelados', JSON.stringify(listaPagos))
         }
+        if (locationSeccion == 'Reemplazos') {
+          sessionStorage.setItem('listaPagosReemplazos', JSON.stringify(listaPagos))
+        }
         if (locationSeccion == 'Notificaciones') {
           sessionStorage.setItem('listaPagosNotificaciones', JSON.stringify(listaPagos))
         }
@@ -744,6 +810,7 @@ const PagoTabs = () => {
         setKeyDetalleFlujo(keyDetalleFlujo + 1)
       }
     }
+    setDesactivarBotonModal(false)
   }
 
   if (session) {
@@ -765,6 +832,7 @@ const PagoTabs = () => {
                   Cancelar
                 </CButton>
                 <CButton
+                  disabled={desactivarBotonModal}
                   color="primary"
                   onClick={() => Aprobar_Rechazar(idFlujo, opcion).then(() => Cancelar(1))}
                 >
@@ -833,6 +901,14 @@ const PagoTabs = () => {
                       onClick={() => mostrarModal(locationIdFlujo, 44)}
                     >
                       No visado
+                    </CButton>{' '}
+                    <CButton
+                      className={!MostrarPausado ? 'd-none' : ''}
+                      color="secondary"
+                      size="sm"
+                      onClick={() => mostrarModal(locationIdFlujo, 45)}
+                    >
+                      Reemplazo de pago
                     </CButton>{' '}
                     <CButton
                       className={!MostrarActualizar ? 'd-none' : ''}
@@ -1048,6 +1124,7 @@ const PagoTabs = () => {
                   Cancelar
                 </CButton>
                 <CButton
+                  disabled={desactivarBotonModal}
                   color="primary"
                   onClick={() => Aprobar_Rechazar(idFlujo, opcion).then(() => Cancelar(1))}
                 >
@@ -1065,6 +1142,7 @@ const PagoTabs = () => {
                   Cancelar
                 </CButton>
                 <CButton
+                  disabled={desactivarBotonModal}
                   color="primary"
                   onClick={() => AsignarGrupo().then(() => CancelarAsignacion())}
                 >

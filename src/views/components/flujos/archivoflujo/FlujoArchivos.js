@@ -13,11 +13,8 @@ import 'react-data-table-component-extensions/dist/index.css'
 
 const FlujoArchivos = () => {
   const history = useHistory()
-  const [time, setTime] = useState(null)
   const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
-  const [show, setShow] = useState(false)
-  const [mensaje, setMensaje] = useState('')
   const filteredItems = results
 
   useEffect(() => {
@@ -29,22 +26,6 @@ const FlujoArchivos = () => {
     })
     return () => (mounted = false)
   }, [])
-
-  async function Cancelar(opcion) {
-    if (opcion == 1) {
-      setShow(false)
-    } else if (opcion == 2) {
-      let idUsuario = 0
-      if (session) {
-        idUsuario = session.id
-      }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
-      if (respuesta === 'OK') {
-        clear()
-        history.push('/')
-      }
-    }
-  }
 
   const customStyles = {
     headRow: {
@@ -149,8 +130,10 @@ const FlujoArchivos = () => {
     },
     {
       name: 'Monto',
-      selector: (row) => formatear(row.doc_total, row.doc_curr),
+      selector: (row) => row.doc_total,
+      cell: (row) => formatear(row.doc_total, row.doc_curr),
       center: true,
+      sortable: true,
       style: {
         fontSize: '11px',
       },
@@ -192,20 +175,6 @@ const FlujoArchivos = () => {
   if (session) {
     return (
       <>
-        <Modal responsive variant="primary" show={show} onHide={() => Cancelar(2)} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirmación</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>{mensaje}</Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => Cancelar(2)}>
-              Cancelar
-            </Button>
-            <Button variant="primary" onClick={() => Cancelar(1)}>
-              Aceptar
-            </Button>
-          </Modal.Footer>
-        </Modal>
         <DataTableExtensions {...tableData}>
           <DataTable
             columns={columns}
@@ -218,6 +187,7 @@ const FlujoArchivos = () => {
             persistTableHead
             striped={true}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>

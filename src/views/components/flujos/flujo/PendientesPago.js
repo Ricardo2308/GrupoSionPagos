@@ -47,6 +47,7 @@ const PendientesPago = (prop) => {
   const [camposOcultos, setListOcultos] = useState([])
   const [anchoConcepto, setAnchoConcepto] = useState('285px')
   const [anchoConcepto2, setAnchoConcepto2] = useState('270px')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
   const filteredItems = results
 
   const handleClose = () => setShow(false)
@@ -125,9 +126,9 @@ const PendientesPago = (prop) => {
 
   const handleInput = (event) => {
     if (event.target.checked) {
-      sessionStorage.setItem(event.target.value, 'true')
+      sessionStorage.setItem('Comepnsar_' + event.target.value, 'true')
     } else {
-      sessionStorage.setItem(event.target.value, 'false')
+      sessionStorage.setItem('Comepnsar_' + event.target.value, 'false')
     }
   }
 
@@ -136,11 +137,12 @@ const PendientesPago = (prop) => {
   }
 
   async function Compensar() {
+    setDesactivarBotonModal(true)
     let bandera = 1
     const respuesta = await postFlujos('0', '', '', '2', pagos, session.id, session.api_token)
     if (respuesta === 'OK') {
       for (let pago of pagos) {
-        sessionStorage.removeItem(pago)
+        sessionStorage.removeItem('Comepnsar_' + pago)
         const pagado = await postFlujoDetalle(
           pago,
           '7',
@@ -179,6 +181,7 @@ const PendientesPago = (prop) => {
         `Los pagos ${respuesta} no fueron compensados debido a que sus códigos bancarios no coinciden con ninguno de los bancos existentes.`,
       )
     }
+    setDesactivarBotonModal(false)
   }
 
   const customStyles = {
@@ -302,8 +305,10 @@ const PendientesPago = (prop) => {
         },
         {
           name: 'Monto',
-          selector: (row) => formatear(row.doc_total, row.doc_curr),
+          selector: (row) => row.doc_total,
+          cell: (row) => formatear(row.doc_total, row.doc_curr),
           center: true,
+          sortable: true,
           style: {
             fontSize: '11px',
           },
@@ -353,7 +358,7 @@ const PendientesPago = (prop) => {
                     value={row.id_flujo}
                     onChange={handleInput}
                     style={{ width: '18px', height: '18px' }}
-                    defaultChecked={estaChequeado(row.id_flujo)}
+                    defaultChecked={estaChequeado('Comepnsar_' + row.id_flujo)}
                   />
                 </div>
               )
@@ -368,7 +373,7 @@ const PendientesPago = (prop) => {
                     value={row.id_flujo}
                     onChange={handleInput}
                     style={{ width: '18px', height: '18px' }}
-                    defaultChecked={estaChequeado(row.id_flujo)}
+                    defaultChecked={estaChequeado('Comepnsar_' + row.id_flujo)}
                   />
                   sin cheque
                 </div>
@@ -449,8 +454,10 @@ const PendientesPago = (prop) => {
         },
         {
           name: 'Monto',
-          selector: (row) => formatear(row.doc_total, row.doc_curr),
+          selector: (row) => row.doc_total,
+          cell: (row) => formatear(row.doc_total, row.doc_curr),
           center: true,
+          sortable: true,
           style: {
             fontSize: '11px',
           },
@@ -498,12 +505,13 @@ const PendientesPago = (prop) => {
 
   function mostrarModal() {
     let pagos = []
-    var markedCheckbox = document.getElementsByName('pagos')
-    for (var checkbox of markedCheckbox) {
-      if (checkbox.checked) {
-        pagos.push(checkbox.value)
+    //var markedCheckbox = document.getElementsByName('pagos')
+    //for (var checkbox of markedCheckbox) {
+    filteredItems.map((row) => {
+      if (estaChequeado('Comepnsar_' + row.id_flujo)) {
+        pagos.push(row.id_flujo)
       }
-    }
+    })
     if (pagos.length > 0) {
       setShow(true)
       setPagos(pagos)
@@ -544,7 +552,11 @@ const PendientesPago = (prop) => {
             <Button variant="secondary" onClick={handleClose}>
               Cancelar
             </Button>
-            <Button variant="primary" onClick={() => Compensar().then(handleClose)}>
+            <Button
+              disabled={desactivarBotonModal}
+              variant="primary"
+              onClick={() => Compensar().then(handleClose)}
+            >
               Aceptar
             </Button>
           </Modal.Footer>
@@ -573,6 +585,7 @@ const PendientesPago = (prop) => {
             persistTableHead
             striped={true}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>

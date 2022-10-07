@@ -29,6 +29,7 @@ const Cards = () => {
   const [idCondicion, setIdCondicion] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -68,6 +69,7 @@ const Cards = () => {
   }
 
   async function eliminarCondicion(id_condicion, opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       const respuesta = await postCondicionAutorizacion(
         id_condicion,
@@ -86,6 +88,7 @@ const Cards = () => {
     } else if (opcion == 2) {
       setShow(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   async function Cancelar(opcion) {
@@ -121,6 +124,7 @@ const Cards = () => {
               Cancelar
             </CButton>
             <CButton
+              disabled={desactivarBotonModal}
               color="primary"
               onClick={() => eliminarCondicion(idCondicion, opcion).then(() => Cancelar(1))}
             >

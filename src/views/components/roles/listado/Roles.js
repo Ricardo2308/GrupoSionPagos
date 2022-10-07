@@ -23,6 +23,7 @@ const Roles = () => {
   const [idRol, setIdRol] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -78,6 +79,7 @@ const Roles = () => {
   }
 
   async function eliminarRol(id, opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       const respuesta = await postCrudRoles(id, '', '', '', '2', session.id, session.api_token)
       if (respuesta === 'OK') {
@@ -88,6 +90,7 @@ const Roles = () => {
     } else if (opcion == 2) {
       setShow(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   const customStyles = {
@@ -260,6 +263,7 @@ const Roles = () => {
             </CButton>
             <CButton
               color="primary"
+              disabled={desactivarBotonModal}
               onClick={() => eliminarRol(idRol, opcion).then(() => Cancelar(1))}
             >
               Aceptar
@@ -288,6 +292,7 @@ const Roles = () => {
             persistTableHead
             striped={true}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>

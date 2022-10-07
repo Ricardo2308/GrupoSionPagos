@@ -30,6 +30,7 @@ const ConsultarPR = () => {
   const [estado, setEstado] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -57,6 +58,7 @@ const ConsultarPR = () => {
   }
 
   async function crudCondicionGrupo(id_condicion, id_condiciongrupo, opcion, estado) {
+    setDesactivarBotonModal(true)
     let result
     if (opcion == 1) {
       const respuesta = await postCondicionGrupo(
@@ -98,6 +100,7 @@ const ConsultarPR = () => {
     } else if (opcion == 3) {
       setShow(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   async function Cancelar(opcion) {
@@ -130,6 +133,7 @@ const ConsultarPR = () => {
                 Cancelar
               </CButton>
               <CButton
+                disabled={desactivarBotonModal}
                 color="primary"
                 onClick={() =>
                   crudCondicionGrupo(location.id_condicion, idGrupo, opcion, estado).then(() =>

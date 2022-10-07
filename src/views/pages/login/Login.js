@@ -184,6 +184,7 @@ const Login = () => {
                                 amarillo: amarillo,
                                 cantidadIngresos: item.cantidadIngresos,
                                 api_token: itemsLogin,
+                                grupos: item.grupos,
                               }
                               const jwt = sign(data, secret)
                               saveJWT(jwt)

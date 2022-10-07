@@ -23,6 +23,7 @@ const UsuarioRestriccionTexto = () => {
   const [idRol, setIdRol] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -78,6 +79,7 @@ const UsuarioRestriccionTexto = () => {
   }
 
   async function eliminarRol(id, opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       const respuesta = await postCrudUsuarioRestriccionTexto(
         id,
@@ -95,6 +97,7 @@ const UsuarioRestriccionTexto = () => {
     } else if (opcion == 2) {
       setShow(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   const customStyles = {
@@ -229,6 +232,7 @@ const UsuarioRestriccionTexto = () => {
             </CButton>
             <CButton
               color="primary"
+              disabled={desactivarBotonModal}
               onClick={() => eliminarRol(idRol, opcion).then(() => Cancelar(1))}
             >
               Aceptar
@@ -257,6 +261,7 @@ const UsuarioRestriccionTexto = () => {
             persistTableHead
             striped={true}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>

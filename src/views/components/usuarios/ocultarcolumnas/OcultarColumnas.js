@@ -36,6 +36,7 @@ const OcultarColumnas = () => {
   const [mensaje, setMensaje] = useState('')
   const [resultsUsuarios, setListUsuarios] = useState([])
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(0)
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -75,6 +76,7 @@ const OcultarColumnas = () => {
   }
 
   async function eliminarOcultar(idOcultar, opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       const respuesta = await postOcultarColumnaUsuario(
         idOcultar,
@@ -93,6 +95,7 @@ const OcultarColumnas = () => {
         setShow(false)
       }
     }
+    setDesactivarBotonModal(false)
   }
 
   async function Cancelar(opcion) {
@@ -221,6 +224,7 @@ const OcultarColumnas = () => {
             </CButton>
             <CButton
               color="primary"
+              disabled={desactivarBotonModal}
               onClick={() => eliminarOcultar(idOcultar, opcion).then(() => Cancelar(1))}
             >
               Aceptar
@@ -249,6 +253,7 @@ const OcultarColumnas = () => {
             persistTableHead
             striped={true}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>

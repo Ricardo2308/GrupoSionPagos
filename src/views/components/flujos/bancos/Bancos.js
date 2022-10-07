@@ -33,6 +33,7 @@ const Bancos = () => {
       item.direccion.toLowerCase().includes(filterText.toLowerCase()) ||
       item.Nombre.toLowerCase().includes(filterText.toLowerCase()),
   )
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -230,6 +231,7 @@ const Bancos = () => {
   }
 
   async function eliminarBanco(id_banco, opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       const respuesta = await postCrudBancos(
         id_banco,
@@ -251,6 +253,7 @@ const Bancos = () => {
     } else if (opcion == 2) {
       setShow(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   const handleClear = () => {
@@ -281,6 +284,7 @@ const Bancos = () => {
               Cancelar
             </CButton>
             <CButton
+              disabled={desactivarBotonModal}
               color="primary"
               onClick={() => eliminarBanco(idBanco, opcion).then(() => Cancelar(1))}
             >
@@ -310,6 +314,7 @@ const Bancos = () => {
             persistTableHead
             striped={true}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>

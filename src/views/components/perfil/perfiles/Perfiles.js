@@ -32,6 +32,7 @@ const Perfiles = () => {
   const [idPerfil, setIdPerfil] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -87,6 +88,7 @@ const Perfiles = () => {
   }
 
   async function eliminarPerfil(id_perfil, opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       const respuesta = await postCrudPerfil(id_perfil, '', '', '2', session.id, session.api_token)
       if (respuesta === 'OK') {
@@ -97,6 +99,7 @@ const Perfiles = () => {
     } else if (opcion == 2) {
       setShow(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   const customStyles = {
@@ -259,6 +262,7 @@ const Perfiles = () => {
               Cancelar
             </CButton>
             <CButton
+              disabled={desactivarBotonModal}
               color="primary"
               onClick={() => eliminarPerfil(idPerfil, opcion).then(() => Cancelar(1))}
             >
@@ -288,6 +292,7 @@ const Perfiles = () => {
             persistTableHead
             striped={true}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>

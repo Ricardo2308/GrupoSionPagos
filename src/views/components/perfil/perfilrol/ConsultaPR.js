@@ -30,6 +30,7 @@ const ConsultarPR = () => {
   const [estado, setEstado] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -73,6 +74,7 @@ const ConsultarPR = () => {
   }
 
   async function crudPerfilRol(id_perfil, id_perfilrol, opcion, estado) {
+    setDesactivarBotonModal(true)
     let result
     if (opcion == 1) {
       const respuesta = await postPerfilRol(
@@ -114,6 +116,7 @@ const ConsultarPR = () => {
     } else if (opcion == 3) {
       setShow(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   if (session) {
@@ -130,6 +133,7 @@ const ConsultarPR = () => {
                 Cancelar
               </CButton>
               <CButton
+                disabled={desactivarBotonModal}
                 color="primary"
                 onClick={() =>
                   crudPerfilRol(location.id_perfil, idRol, opcion, estado).then(() => Cancelar(1))

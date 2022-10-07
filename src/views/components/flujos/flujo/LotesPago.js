@@ -239,6 +239,7 @@ const LotesPago = (prop) => {
               persistTableHead
               striped={true}
               dense
+              paginationRowsPerPageOptions={[25, 50, 100, 300]}
             />
           </DataTableExtensions>
         </div>

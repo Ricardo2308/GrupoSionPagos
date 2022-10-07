@@ -59,22 +59,6 @@ const General = () => {
     }
     return result
   }
-
-  async function Cancelar(opcion) {
-    if (opcion == 1) {
-      setShow(false)
-    } else if (opcion == 2) {
-      let idUsuario = 0
-      if (session) {
-        idUsuario = session.id
-      }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
-      if (respuesta === 'OK') {
-        clear()
-        history.push('/')
-      }
-    }
-  }
   const customStyles = {
     headRow: {
       style: {
@@ -172,20 +156,6 @@ const General = () => {
     }
     return (
       <>
-        <Modal responsive variant="primary" show={show} onHide={() => Cancelar(2)} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirmación</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>{mensaje}</Modal.Body>
-          <Modal.Footer>
-            <CButton color="secondary" onClick={() => Cancelar(2)}>
-              Cancelar
-            </CButton>
-            <CButton color="primary" onClick={() => Cancelar(1)}>
-              Aceptar
-            </CButton>
-          </Modal.Footer>
-        </Modal>
         <DataTableExtensions {...tableData}>
           <DataTable
             columns={columns}
@@ -198,6 +168,7 @@ const General = () => {
             persistTableHead
             striped={true}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>

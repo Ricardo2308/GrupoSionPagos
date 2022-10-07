@@ -22,7 +22,24 @@ const PendientesValidacion = (prop) => {
     let pagos = []
     getPendientesValidacionReporte(session.id,session.api_token).then((items) => {
       if (mounted) {
-        pagos.push(items.flujos)
+        pagos.push(
+          { 
+            "empresa_nombre" : { type: "string" },
+            "doc_num" : { type: "string"},
+            "tipo" : { type: "string"},
+            "doc_date" : { type: "datetime"},
+            "en_favor_de" : { type: "string"},
+            "comments" : { type: "string"},
+            "doc_total" : { type: "number"},
+            "fecha_asignacion" : { type: "datetime"},
+            "nombre_usuario" : { type: "string"},
+            "nivel" : { type: "string"},
+            "dias" : { type: "number"},
+          }
+        )
+        items.flujos.forEach((item) => {
+          pagos.push(item)
+        })
         var pivot = new WebDataRocks({
           container: '#wdr-component',
           beforetoolbarcreated: customizeToolbar,
@@ -30,7 +47,7 @@ const PendientesValidacion = (prop) => {
           toolbar: true,
           report: {
             dataSource: {
-              data: items.flujos,
+              data: pagos,
             },
             slice: {
               rows: [
@@ -41,6 +58,10 @@ const PendientesValidacion = (prop) => {
                 {
                   uniqueName: 'doc_num',
                   caption: 'Documento',
+                },
+                {
+                  uniqueName: 'tipo',
+                  caption: 'Tipo',
                 },
                 {
                   uniqueName: 'doc_date',
@@ -60,11 +81,15 @@ const PendientesValidacion = (prop) => {
                 },
                 {
                   uniqueName: 'fecha_asignacion',
-                  caption: 'Fecha Hora Asignación',
+                  caption: 'Fecha último movimiento',
                 },
                 {
                   uniqueName: 'nombre_usuario',
                   caption: 'Validador',
+                },
+                {
+                  uniqueName: 'nivel',
+                  caption: 'Nivel actual',
                 },
                 {
                   uniqueName: 'dias',
@@ -143,35 +168,9 @@ const PendientesValidacion = (prop) => {
     }
   }
 
-  async function Salir() {
-    let idUsuario = 0
-    if (session) {
-      idUsuario = session.id
-    }
-    const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
-    if (respuesta === 'OK') {
-      clear()
-      history.push('/')
-    }
-  }
-
   if (session) {
     return (
       <>
-        <Modal responsive variant="primary" show={show} onHide={() => Salir()} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirmación</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>{mensaje}</Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => Salir()}>
-              Cancelar
-            </Button>
-            <Button variant="primary" onClick={handleClose}>
-              Aceptar
-            </Button>
-          </Modal.Footer>
-        </Modal>
         <div id="wdr-component"></div>
       </>
     )

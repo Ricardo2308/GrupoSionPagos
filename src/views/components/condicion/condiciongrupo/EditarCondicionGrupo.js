@@ -24,10 +24,8 @@ import {
 const EditarCondicionGrupo = () => {
   const history = useHistory()
   const location = useLocation()
-  const [time, setTime] = useState(null)
   const { session, clear } = useSession('PendrogonIT-Session')
   const [show, setShow] = useState(false)
-  const [showM, setShowM] = useState(false)
   const [results, setList] = useState([])
   const [results1, setList1] = useState([])
   const [mensaje, setMensaje] = useState('')
@@ -102,41 +100,11 @@ const EditarCondicionGrupo = () => {
     }
   }
 
-  async function Cancelar(opcion) {
-    if (opcion == 1) {
-      setShowM(false)
-    } else if (opcion == 2) {
-      let idUsuario = 0
-      if (session) {
-        idUsuario = session.id
-      }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
-      if (respuesta === 'OK') {
-        clear()
-        history.push('/')
-      }
-    }
-  }
-
   if (session) {
     if (location.id_condiciongrupo) {
       return (
         <div style={{ flexDirection: 'row' }}>
           <CContainer>
-            <Modal responsive variant="primary" show={showM} onHide={() => Cancelar(2)} centered>
-              <Modal.Header closeButton>
-                <Modal.Title>Confirmación</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>{mensaje}</Modal.Body>
-              <Modal.Footer>
-                <CButton color="secondary" onClick={() => Cancelar(2)}>
-                  Cancelar
-                </CButton>
-                <CButton color="primary" onClick={() => Cancelar(1)}>
-                  Aceptar
-                </CButton>
-              </Modal.Footer>
-            </Modal>
             <Alert show={show} variant={color} onClose={() => setShow(false)} dismissible>
               <Alert.Heading>{titulo}</Alert.Heading>
               <p>{mensaje}</p>

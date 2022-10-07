@@ -186,8 +186,10 @@ const SolicitudRetorno = (prop) => {
     },
     {
       name: 'Monto',
-      selector: (row) => formatear(row.doc_total, row.doc_curr),
+      selector: (row) => row.doc_total,
+      cell: (row) => formatear(row.doc_total, row.doc_curr),
       center: true,
+      sortable: true,
       style: {
         fontSize: '11px',
       },
@@ -257,6 +259,7 @@ const SolicitudRetorno = (prop) => {
               persistTableHead
               striped={true}
               dense
+              paginationRowsPerPageOptions={[25, 50, 100, 300]}
             />
           </DataTableExtensions>
         </div>

@@ -148,7 +148,7 @@ const ArchivosFlujo = (prop) => {
                       <CTableDataCell className="text-center">{i + 1}</CTableDataCell>
                       <CTableDataCell className="text-center">{item.nombre_usuario}</CTableDataCell>
                       <CTableDataCell className="text-center">{item.descripcion}</CTableDataCell>
-                      <CTableDataCell className="text-center">{estado}aqui</CTableDataCell>
+                      <CTableDataCell className="text-center">{estado}</CTableDataCell>
                       <CTableDataCell className="text-center">
                         <CButton
                           color="danger"

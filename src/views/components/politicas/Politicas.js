@@ -32,6 +32,7 @@ const Politicas = () => {
   const [idPolitica, setIdPolitica] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -71,6 +72,7 @@ const Politicas = () => {
   }
 
   async function eliminarPolitica(idPolitica, opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       const respuesta = await postCrudPoliticas(
         idPolitica,
@@ -90,6 +92,7 @@ const Politicas = () => {
         setShow(false)
       }
     }
+    setDesactivarBotonModal(false)
   }
   async function Cancelar(opcion) {
     if (opcion == 1) {
@@ -248,6 +251,7 @@ const Politicas = () => {
               Cancelar
             </CButton>
             <CButton
+              disabled={desactivarBotonModal}
               color="primary"
               onClick={() => eliminarPolitica(idPolitica, opcion).then(() => Cancelar(1))}
             >
@@ -277,6 +281,7 @@ const Politicas = () => {
             persistTableHead
             striped={true}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>

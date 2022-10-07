@@ -32,15 +32,13 @@ import 'material-design-icons/iconfont/material-icons.css'
 const NuevoArchivoFlujo = (props) => {
   const history = useHistory()
   const location = useLocation()
-  const [time, setTime] = useState(null)
   const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
   const [show, setShow] = useState(false)
-  const [showM, setShowM] = useState(false)
   const [mensaje, setMensaje] = useState('')
   const [color, setColor] = useState('danger')
   const [titulo, setTitulo] = useState('Error!')
-  const [descripcion, setDescripcion] = useState(location.pago)
+  const [descripcion, setDescripcion] = useState(location.concepto)
   const [archivos, setArchivos] = useState([])
   const [mostrar, setMostrar] = useState(false)
   const [urlArchivo, setUrlArchivo] = useState('https://arxiv.org/pdf/quant-ph/0410100.pdf')
@@ -53,6 +51,7 @@ const NuevoArchivoFlujo = (props) => {
   const [mensajeF, setMensajeF] = useState('')
   const [archivoEliminar, setArchivoEliminar] = useState(0)
   const [MostrarFinalizarCarga, setMostrarFinalizarCarga] = useState(false)
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -187,21 +186,6 @@ const NuevoArchivoFlujo = (props) => {
     }
   }
 
-  async function Cancelar(opcion) {
-    if (opcion == 1) {
-      setShowM(false)
-    } else if (opcion == 2) {
-      let idUsuario = 0
-      if (session) {
-        idUsuario = session.id
-      }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
-      if (respuesta === 'OK') {
-        clear()
-        history.push('/')
-      }
-    }
-  }
   const handlerUploadFile = (file) => {
     setArchivos([...archivos, file])
   }
@@ -361,6 +345,7 @@ const NuevoArchivoFlujo = (props) => {
   }
 
   async function Accion(opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       const respuesta = await postArchivoFlujo(
         archivoEliminar,
@@ -384,6 +369,7 @@ const NuevoArchivoFlujo = (props) => {
     } else if (opcion == 4) {
       setShowMF(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   if (session) {
@@ -412,27 +398,6 @@ const NuevoArchivoFlujo = (props) => {
           <div style={{ flexDirection: 'row' }}>
             <CContainer>
               <Modal
-                key="showM"
-                responsive
-                variant="primary"
-                show={showM}
-                onHide={() => Cancelar(2)}
-                centered
-              >
-                <Modal.Header closeButton>
-                  <Modal.Title>Confirmación</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>{mensaje}</Modal.Body>
-                <Modal.Footer>
-                  <CButton color="secondary" onClick={() => Cancelar(2)}>
-                    Cancelar
-                  </CButton>
-                  <CButton color="primary" onClick={() => Cancelar(1)}>
-                    Aceptar
-                  </CButton>
-                </Modal.Footer>
-              </Modal>
-              <Modal
                 key="showME"
                 responsive
                 variant="primary"
@@ -448,7 +413,11 @@ const NuevoArchivoFlujo = (props) => {
                   <CButton color="secondary" onClick={() => Accion(2)}>
                     Cancelar
                   </CButton>
-                  <CButton color="primary" onClick={() => Accion(1)}>
+                  <CButton
+                    disabled={desactivarBotonModal}
+                    color="primary"
+                    onClick={() => Accion(1)}
+                  >
                     Aceptar
                   </CButton>
                 </Modal.Footer>
@@ -469,7 +438,11 @@ const NuevoArchivoFlujo = (props) => {
                   <CButton color="secondary" onClick={() => Accion(4)}>
                     Cancelar
                   </CButton>
-                  <CButton color="primary" onClick={() => Accion(3)}>
+                  <CButton
+                    disabled={desactivarBotonModal}
+                    color="primary"
+                    onClick={() => Accion(3)}
+                  >
                     Aceptar
                   </CButton>
                 </Modal.Footer>
@@ -493,7 +466,7 @@ const NuevoArchivoFlujo = (props) => {
                         placeholder="Descripción"
                         name="descripcion"
                         className="form-control"
-                        defaultValue={location.pago}
+                        defaultValue={location.concepto}
                         onChange={handleInput}
                       />
                     </CInputGroup>
@@ -538,6 +511,7 @@ const NuevoArchivoFlujo = (props) => {
                       persistTableHead
                       striped={true}
                       dense
+                      paginationRowsPerPageOptions={[25, 50, 100, 300]}
                     />
                   </DataTableExtensions>
                 </CCardBody>

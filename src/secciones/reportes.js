@@ -30,6 +30,10 @@ const reportes = (
       No Visados
       <Link to="/reportenovisados" />
     </MenuItem>
+    <MenuItem key="Reportes7" icon={<HiOutlineDocumentReport />}>
+      Reemplazos
+      <Link to="/reportereemplazos" />
+    </MenuItem>
   </SubMenu>
 )
 

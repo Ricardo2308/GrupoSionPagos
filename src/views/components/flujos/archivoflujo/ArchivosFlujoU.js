@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import ReactDOM from 'react-dom'
 import DataTable, { defaultThemes } from 'react-data-table-component'
-import { Modal, Button } from 'react-bootstrap'
-import { useIdleTimer } from 'react-idle-timer'
+import { Button } from 'react-bootstrap'
 import { getArchivosFlujo } from '../../../../services/getArchivosFlujo'
-import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import { useSession } from 'react-use-session'
 import { useHistory, useLocation } from 'react-router-dom'
 import { FaRegFilePdf, FaArrowLeft } from 'react-icons/fa'
@@ -17,13 +15,10 @@ import 'material-design-icons/iconfont/material-icons.css'
 const ArchivosFlujo = () => {
   const history = useHistory()
   const location = useLocation()
-  const [time, setTime] = useState(null)
   const { session, clear } = useSession('PendrogonIT-Session')
   const [results, setList] = useState([])
-  const [show, setShow] = useState(false)
   const [mostrar, setMostrar] = useState(false)
   const [urlArchivo, setUrlArchivo] = useState('https://arxiv.org/pdf/quant-ph/0410100.pdf')
-  const [mensaje, setMensaje] = useState('')
   const [titulo, setTitulo] = useState('')
   const filteredItems = results
   const cerrarPDF = () => setMostrar(false)
@@ -65,22 +60,6 @@ const ArchivosFlujo = () => {
     })
     return () => (mounted = false)
   }, [])
-
-  async function Cancelar(opcion) {
-    if (opcion == 1) {
-      setShow(false)
-    } else if (opcion == 2) {
-      let idUsuario = 0
-      if (session) {
-        idUsuario = session.id
-      }
-      const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
-      if (respuesta === 'OK') {
-        clear()
-        history.push('/')
-      }
-    }
-  }
 
   const customStyles = {
     headRow: {
@@ -167,20 +146,6 @@ const ArchivosFlujo = () => {
       return (
         <>
           {mostrar && ReactDOM.createPortal(modalBody(), document.body)}
-          <Modal responsive variant="primary" show={show} onHide={() => Cancelar(2)} centered>
-            <Modal.Header closeButton>
-              <Modal.Title>Confirmación</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>{mensaje}</Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={() => Cancelar(2)}>
-                Cancelar
-              </Button>
-              <Button variant="primary" onClick={() => Cancelar(1)}>
-                Aceptar
-              </Button>
-            </Modal.Footer>
-          </Modal>
           <div className="float-left" style={{ marginBottom: '10px' }}>
             <Button variant="primary" size="sm" onClick={() => history.goBack()}>
               <FaArrowLeft />
@@ -199,6 +164,7 @@ const ArchivosFlujo = () => {
               persistTableHead
               striped={true}
               dense
+              paginationRowsPerPageOptions={[25, 50, 100, 300]}
             />
           </DataTableExtensions>
         </>

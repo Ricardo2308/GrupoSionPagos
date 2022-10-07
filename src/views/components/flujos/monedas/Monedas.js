@@ -32,6 +32,7 @@ const Monedas = () => {
   const [idMoneda, setIdMoneda] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -87,6 +88,7 @@ const Monedas = () => {
   }
 
   async function eliminarMoneda(id_moneda, opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       const respuesta = await postCrudMonedas(
         id_moneda,
@@ -105,6 +107,7 @@ const Monedas = () => {
     } else if (opcion == 2) {
       setShow(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   const customStyles = {
@@ -240,6 +243,7 @@ const Monedas = () => {
               Cancelar
             </CButton>
             <CButton
+              disabled={desactivarBotonModal}
               color="primary"
               onClick={() => eliminarMoneda(idMoneda, opcion).then(() => Cancelar(1))}
             >
@@ -269,6 +273,7 @@ const Monedas = () => {
             persistTableHead
             striped={true}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>

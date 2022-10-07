@@ -22,7 +22,22 @@ const Pendientes = (prop) => {
     let pagos = []
     getPendientesReporte(session.id,session.api_token).then((items) => {
       if (mounted) {
-        pagos.push(items.flujos)
+        pagos.push(
+          { 
+            "doc_num" : { type: "string"},
+            "doc_date" : { type: "datetime"},
+            "comments" : { type: "string"},
+            "tipo" : { type: "string"},
+            "estado" : { type: "string"},
+            "estado" : { type: "string"},
+            "dias_credito" : { type: "number"},
+            "dias_vencimiento" : { type: "number"},
+            "porcentaje" : { type: "string"},
+          }
+        )
+        items.flujos.forEach((item) => {
+          pagos.push(item)
+        })
         var pivot = new WebDataRocks({
           container: '#wdr-component',
           beforetoolbarcreated: customizeToolbar,
@@ -30,7 +45,7 @@ const Pendientes = (prop) => {
           toolbar: true,
           report: {
             dataSource: {
-              data: items.flujos,
+              data: pagos,
             },
             slice: {
               rows: [
@@ -139,35 +154,9 @@ const Pendientes = (prop) => {
     }
   }
 
-  async function Salir() {
-    let idUsuario = 0
-    if (session) {
-      idUsuario = session.id
-    }
-    const respuesta = await postSesionUsuario(idUsuario, null, null, '2', session.api_token)
-    if (respuesta === 'OK') {
-      clear()
-      history.push('/')
-    }
-  }
-
   if (session) {
     return (
       <>
-        <Modal responsive variant="primary" show={show} onHide={() => Salir()} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirmación</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>{mensaje}</Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => Salir()}>
-              Cancelar
-            </Button>
-            <Button variant="primary" onClick={handleClose}>
-              Aceptar
-            </Button>
-          </Modal.Footer>
-        </Modal>
         <div id="wdr-component"></div>
       </>
     )

@@ -32,6 +32,7 @@ const BloqueoNotificacionCorreo = () => {
   const [idSinNotificacionCorreo, setIdSinNotificacionCorreo] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -71,6 +72,7 @@ const BloqueoNotificacionCorreo = () => {
   }
 
   async function eliminarPrioridad(idSinNotificacionCorreo, opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       const respuesta = await postUsuarioSinNotificacionCorreo(
         idSinNotificacionCorreo,
@@ -89,6 +91,7 @@ const BloqueoNotificacionCorreo = () => {
         setShow(false)
       }
     }
+    setDesactivarBotonModal(false)
   }
 
   async function Cancelar(opcion) {
@@ -209,6 +212,7 @@ const BloqueoNotificacionCorreo = () => {
             </CButton>
             <CButton
               color="primary"
+              disabled={desactivarBotonModal}
               onClick={() =>
                 eliminarPrioridad(idSinNotificacionCorreo, opcion).then(() => Cancelar(1))
               }
@@ -248,6 +252,7 @@ const BloqueoNotificacionCorreo = () => {
             persistTableHead
             striped={true}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>

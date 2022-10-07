@@ -23,6 +23,7 @@ const Usuarios = () => {
   const [idUsuario, setIdUsuario] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -62,6 +63,7 @@ const Usuarios = () => {
   }
 
   async function eliminarUsuario(id, opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       const respuesta = await postEditarUsuario(
         id,
@@ -300,6 +302,7 @@ const Usuarios = () => {
             </CButton>
             <CButton
               color="primary"
+              disabled={desactivarBotonModal}
               onClick={() => eliminarUsuario(idUsuario, opcion).then(() => Cancelar(1))}
             >
               Aceptar
@@ -328,6 +331,7 @@ const Usuarios = () => {
             persistTableHead
             striped={true}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>

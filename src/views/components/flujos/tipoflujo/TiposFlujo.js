@@ -29,6 +29,7 @@ const TiposFlujo = () => {
   const [idTipo, setIdTipo] = useState(0)
   const [opcion, setOpcion] = useState(0)
   const [mensaje, setMensaje] = useState('')
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -84,6 +85,7 @@ const TiposFlujo = () => {
   }
 
   async function eliminarTipo(id_tipoflujo, opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       const respuesta = await postTipoFlujo(
         id_tipoflujo,
@@ -102,6 +104,7 @@ const TiposFlujo = () => {
     } else if (opcion == 2) {
       setShow(false)
     }
+    setDesactivarBotonModal(false)
   }
 
   if (session) {
@@ -121,6 +124,7 @@ const TiposFlujo = () => {
               Cancelar
             </CButton>
             <CButton
+              disabled={desactivarBotonModal}
               color="primary"
               onClick={() => eliminarTipo(idTipo, opcion).then(() => Cancelar(1))}
             >

@@ -36,6 +36,7 @@ const RecordatorioGrupo = () => {
   const [mensaje, setMensaje] = useState('')
   const [resultsUsuarios, setListUsuarios] = useState([])
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(0)
+  const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -84,6 +85,7 @@ const RecordatorioGrupo = () => {
   }
 
   async function eliminarRecordatorio(idRecordatorio, opcion) {
+    setDesactivarBotonModal(true)
     if (opcion == 1) {
       const respuesta = await postUsuarioRecordatorioGrupo(
         idRecordatorio,
@@ -103,6 +105,7 @@ const RecordatorioGrupo = () => {
         setShow(false)
       }
     }
+    setDesactivarBotonModal(false)
   }
 
   async function Cancelar(opcion) {
@@ -249,6 +252,7 @@ const RecordatorioGrupo = () => {
             </CButton>
             <CButton
               color="primary"
+              disabled={desactivarBotonModal}
               onClick={() => eliminarRecordatorio(idRecordatorio, opcion).then(() => Cancelar(1))}
             >
               Aceptar
@@ -277,6 +281,7 @@ const RecordatorioGrupo = () => {
             persistTableHead
             striped={true}
             dense
+            paginationRowsPerPageOptions={[25, 50, 100, 300]}
           />
         </DataTableExtensions>
       </>
