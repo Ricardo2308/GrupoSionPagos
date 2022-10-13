@@ -18,6 +18,8 @@ const RechazadosPorBanco = (prop) => {
   const [camposOcultos, setListOcultos] = useState([])
   const [anchoConcepto, setAnchoConcepto] = useState('285px')
   const filteredItems = results
+  const OrdenarPorColumna = sessionStorage.getItem('OrdenarPorColumnaRPB' + prop.tipo)
+  const OrdenarPorDireccion = sessionStorage.getItem('OrdenarPorDireccionRPB' + prop.tipo)
 
   useEffect(() => {
     let mounted = true
@@ -115,11 +117,17 @@ const RechazadosPorBanco = (prop) => {
     currency: 'USD',
   })
 
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
+      id: 'Empresa',
       name: 'Empresa',
       selector: (row) => row.empresa_nombre,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -129,9 +137,10 @@ const RechazadosPorBanco = (prop) => {
       omit: OcultarCampo('Empresa'),
     },
     {
+      id: 'No.',
       name: 'No.',
       selector: (row) => row.doc_num,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -140,9 +149,10 @@ const RechazadosPorBanco = (prop) => {
       omit: OcultarCampo('No. documento'),
     },
     {
+      id: 'Fecha Sis.',
       name: 'Fecha Sis.',
       selector: (row) => row.creation_date,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -151,9 +161,10 @@ const RechazadosPorBanco = (prop) => {
       omit: OcultarCampo('Fecha sistema'),
     },
     {
+      id: 'Fecha auto.',
       name: 'Fecha auto.',
       selector: (row) => row.aut_date,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -163,8 +174,9 @@ const RechazadosPorBanco = (prop) => {
     },
     {
       name: 'Beneficiario',
+      name: 'Beneficiario',
       selector: (row) => row.en_favor_de,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -174,9 +186,11 @@ const RechazadosPorBanco = (prop) => {
       omit: OcultarCampo('Beneficiario'),
     },
     {
+      id: 'Concepto',
       name: 'Concepto',
       selector: (row) => row.comments,
-      center: true,
+      center: false,
+      sortable: true,
       style: {
         fontSize: '11px',
       },
@@ -185,10 +199,11 @@ const RechazadosPorBanco = (prop) => {
       omit: OcultarCampo('Concepto'),
     },
     {
+      id: 'Monto',
       name: 'Monto',
       selector: (row) => row.doc_total,
       cell: (row) => formatear(row.doc_total, row.doc_curr),
-      center: true,
+      right: true,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -234,6 +249,14 @@ const RechazadosPorBanco = (prop) => {
     export: false,
     print: false,
   }
+  function Ordenamiento(columna, direccion, e) {
+    if (columna.name !== undefined) {
+      sessionStorage.setItem('OrdenarPorColumnaRPB' + prop.tipo, columna.name)
+    }
+    if (direccion) {
+      sessionStorage.setItem('OrdenarPorDireccionRPB' + prop.tipo, direccion)
+    }
+  }
 
   if (session) {
     if (!location.tipo && !prop.tipo) {
@@ -258,8 +281,12 @@ const RechazadosPorBanco = (prop) => {
               responsive={true}
               persistTableHead
               striped={true}
+              onSort={Ordenamiento}
               dense
               paginationRowsPerPageOptions={[25, 50, 100, 300]}
+              paginationComponentOptions={paginationComponentOptions}
+              defaultSortAsc={OrdenarPorDireccion == 'asc' ? true : false}
+              defaultSortFieldId={OrdenarPorColumna}
             />
           </DataTableExtensions>
         </div>

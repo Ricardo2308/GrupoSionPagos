@@ -102,6 +102,9 @@ const ConsultorPagosDetalle = () => {
     if (locationSeccion == 'NoVisados') {
       listaPagos = JSON.parse(sessionStorage.getItem('ConsultorPagosNoVisados'))
     }
+    if (locationSeccion == 'EnviadosBanco') {
+      listaPagos = JSON.parse(sessionStorage.getItem('ConsultorPagosEnviadosBanco'))
+    }
     if (locationSeccion == 'PagadosBanco') {
       listaPagos = JSON.parse(sessionStorage.getItem('ConsultorPagosPagadosBanco'))
     }

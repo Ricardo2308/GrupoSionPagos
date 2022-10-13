@@ -5,6 +5,8 @@ import PendientesPago from './PendientesPago'
 import Compensados from './Compensados'
 import RechazadosPorBanco from './RechazadosPorBanco'
 import SolicitudRetorno from './SolicitudRetorno'
+import EnviadosBanco from './EnviadosBanco'
+import AceptadosBanco from './AceptadosBanco'
 import { useSession } from 'react-use-session'
 import { useIdleTimer } from 'react-idle-timer'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
@@ -56,8 +58,14 @@ const PagoTransferencia = () => {
               <Tab eventKey="pendientes" title="Pendientes">
                 <PendientesPago tipo={'TRANSFERENCIA'} />
               </Tab>
-              <Tab eventKey="compensados" title="Compensados">
+              {/* <Tab eventKey="compensados" title="Compensados">
                 <Compensados tipo={'TRANSFERENCIA'} />
+              </Tab> */}
+              <Tab eventKey="enviadosBanco" title="Enviados a banco">
+                <EnviadosBanco tipo={'TRANSFERENCIA'} />
+              </Tab>
+              <Tab eventKey="aceptadosBanco" title="Aceptados por banco">
+                <AceptadosBanco tipo={'TRANSFERENCIA'} />
               </Tab>
               <Tab eventKey="rechazadosBanco" title="Rechazados por banco">
                 <RechazadosPorBanco tipo={'TRANSFERENCIA'} />

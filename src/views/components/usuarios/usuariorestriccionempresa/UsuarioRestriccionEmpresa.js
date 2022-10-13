@@ -131,11 +131,17 @@ const UsuarioRestriccionEmpresa = () => {
       },
     },
   }
+
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Usuario',
       selector: (row) => row.usuario_con,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -145,7 +151,7 @@ const UsuarioRestriccionEmpresa = () => {
     {
       name: 'Nombre',
       selector: (row) => row.nombre_con + ' ' + row.apellido_con,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -155,7 +161,7 @@ const UsuarioRestriccionEmpresa = () => {
     {
       name: 'Empresa',
       selector: (row) => row.empresa_nombre,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -171,7 +177,7 @@ const UsuarioRestriccionEmpresa = () => {
         }
         return estado
       },
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -263,6 +269,7 @@ const UsuarioRestriccionEmpresa = () => {
             striped={true}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
           />
         </DataTableExtensions>
       </>

@@ -39,21 +39,26 @@ const FlujoFacturaDocumento = (prop) => {
     },
   })
 
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Dirección Archivo',
       selector: (row) => row.src_path,
-      center: true,
+      center: false,
     },
     {
       name: 'Nombre Archivo',
       selector: (row) => row.file_name,
-      center: true,
+      center: false,
     },
     {
       name: 'Extensión Archivo',
       selector: (row) => row.file_ext,
-      center: true,
+      center: false,
     },
   ])
 

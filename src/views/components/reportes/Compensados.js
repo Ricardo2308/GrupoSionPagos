@@ -20,12 +20,14 @@ const Compensados = (prop) => {
           { 
             "empresa_nombre" : { type: "string" },
             "doc_num" : { type: "string"},
-            "cuenta_orgien" : { type: "string"},
+            "tipo" : { type: "string"},
+            "dfl_account" : { type: "string"},
             "en_favor_de" : { type: "string"},
             "comments" : { type: "string"},
             "doc_total" : { type: "number"},
             "aut_date" : { type: "datetime"},
             "fecha" : { type: "datetime"},
+            "nombre_estado" : { type: "string"},
           }
         )
         items.flujos.forEach((item) => {
@@ -51,7 +53,11 @@ const Compensados = (prop) => {
                   caption: 'Documento',
                 },
                 {
-                  uniqueName: 'cuenta_orgien',
+                  uniqueName: 'tipo',
+                  caption: 'Tipo',
+                },
+                {
+                  uniqueName: 'dfl_account',
                   caption: 'Cuenta',
                 },
                 {
@@ -77,6 +83,10 @@ const Compensados = (prop) => {
                 {
                   uniqueName: 'fecha',
                   caption: 'Fecha compensación',
+                },
+                {
+                  uniqueName: 'nombre_estado',
+                  caption: 'Estado',
                 },
               ],
             },
@@ -120,16 +130,14 @@ const Compensados = (prop) => {
               },
               showEmptyData: false,
             },
+            
             formats: [
               {
-                name: '4ktymhkg',
-                thousandsSeparator: ' ',
+                name: "",
+                thousandsSeparator: ',',
                 decimalSeparator: '.',
-                currencySymbol: '',
-                currencySymbolAlign: 'left',
+                decimalPlaces: 2,
                 nullValue: '',
-                textAlign: 'center',
-                isPercent: true,
               },
             ],
           },

@@ -21,6 +21,8 @@ const Compensados = (prop) => {
   const [anchoConcepto, setAnchoConcepto] = useState('285px')
   const filteredItems = results
   const filteredItemsA = compensados
+  const OrdenarPorColumna = sessionStorage.getItem('OrdenarPorColumnaCO' + prop.tipo)
+  const OrdenarPorDireccion = sessionStorage.getItem('OrdenarPorDireccionCO' + prop.tipo)
 
   async function leerNotificaciones(IdFlujo, Pago, Estado, Nivel, IdGrupo) {
     let pagos = []
@@ -135,11 +137,17 @@ const Compensados = (prop) => {
     currency: 'USD',
   })
 
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
+      id: 'Empresa',
       name: 'Empresa',
       selector: (row) => row.empresa_nombre,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -149,9 +157,10 @@ const Compensados = (prop) => {
       omit: OcultarCampo('Empresa'),
     },
     {
+      id: 'No.',
       name: 'No.',
       selector: (row) => row.doc_num,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -160,9 +169,10 @@ const Compensados = (prop) => {
       omit: OcultarCampo('No. documento'),
     },
     {
+      id: 'Fecha Sis.',
       name: 'Fecha Sis.',
       selector: (row) => row.creation_date,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -171,9 +181,10 @@ const Compensados = (prop) => {
       omit: OcultarCampo('Fecha sistema'),
     },
     {
+      id: 'Fecha auto.',
       name: 'Fecha auto.',
       selector: (row) => row.aut_date,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -182,9 +193,10 @@ const Compensados = (prop) => {
       omit: OcultarCampo('Fecha autorización'),
     },
     {
+      id: 'Beneficiario',
       name: 'Beneficiario',
       selector: (row) => row.en_favor_de,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -194,9 +206,11 @@ const Compensados = (prop) => {
       omit: OcultarCampo('Beneficiario'),
     },
     {
+      id: 'Concepto',
       name: 'Concepto',
       selector: (row) => row.comments,
-      center: true,
+      center: false,
+      sortable: true,
       style: {
         fontSize: '11px',
       },
@@ -205,9 +219,12 @@ const Compensados = (prop) => {
       omit: OcultarCampo('Concepto'),
     },
     {
+      id: 'Monto',
       name: 'Monto',
-      selector: (row) => formatter.format(row.doc_total),
-      center: true,
+      selector: (row) => row.doc_total,
+      cell: (row) => formatear(row.doc_total, row.doc_curr),
+      right: true,
+      sortable: true,
       style: {
         fontSize: '11px',
       },
@@ -250,7 +267,7 @@ const Compensados = (prop) => {
     {
       name: 'Empresa',
       selector: (row) => row.empresa_nombre,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -262,7 +279,7 @@ const Compensados = (prop) => {
     {
       name: 'No.',
       selector: (row) => row.Pago,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -273,7 +290,7 @@ const Compensados = (prop) => {
     {
       name: 'Fecha Sis.',
       selector: (row) => row.creation_date,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -284,7 +301,7 @@ const Compensados = (prop) => {
     {
       name: 'Fecha auto.',
       selector: (row) => row.aut_date,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -295,7 +312,7 @@ const Compensados = (prop) => {
     {
       name: 'Tipo',
       selector: (row) => row.tipo,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -306,7 +323,7 @@ const Compensados = (prop) => {
     {
       name: 'Beneficiario',
       selector: (row) => row.en_favor_de,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -318,7 +335,8 @@ const Compensados = (prop) => {
     {
       name: 'Concepto',
       selector: (row) => row.comments,
-      center: true,
+      center: false,
+      sortable: true,
       style: {
         fontSize: '11px',
       },
@@ -330,7 +348,7 @@ const Compensados = (prop) => {
       name: 'Monto',
       selector: (row) => row.doc_total,
       cell: (row) => formatear(row.doc_total, row.doc_curr),
-      center: true,
+      right: true,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -377,6 +395,14 @@ const Compensados = (prop) => {
     export: false,
     print: false,
   }
+  function Ordenamiento(columna, direccion, e) {
+    if (columna.name !== undefined) {
+      sessionStorage.setItem('OrdenarPorColumnaCO' + prop.tipo, columna.name)
+    }
+    if (direccion) {
+      sessionStorage.setItem('OrdenarPorDireccionCO' + prop.tipo, direccion)
+    }
+  }
 
   if (session) {
     if (!location.tipo && !prop.tipo) {
@@ -404,6 +430,7 @@ const Compensados = (prop) => {
                 persistTableHead
                 striped={true}
                 dense
+                paginationComponentOptions={paginationComponentOptions}
               />
             </DataTableExtensions>
           </div>
@@ -424,8 +451,12 @@ const Compensados = (prop) => {
               responsive={true}
               persistTableHead
               striped={true}
+              onSort={Ordenamiento}
               dense
               paginationRowsPerPageOptions={[25, 50, 100, 300]}
+              paginationComponentOptions={paginationComponentOptions}
+              defaultSortAsc={OrdenarPorDireccion == 'asc' ? true : false}
+              defaultSortFieldId={OrdenarPorColumna}
             />
           </DataTableExtensions>
         </div>

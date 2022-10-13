@@ -123,11 +123,17 @@ const Roles = () => {
       },
     },
   }
+
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Descripción',
       selector: (row) => row.descripcion,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -137,7 +143,7 @@ const Roles = () => {
     {
       name: 'Objeto',
       selector: (row) => row.objeto,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -152,7 +158,7 @@ const Roles = () => {
         }
         return estado
       },
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -293,6 +299,7 @@ const Roles = () => {
             striped={true}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
           />
         </DataTableExtensions>
       </>

@@ -25,11 +25,11 @@ const Pendientes = (prop) => {
         pagos.push(
           { 
             "doc_num" : { type: "string"},
-            "doc_date" : { type: "datetime"},
-            "comments" : { type: "string"},
             "tipo" : { type: "string"},
+            "doc_date" : { type: "date string"},
+            "comments" : { type: "string"},
             "estado" : { type: "string"},
-            "estado" : { type: "string"},
+            "doc_total" : { type: "number", format: 'number1'},
             "dias_credito" : { type: "number"},
             "dias_vencimiento" : { type: "number"},
             "porcentaje" : { type: "string"},
@@ -54,6 +54,10 @@ const Pendientes = (prop) => {
                   caption: 'Documento',
                 },
                 {
+                  uniqueName: 'tipo',
+                  caption: 'Tipo',
+                },
+                {
                   uniqueName: 'doc_date',
                   caption: 'Fecha',
                 },
@@ -62,12 +66,13 @@ const Pendientes = (prop) => {
                   caption: 'Detalle',
                 },
                 {
-                  uniqueName: 'tipo',
-                  caption: 'Tipo',
-                },
-                {
                   uniqueName: 'estado',
                   caption: 'Estado',
+                },
+                {
+                  uniqueName: 'doc_total',
+                  caption: 'Monto',
+                  format: 'number1',
                 },
                 {
                   uniqueName: 'dias_credito',
@@ -125,14 +130,11 @@ const Pendientes = (prop) => {
             },
             formats: [
               {
-                name: '4ktymhkg',
-                thousandsSeparator: ' ',
+                name: "",
+                thousandsSeparator: ',',
                 decimalSeparator: '.',
-                currencySymbol: '',
-                currencySymbolAlign: 'left',
+                decimalPlaces: 2,
                 nullValue: '',
-                textAlign: 'center',
-                isPercent: true,
               },
             ],
           },

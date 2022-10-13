@@ -39,59 +39,64 @@ const FlujoOferta = (prop) => {
     },
   })
 
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Número Documento',
       selector: (row) => row.doc_num,
-      center: true,
+      center: false,
       width: '140px',
     },
     {
       name: 'Fecha Documento',
       selector: (row) => row.doc_date,
-      center: true,
+      center: false,
       width: '140px',
     },
     {
       name: 'Código Tarjeta',
       selector: (row) => row.card_code,
-      center: true,
+      center: false,
       width: '140px',
     },
     {
       name: 'Nombre Tarjeta',
       selector: (row) => row.en_favor_de,
-      center: true,
+      center: false,
       width: '500px',
     },
     {
       name: 'Código Item',
       selector: (row) => row.item_code,
-      center: true,
+      center: false,
       width: '100px',
     },
     {
       name: 'Descripción',
       selector: (row) => row.description,
-      center: true,
+      center: false,
       width: '700px',
     },
     {
       name: 'Código UOM',
       selector: (row) => row.uom_code,
-      center: true,
+      center: false,
       width: '100px',
     },
     {
       name: 'Precio',
       selector: (row) => row.price,
-      center: true,
+      center: false,
       width: '130px',
     },
     {
       name: 'Cantidad',
       selector: (row) => row.quantity,
-      center: true,
+      center: false,
     },
   ])
 

@@ -53,6 +53,8 @@ const Pendientes = (prop) => {
   const [color, setColor] = useState('danger')
   const [titulo, setTitulo] = useState('Error!')
   const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
+  const OrdenarPorColumna = sessionStorage.getItem('OrdenarPorColumnaP' + prop.tipo)
+  const OrdenarPorDireccion = sessionStorage.getItem('OrdenarPorDireccionP' + prop.tipo)
 
   const StyledCell = styled.div`
     &.VERDE {
@@ -110,6 +112,84 @@ const Pendientes = (prop) => {
     }
     getPendientesAutorizacion(prop.tipo, idUsuario, session.api_token).then((items) => {
       if (mounted) {
+        if (OrdenarPorColumna !== null && OrdenarPorDireccion !== null) {
+          if (OrdenarPorColumna == 'Empresa' && OrdenarPorDireccion == 'asc') {
+            items.flujos.sort((a, b) =>
+              a.empresa_nombre > b.empresa_nombre
+                ? 1
+                : b.empresa_nombre > a.empresa_nombre
+                ? -1
+                : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'Empresa' && OrdenarPorDireccion == 'desc') {
+            items.flujos.sort((a, b) =>
+              a.empresa_nombre > b.empresa_nombre
+                ? -1
+                : b.empresa_nombre > a.empresa_nombre
+                ? 1
+                : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'No.' && OrdenarPorDireccion == 'asc') {
+            items.flujos.sort((a, b) =>
+              a.doc_num > b.doc_num ? 1 : b.doc_num > a.doc_num ? -1 : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'No.' && OrdenarPorDireccion == 'desc') {
+            items.flujos.sort((a, b) =>
+              a.doc_num > b.doc_num ? -1 : b.doc_num > a.doc_num ? 1 : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'Fecha Sis.' && OrdenarPorDireccion == 'asc') {
+            items.flujos.sort((a, b) =>
+              a.creation_date > b.creation_date ? 1 : b.creation_date > a.creation_date ? -1 : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'Fecha Sis.' && OrdenarPorDireccion == 'desc') {
+            items.flujos.sort((a, b) =>
+              a.creation_date > b.creation_date ? -1 : b.creation_date > a.creation_date ? 1 : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'Beneficiario' && OrdenarPorDireccion == 'asc') {
+            items.flujos.sort((a, b) =>
+              a.en_favor_de > b.en_favor_de ? 1 : b.en_favor_de > a.en_favor_de ? -1 : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'Beneficiario' && OrdenarPorDireccion == 'desc') {
+            items.flujos.sort((a, b) =>
+              a.en_favor_de > b.en_favor_de ? -1 : b.en_favor_de > a.en_favor_de ? 1 : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'Concepto' && OrdenarPorDireccion == 'asc') {
+            items.flujos.sort((a, b) =>
+              a.comments > b.comments ? 1 : b.comments > a.comments ? -1 : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'Concepto' && OrdenarPorDireccion == 'desc') {
+            items.flujos.sort((a, b) =>
+              a.comments > b.comments ? -1 : b.comments > a.comments ? 1 : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'Monto' && OrdenarPorDireccion == 'asc') {
+            items.flujos.sort((a, b) =>
+              parseFloat(a.doc_total) > parseFloat(b.doc_total)
+                ? 1
+                : parseFloat(b.doc_total) > parseFloat(a.doc_total)
+                ? -1
+                : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'Monto' && OrdenarPorDireccion == 'desc') {
+            items.flujos.sort((a, b) =>
+              parseFloat(a.doc_total) > parseFloat(b.doc_total)
+                ? -1
+                : parseFloat(b.doc_total) > parseFloat(a.doc_total)
+                ? 1
+                : 0,
+            )
+          }
+        }
         setDataOriginal(items.flujos)
         if (colorFiltro === 'NO') {
           setListdata(items.flujos)
@@ -259,6 +339,11 @@ const Pendientes = (prop) => {
     currency: 'USD',
   })
 
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: ' ',
@@ -281,7 +366,7 @@ const Pendientes = (prop) => {
           )
         }
       },
-      center: false,
+      center: true,
       width: '35px',
       style: {
         paddingLeft: '0px',
@@ -290,6 +375,7 @@ const Pendientes = (prop) => {
       omit: OcultarCampo('Selección'),
     },
     {
+      id: 'Empresa',
       name: 'Empresa',
       selector: (row) => row.empresa_nombre,
       center: false,
@@ -302,6 +388,7 @@ const Pendientes = (prop) => {
       omit: OcultarCampo('Empresa'),
     },
     {
+      id: 'No.',
       name: 'No.',
       selector: (row) => row.doc_num,
       center: false,
@@ -313,6 +400,7 @@ const Pendientes = (prop) => {
       omit: OcultarCampo('No. documento'),
     },
     {
+      id: 'Fecha Sis.',
       name: 'Fecha Sis.',
       selector: (row) => row.creation_date,
       center: false,
@@ -324,6 +412,7 @@ const Pendientes = (prop) => {
       omit: OcultarCampo('Fecha sistema'),
     },
     {
+      id: 'Beneficiario',
       name: 'Beneficiario',
       selector: (row) => row.en_favor_de,
       center: false,
@@ -336,9 +425,11 @@ const Pendientes = (prop) => {
       omit: OcultarCampo('Beneficiario'),
     },
     {
+      id: 'Concepto',
       name: 'Concepto',
       selector: (row) => row.comments,
       center: false,
+      sortable: true,
       style: {
         fontSize: '11px',
       },
@@ -347,6 +438,7 @@ const Pendientes = (prop) => {
       omit: OcultarCampo('Concepto'),
     },
     {
+      id: 'Monto',
       name: 'Monto',
       selector: (row) => row.doc_total,
       cell: (row) => formatear(row.doc_total, row.doc_curr),
@@ -544,7 +636,7 @@ const Pendientes = (prop) => {
           }
         }
       },
-      center: false,
+      center: true,
       width: '125px',
       omit: OcultarCampo('Acciones'),
     },
@@ -588,6 +680,12 @@ const Pendientes = (prop) => {
   }
 
   function Ordenamiento(columna, direccion, e) {
+    if (columna.name !== undefined) {
+      sessionStorage.setItem('OrdenarPorColumnaP' + prop.tipo, columna.name)
+    }
+    if (direccion) {
+      sessionStorage.setItem('OrdenarPorDireccionP' + prop.tipo, direccion)
+    }
     setColumnaOrden(columna)
     setDireccionOrden(direccion)
     if (columna.name == 'Empresa' && direccion == 'asc') {
@@ -678,13 +776,33 @@ const Pendientes = (prop) => {
         return 0
       })
     }
+    if (columna.name == 'Concepto' && direccion == 'asc') {
+      data.sort(function (a, b) {
+        if (a.comments > b.comments) {
+          return 1
+        }
+        if (a.comments < b.comments) {
+          return -1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'Concepto' && direccion == 'desc') {
+      data.sort(function (a, b) {
+        if (a.comments > b.comments) {
+          return -1
+        }
+        if (a.comments < b.comments) {
+          return 1
+        }
+        return 0
+      })
+    }
     if (columna.name == 'Monto' && direccion == 'asc') {
       data.sort(function (a, b) {
-        //if (formatear(a.doc_total, a.doc_curr) > formatear(b.doc_total, b.doc_curr)) {
         if (parseFloat(a.doc_total) > parseFloat(b.doc_total)) {
           return 1
         }
-        //if (formatear(a.doc_total, a.doc_curr) < formatear(b.doc_total, b.doc_curr)) {
         if (parseFloat(a.doc_total) < parseFloat(b.doc_total)) {
           return -1
         }
@@ -693,11 +811,9 @@ const Pendientes = (prop) => {
     }
     if (columna.name == 'Monto' && direccion == 'desc') {
       data.sort(function (a, b) {
-        //if (formatear(a.doc_total, a.doc_curr) > formatear(b.doc_total, b.doc_curr)) {
         if (parseFloat(a.doc_total) > parseFloat(b.doc_total)) {
           return -1
         }
-        //if (formatear(a.doc_total, a.doc_curr) < formatear(b.doc_total, b.doc_curr)) {
         if (parseFloat(a.doc_total) < parseFloat(b.doc_total)) {
           return 1
         }
@@ -793,16 +909,19 @@ const Pendientes = (prop) => {
     setDesactivarBotonModal(true)
     if (opcion == 1) {
       if (PuedeEnviarRecordatorio) {
-        var markedCheckbox = document.getElementsByName('autorizarPago')
-        for (var checkbox of markedCheckbox) {
-          if (checkbox.checked) {
-            let valorPago = checkbox.value
-            let partes = checkbox.value.split('|')
-            await postRecordatorioUsuario('', '', '', session.id, partes[0], session.api_token)
+        data.map(async (row) => {
+          if (estaChequeado(row.id_flujo + '|' + row.estado + '|' + row.nivel)) {
+            let valorPago = row.id_flujo + '|' + row.estado + '|' + row.nivel
+            //var markedCheckbox = document.getElementsByName('autorizarPago')
+            //for (var checkbox of markedCheckbox) {
+            //if (checkbox.checked) {
+            //let valorPago = checkbox.value
+            //let partes = checkbox.value.split('|')
+            await postRecordatorioUsuario('', '', '', session.id, row.id_flujo, session.api_token)
             sessionStorage.removeItem(valorPago)
-            checkbox.checked = false
+            //checkbox.checked = false
           }
-        }
+        })
       } else {
         setShow(true)
         setTitulo('Error!')
@@ -822,16 +941,19 @@ const Pendientes = (prop) => {
   async function AccionModalConDuda(opcion) {
     setDesactivarBotonModal(true)
     if (opcion == 1) {
-      var markedCheckbox = document.getElementsByName('autorizarPago')
-      for (var checkbox of markedCheckbox) {
-        if (checkbox.checked) {
-          let valorPago = checkbox.value
-          let partes = checkbox.value.split('|')
-          await postFlujos(partes[0], '0', '', '8', null, session.id, session.api_token)
+      data.map(async (row) => {
+        if (estaChequeado(row.id_flujo + '|' + row.estado + '|' + row.nivel)) {
+          let valorPago = row.id_flujo + '|' + row.estado + '|' + row.nivel
+          //var markedCheckbox = document.getElementsByName('autorizarPago')
+          //for (var checkbox of markedCheckbox) {
+          //if (checkbox.checked) {
+          //let valorPago = checkbox.value
+          //let partes = checkbox.value.split('|')
+          await postFlujos(row.id_flujo, '0', '', '8', null, session.id, session.api_token)
           sessionStorage.removeItem(valorPago)
-          checkbox.checked = false
+          //checkbox.checked = false
         }
-      }
+      })
       setShowModalConDuda(false)
       setActualizarTabla(actualizarTabla + 1)
     } else if (opcion == 2) {
@@ -1090,6 +1212,9 @@ const Pendientes = (prop) => {
             conditionalRowStyles={conditionalRowStyles}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
+            defaultSortAsc={OrdenarPorDireccion == 'asc' ? true : false}
+            defaultSortFieldId={OrdenarPorColumna}
           />
         </DataTableExtensions>
       </>

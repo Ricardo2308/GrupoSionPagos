@@ -140,11 +140,17 @@ const Politicas = () => {
       },
     },
   }
+
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Descripción',
       selector: (row) => row.descripcion,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -154,7 +160,7 @@ const Politicas = () => {
     {
       name: 'Identificador',
       selector: (row) => row.identificador,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -162,7 +168,7 @@ const Politicas = () => {
     {
       name: 'Valor',
       selector: (row) => row.valor,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -176,7 +182,7 @@ const Politicas = () => {
         }
         return estado
       },
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -259,7 +265,7 @@ const Politicas = () => {
             </CButton>
           </Modal.Footer>
         </Modal>
-        {/* <div className="float-right" style={{ marginBottom: '10px' }}>
+        <div className="float-right" style={{ marginBottom: '10px' }}>
           <CButton
             color="primary"
             size="sm"
@@ -268,7 +274,7 @@ const Politicas = () => {
           >
             Crear Nueva
           </CButton>
-        </div> */}
+        </div>
         <DataTableExtensions {...tableData}>
           <DataTable
             columns={columns}
@@ -282,6 +288,7 @@ const Politicas = () => {
             striped={true}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
           />
         </DataTableExtensions>
       </>

@@ -233,6 +233,11 @@ const NuevoArchivoFlujo = (props) => {
     },
   }
 
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: '#',
@@ -243,7 +248,7 @@ const NuevoArchivoFlujo = (props) => {
     {
       name: 'Usuario',
       selector: (row) => row.nombre_usuario,
-      center: true,
+      center: false,
       sortable: true,
       wrap: true,
       width: '170px',
@@ -251,7 +256,7 @@ const NuevoArchivoFlujo = (props) => {
     {
       name: 'Nombre Archivo',
       selector: (row) => row.descripcion,
-      center: true,
+      center: false,
       sortable: true,
       wrap: true,
       width: '190px',
@@ -269,7 +274,7 @@ const NuevoArchivoFlujo = (props) => {
           </div>
         )
       },
-      center: true,
+      center: false,
       width: '490px',
     },
     {
@@ -512,6 +517,7 @@ const NuevoArchivoFlujo = (props) => {
                       striped={true}
                       dense
                       paginationRowsPerPageOptions={[25, 50, 100, 300]}
+                      paginationComponentOptions={paginationComponentOptions}
                     />
                   </DataTableExtensions>
                 </CCardBody>

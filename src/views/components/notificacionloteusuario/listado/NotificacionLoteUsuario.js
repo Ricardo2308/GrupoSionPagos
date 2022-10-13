@@ -131,11 +131,17 @@ const NotificacionLoteUsuario = () => {
       },
     },
   }
+
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Usuario',
       selector: (row) => row.nombre + ' ' + row.apellido,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -145,7 +151,7 @@ const NotificacionLoteUsuario = () => {
     {
       name: 'Correo',
       selector: (row) => row.correo,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -155,7 +161,7 @@ const NotificacionLoteUsuario = () => {
     {
       name: 'Tipo',
       selector: (row) => row.TipoTransaccion,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -165,7 +171,7 @@ const NotificacionLoteUsuario = () => {
     {
       name: 'Documento',
       selector: (row) => row.tipoDocumento,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -253,6 +259,7 @@ const NotificacionLoteUsuario = () => {
             striped={true}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
           />
         </DataTableExtensions>
       </>

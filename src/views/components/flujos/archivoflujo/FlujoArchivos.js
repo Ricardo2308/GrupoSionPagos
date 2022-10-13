@@ -75,11 +75,16 @@ const FlujoArchivos = () => {
     currency: 'USD',
   })
 
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Empresa',
       selector: (row) => row.empresa_nombre,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -90,7 +95,7 @@ const FlujoArchivos = () => {
     {
       name: 'No.',
       selector: (row) => row.doc_num,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -100,7 +105,7 @@ const FlujoArchivos = () => {
     {
       name: 'Fecha Sis.',
       selector: (row) => row.creation_date,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -110,7 +115,7 @@ const FlujoArchivos = () => {
     {
       name: 'Beneficiario',
       selector: (row) => row.en_favor_de,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -121,7 +126,8 @@ const FlujoArchivos = () => {
     {
       name: 'Concepto',
       selector: (row) => row.comments,
-      center: true,
+      center: false,
+      sortable: true,
       style: {
         fontSize: '11px',
       },
@@ -132,7 +138,7 @@ const FlujoArchivos = () => {
       name: 'Monto',
       selector: (row) => row.doc_total,
       cell: (row) => formatear(row.doc_total, row.doc_curr),
-      center: true,
+      right: true,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -188,6 +194,7 @@ const FlujoArchivos = () => {
             striped={true}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
           />
         </DataTableExtensions>
       </>

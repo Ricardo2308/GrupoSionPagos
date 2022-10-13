@@ -43,7 +43,11 @@ const Rechazados = (prop) => {
                                     caption: 'Documento',
                                 },
                                 {
-                                    uniqueName: 'cuenta_orgien',
+                                  uniqueName: 'tipo',
+                                  caption: 'Tipo',
+                                },
+                                {
+                                    uniqueName: 'dfl_account',
                                     caption: 'Cuenta',
                                 },
                                 {
@@ -112,18 +116,16 @@ const Rechazados = (prop) => {
                             },
                             showEmptyData: false,
                         },
-                        formats: [
-                            {
-                                name: '4ktymhkg',
-                                thousandsSeparator: ' ',
-                                decimalSeparator: '.',
-                                currencySymbol: '',
-                                currencySymbolAlign: 'left',
-                                nullValue: '',
-                                textAlign: 'center',
-                                isPercent: true,
-                            },
-                        ],
+                        
+            formats: [
+                {
+                  name: "",
+                  thousandsSeparator: ',',
+                  decimalSeparator: '.',
+                  decimalPlaces: 2,
+                  nullValue: '',
+                },
+              ],
                     },
                     global: {
                         localization: spanish,

@@ -37,6 +37,8 @@ const RechazadosBanco = (prop) => {
   const [rechazados, setRechazados] = useState([])
   const [filterText, setFilterText] = useState('')
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false)
+  const OrdenarPorColumna = sessionStorage.getItem('OrdenarPorColumnaRB' + prop.tipo)
+  const OrdenarPorDireccion = sessionStorage.getItem('OrdenarPorDireccionRB' + prop.tipo)
   const filteredItems = results.filter(
     (item) =>
       item.comments.toLowerCase().includes(filterText.toLowerCase()) ||
@@ -119,28 +121,33 @@ const RechazadosBanco = (prop) => {
     },
   })
 
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Número Documento',
       selector: (row) => row.doc_num,
-      center: true,
+      center: false,
       width: '15%',
     },
     {
       name: 'Fecha Sistema',
       selector: (row) => row.creation_date,
-      center: true,
+      center: false,
       width: '13%',
     },
     {
       name: 'Detalle',
       selector: (row) => row.comments,
-      center: true,
+      center: false,
       width: '53%',
     },
     {
       name: 'Estado',
-      center: true,
+      center: false,
       cell: function OrderItems(row) {
         if (row.activo == 1) {
           return <div>Activo</div>
@@ -185,24 +192,24 @@ const RechazadosBanco = (prop) => {
     {
       name: 'Número Documento',
       selector: (row) => row.Pago,
-      center: true,
+      center: false,
       width: '15%',
     },
     {
       name: 'Fecha Sis.',
       selector: (row) => row.creation_date,
-      center: true,
+      center: false,
       width: '13%',
     },
     {
       name: 'Detalle',
       selector: (row) => row.comments,
-      center: true,
+      center: false,
       width: '53%',
     },
     {
       name: 'Estado',
-      center: true,
+      center: false,
       cell: function OrderItems(row) {
         if (row.activo == 1) {
           return <div>Activo</div>
@@ -233,6 +240,14 @@ const RechazadosBanco = (prop) => {
       center: true,
     },
   ])
+  function Ordenamiento(columna, direccion, e) {
+    if (columna.name !== undefined) {
+      sessionStorage.setItem('OrdenarPorColumnaRB' + prop.tipo, columna.name)
+    }
+    if (direccion) {
+      sessionStorage.setItem('OrdenarPorDireccionRB' + prop.tipo, direccion)
+    }
+  }
 
   const subHeaderComponentMemo = useMemo(() => {
     const handleClear = () => {
@@ -277,6 +292,9 @@ const RechazadosBanco = (prop) => {
               subHeaderComponent={subHeaderComponentMemo}
               responsive={true}
               persistTableHead
+              paginationComponentOptions={paginationComponentOptions}
+              defaultSortAsc={OrdenarPorDireccion == 'asc' ? true : false}
+              defaultSortFieldId={OrdenarPorColumna}
             />
           </div>
           <div>
@@ -292,6 +310,10 @@ const RechazadosBanco = (prop) => {
               paginationResetDefaultPage={resetPaginationToggle}
               responsive={true}
               persistTableHead
+              onSort={Ordenamiento}
+              paginationComponentOptions={paginationComponentOptions}
+              defaultSortAsc={OrdenarPorDireccion == 'asc' ? true : false}
+              defaultSortFieldId={OrdenarPorColumna}
             />
           </div>
         </div>
@@ -312,7 +334,11 @@ const RechazadosBanco = (prop) => {
             subHeader
             subHeaderComponent={subHeaderComponentMemo}
             responsive={true}
+            onSort={Ordenamiento}
             persistTableHead
+            paginationComponentOptions={paginationComponentOptions}
+            defaultSortAsc={OrdenarPorDireccion == 'asc' ? true : false}
+            defaultSortFieldId={OrdenarPorColumna}
           />
         </div>
       </div>

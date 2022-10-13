@@ -129,11 +129,17 @@ const Permisos = () => {
       },
     },
   }
+
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Descripción',
       selector: (row) => row.descripcion,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -149,7 +155,7 @@ const Permisos = () => {
         }
         return estado
       },
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -253,6 +259,7 @@ const Permisos = () => {
             striped={true}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
           />
         </DataTableExtensions>
       </>

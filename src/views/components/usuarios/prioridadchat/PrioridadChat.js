@@ -177,11 +177,17 @@ const PrioridadChat = () => {
       },
     },
   }
+
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Usuario',
       selector: (row) => row.usuario_con,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -191,7 +197,7 @@ const PrioridadChat = () => {
     {
       name: 'Nombre',
       selector: (row) => row.nombre_con + ' ' + row.apellido_con,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -201,7 +207,7 @@ const PrioridadChat = () => {
     {
       name: 'Usuario prioridad',
       selector: (row) => row.usuario_pri,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -209,7 +215,7 @@ const PrioridadChat = () => {
     {
       name: 'Nombre prioridad',
       selector: (row) => row.nombre_pri + ' ' + row.apellido_pri,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -219,7 +225,7 @@ const PrioridadChat = () => {
     {
       name: 'Nivel',
       selector: (row) => row.nivel,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -370,6 +376,7 @@ const PrioridadChat = () => {
             striped={true}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
           />
         </DataTableExtensions>
       </>

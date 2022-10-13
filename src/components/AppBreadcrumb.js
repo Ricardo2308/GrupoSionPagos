@@ -42,10 +42,12 @@ const AppBreadcrumb = () => {
 
   return (
     <CBreadcrumb className="m-0 ms-2" style={{ zIndex: '0' }}>
-      <CBreadcrumbItem style={{ color: 'blue' }}>Inicio</CBreadcrumbItem>
+      <CBreadcrumbItem style={{ textDecoration: 'none' }} active>
+        Inicio
+      </CBreadcrumbItem>
       {breadcrumbs.map((breadcrumb, index) => {
         return (
-          <CBreadcrumbItem style={{ color: 'blue' }} key={index}>
+          <CBreadcrumbItem style={{ textDecoration: 'none' }} key={index} active>
             {breadcrumb.name}
           </CBreadcrumbItem>
         )

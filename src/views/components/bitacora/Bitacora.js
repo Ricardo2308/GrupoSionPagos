@@ -99,11 +99,17 @@ const Bitacora = () => {
       },
     },
   }
+
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Usuario',
       selector: (row) => row.nombre_usuario,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -113,7 +119,7 @@ const Bitacora = () => {
     {
       name: 'Nombre',
       selector: (row) => row.nombre + ' ' + row.apellido,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -123,7 +129,7 @@ const Bitacora = () => {
     {
       name: 'Fecha',
       selector: (row) => row.fecha_hora,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -132,7 +138,7 @@ const Bitacora = () => {
     {
       name: 'Acción',
       selector: (row) => row.accion,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -141,7 +147,7 @@ const Bitacora = () => {
     {
       name: 'Objeto',
       selector: (row) => row.objeto,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -230,6 +236,7 @@ const Bitacora = () => {
             striped={true}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
           />
         </DataTableExtensions>
       </>

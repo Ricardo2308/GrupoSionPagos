@@ -296,11 +296,13 @@ const CompensacionTabs = () => {
         location.estado == '7' ||
         location.estado == '9' ||
         location.estado == '12' ||
-        location.estado == '13'
+        location.estado == '13' ||
+        location.estado == '15' ||
+        location.estado == '17'
       ) {
         MostrarActualizar = false
       }
-      if (location.estado != '12') {
+      if (location.estado != '12' && location.estado != '15' && location.estado != '17') {
         MostrarReprocesar = false
       }
       if (location.estado == '9') {

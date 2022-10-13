@@ -21,6 +21,8 @@ const Autorizados = (prop) => {
   const [anchoConcepto, setAnchoConcepto] = useState('285px')
   const filteredItems = results
   const filteredItemsA = autorizados
+  const OrdenarPorColumna = sessionStorage.getItem('OrdenarPorColumnaA' + prop.tipo)
+  const OrdenarPorDireccion = sessionStorage.getItem('OrdenarPorDireccionA' + prop.tipo)
 
   async function leerNotificaciones(IdFlujo, Pago, Estado, Nivel, IdGrupo) {
     if (location.opcion == 1) {
@@ -90,6 +92,84 @@ const Autorizados = (prop) => {
       }
       getAutorizados(session.id, location.tipo, session.api_token).then((items) => {
         if (mounted) {
+          if (OrdenarPorColumna !== null && OrdenarPorDireccion !== null) {
+            if (OrdenarPorColumna == 'Empresa' && OrdenarPorDireccion == 'asc') {
+              items.bitacora.sort((a, b) =>
+                a.empresa_nombre > b.empresa_nombre
+                  ? 1
+                  : b.empresa_nombre > a.empresa_nombre
+                  ? -1
+                  : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'Empresa' && OrdenarPorDireccion == 'desc') {
+              items.bitacora.sort((a, b) =>
+                a.empresa_nombre > b.empresa_nombre
+                  ? -1
+                  : b.empresa_nombre > a.empresa_nombre
+                  ? 1
+                  : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'No.' && OrdenarPorDireccion == 'asc') {
+              items.bitacora.sort((a, b) =>
+                a.doc_num > b.doc_num ? 1 : b.doc_num > a.doc_num ? -1 : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'No.' && OrdenarPorDireccion == 'desc') {
+              items.bitacora.sort((a, b) =>
+                a.doc_num > b.doc_num ? -1 : b.doc_num > a.doc_num ? 1 : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'Fecha Sis.' && OrdenarPorDireccion == 'asc') {
+              items.bitacora.sort((a, b) =>
+                a.creation_date > b.creation_date ? 1 : b.creation_date > a.creation_date ? -1 : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'Fecha Sis.' && OrdenarPorDireccion == 'desc') {
+              items.bitacora.sort((a, b) =>
+                a.creation_date > b.creation_date ? -1 : b.creation_date > a.creation_date ? 1 : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'Beneficiario' && OrdenarPorDireccion == 'asc') {
+              items.bitacora.sort((a, b) =>
+                a.en_favor_de > b.en_favor_de ? 1 : b.en_favor_de > a.en_favor_de ? -1 : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'Beneficiario' && OrdenarPorDireccion == 'desc') {
+              items.bitacora.sort((a, b) =>
+                a.en_favor_de > b.en_favor_de ? -1 : b.en_favor_de > a.en_favor_de ? 1 : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'Concepto' && OrdenarPorDireccion == 'asc') {
+              items.bitacora.sort((a, b) =>
+                a.comments > b.comments ? 1 : b.comments > a.comments ? -1 : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'Concepto' && OrdenarPorDireccion == 'desc') {
+              items.bitacora.sort((a, b) =>
+                a.comments > b.comments ? -1 : b.comments > a.comments ? 1 : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'Monto' && OrdenarPorDireccion == 'asc') {
+              items.bitacora.sort((a, b) =>
+                parseFloat(a.doc_total) > parseFloat(b.doc_total)
+                  ? 1
+                  : parseFloat(b.doc_total) > parseFloat(a.doc_total)
+                  ? -1
+                  : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'Monto' && OrdenarPorDireccion == 'desc') {
+              items.bitacora.sort((a, b) =>
+                parseFloat(a.doc_total) > parseFloat(b.doc_total)
+                  ? -1
+                  : parseFloat(b.doc_total) > parseFloat(a.doc_total)
+                  ? 1
+                  : 0,
+              )
+            }
+          }
           setList(items.bitacora)
           let datosOrdenados = []
           items.bitacora.forEach((item) => {
@@ -119,6 +199,84 @@ const Autorizados = (prop) => {
     } else {
       getAutorizados(session.id, prop.tipo, session.api_token).then((items) => {
         if (mounted) {
+          if (OrdenarPorColumna !== null && OrdenarPorDireccion !== null) {
+            if (OrdenarPorColumna == 'Empresa' && OrdenarPorDireccion == 'asc') {
+              items.bitacora.sort((a, b) =>
+                a.empresa_nombre > b.empresa_nombre
+                  ? 1
+                  : b.empresa_nombre > a.empresa_nombre
+                  ? -1
+                  : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'Empresa' && OrdenarPorDireccion == 'desc') {
+              items.bitacora.sort((a, b) =>
+                a.empresa_nombre > b.empresa_nombre
+                  ? -1
+                  : b.empresa_nombre > a.empresa_nombre
+                  ? 1
+                  : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'No.' && OrdenarPorDireccion == 'asc') {
+              items.bitacora.sort((a, b) =>
+                a.doc_num > b.doc_num ? 1 : b.doc_num > a.doc_num ? -1 : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'No.' && OrdenarPorDireccion == 'desc') {
+              items.bitacora.sort((a, b) =>
+                a.doc_num > b.doc_num ? -1 : b.doc_num > a.doc_num ? 1 : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'Fecha Sis.' && OrdenarPorDireccion == 'asc') {
+              items.bitacora.sort((a, b) =>
+                a.creation_date > b.creation_date ? 1 : b.creation_date > a.creation_date ? -1 : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'Fecha Sis.' && OrdenarPorDireccion == 'desc') {
+              items.bitacora.sort((a, b) =>
+                a.creation_date > b.creation_date ? -1 : b.creation_date > a.creation_date ? 1 : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'Beneficiario' && OrdenarPorDireccion == 'asc') {
+              items.bitacora.sort((a, b) =>
+                a.en_favor_de > b.en_favor_de ? 1 : b.en_favor_de > a.en_favor_de ? -1 : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'Beneficiario' && OrdenarPorDireccion == 'desc') {
+              items.bitacora.sort((a, b) =>
+                a.en_favor_de > b.en_favor_de ? -1 : b.en_favor_de > a.en_favor_de ? 1 : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'Concepto' && OrdenarPorDireccion == 'asc') {
+              items.bitacora.sort((a, b) =>
+                a.comments > b.comments ? 1 : b.comments > a.comments ? -1 : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'Concepto' && OrdenarPorDireccion == 'desc') {
+              items.bitacora.sort((a, b) =>
+                a.comments > b.comments ? -1 : b.comments > a.comments ? 1 : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'Monto' && OrdenarPorDireccion == 'asc') {
+              items.bitacora.sort((a, b) =>
+                parseFloat(a.doc_total) > parseFloat(b.doc_total)
+                  ? 1
+                  : parseFloat(b.doc_total) > parseFloat(a.doc_total)
+                  ? -1
+                  : 0,
+              )
+            }
+            if (OrdenarPorColumna == 'Monto' && OrdenarPorDireccion == 'desc') {
+              items.bitacora.sort((a, b) =>
+                parseFloat(a.doc_total) > parseFloat(b.doc_total)
+                  ? -1
+                  : parseFloat(b.doc_total) > parseFloat(a.doc_total)
+                  ? 1
+                  : 0,
+              )
+            }
+          }
           setList(items.bitacora)
           let datosOrdenados = []
           items.bitacora.forEach((item) => {
@@ -207,11 +365,17 @@ const Autorizados = (prop) => {
     currency: 'USD',
   })
 
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
+      id: 'Empresa',
       name: 'Empresa',
       selector: (row) => row.empresa_nombre,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -221,9 +385,10 @@ const Autorizados = (prop) => {
       omit: OcultarCampo('Empresa'),
     },
     {
+      id: 'No.',
       name: 'No.',
       selector: (row) => row.doc_num,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -232,9 +397,10 @@ const Autorizados = (prop) => {
       omit: OcultarCampo('No. documento'),
     },
     {
+      id: 'Fecha Sis.',
       name: 'Fecha Sis.',
       selector: (row) => row.creation_date,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -243,9 +409,10 @@ const Autorizados = (prop) => {
       omit: OcultarCampo('Fecha sistema'),
     },
     {
+      id: 'Beneficiario',
       name: 'Beneficiario',
       selector: (row) => row.en_favor_de,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -255,9 +422,11 @@ const Autorizados = (prop) => {
       omit: OcultarCampo('Beneficiario'),
     },
     {
+      id: 'Concepto',
       name: 'Concepto',
       selector: (row) => row.comments,
-      center: true,
+      center: false,
+      sortable: true,
       style: {
         fontSize: '11px',
       },
@@ -266,10 +435,11 @@ const Autorizados = (prop) => {
       omit: OcultarCampo('Concepto'),
     },
     {
+      id: 'Monto',
       name: 'Monto',
       selector: (row) => row.doc_total,
       cell: (row) => formatear(row.doc_total, row.doc_curr),
-      center: true,
+      right: true,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -315,7 +485,7 @@ const Autorizados = (prop) => {
     {
       name: 'Empresa',
       selector: (row) => row.empresa_nombre,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -327,7 +497,7 @@ const Autorizados = (prop) => {
     {
       name: 'No.',
       selector: (row) => row.Pago,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -338,7 +508,7 @@ const Autorizados = (prop) => {
     {
       name: 'Fecha Sis.',
       selector: (row) => row.creation_date,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -349,7 +519,7 @@ const Autorizados = (prop) => {
     {
       name: 'Tipo',
       selector: (row) => row.tipo,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -360,7 +530,7 @@ const Autorizados = (prop) => {
     {
       name: 'Beneficiario',
       selector: (row) => row.en_favor_de,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -372,7 +542,8 @@ const Autorizados = (prop) => {
     {
       name: 'Concepto',
       selector: (row) => row.comments,
-      center: true,
+      center: false,
+      sortable: true,
       style: {
         fontSize: '11px',
       },
@@ -384,7 +555,7 @@ const Autorizados = (prop) => {
       name: 'Monto',
       selector: (row) => row.doc_total,
       cell: (row) => formatear(row.doc_total, row.doc_curr),
-      center: true,
+      right: true,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -432,6 +603,12 @@ const Autorizados = (prop) => {
   }
 
   function Ordenamiento(columna, direccion, e) {
+    if (columna.name !== undefined) {
+      sessionStorage.setItem('OrdenarPorColumnaA' + prop.tipo, columna.name)
+    }
+    if (direccion) {
+      sessionStorage.setItem('OrdenarPorDireccionA' + prop.tipo, direccion)
+    }
     if (columna.name == 'Empresa' && direccion == 'asc') {
       filteredItems.sort(function (a, b) {
         if (a.empresa_nombre > b.empresa_nombre) {
@@ -520,12 +697,34 @@ const Autorizados = (prop) => {
         return 0
       })
     }
-    if (columna.name == 'Monto' && direccion == 'asc') {
+    if (columna.name == 'Concepto' && direccion == 'asc') {
       filteredItems.sort(function (a, b) {
-        if (formatear(a.doc_total, a.doc_curr) > formatear(b.doc_total, b.doc_curr)) {
+        if (a.comments > b.comments) {
           return 1
         }
-        if (formatear(a.doc_total, a.doc_curr) < formatear(b.doc_total, b.doc_curr)) {
+        if (a.comments < b.comments) {
+          return -1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'Concepto' && direccion == 'desc') {
+      filteredItems.sort(function (a, b) {
+        if (a.comments > b.comments) {
+          return -1
+        }
+        if (a.comments < b.comments) {
+          return 1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'Monto' && direccion == 'asc') {
+      filteredItems.sort(function (a, b) {
+        if (parseFloat(a.doc_total) > parseFloat(b.doc_total)) {
+          return 1
+        }
+        if (parseFloat(a.doc_total) < parseFloat(b.doc_total)) {
           return -1
         }
         return 0
@@ -533,10 +732,10 @@ const Autorizados = (prop) => {
     }
     if (columna.name == 'Monto' && direccion == 'desc') {
       filteredItems.sort(function (a, b) {
-        if (formatear(a.doc_total, a.doc_curr) > formatear(b.doc_total, b.doc_curr)) {
+        if (parseFloat(a.doc_total) > parseFloat(b.doc_total)) {
           return -1
         }
-        if (formatear(a.doc_total, a.doc_curr) < formatear(b.doc_total, b.doc_curr)) {
+        if (parseFloat(a.doc_total) < parseFloat(b.doc_total)) {
           return 1
         }
         return 0
@@ -584,6 +783,7 @@ const Autorizados = (prop) => {
                 persistTableHead
                 striped={true}
                 dense
+                paginationComponentOptions={paginationComponentOptions}
               />
             </DataTableExtensions>
           </div>
@@ -607,6 +807,9 @@ const Autorizados = (prop) => {
               onSort={Ordenamiento}
               dense
               paginationRowsPerPageOptions={[25, 50, 100, 300]}
+              paginationComponentOptions={paginationComponentOptions}
+              defaultSortAsc={OrdenarPorDireccion == 'asc' ? true : false}
+              defaultSortFieldId={OrdenarPorColumna}
             />
           </DataTableExtensions>
         </div>

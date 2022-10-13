@@ -7,8 +7,9 @@ import Compensados from './Compensados'
 import RechazadosPorBanco from './RechazadosPorBanco'
 import SolicitudRetorno from './SolicitudRetorno'
 import LotesPago from './LotesPago'
+import EnviadosBanco from './EnviadosBanco'
+import AceptadosBanco from './AceptadosBanco'
 import { useSession } from 'react-use-session'
-import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import '../../../../scss/estilos.scss'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
 
@@ -59,9 +60,15 @@ const PagoBancario = () => {
               <Tab eventKey="compensados" title="Compensados">
                 <Compensados tipo={'BANCARIO'} />
               </Tab>
+              {/* <Tab eventKey="enviadosBanco" title="Enviados a banco">
+                <EnviadosBanco tipo={'BANCARIO'} />
+              </Tab>
+               <Tab eventKey="aceptadosBanco" title="Aceptados por banco">
+                <AceptadosBanco tipo={'BANCARIO'} />
+              </Tab>
               <Tab eventKey="rechazadosBanco" title="Rechazados por banco">
                 <RechazadosPorBanco tipo={'BANCARIO'} />
-              </Tab>
+              </Tab> */}
               <Tab eventKey="lotespago" title="Lotes de pago">
                 <LotesPago tipo={'BANCARIO'} />
               </Tab>

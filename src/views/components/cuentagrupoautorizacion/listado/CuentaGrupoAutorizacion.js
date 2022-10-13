@@ -130,11 +130,17 @@ const CuentaGrupoAutorizacion = () => {
       },
     },
   }
+
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Cuenta(s)',
       selector: (row) => row.CodigoCuenta,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -144,7 +150,7 @@ const CuentaGrupoAutorizacion = () => {
     {
       name: 'Grupo autorización',
       selector: (row) => row.identificador,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -236,6 +242,7 @@ const CuentaGrupoAutorizacion = () => {
             striped={true}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
           />
         </DataTableExtensions>
       </>

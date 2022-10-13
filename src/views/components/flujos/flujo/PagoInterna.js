@@ -6,6 +6,8 @@ import PendientesPago from './PendientesPago'
 import Compensados from './Compensados'
 import RechazadosPorBanco from './RechazadosPorBanco'
 import SolicitudRetorno from './SolicitudRetorno'
+import EnviadosBanco from './EnviadosBanco'
+import AceptadosBanco from './AceptadosBanco'
 import { useSession } from 'react-use-session'
 import { postSesionUsuario } from '../../../../services/postSesionUsuario'
 import '../../../../scss/estilos.scss'
@@ -64,9 +66,15 @@ const PagoInterna = () => {
               <Tab eventKey="compensados" title="Compensados">
                 <Compensados tipo={'INTERNA'} />
               </Tab>
+              {/* <Tab eventKey="enviadosBanco" title="Enviados a banco">
+                <EnviadosBanco tipo={'INTERNA'} />
+              </Tab>
+               <Tab eventKey="aceptadosBanco" title="Aceptados por banco">
+                <AceptadosBanco tipo={'INTERNA'} />
+              </Tab>
               <Tab eventKey="rechazadosBanco" title="Rechazados por banco">
                 <RechazadosPorBanco comentarios={comentarios} tipo={'INTERNA'} />
-              </Tab>
+              </Tab> */}
               <Tab eventKey="lotespago" title="Lotes de pago">
                 <LotesPago tipo={'INTERNA'} />
               </Tab>

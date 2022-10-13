@@ -49,6 +49,8 @@ const PendientesPago = (prop) => {
   const [anchoConcepto2, setAnchoConcepto2] = useState('270px')
   const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
   const filteredItems = results
+  const OrdenarPorColumna = sessionStorage.getItem('OrdenarPorColumnaPP' + prop.tipo)
+  const OrdenarPorDireccion = sessionStorage.getItem('OrdenarPorDireccionPP' + prop.tipo)
 
   const handleClose = () => setShow(false)
 
@@ -143,18 +145,34 @@ const PendientesPago = (prop) => {
     if (respuesta === 'OK') {
       for (let pago of pagos) {
         sessionStorage.removeItem('Comepnsar_' + pago)
-        const pagado = await postFlujoDetalle(
-          pago,
-          '7',
-          session.id,
-          'Compensado',
-          '0',
-          session.api_token,
-        )
-        if (pagado === 'OK') {
-          bandera *= 1
+        if (prop.tipo == 'TRANSFERENCIA') {
+          const pagado = await postFlujoDetalle(
+            pago,
+            '17',
+            session.id,
+            'Enviado a banco',
+            '0',
+            session.api_token,
+          )
+          if (pagado === 'OK') {
+            bandera *= 1
+          } else {
+            bandera *= 0
+          }
         } else {
-          bandera *= 0
+          const pagado = await postFlujoDetalle(
+            pago,
+            '7',
+            session.id,
+            'Compensado',
+            '0',
+            session.api_token,
+          )
+          if (pagado === 'OK') {
+            bandera *= 1
+          } else {
+            bandera *= 0
+          }
         }
       }
       if (bandera == 1) {
@@ -232,13 +250,19 @@ const PendientesPago = (prop) => {
     currency: 'USD',
   })
 
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => {
     if (MostrarReprocesar) {
       return [
         {
+          id: 'Empresa',
           name: 'Empresa',
           selector: (row) => row.empresa_nombre,
-          center: true,
+          center: false,
           style: {
             fontSize: '11px',
           },
@@ -248,9 +272,10 @@ const PendientesPago = (prop) => {
           omit: OcultarCampo('Empresa'),
         },
         {
+          id: 'No.',
           name: 'No.',
           selector: (row) => row.doc_num,
-          center: true,
+          center: false,
           style: {
             fontSize: '11px',
           },
@@ -259,9 +284,10 @@ const PendientesPago = (prop) => {
           omit: OcultarCampo('No. documento'),
         },
         {
+          id: 'Fecha Sis.',
           name: 'Fecha Sis.',
           selector: (row) => row.creation_date,
-          center: true,
+          center: false,
           sortable: true,
           style: {
             fontSize: '11px',
@@ -270,9 +296,10 @@ const PendientesPago = (prop) => {
           omit: OcultarCampo('Fecha sistema'),
         },
         {
+          id: 'Fecha auto.',
           name: 'Fecha auto.',
           selector: (row) => row.aut_date,
-          center: true,
+          center: false,
           sortable: true,
           style: {
             fontSize: '11px',
@@ -281,9 +308,10 @@ const PendientesPago = (prop) => {
           omit: OcultarCampo('Fecha autorización'),
         },
         {
+          id: 'Beneficiario',
           name: 'Beneficiario',
           selector: (row) => row.en_favor_de,
-          center: true,
+          center: false,
           sortable: true,
           style: {
             fontSize: '11px',
@@ -293,9 +321,11 @@ const PendientesPago = (prop) => {
           omit: OcultarCampo('Beneficiario'),
         },
         {
+          id: 'Concepto',
           name: 'Concepto',
           selector: (row) => row.comments,
-          center: true,
+          center: false,
+          sortable: true,
           style: {
             fontSize: '11px',
           },
@@ -304,10 +334,11 @@ const PendientesPago = (prop) => {
           omit: OcultarCampo('Concepto'),
         },
         {
+          id: 'Monto',
           name: 'Monto',
           selector: (row) => row.doc_total,
           cell: (row) => formatear(row.doc_total, row.doc_curr),
-          center: true,
+          right: true,
           sortable: true,
           style: {
             fontSize: '11px',
@@ -385,9 +416,10 @@ const PendientesPago = (prop) => {
           omit: OcultarCampo('Selección'),
         },
         {
+          id: 'Empresa',
           name: 'Empresa',
           selector: (row) => row.empresa_nombre,
-          center: true,
+          center: false,
           style: {
             fontSize: '11px',
           },
@@ -397,9 +429,10 @@ const PendientesPago = (prop) => {
           omit: OcultarCampo('Empresa'),
         },
         {
+          id: 'No.',
           name: 'No.',
           selector: (row) => row.doc_num,
-          center: true,
+          center: false,
           style: {
             fontSize: '11px',
           },
@@ -408,9 +441,10 @@ const PendientesPago = (prop) => {
           omit: OcultarCampo('No. documento'),
         },
         {
+          id: 'Fecha Sis.',
           name: 'Fecha Sis.',
           selector: (row) => row.creation_date,
-          center: true,
+          center: false,
           sortable: true,
           style: {
             fontSize: '11px',
@@ -419,9 +453,10 @@ const PendientesPago = (prop) => {
           omit: OcultarCampo('Fecha sistema'),
         },
         {
+          id: 'Fecha auto.',
           name: 'Fecha auto.',
           selector: (row) => row.aut_date,
-          center: true,
+          center: false,
           sortable: true,
           style: {
             fontSize: '11px',
@@ -430,9 +465,10 @@ const PendientesPago = (prop) => {
           omit: OcultarCampo('Fecha autorización'),
         },
         {
+          id: 'Beneficiario',
           name: 'Beneficiario',
           selector: (row) => row.en_favor_de,
-          center: true,
+          center: false,
           sortable: true,
           style: {
             fontSize: '11px',
@@ -442,9 +478,11 @@ const PendientesPago = (prop) => {
           omit: OcultarCampo('Beneficiario'),
         },
         {
+          id: 'Concepto',
           name: 'Concepto',
           selector: (row) => row.comments,
-          center: true,
+          center: false,
+          sortable: true,
           style: {
             fontSize: '11px',
           },
@@ -453,10 +491,11 @@ const PendientesPago = (prop) => {
           omit: OcultarCampo('Concepto'),
         },
         {
+          id: 'Monto',
           name: 'Monto',
           selector: (row) => row.doc_total,
           cell: (row) => formatear(row.doc_total, row.doc_curr),
-          center: true,
+          right: true,
           sortable: true,
           style: {
             fontSize: '11px',
@@ -530,6 +569,14 @@ const PendientesPago = (prop) => {
     export: false,
     print: false,
   }
+  function Ordenamiento(columna, direccion, e) {
+    if (columna.name !== undefined) {
+      sessionStorage.setItem('OrdenarPorColumnaPP' + prop.tipo, columna.name)
+    }
+    if (direccion) {
+      sessionStorage.setItem('OrdenarPorDireccionPP' + prop.tipo, direccion)
+    }
+  }
 
   if (session) {
     let deshabilitar = false
@@ -584,8 +631,12 @@ const PendientesPago = (prop) => {
             responsive={true}
             persistTableHead
             striped={true}
+            onSort={Ordenamiento}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
+            defaultSortAsc={OrdenarPorDireccion == 'asc' ? true : false}
+            defaultSortFieldId={OrdenarPorColumna}
           />
         </DataTableExtensions>
       </>

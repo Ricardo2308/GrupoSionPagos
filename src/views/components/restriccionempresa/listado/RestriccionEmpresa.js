@@ -130,11 +130,17 @@ const RestriccionEmpresa = () => {
       },
     },
   }
+
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Empresa',
       selector: (row) => row.empresa_nombre,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -150,7 +156,7 @@ const RestriccionEmpresa = () => {
         }
         return estado
       },
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -242,6 +248,7 @@ const RestriccionEmpresa = () => {
             striped={true}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
           />
         </DataTableExtensions>
       </>

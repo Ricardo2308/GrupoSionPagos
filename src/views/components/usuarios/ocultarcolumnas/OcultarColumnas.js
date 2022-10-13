@@ -144,11 +144,17 @@ const OcultarColumnas = () => {
       },
     },
   }
+
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Usuario',
       selector: (row) => row.usuario,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -158,7 +164,7 @@ const OcultarColumnas = () => {
     {
       name: 'Nombre',
       selector: (row) => row.nombre + ' ' + row.apellido,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -168,7 +174,7 @@ const OcultarColumnas = () => {
     {
       name: 'Columna',
       selector: (row) => row.NombreColumna,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -254,6 +260,7 @@ const OcultarColumnas = () => {
             striped={true}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
           />
         </DataTableExtensions>
       </>

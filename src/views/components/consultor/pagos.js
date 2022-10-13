@@ -10,6 +10,7 @@ import ConsultorCompensados from './consultorCompensados'
 import ConsultorCancelados from './consultorCancelados'
 import ConsultorRechazadosBanco from './consultorRechazadosBanco'
 import ConsultorNoVisados from './consultorNoVisados'
+import ConsultorEnviadosBanco from './consultorEnviadosBanco'
 import ConsultorPagadosBanco from './consultorPagadosBanco'
 import ConsultorReemplazados from './consultorReemplazados'
 
@@ -39,14 +40,17 @@ const ConsultorPagos = (props) => {
               <Tab eventKey="cancelados" title="Cancelados">
                 <ConsultorCancelados />
               </Tab>
-              <Tab eventKey="rechazadosBanco" title="Rechazados por banco">
-                <ConsultorRechazadosBanco />
-              </Tab>
               <Tab eventKey="noVisados" title="No visados">
                 <ConsultorNoVisados />
               </Tab>
-              <Tab eventKey="pagadosBanco" title="Pagados por banco">
+              <Tab eventKey="enviadosBanco" title="Enviados a b.">
+                <ConsultorEnviadosBanco />
+              </Tab>
+              <Tab eventKey="pagadosBanco" title="Aceptados por b.">
                 <ConsultorPagadosBanco />
+              </Tab>
+              <Tab eventKey="rechazadosBanco" title="Rechazados por b.">
+                <ConsultorRechazadosBanco />
               </Tab>
               <Tab eventKey="reemplazados" title="Reemplazados">
                 <ConsultorReemplazados />

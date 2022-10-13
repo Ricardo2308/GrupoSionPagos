@@ -89,11 +89,17 @@ const Conectados = () => {
       },
     },
   }
+
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Usuario',
       selector: (row) => row.NombreUsuario,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -103,7 +109,7 @@ const Conectados = () => {
     {
       name: 'IP',
       selector: (row) => row.IPAddress,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -112,7 +118,7 @@ const Conectados = () => {
     {
       name: 'Navegador',
       selector: (row) => row.Navegador,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -121,7 +127,7 @@ const Conectados = () => {
     {
       name: 'Hora Inicio',
       selector: (row) => row.FechaHoraInicio,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -187,6 +193,7 @@ const Conectados = () => {
             striped={true}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
           />
         </DataTableExtensions>
       </>

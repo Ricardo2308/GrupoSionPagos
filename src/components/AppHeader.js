@@ -125,9 +125,7 @@ const AppHeader = () => {
           className="ms-md-3 d-lg-none"
           onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
         ></CHeaderToggler>
-        <CHeaderBrand>
-          <AppBreadcrumb />
-        </CHeaderBrand>
+        <AppBreadcrumb />
         <CHeaderNav className="d-none d-md-flex me-auto">
           <CNavItem></CNavItem>
         </CHeaderNav>

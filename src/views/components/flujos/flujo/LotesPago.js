@@ -116,11 +116,16 @@ const LotesPago = (prop) => {
     currency: 'USD',
   })
 
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Lote',
       selector: (row) => row.id_lotepago,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -130,7 +135,7 @@ const LotesPago = (prop) => {
     {
       name: 'Fecha',
       selector: (row) => row.fecha_hora,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -139,7 +144,7 @@ const LotesPago = (prop) => {
     {
       name: 'Usuario',
       selector: (row) => row.nombre + ' ' + row.apellido,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -170,7 +175,7 @@ const LotesPago = (prop) => {
           </div>
         )
       },
-      center: true,
+      center: false,
     },
     /* {
       name: 'Acciones',
@@ -194,7 +199,7 @@ const LotesPago = (prop) => {
           </div>
         )
       },
-      center: true,
+      center: false,
     }, */
   ])
 
@@ -240,6 +245,7 @@ const LotesPago = (prop) => {
               striped={true}
               dense
               paginationRowsPerPageOptions={[25, 50, 100, 300]}
+              paginationComponentOptions={paginationComponentOptions}
             />
           </DataTableExtensions>
         </div>

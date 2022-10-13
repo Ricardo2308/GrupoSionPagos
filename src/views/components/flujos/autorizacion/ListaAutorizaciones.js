@@ -150,11 +150,17 @@ const ListaAutorizaciones = () => {
       },
     },
   }
+
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Usuario Temporal',
       selector: (row) => row.usuariotemporal,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -164,7 +170,7 @@ const ListaAutorizaciones = () => {
     {
       name: 'Fecha inico',
       selector: (row) => row.fecha_inicio,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -173,7 +179,7 @@ const ListaAutorizaciones = () => {
     {
       name: 'Fecha final',
       selector: (row) => row.fecha_final,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -188,7 +194,7 @@ const ListaAutorizaciones = () => {
         }
         return estado
       },
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -281,6 +287,7 @@ const ListaAutorizaciones = () => {
             striped={true}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
           />
         </DataTableExtensions>
       </>

@@ -140,11 +140,17 @@ const Monedas = () => {
       },
     },
   }
+
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Nombre',
       selector: (row) => row.nombre,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -154,7 +160,7 @@ const Monedas = () => {
     {
       name: 'Símbolo',
       selector: (row) => row.simbolo,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -169,7 +175,7 @@ const Monedas = () => {
         }
         return estado
       },
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -274,6 +280,7 @@ const Monedas = () => {
             striped={true}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
           />
         </DataTableExtensions>
       </>

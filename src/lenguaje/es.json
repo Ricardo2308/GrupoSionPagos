@@ -62,7 +62,7 @@
     "total": "Total",
     "totals": "Totales",
     "grandTotal": "Total",
-    "blankMember": "(blanco)",
+    "blankMember": " ",
     "dateInvalidCaption": "Invalid date",
     "reportInformation": "Report Information"
   },

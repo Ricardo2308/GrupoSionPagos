@@ -138,11 +138,17 @@ const UsuarioRedireccion = () => {
       },
     },
   }
+
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Usuario',
       selector: (row) => row.usuario_con,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -152,7 +158,7 @@ const UsuarioRedireccion = () => {
     {
       name: 'Nombre',
       selector: (row) => row.nombre_con + ' ' + row.apellido_con,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -162,7 +168,7 @@ const UsuarioRedireccion = () => {
     {
       name: 'Seccion',
       selector: (row) => row.nombre_seccion,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -248,6 +254,7 @@ const UsuarioRedireccion = () => {
             striped={true}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
           />
         </DataTableExtensions>
       </>

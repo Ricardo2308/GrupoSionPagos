@@ -67,11 +67,17 @@ const Historico = () => {
       },
     },
   }
+
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Navegador',
       selector: (row) => row.Navegador,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -81,7 +87,7 @@ const Historico = () => {
     {
       name: 'IP Usuario',
       selector: (row) => row.IPAddress,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -90,7 +96,7 @@ const Historico = () => {
     {
       name: 'Inicio Sesión',
       selector: (row) => row.FechaHoraInicio,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -99,7 +105,7 @@ const Historico = () => {
     {
       name: 'Fin Sesión',
       selector: (row) => row.FechaHoraFinal,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -142,6 +148,7 @@ const Historico = () => {
               striped={true}
               dense
               paginationRowsPerPageOptions={[25, 50, 100, 300]}
+              paginationComponentOptions={paginationComponentOptions}
             />
           </DataTableExtensions>
         </>

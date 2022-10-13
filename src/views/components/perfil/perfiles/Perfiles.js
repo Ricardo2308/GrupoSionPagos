@@ -133,11 +133,16 @@ const Perfiles = () => {
     },
   }
 
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Descripcion',
       selector: (row) => row.descripcion,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -153,7 +158,7 @@ const Perfiles = () => {
         }
         return estado
       },
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -293,6 +298,7 @@ const Perfiles = () => {
             striped={true}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
           />
         </DataTableExtensions>
       </>

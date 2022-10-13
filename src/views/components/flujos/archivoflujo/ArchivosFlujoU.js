@@ -92,18 +92,23 @@ const ArchivosFlujo = () => {
     },
   }
 
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Usuario',
       selector: (row) => row.nombre_usuario,
-      center: true,
+      center: false,
       sortable: true,
       wrap: true,
     },
     {
       name: 'Nombre Archvo',
       selector: (row) => row.descripcion,
-      center: true,
+      center: false,
       sortable: true,
       wrap: true,
     },
@@ -165,6 +170,7 @@ const ArchivosFlujo = () => {
               striped={true}
               dense
               paginationRowsPerPageOptions={[25, 50, 100, 300]}
+              paginationComponentOptions={paginationComponentOptions}
             />
           </DataTableExtensions>
         </>

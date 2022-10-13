@@ -20,11 +20,12 @@ const Reemplazos = (prop) => {
           { 
             "empresa_nombre" : { type: "string" },
             "doc_num" : { type: "string"},
-            "cuenta_orgien" : { type: "string"},
+            "tipo" : { type: "string"},
+            "dfl_account" : { type: "string"},
             "en_favor_de" : { type: "string"},
             "comments" : { type: "string"},
             "doc_total" : { type: "number"},
-            "doc_date" : { type: "datetime"},
+            "doc_date" : { type: "date string"},
           }
         )
         items.flujos.forEach((item) => {
@@ -50,7 +51,11 @@ const Reemplazos = (prop) => {
                   caption: 'Documento',
                 },
                 {
-                  uniqueName: 'cuenta_orgien',
+                  uniqueName: 'tipo',
+                  caption: 'Tipo',
+                },
+                {
+                  uniqueName: 'dfl_account',
                   caption: 'Cuenta',
                 },
                 {
@@ -111,16 +116,14 @@ const Reemplazos = (prop) => {
               },
               showEmptyData: false,
             },
+            
             formats: [
               {
-                name: '4ktymhkg',
-                thousandsSeparator: ' ',
+                name: "",
+                thousandsSeparator: ',',
                 decimalSeparator: '.',
-                currencySymbol: '',
-                currencySymbolAlign: 'left',
+                decimalPlaces: 2,
                 nullValue: '',
-                textAlign: 'center',
-                isPercent: true,
               },
             ],
           },

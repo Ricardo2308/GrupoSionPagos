@@ -26,6 +26,8 @@ const PendientesRecordatorio = (prop) => {
   const [camposOcultos, setListOcultos] = useState([])
   const [anchoConcepto, setAnchoConcepto] = useState('285px')
   const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
+  const OrdenarPorColumna = sessionStorage.getItem('OrdenarPorColumnaPR')
+  const OrdenarPorDireccion = sessionStorage.getItem('OrdenarPorDireccionPR')
 
   useEffect(() => {
     let mounted = true
@@ -36,6 +38,84 @@ const PendientesRecordatorio = (prop) => {
     }
     getRecordatorioPorUsuario(idUsuario, session.api_token).then((items) => {
       if (mounted) {
+        if (OrdenarPorColumna !== null && OrdenarPorDireccion !== null) {
+          if (OrdenarPorColumna == 'Empresa' && OrdenarPorDireccion == 'asc') {
+            items.flujos.sort((a, b) =>
+              a.empresa_nombre > b.empresa_nombre
+                ? 1
+                : b.empresa_nombre > a.empresa_nombre
+                ? -1
+                : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'Empresa' && OrdenarPorDireccion == 'desc') {
+            items.flujos.sort((a, b) =>
+              a.empresa_nombre > b.empresa_nombre
+                ? -1
+                : b.empresa_nombre > a.empresa_nombre
+                ? 1
+                : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'No.' && OrdenarPorDireccion == 'asc') {
+            items.flujos.sort((a, b) =>
+              a.doc_num > b.doc_num ? 1 : b.doc_num > a.doc_num ? -1 : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'No.' && OrdenarPorDireccion == 'desc') {
+            items.flujos.sort((a, b) =>
+              a.doc_num > b.doc_num ? -1 : b.doc_num > a.doc_num ? 1 : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'Fecha Sis.' && OrdenarPorDireccion == 'asc') {
+            items.flujos.sort((a, b) =>
+              a.creation_date > b.creation_date ? 1 : b.creation_date > a.creation_date ? -1 : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'Fecha Sis.' && OrdenarPorDireccion == 'desc') {
+            items.flujos.sort((a, b) =>
+              a.creation_date > b.creation_date ? -1 : b.creation_date > a.creation_date ? 1 : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'Beneficiario' && OrdenarPorDireccion == 'asc') {
+            items.flujos.sort((a, b) =>
+              a.en_favor_de > b.en_favor_de ? 1 : b.en_favor_de > a.en_favor_de ? -1 : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'Beneficiario' && OrdenarPorDireccion == 'desc') {
+            items.flujos.sort((a, b) =>
+              a.en_favor_de > b.en_favor_de ? -1 : b.en_favor_de > a.en_favor_de ? 1 : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'Concepto' && OrdenarPorDireccion == 'asc') {
+            items.flujos.sort((a, b) =>
+              a.comments > b.comments ? 1 : b.comments > a.comments ? -1 : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'Concepto' && OrdenarPorDireccion == 'desc') {
+            items.flujos.sort((a, b) =>
+              a.comments > b.comments ? -1 : b.comments > a.comments ? 1 : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'Monto' && OrdenarPorDireccion == 'asc') {
+            items.flujos.sort((a, b) =>
+              parseFloat(a.doc_total) > parseFloat(b.doc_total)
+                ? 1
+                : parseFloat(b.doc_total) > parseFloat(a.doc_total)
+                ? -1
+                : 0,
+            )
+          }
+          if (OrdenarPorColumna == 'Monto' && OrdenarPorDireccion == 'desc') {
+            items.flujos.sort((a, b) =>
+              parseFloat(a.doc_total) > parseFloat(b.doc_total)
+                ? -1
+                : parseFloat(b.doc_total) > parseFloat(a.doc_total)
+                ? 1
+                : 0,
+            )
+          }
+        }
         setListdata(items.flujos)
         let datosOrdenados = []
         items.flujos.forEach((item) => {
@@ -149,6 +229,11 @@ const PendientesRecordatorio = (prop) => {
     currency: 'USD',
   })
 
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: ' ',
@@ -176,9 +261,10 @@ const PendientesRecordatorio = (prop) => {
       omit: OcultarCampo('Selección'),
     },
     {
+      id: 'Empresa',
       name: 'Empresa',
       selector: (row) => row.empresa_nombre,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -188,9 +274,10 @@ const PendientesRecordatorio = (prop) => {
       omit: OcultarCampo('Empresa'),
     },
     {
+      id: 'No.',
       name: 'No.',
       selector: (row) => row.doc_num,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -199,9 +286,10 @@ const PendientesRecordatorio = (prop) => {
       omit: OcultarCampo('No. documento'),
     },
     {
+      id: 'Fecha Sis.',
       name: 'Fecha Sis.',
       selector: (row) => row.creation_date,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -210,9 +298,10 @@ const PendientesRecordatorio = (prop) => {
       omit: OcultarCampo('Fecha sistema'),
     },
     {
+      id: 'Beneficiario',
       name: 'Beneficiario',
       selector: (row) => row.en_favor_de,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -222,9 +311,11 @@ const PendientesRecordatorio = (prop) => {
       omit: OcultarCampo('Beneficiario'),
     },
     {
+      id: 'Concepto',
       name: 'Concepto',
       selector: (row) => row.comments,
-      center: true,
+      center: false,
+      sortable: true,
       style: {
         fontSize: '11px',
       },
@@ -233,10 +324,11 @@ const PendientesRecordatorio = (prop) => {
       omit: OcultarCampo('Concepto'),
     },
     {
+      id: 'Monto',
       name: 'Monto',
       selector: (row) => row.doc_total,
       cell: (row) => formatear(row.doc_total, row.doc_curr),
-      center: true,
+      right: true,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -444,6 +536,12 @@ const PendientesRecordatorio = (prop) => {
   }
 
   function Ordenamiento(columna, direccion, e) {
+    if (columna.name !== undefined) {
+      sessionStorage.setItem('OrdenarPorColumnaPR', columna.name)
+    }
+    if (direccion) {
+      sessionStorage.setItem('OrdenarPorDireccionPR', direccion)
+    }
     if (columna.name == 'Empresa' && direccion == 'asc') {
       data.sort(function (a, b) {
         if (a.empresa_nombre > b.empresa_nombre) {
@@ -532,12 +630,34 @@ const PendientesRecordatorio = (prop) => {
         return 0
       })
     }
-    if (columna.name == 'Monto' && direccion == 'asc') {
+    if (columna.name == 'Concepto' && direccion == 'asc') {
       data.sort(function (a, b) {
-        if (formatear(a.doc_total, a.doc_curr) > formatear(b.doc_total, b.doc_curr)) {
+        if (a.comments > b.comments) {
           return 1
         }
-        if (formatear(a.doc_total, a.doc_curr) < formatear(b.doc_total, b.doc_curr)) {
+        if (a.comments < b.comments) {
+          return -1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'Concepto' && direccion == 'desc') {
+      data.sort(function (a, b) {
+        if (a.comments > b.comments) {
+          return -1
+        }
+        if (a.comments < b.comments) {
+          return 1
+        }
+        return 0
+      })
+    }
+    if (columna.name == 'Monto' && direccion == 'asc') {
+      data.sort(function (a, b) {
+        if (parseFloat(a.doc_total) > parseFloat(b.doc_total)) {
+          return 1
+        }
+        if (parseFloat(a.doc_total) < parseFloat(b.doc_total)) {
           return -1
         }
         return 0
@@ -545,10 +665,10 @@ const PendientesRecordatorio = (prop) => {
     }
     if (columna.name == 'Monto' && direccion == 'desc') {
       data.sort(function (a, b) {
-        if (formatear(a.doc_total, a.doc_curr) > formatear(b.doc_total, b.doc_curr)) {
+        if (parseFloat(a.doc_total) > parseFloat(b.doc_total)) {
           return -1
         }
-        if (formatear(a.doc_total, a.doc_curr) < formatear(b.doc_total, b.doc_curr)) {
+        if (parseFloat(a.doc_total) < parseFloat(b.doc_total)) {
           return 1
         }
         return 0
@@ -677,6 +797,9 @@ const PendientesRecordatorio = (prop) => {
             onSort={Ordenamiento}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
+            defaultSortAsc={OrdenarPorDireccion == 'asc' ? true : false}
+            defaultSortFieldId={OrdenarPorColumna}
           />
         </DataTableExtensions>
       </>

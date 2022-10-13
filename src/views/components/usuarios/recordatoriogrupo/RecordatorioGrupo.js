@@ -154,11 +154,17 @@ const RecordatorioGrupo = () => {
       },
     },
   }
+
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Usuario',
       selector: (row) => row.usuario_emi,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -168,7 +174,7 @@ const RecordatorioGrupo = () => {
     {
       name: 'Nombre',
       selector: (row) => row.nombre_emi + ' ' + row.apellido_emi,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -178,7 +184,7 @@ const RecordatorioGrupo = () => {
     {
       name: 'Usuario receptor',
       selector: (row) => row.usuario_rec,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -186,7 +192,7 @@ const RecordatorioGrupo = () => {
     {
       name: 'Nombre receptor',
       selector: (row) => row.nombre_rec + ' ' + row.apellido_rec,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -196,7 +202,7 @@ const RecordatorioGrupo = () => {
     {
       name: 'Grupo',
       selector: (row) => '[' + row.identificador + '] ' + row.descripcion,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -282,6 +288,7 @@ const RecordatorioGrupo = () => {
             striped={true}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
           />
         </DataTableExtensions>
       </>

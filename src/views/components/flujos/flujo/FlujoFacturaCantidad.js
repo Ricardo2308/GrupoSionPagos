@@ -39,16 +39,21 @@ const FlujoFacturaCantidad = (prop) => {
     },
   })
 
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Número Documento',
       selector: (row) => row.doc_num,
-      center: true,
+      center: false,
     },
     {
       name: 'Cantidad Facturas',
       selector: (row) => row.cant_facturas,
-      center: true,
+      center: false,
     },
   ])
 

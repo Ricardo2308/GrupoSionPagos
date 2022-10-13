@@ -39,100 +39,105 @@ const FlujoSolicitud = (prop) => {
     },
   })
 
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Número Documento',
       selector: (row) => row.doc_num,
-      center: true,
+      center: false,
       width: '140px',
     },
     {
       name: 'Nombre',
       selector: (row) => row.req_name,
-      center: true,
+      center: false,
       width: '180px',
     },
     {
       name: 'Código Item',
       selector: (row) => row.item_code,
-      center: true,
+      center: false,
       width: '140px',
     },
     {
       name: 'Descripción',
       selector: (row) => row.description,
-      center: true,
+      center: false,
     },
     {
       name: 'Código UOM',
       selector: (row) => row.uom_code,
-      center: true,
+      center: false,
       width: '140px',
     },
     {
       name: 'Precio',
       selector: (row) => row.price,
-      center: true,
+      center: false,
       width: '100px',
     },
     {
       name: 'Cantidad',
       selector: (row) => row.quantity,
-      center: true,
+      center: false,
       width: '100px',
     },
     {
       name: 'Unidades Totales',
       selector: (row) => row.unidades_totales,
-      center: true,
+      center: false,
       width: '150px',
     },
     {
       name: 'Unidades por Caja',
       selector: (row) => row.unidades_por_caja,
-      center: true,
+      center: false,
       width: '150px',
     },
     {
       name: 'Comentarios',
       selector: (row) => row.comments,
-      center: true,
+      center: false,
       width: '100px',
     },
     {
       name: 'Autorizador 1',
       selector: (row) => row.autorizador1,
-      center: true,
+      center: false,
       width: '100px',
     },
     {
       name: 'Autorizador 2',
       selector: (row) => row.autorizador2,
-      center: true,
+      center: false,
       width: '100px',
     },
     {
       name: 'Autorizador 3',
       selector: (row) => row.autorizador3,
-      center: true,
+      center: false,
       width: '100px',
     },
     {
       name: 'Fecha Autorización 1',
       selector: (row) => row.fecha_aut1,
-      center: true,
+      center: false,
       width: '150px',
     },
     {
       name: 'Fecha Autorización 2',
       selector: (row) => row.fecha_aut2,
-      center: true,
+      center: false,
       width: '150px',
     },
     {
       name: 'Fecha Autorización 3',
       selector: (row) => row.fecha_aut3,
-      center: true,
+      center: false,
       width: '150px',
     },
   ])

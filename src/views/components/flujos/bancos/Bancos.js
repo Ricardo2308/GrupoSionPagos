@@ -102,11 +102,16 @@ const Bancos = () => {
     },
   }
 
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'No.',
       selector: (row) => row.codigo_transferencia,
-      center: true,
+      center: false,
       width: '65px',
       sortable: true,
       wrap: true,
@@ -114,7 +119,7 @@ const Bancos = () => {
     {
       name: 'Nombre',
       selector: (row) => row.nombre,
-      center: true,
+      center: false,
       width: '320px',
       sortable: true,
       wrap: true,
@@ -122,7 +127,7 @@ const Bancos = () => {
     {
       name: 'Dirección',
       selector: (row) => row.direccion,
-      center: true,
+      center: false,
       width: '300px',
       sortable: true,
       wrap: true,
@@ -130,7 +135,7 @@ const Bancos = () => {
     {
       name: 'País',
       selector: (row) => row.Nombre,
-      center: true,
+      center: false,
       width: '100px',
       sortable: true,
       wrap: true,
@@ -138,14 +143,14 @@ const Bancos = () => {
     {
       name: 'SAP',
       selector: (row) => row.codigo_SAP,
-      center: true,
+      center: false,
       width: '90px',
       sortable: true,
       wrap: true,
     },
     {
       name: 'Estado',
-      center: true,
+      center: false,
       width: '80px',
       cell: function OrderItems(row) {
         if (row.activo == 1) {
@@ -315,6 +320,7 @@ const Bancos = () => {
             striped={true}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
           />
         </DataTableExtensions>
       </>

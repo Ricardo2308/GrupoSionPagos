@@ -134,11 +134,17 @@ const Usuarios = () => {
       },
     },
   }
+
+  const paginationComponentOptions = {
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'TODOS',
+  }
+
   const columns = useMemo(() => [
     {
       name: 'Nombre',
       selector: (row) => row.nombre + ' ' + row.apellido,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -148,7 +154,7 @@ const Usuarios = () => {
     {
       name: 'Correo',
       selector: (row) => row.email,
-      center: true,
+      center: false,
       style: {
         fontSize: '11px',
       },
@@ -157,7 +163,7 @@ const Usuarios = () => {
     {
       name: 'Usuario',
       selector: (row) => row.nombre_usuario,
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -172,7 +178,7 @@ const Usuarios = () => {
         }
         return estado
       },
-      center: true,
+      center: false,
       sortable: true,
       style: {
         fontSize: '11px',
@@ -333,6 +339,7 @@ const Usuarios = () => {
             striped={true}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
+            paginationComponentOptions={paginationComponentOptions}
           />
         </DataTableExtensions>
       </>
