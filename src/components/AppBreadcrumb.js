@@ -4,9 +4,11 @@ import { useLocation } from 'react-router-dom'
 import routes from '../routes'
 
 import { CBreadcrumb, CBreadcrumbItem } from '@coreui/react'
+import { useSession } from 'react-use-session'
 
 const AppBreadcrumb = () => {
   const currentLocation = useLocation().pathname
+  const { session } = useSession('PendrogonIT-Session')
 
   const getRouteName = (pathname, routes) => {
     let currentRoute = routes.find((route) => route.path === pathname)
@@ -42,12 +44,17 @@ const AppBreadcrumb = () => {
 
   return (
     <CBreadcrumb className="m-0 ms-2" style={{ zIndex: '0' }}>
-      <CBreadcrumbItem style={{ textDecoration: 'none' }} active>
+      <CBreadcrumbItem href={'/#' + session.redireccion} style={{ textDecoration: 'none' }} active>
         Inicio
       </CBreadcrumbItem>
       {breadcrumbs.map((breadcrumb, index) => {
         return (
-          <CBreadcrumbItem style={{ textDecoration: 'none' }} key={index} active>
+          <CBreadcrumbItem
+            style={{ textDecoration: 'none' }}
+            href={'/#' + breadcrumb.pathname}
+            key={index}
+            active
+          >
             {breadcrumb.name}
           </CBreadcrumbItem>
         )

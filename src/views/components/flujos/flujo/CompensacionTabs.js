@@ -302,7 +302,7 @@ const CompensacionTabs = () => {
       ) {
         MostrarActualizar = false
       }
-      if (location.estado != '12' && location.estado != '15' && location.estado != '17') {
+      if (location.estado != '12') {
         MostrarReprocesar = false
       }
       if (location.estado == '9') {

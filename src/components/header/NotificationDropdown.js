@@ -109,39 +109,41 @@ const NotificationDropdown = (props) => {
         </CDropdownToggle>
         <CDropdownMenu className="pt-0" placement="bottom-end">
           <CDropdownHeader className="bg-light fw-semibold py-2">Notificaciones</CDropdownHeader>
-          {props.recordatorio && (
-            <CDropdownItem
-              title="Ir al recordatorios"
-              key="recordatorio"
-              style={{ cursor: 'pointer' }}
-              onClick={() => history.push({ pathname: '/recordatoriopendiente' })}
-            >
-              Tiene recordatorios
-            </CDropdownItem>
-          )}
-          {props.notificaciones.map((item, i) => {
-            if (item.Leido == 0) {
-              return (
-                <CDropdownItem
-                  title="Ir al Pago"
-                  key={item.IdNotificacion}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() =>
-                    leerNotificacion(
-                      item.estado,
-                      item.tipo,
-                      item.IdFlujo,
-                      item.Pago,
-                      item.nivel,
-                      item.IdGrupo,
-                    )
-                  }
-                >
-                  {item.Mensaje}
-                </CDropdownItem>
-              )
-            }
-          })}
+          <div style={{ overflowY: 'auto', maxHeight: '600px' }}>
+            {props.recordatorio && (
+              <CDropdownItem
+                title="Ir al recordatorios"
+                key="recordatorio"
+                style={{ cursor: 'pointer' }}
+                onClick={() => history.push({ pathname: '/recordatoriopendiente' })}
+              >
+                Tiene recordatorios
+              </CDropdownItem>
+            )}
+            {props.notificaciones.map((item, i) => {
+              if (item.Leido == 0) {
+                return (
+                  <CDropdownItem
+                    title="Ir al Pago"
+                    key={item.IdNotificacion}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() =>
+                      leerNotificacion(
+                        item.estado,
+                        item.tipo,
+                        item.IdFlujo,
+                        item.Pago,
+                        item.nivel,
+                        item.IdGrupo,
+                      )
+                    }
+                  >
+                    {item.Mensaje}
+                  </CDropdownItem>
+                )
+              }
+            })}
+          </div>
         </CDropdownMenu>
       </CDropdown>
     )

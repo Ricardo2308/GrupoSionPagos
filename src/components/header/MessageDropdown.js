@@ -44,41 +44,43 @@ const MessageDropdown = (props) => {
         </CDropdownToggle>
         <CDropdownMenu className="pt-0" placement="bottom-end">
           <CDropdownHeader className="bg-light fw-semibold py-2">Mensajes</CDropdownHeader>
-          {props.mensajes.map((item, i) => {
-            if (item.leido == 0) {
-              return (
-                <CDropdownItem
-                  title="Ir al Pago"
-                  key={item.id_mensaje}
-                  style={{ cursor: 'pointer', fontWeight: 'bold' }}
-                  onClick={() => responderMensajes(item.tipo)}
-                >
-                  {item.usuarioenvia}
-                  {'->'}
-                  {item.Pago}
-                  {'->"'}
-                  {item.mensaje}
-                  {'"'}
-                </CDropdownItem>
-              )
-            } else {
-              return (
-                <CDropdownItem
-                  title="Ir al Pago"
-                  key={item.id_mensaje}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => responderMensajes(item.tipo)}
-                >
-                  {item.usuarioenvia}
-                  {'->'}
-                  {item.Pago}
-                  {'->"'}
-                  {item.mensaje}
-                  {'"'}
-                </CDropdownItem>
-              )
-            }
-          })}
+          <div style={{ overflowY: 'auto', maxHeight: '600px' }}>
+            {props.mensajes.map((item, i) => {
+              if (item.leido == 0) {
+                return (
+                  <CDropdownItem
+                    title="Ir al Pago"
+                    key={item.id_mensaje}
+                    style={{ cursor: 'pointer', fontWeight: 'bold' }}
+                    onClick={() => responderMensajes(item.tipo)}
+                  >
+                    {item.usuarioenvia}
+                    {'->'}
+                    {item.Pago}
+                    {'->"'}
+                    {item.mensaje}
+                    {'"'}
+                  </CDropdownItem>
+                )
+              } else {
+                return (
+                  <CDropdownItem
+                    title="Ir al Pago"
+                    key={item.id_mensaje}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => responderMensajes(item.tipo)}
+                  >
+                    {item.usuarioenvia}
+                    {'->'}
+                    {item.Pago}
+                    {'->"'}
+                    {item.mensaje}
+                    {'"'}
+                  </CDropdownItem>
+                )
+              }
+            })}
+          </div>
         </CDropdownMenu>
       </CDropdown>
     )

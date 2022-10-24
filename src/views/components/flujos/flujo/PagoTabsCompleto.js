@@ -460,7 +460,7 @@ const PagoTabsCompleto = () => {
       if (locationEstado == 3) {
         const respuesta = await postFlujos(
           id_flujo,
-          '2',
+          '1',
           '',
           '',
           null,

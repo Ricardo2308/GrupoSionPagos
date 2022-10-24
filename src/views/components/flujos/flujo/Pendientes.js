@@ -249,7 +249,7 @@ const Pendientes = (prop) => {
         }
       }
     })
-    getUsuarioRecordatorioGrupo(session.id, session.api_token).then((items) => {
+    getUsuarioRecordatorioGrupo(session.id, null, session.api_token).then((items) => {
       if (items.recordatorio.length > 0) {
         setPuedeEnviarRecordatorio(true)
       } else {
@@ -488,7 +488,7 @@ const Pendientes = (prop) => {
                 <Button
                   data-tag="allowRowEvents"
                   size="sm"
-                  variant="primary"
+                  variant="danger"
                   title="Cargar Archivo"
                   className={!MostrarCargar ? 'd-none' : ''}
                   onClick={() =>

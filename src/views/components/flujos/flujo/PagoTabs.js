@@ -35,6 +35,8 @@ import { getGruposAutorizacion } from '../../../../services/getGruposAutorizacio
 import { CButton, CInputGroup, CInputGroupText, CFormSelect } from '@coreui/react'
 import { FaUsers } from 'react-icons/fa'
 import { getUsuarioGrupo } from '../../../../services/getUsuarioGrupo'
+import { getUsuarioRecordatorioGrupo } from '../../../../services/getUsuarioRecordatorioGrupo'
+import { postRecordatorioUsuario } from '../../../../services/postRecordatorioUsuario'
 
 const PagoTabs = () => {
   const history = useHistory()
@@ -102,6 +104,8 @@ const PagoTabs = () => {
   const [grupoAsignado, setGrupoAsignado] = useState(0)
   const [usuarioGrupoList, setUsuarioGrupoList] = useState([])
   const [desactivarBotonModal, setDesactivarBotonModal] = useState(false)
+  const [PuedeEnviarRecordatorio, setPuedeEnviarRecordatorio] = useState(false)
+  const [intervaloChat, setIntervaloChat] = useState(0)
 
   useEffect(() => {
     let listaPagos
@@ -313,19 +317,31 @@ const PagoTabs = () => {
       setContadorMensajesRecibidos(contMensajes)
     })
 
-    setInterval(() => {
-      let contMensajes = 0
-      getContadorChat(locationIdFlujo, session.id, session.api_token).then((items) => {
-        items.mensajes.map((item) => {
-          if (item.eliminado == 0) {
-            if (item.leido == 0) {
-              contMensajes++
+    getUsuarioRecordatorioGrupo(session.id, locationIdFlujo, session.api_token).then((items) => {
+      if (items.recordatorio.length > 0 && locationPuedoAutorizar == '1') {
+        setPuedeEnviarRecordatorio(true)
+      } else {
+        setPuedeEnviarRecordatorio(false)
+      }
+    })
+
+    if (intervaloChat == 0) {
+      let idIntervalo = setInterval(() => {
+        let contMensajes = 0
+        getContadorChat(locationIdFlujo, session.id, session.api_token).then((items) => {
+          items.mensajes.map((item) => {
+            if (item.eliminado == 0) {
+              if (item.leido == 0) {
+                contMensajes++
+              }
             }
-          }
+          })
+          setContadorMensajesRecibidos(contMensajes)
         })
-        setContadorMensajesRecibidos(contMensajes)
-      })
-    }, 3000)
+      }, 3000)
+      setIntervaloChat(idIntervalo)
+    }
+
     return () => (mounted = false)
   }, [actualizarDatos])
 
@@ -440,6 +456,11 @@ const PagoTabs = () => {
       setIdFlujo(id_flujo)
       setOpcion(opcion)
       setMensaje('Está seguro de actualizar y continuar con el proceso de autorización del pago?')
+      setShow(true)
+    } else if (opcion == 6) {
+      setIdFlujo(id_flujo)
+      setOpcion(opcion)
+      setMensaje('Está seguro de notificar recordario del pago?')
       setShow(true)
     }
   }
@@ -703,6 +724,10 @@ const PagoTabs = () => {
           history.go(-1)
         }
       }
+    } else if (opcion == 6) {
+      await postRecordatorioUsuario('', '', '', session.id, id_flujo, session.api_token)
+      setPuedeEnviarRecordatorio(false)
+      setShow(false)
     }
     setDesactivarBotonModal(false)
   }
@@ -851,7 +876,7 @@ const PagoTabs = () => {
               }}
             >
               <div
-                style={{ width: '80%', display: 'flex', gap: '10px', justifyContent: 'flex-start' }}
+                style={{ width: '70%', display: 'flex', gap: '10px', justifyContent: 'flex-start' }}
               >
                 <div style={{ width: '25%', marginLeft: '10px' }}>
                   <Button variant="primary" size="sm" onClick={() => history.goBack()}>
@@ -930,7 +955,7 @@ const PagoTabs = () => {
                 </div>
               </div>
               <div
-                style={{ width: '20%', display: 'flex', gap: '10px', justifyContent: 'flex-end' }}
+                style={{ width: '30%', display: 'flex', gap: '10px', justifyContent: 'flex-end' }}
               >
                 <div className={ocultarBotones ? 'd-none' : ''}>
                   <div className={!MostrarAutorizar && !yaAutorizo ? 'd-none' : ''}>
@@ -945,6 +970,15 @@ const PagoTabs = () => {
                       disabled={desBotonSeleccionar}
                     >
                       Marcar para autorizar
+                    </Button>{' '}
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      title="Enviar recordatorio"
+                      className={!PuedeEnviarRecordatorio ? 'd-none' : ''}
+                      onClick={() => mostrarModal(locationIdFlujo, 6)}
+                    >
+                      Enviar recordatorio
                     </Button>
                   </div>
                 </div>

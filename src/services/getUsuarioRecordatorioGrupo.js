@@ -1,10 +1,13 @@
 const API = `${process.env.REACT_APP_API_URL}usuariorecordatoriogrupo`
 
-export function getUsuarioRecordatorioGrupo(idUsuario, token) {
+export function getUsuarioRecordatorioGrupo(idUsuario, idFlujo, token) {
   let ApiFinal = API
   let ApiWhere = ''
   if (idUsuario !== null) {
     ApiWhere += '/' + idUsuario
+  }
+  if (idFlujo !== null) {
+    ApiWhere += '/' + idFlujo
   }
   ApiFinal += ApiWhere
   return fetch(ApiFinal, {

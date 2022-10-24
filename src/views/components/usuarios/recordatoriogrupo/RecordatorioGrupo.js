@@ -50,7 +50,7 @@ const RecordatorioGrupo = () => {
         setListUsuarios(items.users)
       }
     })
-    getUsuarioRecordatorioGrupo(null, session.api_token).then((items) => {
+    getUsuarioRecordatorioGrupo(null, null, session.api_token).then((items) => {
       if (mounted) {
         setList(items.recordatorio)
       }
@@ -98,7 +98,7 @@ const RecordatorioGrupo = () => {
         session.api_token,
       )
       if (respuesta === 'OK') {
-        await getUsuarioRecordatorioGrupo(null, session.api_token).then((items) => {
+        await getUsuarioRecordatorioGrupo(null, null, session.api_token).then((items) => {
           setList(items.recordatorio)
         })
       } else if (opcion == 2) {

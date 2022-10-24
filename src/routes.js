@@ -139,6 +139,9 @@ const EditarTipoFlujo = React.lazy(() =>
 )
 
 const PagoTabs = React.lazy(() => import('./views/components/flujos/flujo/PagoTabs'))
+const AutorizacionGeneral = React.lazy(() =>
+  import('./views/components/flujos/flujo/AutorizacionGeneral'),
+)
 const GridBancario = React.lazy(() => import('./views/components/flujos/flujo/Bancario'))
 const Transferencia = React.lazy(() => import('./views/components/flujos/flujo/Transferencia'))
 const GridInterna = React.lazy(() => import('./views/components/flujos/flujo/Interna'))
@@ -155,6 +158,9 @@ const NuevoArchivoFlujo = React.lazy(() =>
 )
 const EditarArchivoFlujo = React.lazy(() =>
   import('./views/components/flujos/archivoflujo/EditarArchivoFlujo'),
+)
+const CompensacionGeneral = React.lazy(() =>
+  import('./views/components/flujos/flujo/CompensacionGeneral'),
 )
 const CompensacionBancario = React.lazy(() =>
   import('./views/components/flujos/flujo/PagoBancario'),
@@ -364,7 +370,7 @@ const routes = [
   { path: '/cuentas', exact: true, name: 'Cuentas', component: Cuentas },
   { path: '/cuentas/editar', name: 'Modificación', component: EditarCuentas },
   { path: '/cuentas/nueva', name: 'Nueva', component: NuevaCuenta },
-  { path: '/pagos', exact: true, name: 'Autorización Pagos', component: GridBancario },
+  { path: '/pagos', exact: true, name: 'Autorización Pagos', component: AutorizacionGeneral },
   { path: '/pagos/bancario', name: 'Bancaria', component: GridBancario },
   { path: '/pagos/transferencia', name: 'Transferencia', component: Transferencia },
   { path: '/pagos/interna', name: 'Interna', component: GridInterna },
@@ -422,7 +428,7 @@ const routes = [
     path: '/compensacion',
     exact: true,
     name: 'Compensación Pagos',
-    component: CompensacionBancario,
+    component: CompensacionGeneral,
   },
   { path: '/compensacion/bancario', name: 'Bancaria', component: CompensacionBancario },
   {

@@ -13,6 +13,9 @@ import '../../../../scss/estilos.scss'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
 import { getOcultarColumnaUsuario } from '../../../../services/getOcultarColumnaUsuario'
+import { getFlujoCompensarSeleccionado } from '../../../../services/getFlujoCompensarSeleccionado'
+import { getFlujoCompensarSeleccionadoUsuario } from '../../../../services/getFlujoCompensarSeleccionadoUsuario'
+import { postFlujoCompensarSeleccionado } from '../../../../services/postFlujoCompensarSeleccionado'
 
 const FilterComponent = (prop) => (
   <div className="div-search">
@@ -93,6 +96,13 @@ const PendientesPago = (prop) => {
         }
       }
     })
+    getFlujoCompensarSeleccionadoUsuario(idUsuario, session.api_token).then((items) => {
+      if (mounted) {
+        for (let item of items.pagos) {
+          sessionStorage.setItem('Comepnsar_' + item.id_flujo, 'true')
+        }
+      }
+    })
     return () => (mounted = false)
   }, [])
 
@@ -126,10 +136,29 @@ const PendientesPago = (prop) => {
     return result
   }
 
-  const handleInput = (event) => {
+  const handleInput = async (event) => {
+    //Validamos si está seleccionado por otro usuario
     if (event.target.checked) {
-      sessionStorage.setItem('Comepnsar_' + event.target.value, 'true')
+      const respuesta = await getFlujoCompensarSeleccionado(
+        session.id,
+        event.target.value,
+        session.api_token,
+      )
+      if (respuesta == 'SI') {
+        event.target.checked = true
+        sessionStorage.setItem('Comepnsar_' + event.target.value, 'true')
+      } else {
+        setShowAlert(true)
+        setTitulo('Alerta!')
+        setColor('warning')
+        setMensaje(`El pago ya ha sido seleccionado por otro usuario para compensarlo.`)
+        setTimeout(() => {
+          setShowAlert(false)
+        }, 4000)
+        event.target.checked = false
+      }
     } else {
+      await postFlujoCompensarSeleccionado(session.id, event.target.value, session.api_token)
       sessionStorage.setItem('Comepnsar_' + event.target.value, 'false')
     }
   }
@@ -195,9 +224,7 @@ const PendientesPago = (prop) => {
       setShowAlert(true)
       setTitulo('Error!')
       setColor('danger')
-      setMensaje(
-        `Los pagos ${respuesta} no fueron compensados debido a que sus códigos bancarios no coinciden con ninguno de los bancos existentes.`,
-      )
+      setMensaje(`Error: ${respuesta}`)
     }
     setDesactivarBotonModal(false)
   }
