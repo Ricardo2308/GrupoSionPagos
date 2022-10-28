@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useSession } from 'react-use-session'
-import { Button, Modal } from 'react-bootstrap'
+import { Button, Alert } from 'react-bootstrap'
 import { getReporteRechazados } from '../../../services/getReporteRechazados'
 import spanish from '../../../lenguaje/es.json'
 import '../../../scss/estilos.scss'
@@ -14,11 +14,15 @@ const Rechazados = (prop) => {
     const { session, clear } = useSession('PendrogonIT-Session')
     const [years, setYears] = useState([])
     const [datosReporte, setDatosReporte] = useState([])
+    const [inicio, setInicio] = useState('')
+    const [final, setFinal] = useState('')
+    const [showAlert, setShowAlert] = useState(false)
+    const [titulo, setTitulo] = useState('Error!')
+    const [color, setColor] = useState('danger')
+    const [mensaje, setMensaje] = useState('')
   
     const [form, setValues] = useState({
       campo: 'Fecha',
-      year: '0',
-      mes: '0',
     })  
 
     useEffect(() => {
@@ -30,7 +34,7 @@ const Rechazados = (prop) => {
         setYears(years)
         let pagos = []
 
-        getReporteRechazados(session.id, form.year, form.mes, form.campo, session.api_token).then((items) => {
+        getReporteRechazados(session.id, null, null, form.campo, session.api_token).then((items) => {
             if (mounted) {
                 pagos.push(
                 { 
@@ -174,28 +178,38 @@ const Rechazados = (prop) => {
     }
   
     const filtrar = async () => {
-      let pagos = []
+        if(final >= inicio){
+            let pagos = []
 
-      getReporteRechazados(session.id, form.year, form.mes, form.campo, session.api_token).then((items) => {
-              pagos.push(
-              { 
-                  "empresa_nombre" : { type: "string" },
-                  "doc_num" : { type: "string"},
-                  "tipo" : { type: "string"},
-                  "dfl_account" : { type: "string"},
-                  "en_favor_de" : { type: "string"},
-                  "comments" : { type: "string"},
-                  "doc_total" : { type: "number"},
-                  "doc_date" : { type: "date string"},
-                  "fecha" : { type: "date string"},
-                  "Comentario" : { type: "string"},
-              }
-              )
-              items.flujos.forEach((item) => {
-                  pagos.push(item)
-              })
-              setDatosReporte(pagos)
-      })
+            getReporteRechazados(session.id, inicio, final, form.campo, session.api_token).then((items) => {
+                    pagos.push(
+                    { 
+                        "empresa_nombre" : { type: "string" },
+                        "doc_num" : { type: "string"},
+                        "tipo" : { type: "string"},
+                        "dfl_account" : { type: "string"},
+                        "en_favor_de" : { type: "string"},
+                        "comments" : { type: "string"},
+                        "doc_total" : { type: "number"},
+                        "doc_date" : { type: "date string"},
+                        "fecha" : { type: "date string"},
+                        "Comentario" : { type: "string"},
+                    }
+                    )
+                    items.flujos.forEach((item) => {
+                        pagos.push(item)
+                    })
+                    setDatosReporte(pagos)
+            })
+        }else{
+            setShowAlert(true)
+            setTitulo('Error!')
+            setColor('danger')
+            setMensaje('Las fechas seleccionadas no son validas')
+            setTimeout(() => {
+                setShowAlert(false)
+            }, 4000)
+        }
     }
 
     function customizeToolbar(toolbar) {
@@ -207,57 +221,53 @@ const Rechazados = (prop) => {
         }
     }
 
+    function registrarInicio(fecha) {
+      setInicio(fecha)
+    }
+  
+    function registrarFinal(fecha) {
+      setFinal(fecha)
+    }
+
     if (session) {
         return (
             <>
-                <div className="div-search" style={{ marginBottom: '20px' }}>
+                <div style={{ display: 'flex', gap: '10px', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'baseline' }}>
                 <CFormSelect
                     name="campo"
-                    style={{ marginLeft: '35%', marginRight: '10px' }}
+                    style={{ marginLeft: '52%', marginRight: '10px' }}
                     onChange={handleInput}
+                    size="sm"
                 >
                     <option value="Fecha">Seleccione fecha para filtro</option>
                     <option value="doc_date">Fecha emisión</option>
                     <option value="Fecha">Fecha rechazo</option>
                 </CFormSelect>
-                <CFormSelect
-                    name="year"
-                    style={{ marginRight: '10px' }}
-                    onChange={handleInput}
-                >
-                    <option>Seleccione año</option>
-                    {years.map((item, i) => {
-                    return (
-                        <option key={i} value={item}>
-                        {item}
-                        </option>
-                    )
-                    })}
-                </CFormSelect>
-                <CFormSelect name="mes" style={{ marginRight: '10px' }} onChange={handleInput}>
-                    <option>Seleccione mes</option>
-                    <option value="1">Enero</option>
-                    <option value="2">Febrero</option>
-                    <option value="3">Marzo</option>
-                    <option value="4">Abril</option>
-                    <option value="5">Mayo</option>
-                    <option value="6">Junio</option>
-                    <option value="7">Julio</option>
-                    <option value="8">Agosto</option>
-                    <option value="9">Septiembre</option>
-                    <option value="10">Octubre</option>
-                    <option value="11">Noviembre</option>
-                    <option value="12">Diciembre</option>
-                </CFormSelect>
-                <Button
-                    color="primary"
-                    className="search-button"
-                    title="Filtrar por año y mes"
-                    onClick={filtrar}
-                >
+                De:
+                <input
+                    defaultValue={inicio}
+                    type="date"
+                    onChange={(e) => {
+                    registrarInicio(e.target.value)
+                    }}
+                />
+                A:
+                <input
+                    defaultValue={final}
+                    type="date"
+                    onChange={(e) => {
+                    registrarFinal(e.target.value)
+                    }}
+                />{' '}
+                <Button color="primary" size="sm" title="Buscar" onClick={filtrar}>
                     <FaSearch />
                 </Button>
                 </div>
+                <br />
+                <Alert show={showAlert} variant={color} onClose={() => setShowAlert(false)} dismissible>
+                    <Alert.Heading>{titulo}</Alert.Heading>
+                    <p>{mensaje}</p>
+                </Alert>
                 <div id="wdr-component"></div>
             </>
         )

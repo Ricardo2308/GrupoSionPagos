@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}pendientesvalidacionreporte`
 
-export function getPendientesValidacionReporte(idUsuario, year, mes, campo, token) {
+export function getPendientesValidacionReporte(idUsuario, inicial, final, campo, token) {
   let ApiFinal = API
   let ApiWhere = ''
   if (idUsuario !== null) {
@@ -9,8 +9,8 @@ export function getPendientesValidacionReporte(idUsuario, year, mes, campo, toke
   ApiFinal += ApiWhere
   var datos = {
     campo: campo,
-    year: year,
-    mes: mes,
+    fechaInicial: inicial,
+    fechaFinal: final,
   }
   const data = JSON.stringify(datos)
   return fetch(ApiFinal, {

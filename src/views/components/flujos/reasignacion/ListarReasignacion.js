@@ -552,15 +552,6 @@ const ListarReasignacion = (prop) => {
     return true
   }
 
-  const conditionalRowStyles = [
-    {
-      when: (row) => row.marcarRecordado > 0,
-      style: {
-        backgroundColor: '#fffadd',
-      },
-    },
-  ]
-
   if (session) {
     return (
       <>
@@ -576,7 +567,6 @@ const ListarReasignacion = (prop) => {
             persistTableHead
             striped={true}
             onSort={Ordenamiento}
-            conditionalRowStyles={conditionalRowStyles}
             dense
             paginationRowsPerPageOptions={[25, 50, 100, 300]}
             paginationComponentOptions={paginationComponentOptions}

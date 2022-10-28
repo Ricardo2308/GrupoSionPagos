@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}novisadoreporte`
 
-export function getReporteNoVisados(idUsuario, year, mes, token) {
+export function getReporteNoVisados(idUsuario, inicial, final, token) {
   let ApiFinal = API
   let ApiWhere = ''
   if (idUsuario !== null) {
@@ -8,8 +8,8 @@ export function getReporteNoVisados(idUsuario, year, mes, token) {
   }
   ApiFinal += ApiWhere
   var datos = {
-    year: year,
-    mes: mes,
+    fechaInicial: inicial,
+    fechaFinal: final,
   }
   const data = JSON.stringify(datos)
   return fetch(ApiFinal, {

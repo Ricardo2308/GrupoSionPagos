@@ -36,20 +36,6 @@ const CompensacionGeneral = (prop) => {
             </Button>
             <Button
               variant="secondary"
-              href={'/#/compensacion/transferencia'}
-              size="lg"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0px',
-                width: 600,
-              }}
-            >
-              <RiFileTransferLine /> &nbsp;Transferencia
-            </Button>
-            <Button
-              variant="secondary"
               href={'/#/compensacion/interna'}
               size="lg"
               style={{
@@ -61,6 +47,20 @@ const CompensacionGeneral = (prop) => {
               }}
             >
               <RiDownload2Fill /> &nbsp;Interna
+            </Button>
+            <Button
+              variant="secondary"
+              href={'/#/compensacion/transferencia'}
+              size="lg"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0px',
+                width: 600,
+              }}
+            >
+              <RiFileTransferLine /> &nbsp;Transferencia
             </Button>
           </div>
         </div>

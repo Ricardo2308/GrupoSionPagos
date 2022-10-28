@@ -1,14 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { useIdleTimer } from 'react-idle-timer'
-import { Tab, Tabs, Modal, Button } from 'react-bootstrap'
+import { Tab, Tabs } from 'react-bootstrap'
 import PendientesPago from './PendientesPago'
 import Compensados from './Compensados'
-import RechazadosPorBanco from './RechazadosPorBanco'
-import SolicitudRetorno from './SolicitudRetorno'
 import LotesPago from './LotesPago'
-import EnviadosBanco from './EnviadosBanco'
-import AceptadosBanco from './AceptadosBanco'
 import { useSession } from 'react-use-session'
 import '../../../../scss/estilos.scss'
 import { getPerfilUsuario } from '../../../../services/getPerfilUsuario'
@@ -40,15 +35,6 @@ const PagoBancario = () => {
   }
 
   if (session) {
-    let MostrarReprocesar = ExistePermiso('Reprocesar')
-    let tabSolicitudes
-    if (MostrarReprocesar) {
-      tabSolicitudes = (
-        <Tab eventKey="solicitudretorno" title="Solicitudes a bandeja">
-          <SolicitudRetorno tipo={'BANCARIO'} />
-        </Tab>
-      )
-    }
     return (
       <div className="div-tabs">
         <div className="div-content">
@@ -60,19 +46,9 @@ const PagoBancario = () => {
               <Tab eventKey="compensados" title="Compensados">
                 <Compensados tipo={'BANCARIO'} />
               </Tab>
-              {/* <Tab eventKey="enviadosBanco" title="Enviados a banco">
-                <EnviadosBanco tipo={'BANCARIO'} />
-              </Tab>
-               <Tab eventKey="aceptadosBanco" title="Aceptados por banco">
-                <AceptadosBanco tipo={'BANCARIO'} />
-              </Tab>
-              <Tab eventKey="rechazadosBanco" title="Rechazados por banco">
-                <RechazadosPorBanco tipo={'BANCARIO'} />
-              </Tab> */}
               <Tab eventKey="lotespago" title="Lotes de pago">
                 <LotesPago tipo={'BANCARIO'} />
               </Tab>
-              {tabSolicitudes}
             </Tabs>
           </div>
         </div>

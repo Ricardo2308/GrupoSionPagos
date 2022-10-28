@@ -36,20 +36,6 @@ const AutorizacionGeneral = (prop) => {
             </Button>
             <Button
               variant="secondary"
-              href={'/#/pagos/transferencia'}
-              size="lg"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0px',
-                width: 600,
-              }}
-            >
-              <RiFileTransferLine /> &nbsp;Transferencia
-            </Button>
-            <Button
-              variant="secondary"
               href={'/#/pagos/interna'}
               size="lg"
               style={{
@@ -61,6 +47,20 @@ const AutorizacionGeneral = (prop) => {
               }}
             >
               <RiDownload2Fill /> &nbsp;Interna
+            </Button>
+            <Button
+              variant="secondary"
+              href={'/#/pagos/transferencia'}
+              size="lg"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0px',
+                width: 600,
+              }}
+            >
+              <RiFileTransferLine /> &nbsp;Transferencia
             </Button>
           </div>
         </div>

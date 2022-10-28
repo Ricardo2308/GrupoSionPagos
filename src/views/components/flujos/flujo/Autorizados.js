@@ -10,6 +10,7 @@ import '../../../../scss/estilos.scss'
 import DataTableExtensions from 'react-data-table-component-extensions'
 import 'react-data-table-component-extensions/dist/index.css'
 import { getOcultarColumnaUsuario } from '../../../../services/getOcultarColumnaUsuario'
+import { getUsuarioGrupo } from '../../../../services/getUsuarioGrupo'
 
 const Autorizados = (prop) => {
   const history = useHistory()
@@ -23,8 +24,19 @@ const Autorizados = (prop) => {
   const filteredItemsA = autorizados
   const OrdenarPorColumna = sessionStorage.getItem('OrdenarPorColumnaA' + prop.tipo)
   const OrdenarPorDireccion = sessionStorage.getItem('OrdenarPorDireccionA' + prop.tipo)
+  const [resultsGrupos, setListGrupos] = useState([])
 
   async function leerNotificaciones(IdFlujo, Pago, Estado, Nivel, IdGrupo) {
+    let PuedoAutorizar = '0'
+    let NivelPagoActual = Nivel
+    if (Nivel == 0) {
+      NivelPagoActual = Nivel + 1
+    }
+    for (let item of resultsGrupos) {
+      if (item.id_grupoautorizacion == IdGrupo && item.nivel == NivelPagoActual) {
+        PuedoAutorizar = '1'
+      }
+    }
     if (location.opcion == 1) {
       let pagos = []
       pagos.push(IdFlujo)
@@ -37,7 +49,7 @@ const Autorizados = (prop) => {
           estado: Estado,
           nivel: Nivel,
           id_grupo: IdGrupo,
-          PuedoAutorizar: '0',
+          PuedoAutorizar: PuedoAutorizar,
           seccion: 'Notificaciones',
         })
       }
@@ -49,7 +61,7 @@ const Autorizados = (prop) => {
         estado: Estado,
         nivel: Nivel,
         id_grupo: IdGrupo,
-        PuedoAutorizar: '1',
+        PuedoAutorizar: PuedoAutorizar,
         seccion: 'Mensajes',
       })
     }
@@ -196,6 +208,11 @@ const Autorizados = (prop) => {
           }
         }
       })
+      getUsuarioGrupo(session.id, null, session.api_token).then((items) => {
+        if (mounted) {
+          setListGrupos(items.detalle)
+        }
+      })
     } else {
       getAutorizados(session.id, prop.tipo, session.api_token).then((items) => {
         if (mounted) {
@@ -301,6 +318,11 @@ const Autorizados = (prop) => {
           } else {
             setAnchoConcepto('285px')
           }
+        }
+      })
+      getUsuarioGrupo(session.id, null, session.api_token).then((items) => {
+        if (mounted) {
+          setListGrupos(items.detalle)
         }
       })
     }

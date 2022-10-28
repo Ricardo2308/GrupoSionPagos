@@ -7,7 +7,7 @@ import PagoTabs from 'src/views/components/flujos/flujo/PagoTabs'
 
 const AppContent = () => {
   return (
-    <CContainer lg style={{ position: 'relative' }}>
+    <CContainer fluid style={{ position: 'relative' }}>
       <Suspense fallback={<CSpinner color="primary" />}>
         <Switch>
           {routes.map((route, idx) => {

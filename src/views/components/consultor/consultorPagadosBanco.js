@@ -203,7 +203,7 @@ const ConsultorPagadosBanco = (prop) => {
       style: {
         paddingLeft: '8px', // override the cell padding for head cells
         paddingRight: '8px',
-        fontSize: '12px',
+        fontSize: '11px',
         '&:not(:last-of-type)': {
           borderRightStyle: 'solid',
           borderRightWidth: '1px',
@@ -263,7 +263,7 @@ const ConsultorPagadosBanco = (prop) => {
       selector: (row) => row.empresa_nombre,
       center: false,
       style: {
-        fontSize: '11px',
+        fontSize: '10px',
       },
       sortable: true,
       wrap: true,
@@ -276,7 +276,7 @@ const ConsultorPagadosBanco = (prop) => {
       selector: (row) => row.doc_num,
       center: false,
       style: {
-        fontSize: '11px',
+        fontSize: '10px',
       },
       sortable: true,
       width: '90px',
@@ -287,7 +287,7 @@ const ConsultorPagadosBanco = (prop) => {
       selector: (row) => row.tipo,
       center: false,
       style: {
-        fontSize: '11px',
+        fontSize: '10px',
       },
       sortable: true,
       width: '90px',
@@ -300,7 +300,7 @@ const ConsultorPagadosBanco = (prop) => {
       center: false,
       sortable: true,
       style: {
-        fontSize: '11px',
+        fontSize: '10px',
       },
       width: '100px',
       omit: OcultarCampo('Fecha sistema'),
@@ -312,10 +312,10 @@ const ConsultorPagadosBanco = (prop) => {
       center: false,
       sortable: true,
       style: {
-        fontSize: '11px',
+        fontSize: '10px',
       },
       wrap: true,
-      width: '250px',
+      width: '230px',
       omit: OcultarCampo('Beneficiario'),
     },
     {
@@ -325,7 +325,7 @@ const ConsultorPagadosBanco = (prop) => {
       center: false,
       sortable: true,
       style: {
-        fontSize: '11px',
+        fontSize: '10px',
       },
       wrap: true,
       width: anchoConcepto,
@@ -339,9 +339,9 @@ const ConsultorPagadosBanco = (prop) => {
       right: true,
       sortable: true,
       style: {
-        fontSize: '11px',
+        fontSize: '10px',
       },
-      width: '120px',
+      width: '105px',
       omit: OcultarCampo('Monto'),
     },
     {

@@ -152,14 +152,19 @@ const NotificationsCount = (props) => {
   if (props.count === 0 && props.contador === 0) {
     return null
   }
-  return <div className={'new-messages-count'}>{props.count + props.contador}</div>
+  let contadorNotificaciones = props.count + props.contador
+  return (
+    <div className={'new-messages-count'}>
+      {contadorNotificaciones > 100 ? '+99' : contadorNotificaciones}
+    </div>
+  )
 }
 
 const MessageCount = (props) => {
   if (props.count === 0) {
     return null
   }
-  return <div className={'new-messages-count'}>{props.count}</div>
+  return <div className={'new-messages-count'}>{props.count > 100 ? '+99' : props.count}</div>
 }
 
 export default AppHeader

@@ -1,6 +1,6 @@
 const API = `${process.env.REACT_APP_API_URL}canceladosreporte`
 
-export function getReporteCancelados(idUsuario, year, mes, campo, token) {
+export function getReporteCancelados(idUsuario, inicial, final, campo, token) {
   let ApiFinal = API
   let ApiWhere = ''
   if (idUsuario !== null) {
@@ -9,8 +9,8 @@ export function getReporteCancelados(idUsuario, year, mes, campo, token) {
   ApiFinal += ApiWhere
   var datos = {
     campo: campo,
-    year: year,
-    mes: mes,
+    fechaInicial: inicial,
+    fechaFinal: final,
   }
   const data = JSON.stringify(datos)
   return fetch(ApiFinal, {

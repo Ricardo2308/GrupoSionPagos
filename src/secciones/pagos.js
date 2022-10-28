@@ -40,13 +40,13 @@ const pagos = [
           Bancaria
           <Link to="/pagos/bancario" />
         </MenuItem>
-        <MenuItem key="AutorizarPagos2">
-          Transferencia
-          <Link to="/pagos/transferencia" />
-        </MenuItem>
         <MenuItem key="AutorizarPagos3">
           Interna
           <Link to="/pagos/interna" />
+        </MenuItem>
+        <MenuItem key="AutorizarPagos2">
+          Transferencia
+          <Link to="/pagos/transferencia" />
         </MenuItem>
       </SubMenu>
     ),
@@ -59,13 +59,13 @@ const pagos = [
           Bancaria
           <Link to="/compensacion/bancario" />
         </MenuItem>
-        <MenuItem key="CompensarPagos2">
-          Transferencia
-          <Link to="/compensacion/transferencia" />
-        </MenuItem>
         <MenuItem key="CompensarPagos3">
           Interna
           <Link to="/compensacion/interna" />
+        </MenuItem>
+        <MenuItem key="CompensarPagos2">
+          Transferencia
+          <Link to="/compensacion/transferencia" />
         </MenuItem>
       </SubMenu>
     ),
