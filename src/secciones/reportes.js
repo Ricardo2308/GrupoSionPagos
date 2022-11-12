@@ -34,6 +34,10 @@ const reportes = (
       Reemplazos
       <Link to="/reportereemplazos" />
     </MenuItem>
+    <MenuItem key="Reportes8" icon={<HiOutlineDocumentReport />}>
+      Pendientes de compensar
+      <Link to="/pendientescompensarreporte" />
+    </MenuItem>
   </SubMenu>
 )
 

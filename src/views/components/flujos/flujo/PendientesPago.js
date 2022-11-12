@@ -16,6 +16,7 @@ import { getOcultarColumnaUsuario } from '../../../../services/getOcultarColumna
 import { getFlujoCompensarSeleccionado } from '../../../../services/getFlujoCompensarSeleccionado'
 import { getFlujoCompensarSeleccionadoUsuario } from '../../../../services/getFlujoCompensarSeleccionadoUsuario'
 import { postFlujoCompensarSeleccionado } from '../../../../services/postFlujoCompensarSeleccionado'
+import { postFlujosCompensar } from '../../../../services/postFlujosCompensar'
 
 const FilterComponent = (prop) => (
   <div className="div-search">
@@ -170,9 +171,17 @@ const PendientesPago = (prop) => {
   async function Compensar() {
     setDesactivarBotonModal(true)
     let bandera = 1
-    const respuesta = await postFlujos('0', '', '', '2', pagos, session.id, session.api_token)
-    if (respuesta === 'OK') {
-      for (let pago of pagos) {
+    const respuesta = await postFlujosCompensar(
+      '0',
+      '',
+      '',
+      '2',
+      pagos,
+      session.id,
+      session.api_token,
+    )
+    if (respuesta.mensaje === 'OK') {
+      for (let pago of respuesta.pagos) {
         sessionStorage.removeItem('Comepnsar_' + pago)
         if (prop.tipo == 'TRANSFERENCIA') {
           const pagado = await postFlujoDetalle(
@@ -206,7 +215,7 @@ const PendientesPago = (prop) => {
       }
       if (bandera == 1) {
         const enviada = await postNotificacion(
-          pagos,
+          respuesta.pagos,
           session.id,
           'compensado.',
           '',
@@ -224,7 +233,7 @@ const PendientesPago = (prop) => {
       setShowAlert(true)
       setTitulo('Error!')
       setColor('danger')
-      setMensaje(`Error: ${respuesta}`)
+      setMensaje(`Error: ${respuesta.mensaje}`)
     }
     setDesactivarBotonModal(false)
   }

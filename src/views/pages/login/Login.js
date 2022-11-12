@@ -149,15 +149,20 @@ const Login = () => {
     event.preventDefault()
     postLogIn(form.usuario, md5(form.password, { encoding: 'binary' })).then((itemsLogin) => {
       if (itemsLogin) {
-        getUsuarios(null, null, form.usuario, null, itemsLogin).then((items) => {
+        const n = new Date()
+        const year = n.toLocaleString('es-GT', { year: 'numeric' })
+        const month = n.toLocaleString('es-GT', { month: '2-digit' })
+        const day = n.toLocaleString('es-GT', { day: '2-digit' })
+        const tokenApp = md5(year + '-' + month + '-' + day + itemsLogin, { encoding: 'binary' })
+        getUsuarios(null, null, form.usuario, null, tokenApp).then((items) => {
           if (items) {
             if (items.users.length > 0) {
               for (let item of items.users) {
                 if (md5(form.password, { encoding: 'binary' }) === item.password) {
                   if (item.activo == 1 && item.eliminado == 0) {
-                    revisarPolitica(item.id, item.cambia_password, itemsLogin).then((respuesta) => {
+                    revisarPolitica(item.id, item.cambia_password, tokenApp).then((respuesta) => {
                       if (respuesta == true) {
-                        estoyConectado(item.id, itemsLogin).then((conexion) => {
+                        estoyConectado(item.id, tokenApp).then((conexion) => {
                           //if (conexion == true) {
                           //setShow(true)
                           //setTitulo('Aviso!')
@@ -166,7 +171,7 @@ const Login = () => {
                           //  'Parece que tu usuario tiene una sesión activa, cierra sesión y vuelve a intentarlo.',
                           //)
                           //} else {
-                          crearSesion(item.id, item.cantidadIngresos, itemsLogin).then((sesion) => {
+                          crearSesion(item.id, item.cantidadIngresos, tokenApp).then((sesion) => {
                             if (sesion == true) {
                               let limiteconexion = obtenerPolitica('_LIMITE_TIEMPO_CONEXION_')
                               let verde = obtenerPolitica('_SEMAFORO_VERDE')
@@ -183,7 +188,7 @@ const Login = () => {
                                 verde: verde,
                                 amarillo: amarillo,
                                 cantidadIngresos: item.cantidadIngresos,
-                                api_token: itemsLogin,
+                                api_token: tokenApp,
                                 grupos: item.grupos,
                                 redireccion: item.redireccion,
                               }
@@ -219,7 +224,7 @@ const Login = () => {
                   setMensaje('Credenciales incorrectas. Vuelva a intentarlo.')
                   if (item.activo == 1 && item.eliminado == 0) {
                     let valor = obtenerPolitica('_LIMITE_ERROR_LOGIN_')
-                    postLogLogin(item.id, valor, itemsLogin)
+                    postLogLogin(item.id, valor, tokenApp)
                   }
                 }
               }
