@@ -234,7 +234,7 @@ const PendientesCompensar = (prop) => {
           >
             <option value="Fecha">Seleccione fecha para filtro</option>
             <option value="doc_date">Fecha emisión</option>
-            <option value="Fecha">Fecha cancelación</option>
+            <option value="Fecha">Fecha autorización</option>
           </CFormSelect>
           De:
           <input

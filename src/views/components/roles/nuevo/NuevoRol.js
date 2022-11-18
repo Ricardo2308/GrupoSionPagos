@@ -138,6 +138,7 @@ const NuevoRol = () => {
                     <option value="Modulo Dashboard">Modulo Dashboard</option>
                     <option value="Modulo Consultor">Modulo Consultor</option>
                     <option value="Modulo Reasignador">Modulo Reasignador</option>
+                    <option value="Modulo Recordatorios">Modulo Recordatorios</option>
                   </CFormSelect>
                 </CInputGroup>
                 <CButton color="primary" onClick={handleSubmit}>

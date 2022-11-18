@@ -516,7 +516,7 @@ const ConsultorPagosDetalle = () => {
               </Tabs>
             </div>
           </div>
-          <div
+          {/*  <div
             className={contadorMensajesRecibidos == 0 ? 'd-none' : ''}
             style={{
               zIndex: 2,
@@ -540,7 +540,7 @@ const ConsultorPagosDetalle = () => {
           >
             {contadorMensajesRecibidos}
           </div>
-          {/*  <Chat
+           <Chat
             style={{ zIndex: 1 }}
             key={keyChat}
             id_usuario={session.id}
